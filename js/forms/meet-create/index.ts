@@ -19,6 +19,7 @@ import { Meets } from "../meets/index.js";
 
 // Импортируем handlers
 import { createHandler } from "./handlers/create.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки модального окна создания конференции.
@@ -229,10 +230,10 @@ export class MeetCreate {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("label", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.meet_create.name}
+                                ${t("forms.meet_create.name")}
                             </span>
                             ${Inputs.create({
-            placeholder: window._lc.forms.meet_create.name,
+            placeholder: t("forms.meet_create.name"),
             name: "name",
             attributes: ["required"]
         })}
@@ -243,10 +244,10 @@ export class MeetCreate {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("message-circle", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.meet_create.about}
+                                ${t("forms.meet_create.about")}
                             </span>
                             ${Inputs.textarea({
-            placeholder: window._lc.forms.meet_create.about,
+            placeholder: t("forms.meet_create.about"),
             name: "about",
             rows: 4
         })}
@@ -257,15 +258,15 @@ export class MeetCreate {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("world", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.meet_create.is_public_cast}
+                                ${t("forms.meet_create.is_public_cast")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.meet_create.is_public_cast_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.meet_create.is_public_cast_desc")}</span>
                             ${Toggle.switch({
             name: "is-public",
             checked: true,
             toggleText: {
-                on: window._lc.forms.meet_create.opened,
-                off: window._lc.forms.meet_create.closed
+                on: t("forms.meet_create.opened"),
+                off: t("forms.meet_create.closed")
             }
         })}
                         </div>
@@ -275,15 +276,15 @@ export class MeetCreate {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("messages", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.meet_create.is_chat_cast}
+                                ${t("forms.meet_create.is_chat_cast")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.meet_create.is_chat_cast_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.meet_create.is_chat_cast_desc")}</span>
                             ${Toggle.switch({
             name: "is-chat",
             checked: true,
             toggleText: {
-                on: window._lc.forms.meet_create.enabled,
-                off: window._lc.forms.meet_create.disabled
+                on: t("forms.meet_create.enabled"),
+                off: t("forms.meet_create.disabled")
             }
         })}
                         </div>

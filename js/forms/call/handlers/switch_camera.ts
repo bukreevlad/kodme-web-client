@@ -13,6 +13,7 @@ import { updateParticipant } from "../functions/update_participant.js";
 
 // Импортируем типы
 import type { Call } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -93,7 +94,7 @@ export async function switchCameraHandler(event: Event, form?: Call): Promise<vo
         Logger.error("❌ [app][call]: Ошибка ручной замены камеры:", error);
 
         // Toast
-        Toast.error(window._lc.forms.call.toasts.camera_error);
+        Toast.error(t("forms.call.toasts.camera_error"));
 
     }
 

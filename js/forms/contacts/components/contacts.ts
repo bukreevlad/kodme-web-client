@@ -1,6 +1,5 @@
 // Импортируем utils
 import { Logger } from "../../../utils/logs/logger.js";
-import { TimeAgoFormatter } from "../../../utils/date/time_ago_formatter.js";
 
 // Импортируем components
 import { Avatars } from "../../../components/avatars.js";
@@ -12,6 +11,7 @@ import { UserProfile } from "../../user-profile/index.js";
 import { isContactRecord } from "../types.js";
 import type { ContactRecord } from "../types.js";
 import type { Contacts } from "../index.js";
+import { I18n, t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -110,9 +110,13 @@ export function createContactItem(form: Contacts, data: ContactRecord): HTMLElem
 
             // В сети
             if (isOnline) {
-                isOnline.textContent = next.is_online ? window._lc.forms.search._components.users.online :
-                    next.last_action_at ? `${window._lc.forms.search._components.users.was} ${new TimeAgoFormatter(next.last_action_at).formattedTime}`
-                        : window._lc.forms.search._components.users.not_online;
+                if (next.is_online) {
+                    I18n.setPlain(isOnline, t("forms.search._components.users.online"));
+                } else if (next.last_action_at) {
+                    I18n.setTime(isOnline, next.last_action_at, undefined, "forms.search._components.users.was");
+                } else {
+                    I18n.setPlain(isOnline, t("forms.search._components.users.not_online"));
+                }
             }
 
         } catch (error) {

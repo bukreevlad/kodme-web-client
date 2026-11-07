@@ -14,6 +14,7 @@ import { registrationRequest } from "../requests/registration.js";
 
 // Импортируем типы
 import type { Registration } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -43,21 +44,21 @@ export async function registrationHandler(form: Registration): Promise<void> {
         // Локальная валидация пароля
         if (!form.password) {
             Inputs.markInvalid(password, true);
-            Toast.error(window._lc.forms.registration.toasts.not_password);
+            Toast.error(t("forms.registration.toasts.not_password"));
             return;
         }
 
         // Если пароль слишком короткий
         if (form.password.length < 8) {
             Inputs.markInvalid(password, true);
-            Toast.warning(window._lc.forms.registration.toasts.password_too_short);
+            Toast.warning(t("forms.registration.toasts.password_too_short"));
             return;
         }
 
         // Если пароли не совпадают
         if (form.password !== form.retryPassword) {
             Inputs.markInvalid(retryPassword, true);
-            Toast.error(window._lc.forms.registration.toasts.passwords_not_match);
+            Toast.error(t("forms.registration.toasts.passwords_not_match"));
             return;
         }
 
@@ -82,7 +83,7 @@ export async function registrationHandler(form: Registration): Promise<void> {
             form.modal?.close();
 
             // Toast успеха
-            Toast.success(window._lc.forms.registration.toasts.success_registration);
+            Toast.success(t("forms.registration.toasts.success_registration"));
 
             // Открываем форму авторизации
             new Login();
@@ -94,72 +95,72 @@ export async function registrationHandler(form: Registration): Promise<void> {
 
         // Если такой email уже зарегистрирован
         if (getErrorMessage(error).includes("EMAIL_ALREADY_TAKEN")) {
-            Toast.error(window._lc.forms.registration.toasts.email_already_taken);
+            Toast.error(t("forms.registration.toasts.email_already_taken"));
         }
 
         // Если не ввели email
         if (getErrorMessage(error).includes("EMAIL_REQUIRED")) {
-            Toast.error(window._lc.forms.registration.toasts.not_email);
+            Toast.error(t("forms.registration.toasts.not_email"));
         }
 
         // Если email некорректный
         if (getErrorMessage(error).includes("INVALID_EMAIL")) {
-            Toast.error(window._lc.forms.registration.toasts.invalid_email);
+            Toast.error(t("forms.registration.toasts.invalid_email"));
         }
 
         // Если не ввели имя
         if (getErrorMessage(error).includes("FIRST_NAME_REQUIRED")) {
-            Toast.error(window._lc.forms.registration.toasts.not_first_name);
+            Toast.error(t("forms.registration.toasts.not_first_name"));
         }
 
         // Если имя некорректное
         if (getErrorMessage(error).includes("INVALID_FIRST_NAME")) {
-            Toast.error(window._lc.forms.registration.toasts.invalid_first_name);
+            Toast.error(t("forms.registration.toasts.invalid_first_name"));
         }
 
         // Если не ввели фамилию
         if (getErrorMessage(error).includes("LAST_NAME_REQUIRED")) {
-            Toast.error(window._lc.forms.registration.toasts.not_last_name);
+            Toast.error(t("forms.registration.toasts.not_last_name"));
         }
 
         // Если фамилия некорректная
         if (getErrorMessage(error).includes("INVALID_LAST_NAME")) {
-            Toast.error(window._lc.forms.registration.toasts.invalid_last_name);
+            Toast.error(t("forms.registration.toasts.invalid_last_name"));
         }
 
         // Если не ввели пароль
         if (getErrorMessage(error).includes("PASSWORD_REQUIRED")) {
-            Toast.error(window._lc.forms.registration.toasts.not_password);
+            Toast.error(t("forms.registration.toasts.not_password"));
         }
 
         // Если не ввели повтор пароля
         if (getErrorMessage(error).includes("RETRY_PASSWORD_REQUIRED")) {
-            Toast.error(window._lc.forms.registration.toasts.not_retry_password);
+            Toast.error(t("forms.registration.toasts.not_retry_password"));
         }
 
         // Если пароли не совпадают
         if (getErrorMessage(error).includes("PASSWORDS_NOT_MATCH")) {
-            Toast.error(window._lc.forms.registration.toasts.passwords_not_match);
+            Toast.error(t("forms.registration.toasts.passwords_not_match"));
         }
 
         // Если пароль слишком короткий
         if (getErrorMessage(error).includes("PASSWORD_TOO_SHORT")) {
-            Toast.warning(window._lc.forms.registration.toasts.password_too_short);
+            Toast.warning(t("forms.registration.toasts.password_too_short"));
         }
 
         // Если аккаунт заблокирован
         if (getErrorMessage(error).includes("USER_BLOCKED")) {
-            Toast.error(window._lc.forms.registration.toasts.user_blocked);
+            Toast.error(t("forms.registration.toasts.user_blocked"));
         }
 
         // Если регистрация выключена
         if (getErrorMessage(error).includes("MODULE_DISABLED")) {
-            Toast.error(window._lc.forms.registration.toasts.module_disabled);
+            Toast.error(t("forms.registration.toasts.module_disabled"));
         }
 
         // Если превышен лимит запросов
         if (getErrorMessage(error).includes("RATE_LIMIT_EXCEEDED") || getErrorStatus(error) === 429) {
-            Toast.warning(window._lc.forms.registration.toasts.too_many_requests);
+            Toast.warning(t("forms.registration.toasts.too_many_requests"));
         }
 
     }

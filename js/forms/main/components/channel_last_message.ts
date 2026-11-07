@@ -4,7 +4,7 @@ import { isKind } from "../../../config/file_types.js";
 // Импортируем utils
 import { Logger } from "../../../utils/logs/logger.js";
 import { Icons } from "../../../utils/icons.js";
-import { getDeclension } from "../../../utils/string/declensions.js";
+import { I18n, t } from "../../../utils/i18n/index.js";
 import { unescapeHtml } from "../../../utils/string/unescape_html.js";
 
 // Импортируем components
@@ -139,7 +139,7 @@ function renderMessage(channel: ChannelItem, data: ChannelRecord): HTMLElement |
         // (на проводе это значение вида "USER_JOINED_GROUP"), поэтому
         // собираем источник с приведением через String(): поведение
         // идентично легаси — обращение к объекту локали само приводило ключ
-        const messagesLocale = window._lc.forms.messages.components.messages.system_messages;
+        const messagesLocale = I18n.tree.forms.messages.components.messages.system_messages;
         const systemSource = { ...data.last_message, action_type: String(data.last_message.action_type) };
         text.textContent = parseSystemMessage(systemSource, messagesLocale);
 
@@ -147,7 +147,7 @@ function renderMessage(channel: ChannelItem, data: ChannelRecord): HTMLElement |
 
         // Стикер-сообщение без текста: в превью показываем подпись
         if (!data?.last_message?.text && data?.last_message?.sticker_document_id) {
-            text.textContent = window._lc.forms.main.components.channels.last_message.sticker;
+            text.textContent = t("forms.main.components.channels.last_message.sticker");
 
             // Сервер присылает текст экранированным, поэтому снимаем одно экранирование.
             // NOTE(MIGRATION): пустой текст нормализуется — null/undefined в
@@ -160,7 +160,7 @@ function renderMessage(channel: ChannelItem, data: ChannelRecord): HTMLElement |
 
     // Если сообщение от текущего пользователя
     const itsYou = tpl.querySelector<HTMLElement>("[data-its-you]");
-    const itsMe = data?.last_message?.created_user_id === getSessionUserId() ? window._lc.forms.main.components.channels.last_message.you : "";
+    const itsMe = data?.last_message?.created_user_id === getSessionUserId() ? t("forms.main.components.channels.last_message.you") : "";
     const type = data.type;
     if (itsMe && type != null && [1, 2, 4].includes(type)) {
 
@@ -247,7 +247,7 @@ function renderMessage(channel: ChannelItem, data: ChannelRecord): HTMLElement |
 
             // Если нет текста и одна картинка
             if (!data?.last_message.text && images.length === 1) {
-                text.innerHTML = `<span class="text-[var(--color-brand)] dark:text-[var(--color-brand)]">${window._lc.forms.main.components.channels.last_message.image}</span>`;
+                text.innerHTML = `<span class="text-[var(--color-brand)] dark:text-[var(--color-brand)]">${t("forms.main.components.channels.last_message.image")}</span>`;
             }
 
             // Если аудио найдено
@@ -258,7 +258,7 @@ function renderMessage(channel: ChannelItem, data: ChannelRecord): HTMLElement |
 
             // Если это голосовое сообщение
             if (isAudioNote) {
-                const audio = `<span class="text-[var(--color-brand)] dark:text-[var(--color-brand)]">${window._lc.forms.main.components.channels.last_message.voice_note}</span>`;
+                const audio = `<span class="text-[var(--color-brand)] dark:text-[var(--color-brand)]">${t("forms.main.components.channels.last_message.voice_note")}</span>`;
                 text.innerHTML = audio;
             } else {
                 if (audios.length === 1) {
@@ -270,7 +270,7 @@ function renderMessage(channel: ChannelItem, data: ChannelRecord): HTMLElement |
                 } else if (audios.length > 1) {
                     // Отображаем количество
                     const counts = `<span class="text-[var(--color-brand)] dark:text-[var(--color-brand)] truncate">
-                    ${audios.length} ${getDeclension(audios.length, window._lc.forms.messages.components.reply_footer.dec_audios)}</span>`;
+                    ${audios.length} ${t("forms.messages.components.reply_footer.dec_audios", { count: audios.length })}</span>`;
                     media.innerHTML = counts;
                 }
             }
@@ -283,7 +283,7 @@ function renderMessage(channel: ChannelItem, data: ChannelRecord): HTMLElement |
 
             // Если это видео сообщение
             if (isVideoNote) {
-                const video = `<span class="text-[var(--color-brand)] dark:text-[var(--color-brand)]">${window._lc.forms.main.components.channels.last_message.video_note}</span>`;
+                const video = `<span class="text-[var(--color-brand)] dark:text-[var(--color-brand)]">${t("forms.main.components.channels.last_message.video_note")}</span>`;
                 text.innerHTML = video;
             } else {
                 if (videos.length === 1) {
@@ -295,7 +295,7 @@ function renderMessage(channel: ChannelItem, data: ChannelRecord): HTMLElement |
                 } else if (videos.length > 1) {
                     // Отображаем количество
                     const counts = `<span class="text-[var(--color-brand)] dark:text-[var(--color-brand)] truncate">
-                    ${videos.length} ${getDeclension(videos.length, window._lc.forms.messages.components.reply_footer.dec_videos)}</span>`;
+                    ${videos.length} ${t("forms.messages.components.reply_footer.dec_videos", { count: videos.length })}</span>`;
                     media.innerHTML = counts;
                 }
             }
@@ -313,7 +313,7 @@ function renderMessage(channel: ChannelItem, data: ChannelRecord): HTMLElement |
             } else if (documents.length > 1) {
                 // Отображаем количество
                 const files = `<span class="text-[var(--color-brand)] dark:text-[var(--color-brand)] truncate">
-                    ${documents.length} ${getDeclension(documents.length, window._lc.forms.main.components.channels.last_message.dec_files)}
+                    ${documents.length} ${t("forms.main.components.channels.last_message.dec_files", { count: documents.length })}
                 </span>`;
                 media.innerHTML = files;
             }

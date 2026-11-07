@@ -10,6 +10,7 @@ import { templateHorizontalTab, templatePane } from "./folder_tab_templates.js";
 // Импортируем типы
 import type { Main } from "../index.js";
 import type { MainFolder } from "../types.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -26,7 +27,7 @@ export function showMainFolders(form: Main): void {
         const folders = getSessionMainFolders();
 
         // Показываем общую папку
-        const mainFolder: MainFolder = { id: "all", name: "Все" };
+        const mainFolder: MainFolder = { id: "all", name: t("forms.main.all_folder") };
         const tabH = templateHorizontalTab(mainFolder);
         const pane = templatePane(mainFolder);
 

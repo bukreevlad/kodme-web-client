@@ -20,6 +20,7 @@ import { switchIsNumberUsersHandler } from "./handlers/switch-is-number-users.js
 
 // Импортируем forms
 import { MeetSettings } from "../meet-settings/index.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы создания приглашения в конференцию.
@@ -253,10 +254,10 @@ export class MeetInviteCreate {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("label", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.meet_invite_create.name}
+                                ${t("forms.meet_invite_create.name")}
                             </span>
                             ${Inputs.create({
-            placeholder: window._lc.forms.meet_invite_create.name,
+            placeholder: t("forms.meet_invite_create.name"),
             name: "name",
             attributes: ["required"]
         })}
@@ -267,22 +268,22 @@ export class MeetInviteCreate {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("users", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.meet_invite_create.number_users}
+                                ${t("forms.meet_invite_create.number_users")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.meet_invite_create.number_users_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.meet_invite_create.number_users_desc")}</span>
 
                             ${Toggle.switch({
             name: "is-max-users",
             checked: false,
             toggleText: {
-                on: window._lc.forms.meet_invite_create.limited,
-                off: window._lc.forms.meet_invite_create.infifnity
+                on: t("forms.meet_invite_create.limited"),
+                off: t("forms.meet_invite_create.infifnity")
             }
         })}
 
                             <div data-max-users class="hidden">
                                 ${Inputs.number({
-            placeholder: window._lc.forms.meet_invite_create.number_users,
+            placeholder: t("forms.meet_invite_create.number_users"),
             name: "max-users",
             value: "10",
             min: "1",

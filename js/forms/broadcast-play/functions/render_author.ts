@@ -1,6 +1,7 @@
 // Импортируем utils
 import { Logger } from "../../../utils/logs/logger.js";
 import { Icons } from "../../../utils/icons.js";
+import { t } from "../../../utils/i18n/index.js";
 
 // Импортируем типы
 import type { BroadcastPlay } from "../index.js";
@@ -66,7 +67,7 @@ export function renderAuthor(form: BroadcastPlay, data?: BroadcastCast | null): 
         if (botIcon) badgeElement.appendChild(botIcon);
 
         const badgeText = document.createElement("span");
-        badgeText.textContent = "Бот";
+        badgeText.textContent = t("forms.broadcast_play.bot_badge");
         badgeElement.appendChild(badgeText);
 
         wrapper.appendChild(badgeElement);

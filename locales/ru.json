@@ -57,7 +57,8 @@
       "upload_size_mismatch": "Размер загруженного файла не совпадает",
       "document_not_processed": "Файл ещё обрабатывается, попробуйте отправить позже",
       "media_processing_disabled": "Обработка файлов временно недоступна",
-      "upload_rejected": "Хранилище отклонило файл (400). Попробуйте позже"
+      "upload_rejected": "Хранилище отклонило файл (400). Попробуйте позже",
+      "file_fallback_name": "файл"
     }
   },
   "components": {
@@ -74,6 +75,9 @@
     "video_player": {
       "wide_expand": "Растянуть видео на всю ширину",
       "wide_collapse": "Вернуть видео к обычной ширине"
+    },
+    "markdown": {
+      "code_block": "Блок кода"
     }
   },
   "utils": {
@@ -91,11 +95,22 @@
       ]
     },
     "duration_formatter": {
-      "days": [
-        "день",
-        "дня",
-        "дней"
-      ]
+      "days_one": "день",
+      "days_few": "дня",
+      "days_many": "дней",
+      "days_other": "дней"
+    },
+    "fetch_handler": {
+      "body_read_failed": "Невозможно прочитать тело ответа.",
+      "http_error": "Ошибка {{status}}: {{message}}",
+      "request_failed": "Запрос не удался. Статус: {{status}} ({{statusText}})"
+    },
+    "file_downloader": {
+      "download_failed": "Ошибка скачивания",
+      "aborted": "Загрузка отменена"
+    },
+    "file_renditions": {
+      "original": "Оригинал"
     }
   },
   "forms": {
@@ -111,7 +126,7 @@
     "audio_player": {
       "playlist_title": "Очередь воспроизведения",
       "playlist_empty": "Очередь пуста",
-      "tracks_count": "Треков: {count}",
+      "tracks_count": "Треков: {{count}}",
       "unknown_track": "Неизвестный трек",
       "unknown_author": "Неизвестный автор",
       "untitled": "Без названия",
@@ -161,12 +176,13 @@
         "qr_not_found": "QR код не найден. Попробуйте ещё раз",
         "qr_expired": "QR код истёк. Отсканируйте новый",
         "success_login": "Авторизация успешна"
-      }
+      },
+      "qr_alt": "QR код"
     },
     "registration": {
       "title": "Создание аккаунта",
       "subtitle": "Создайте аккаунт, чтобы начать общение",
-      "step": "Шаг {current} из {total}",
+      "step": "Шаг {{current}} из {{total}}",
       "email": "Email",
       "you_name": "Ваше имя",
       "first_name": "Имя",
@@ -198,7 +214,7 @@
     "confirm": {
       "title": "Проверьте почту",
       "title_totp": "Подтверждение входа",
-      "desc": "Код подтверждения отправлен на {email}",
+      "desc": "Код подтверждения отправлен на {{email}}",
       "code": "Код",
       "desc_code": "Введите код из письма",
       "desc_totp": "Введите код из приложения-генератора",
@@ -220,7 +236,7 @@
     "forgot_password": {
       "title": "Не помните пароль?",
       "subtitle": "Отправим код на почту и восстановим доступ",
-      "step": "Шаг {current} из {total}",
+      "step": "Шаг {{current}} из {{total}}",
       "email": "Email",
       "code": "Код",
       "password": "Пароль",
@@ -271,11 +287,10 @@
             "sticker": "Стикер",
             "voice_note": "Голосовое сообщение",
             "video_note": "Видеосообщение",
-            "dec_files": [
-              "файл",
-              "файла",
-              "файлов"
-            ],
+            "dec_files_one": "файл",
+            "dec_files_few": "файла",
+            "dec_files_many": "файлов",
+            "dec_files_other": "файлов",
             "status_activity": {
               "several_actions": "Несколько человек совершают действия...",
               "and_or": "и еще",
@@ -331,7 +346,10 @@
         "storage_overflow": "Локальное хранилище переполнено",
         "storage_overflow_or_unavailable": "Локальное хранилище переполнено или недоступно",
         "storage_write_failed": "Мы не смогли записать данные в локальное хранилище..."
-      }
+      },
+      "connecting": "Соединение...",
+      "updating": "Обновление...",
+      "all_folder": "Все"
     },
     "main_folders_manager": {
       "title": "Папки",
@@ -339,11 +357,10 @@
       "empty_title": "Пока нет ни одной папки",
       "empty_desc": "Создайте первую папку, чтобы группировать чаты по темам или проектам.",
       "create_folder": "Создать папку",
-      "chats_count": [
-        "чат",
-        "чата",
-        "чатов"
-      ],
+      "chats_count_one": "чат",
+      "chats_count_few": "чата",
+      "chats_count_many": "чатов",
+      "chats_count_other": "чатов",
       "toasts": {
         "success_remove": "Папка удалена",
         "folder_not_found": "Папка не найдена",
@@ -730,7 +747,7 @@
       "passkey_rename_save": "Сохранить",
       "passkey_remove": "Удалить",
       "passkey_remove_title": "Удаление ключа",
-      "passkey_remove_desc": "Ключ «{name}» будет удалён. Войти с этого устройства можно будет только по паролю",
+      "passkey_remove_desc": "Ключ «{{name}}» будет удалён. Войти с этого устройства можно будет только по паролю",
       "toasts": {
         "totp_enabled": "Двухфакторная авторизация включена",
         "totp_disabled": "Двухфакторная авторизация отключена",
@@ -1195,7 +1212,8 @@
       "toasts": {
         "unsupported_format": "Ваш браузер не поддерживает проигрывание",
         "source_error": "Не удалось открыть выбор источника"
-      }
+      },
+      "bot_badge": "Бот"
     },
     "broadcast_settings": {
       "choose_thumb": "Выбрать обложку",
@@ -1322,11 +1340,10 @@
       "immersive_hint": "Панели скрыты. Нажмите Esc, чтобы вернуть их.",
       "participants": {
         "alone": "Вы один в конференции",
-        "count": [
-          "участник",
-          "участника",
-          "участников"
-        ]
+        "count_one": "участник",
+        "count_few": "участника",
+        "count_many": "участников",
+        "count_other": "участников"
       },
       "quality": {
         "unknown": "Нет данных",
@@ -1489,7 +1506,8 @@
           "enabled": "Включен",
           "disabled": "Отключен"
         }
-      }
+      },
+      "participant_fallback": "Участник"
     },
     "meet_settings": {
       "choose_thumb": "Выбрать обложку",
@@ -1568,7 +1586,8 @@
         "desc": "Создайте тему — она появится здесь"
       },
       "toasts": {
-        "load_error": "Не удалось загрузить темы"
+        "load_error": "Не удалось загрузить темы",
+        "save_error": "Не можем сохранить тему"
       }
     },
     "theme_create": {
@@ -1608,6 +1627,17 @@
         "pak_empty_desc": "Автор пака ещё не добавил стикеры",
         "load_error": "Не удалось загрузить паки",
         "pak_load_error": "Не удалось загрузить пак"
+      },
+      "categories": {
+        "smileys": "Смайлики и эмоции",
+        "gestures": "Жесты и люди",
+        "animals": "Животные и природа",
+        "food": "Еда и напитки",
+        "travel": "Путешествия и места",
+        "activities": "Активности и спорт",
+        "objects": "Предметы",
+        "symbols": "Символы",
+        "flags": "Флаги"
       }
     },
     "sticker_paks": {
@@ -1617,11 +1647,10 @@
         "desc": "Создайте пак стикеров или добавьте публичный к себе"
       },
       "labels": {
-        "stickers": [
-          "стикер",
-          "стикера",
-          "стикеров"
-        ],
+        "stickers_one": "стикер",
+        "stickers_few": "стикера",
+        "stickers_many": "стикеров",
+        "stickers_other": "стикеров",
         "author_pack": "Ваш",
         "private": "Приватный",
         "added": "Добавлен"
@@ -1670,11 +1699,10 @@
         "subscribe_error": "Не удалось добавить пак",
         "success_add": "Стикер добавлен в пак",
         "success_add_many": "Добавлено в пак",
-        "dec_stickers": [
-          "стикер",
-          "стикера",
-          "стикеров"
-        ],
+        "dec_stickers_one": "стикер",
+        "dec_stickers_few": "стикера",
+        "dec_stickers_many": "стикеров",
+        "dec_stickers_other": "стикеров",
         "limit_reached": "В паке уже 100 стикеров — предел",
         "invalid_format": "Стикер должен быть файлом WEBP",
         "too_big": "Файл стикера больше 512 КБ",
@@ -1710,9 +1738,10 @@
       "online": "В сети",
       "was": "Был(а)",
       "offline": "Не в сети",
-      "dec_one_subscriber": "участник",
-      "dec_two_subscribers": "участника",
-      "dec_five_subscribers": "участников",
+      "subscribers_one": "участник",
+      "subscribers_few": "участника",
+      "subscribers_many": "участников",
+      "subscribers_other": "участников",
       "group_topic": "Тема группы",
       "conference_chat": "Чат конференции",
       "broadcast_chat": "Чат трансляции",
@@ -1723,11 +1752,11 @@
         "bot_not_online": "Бот не в сети",
         "invite_not_valid": "Приглашение недействительно",
         "cloud_link_not_valid": "Ссылка недействительна",
-        "maximum_files": "Не более %{count}% файлов",
-        "file_too_large": "Файл %{name}% больше %{size}%",
-        "invalid_extension": "Файл %{name}% нельзя прикреплять",
-        "invalid_mime": "Тип файла %{name}% не совпадает с расширением",
-        "message_too_long": "Максимум %{count}% символов",
+        "maximum_files": "Не более {{count}} файлов",
+        "file_too_large": "Файл {{name}} больше {{size}}",
+        "invalid_extension": "Файл {{name}} нельзя прикреплять",
+        "invalid_mime": "Тип файла {{name}} не совпадает с расширением",
+        "message_too_long": "Максимум {{count}} символов",
         "uploading_failed": "Не удалось загрузить файл",
         "send_failed": "Сообщение не отправлено",
         "sticker_send_error": "Не удалось отправить стикер",
@@ -1766,21 +1795,18 @@
             "image": "Изображение",
             "voice_note": "Голосовое сообщение",
             "video_note": "Видеосообщение",
-            "dec_files": [
-              "файл",
-              "файла",
-              "файлов"
-            ],
-            "dec_audios": [
-              "аудиозапись",
-              "аудиозаписи",
-              "аудиозаписей"
-            ],
-            "dec_videos": [
-              "видеозапись",
-              "видеозаписи",
-              "видеозаписей"
-            ]
+            "dec_files_one": "файл",
+            "dec_files_few": "файла",
+            "dec_files_many": "файлов",
+            "dec_files_other": "файлов",
+            "dec_audios_one": "аудиозапись",
+            "dec_audios_few": "аудиозаписи",
+            "dec_audios_many": "аудиозаписей",
+            "dec_audios_other": "аудиозаписей",
+            "dec_videos_one": "видеозапись",
+            "dec_videos_few": "видеозаписи",
+            "dec_videos_many": "видеозаписей",
+            "dec_videos_other": "видеозаписей"
           },
           "forward": {
             "forwarded_from": "Переслано от",
@@ -1814,19 +1840,19 @@
           },
           "system_messages": {
             "USER_JOINED_GROUP": {
-              "string": "%{user_name}% теперь в группе",
+              "string": "{{user_name}} теперь в группе",
               "array": "теперь в группе"
             },
             "USER_LEFT_GROUP": {
-              "string": "%{user_name}% покинул группу",
+              "string": "{{user_name}} покинул группу",
               "array": "покинул группу"
             },
             "USER_ROLE_CHANGED_TO_MODERATOR_IN_GROUP": {
-              "string": "%{user_name}% стал модератором",
+              "string": "{{user_name}} стал модератором",
               "array": "стал модератором"
             },
             "USER_RENAMED_GROUP": {
-              "string": "%{user_name}% сменил название группы на - %{group_name}% ",
+              "string": "{{user_name}} сменил название группы на - {{group_name}} ",
               "array": "сменил название группы на - "
             },
             "BROADCAST_STARTED": {
@@ -1857,33 +1883,30 @@
             }
           },
           "comments": {
-            "dec_comments": [
-              "комментарий",
-              "комментария",
-              "комментариев"
-            ]
-          }
+            "dec_comments_one": "комментарий",
+            "dec_comments_few": "комментария",
+            "dec_comments_many": "комментариев",
+            "dec_comments_other": "комментариев"
+          },
+          "moderator_badge": "модератор"
         },
         "reply_footer": {
           "image": "Изображение",
           "sticker": "Стикер",
           "voice_note": "Голосовое сообщение",
           "video_note": "Видеосообщение",
-          "dec_files": [
-            "файл",
-            "файла",
-            "файлов"
-          ],
-          "dec_audios": [
-            "аудиозапись",
-            "аудиозаписи",
-            "аудиозаписей"
-          ],
-          "dec_videos": [
-            "видеозапись",
-            "видеозаписи",
-            "видеозаписей"
-          ]
+          "dec_files_one": "файл",
+          "dec_files_few": "файла",
+          "dec_files_many": "файлов",
+          "dec_files_other": "файлов",
+          "dec_audios_one": "аудиозапись",
+          "dec_audios_few": "аудиозаписи",
+          "dec_audios_many": "аудиозаписей",
+          "dec_audios_other": "аудиозаписей",
+          "dec_videos_one": "видеозапись",
+          "dec_videos_few": "видеозаписи",
+          "dec_videos_many": "видеозаписей",
+          "dec_videos_other": "видеозаписей"
         }
       },
       "context_menu": {
@@ -1921,7 +1944,8 @@
           "action_cancel": "Отмена",
           "action_remove": "Удалить"
         }
-      }
+      },
+      "title": "Сообщения"
     },
     "secret_chat": {
       "title": "Секретный чат",
@@ -1937,21 +1961,18 @@
           "image": "Фото",
           "voice_note": "Голосовое сообщение",
           "video_note": "Видеосообщение",
-          "dec_audios": [
-            "аудио",
-            "аудио",
-            "аудио"
-          ],
-          "dec_videos": [
-            "видео",
-            "видео",
-            "видео"
-          ],
-          "dec_files": [
-            "вложение",
-            "вложения",
-            "вложений"
-          ]
+          "dec_audios_one": "аудио",
+          "dec_audios_few": "аудио",
+          "dec_audios_many": "аудио",
+          "dec_audios_other": "аудио",
+          "dec_videos_one": "видео",
+          "dec_videos_few": "видео",
+          "dec_videos_many": "видео",
+          "dec_videos_other": "видео",
+          "dec_files_one": "вложение",
+          "dec_files_few": "вложения",
+          "dec_files_many": "вложений",
+          "dec_files_other": "вложений"
         },
         "document_item": {
           "context_menu": {
@@ -1998,12 +2019,12 @@
       "self_destruct_badge": "Самоуничтожение",
       "toasts": {
         "empty_message": "Сообщение пустое",
-        "message_too_long": "Максимум %{count}% символов",
+        "message_too_long": "Максимум {{count}} символов",
         "invalid_characters": "Сообщение содержит недопустимые символы",
-        "maximum_files": "Не более %{count}% файлов",
-        "file_too_large": "Файл %{name}% больше %{size}%",
-        "invalid_extension": "Файл %{name}% нельзя прикреплять",
-        "invalid_mime": "Тип файла %{name}% не совпадает с расширением",
+        "maximum_files": "Не более {{count}} файлов",
+        "file_too_large": "Файл {{name}} больше {{size}}",
+        "invalid_extension": "Файл {{name}} нельзя прикреплять",
+        "invalid_mime": "Тип файла {{name}} не совпадает с расширением",
         "drop_files_failed": "Не удалось прочитать перетаскиваемые файлы",
         "uploading_failed": "Не удалось передать файл",
         "message_removed": "Сообщение удалено",
@@ -2117,14 +2138,16 @@
       },
       "_components": {
         "channels": {
-          "dec_one_subscriber": "участник",
-          "dec_two_subscribers": "участника",
-          "dec_five_subscribers": "участников"
+          "subscribers_one": "участник",
+          "subscribers_few": "участника",
+          "subscribers_many": "участников",
+          "subscribers_other": "участников"
         },
         "groups": {
-          "dec_one_subscriber": "участник",
-          "dec_two_subscribers": "участника",
-          "dec_five_subscribers": "участников"
+          "subscribers_one": "участник",
+          "subscribers_few": "участника",
+          "subscribers_many": "участников",
+          "subscribers_other": "участников"
         },
         "users": {
           "online": "В сети",
@@ -2146,7 +2169,7 @@
       },
       "permission": {
         "title": "Доступ к устройству",
-        "desc": "Приложение «{app}» запрашивает доступ к {permission}.",
+        "desc": "Приложение «{{app}}» запрашивает доступ к {{permission}}.",
         "camera": "камере",
         "microphone": "микрофону",
         "geolocation": "геолокации",
@@ -2184,7 +2207,8 @@
         "dialog_created": "Диалог создан",
         "id_cannot_match": "Нельзя создать чат с самим собой",
         "invalid_bot_id": "Бот не найден"
-      }
+      },
+      "subtitle": "Профиль бота"
     },
     "bot_settings": {
       "link": "Публичное имя",
@@ -2202,7 +2226,9 @@
         "success_avatar": "Аватар бота сохранён",
         "avatar_error": "Не удалось сохранить аватар",
         "success_remove_avatar": "Аватар бота удалён",
-        "remove_avatar_error": "Не удалось удалить аватар"
+        "remove_avatar_error": "Не удалось удалить аватар",
+        "json_invalid": "Некорректный JSON",
+        "copied": "Текст скопирован"
       },
       "context_menu": {
         "add_command": "Новая команда",
@@ -2304,23 +2330,21 @@
       "enter_comment": "Комментарий",
       "new_comments": "Новые комментарии",
       "removed_comment": "Комментарий удалён",
-      "dec_comments": [
-        "комментарий",
-        "комментария",
-        "комментариев"
-      ],
-      "dec_files": [
-        "вложение",
-        "вложения",
-        "вложений"
-      ],
+      "dec_comments_one": "комментарий",
+      "dec_comments_few": "комментария",
+      "dec_comments_many": "комментариев",
+      "dec_comments_other": "комментариев",
+      "dec_files_one": "вложение",
+      "dec_files_few": "вложения",
+      "dec_files_many": "вложений",
+      "dec_files_other": "вложений",
       "toasts": {
         "empty_message": "Комментарий пустой",
-        "maximum_files": "Не более %{count}% файлов",
-        "file_too_large": "Файл %{name}% больше %{size}%",
-        "invalid_extension": "Файл %{name}% нельзя прикреплять",
-        "invalid_mime": "Тип файла %{name}% не совпадает с расширением",
-        "message_too_long": "Максимум %{count}% символов",
+        "maximum_files": "Не более {{count}} файлов",
+        "file_too_large": "Файл {{name}} больше {{size}}",
+        "invalid_extension": "Файл {{name}} нельзя прикреплять",
+        "invalid_mime": "Тип файла {{name}} не совпадает с расширением",
+        "message_too_long": "Максимум {{count}} символов",
         "invalid_characters": "Комментарий содержит недопустимые символы",
         "uploading_failed": "Не удалось загрузить файл",
         "send_failed": "Комментарий не отправлен",
@@ -2338,21 +2362,18 @@
           "sticker": "Стикер",
           "voice_note": "Голосовое сообщение",
           "video_note": "Видеосообщение",
-          "dec_audios": [
-            "аудио",
-            "аудио",
-            "аудио"
-          ],
-          "dec_videos": [
-            "видео",
-            "видео",
-            "видео"
-          ],
-          "dec_files": [
-            "вложение",
-            "вложения",
-            "вложений"
-          ]
+          "dec_audios_one": "аудио",
+          "dec_audios_few": "аудио",
+          "dec_audios_many": "аудио",
+          "dec_audios_other": "аудио",
+          "dec_videos_one": "видео",
+          "dec_videos_few": "видео",
+          "dec_videos_many": "видео",
+          "dec_videos_other": "видео",
+          "dec_files_one": "вложение",
+          "dec_files_few": "вложения",
+          "dec_files_many": "вложений",
+          "dec_files_other": "вложений"
         },
         "document_item": {
           "context_menu": {
@@ -2396,11 +2417,10 @@
         "active": "Соединились"
       },
       "participants": {
-        "count": [
-          "участник",
-          "участника",
-          "участников"
-        ]
+        "count_one": "участник",
+        "count_few": "участника",
+        "count_many": "участников",
+        "count_other": "участников"
       },
       "quality": {
         "excellent": "Отлично",
@@ -2422,7 +2442,7 @@
         "calls_restricted": "Пользователю запрещено звонить",
         "user_not_found": "Пользователь не найден",
         "busy": "Абонент занят",
-        "busy_incoming": "{name} пытается вам позвонить, но вы уже разговариваете",
+        "busy_incoming": "{{name}} пытается вам позвонить, но вы уже разговариваете",
         "no_answer": "Абонент не ответил",
         "declined": "Звонок отклонён",
         "ended": "Звонок завершён",
@@ -2571,6 +2591,43 @@
           "action_close": "Закрыть"
         }
       }
+    },
+    "user_setting_language": {
+      "title": "Язык",
+      "desc": "Выберите язык интерфейса — смена применяется сразу.",
+      "dialogs": {
+        "confirm": {
+          "title": "Смена языка",
+          "desc": "Сменить язык интерфейса на {{name}}?",
+          "action_cancel": "Отмена",
+          "action_change": "Сменить"
+        }
+      }
+    },
+    "menu": {
+      "profile": "Мой профиль",
+      "create_channel": "Создать сообщество",
+      "create_group": "Создать группу",
+      "contacts": "Контакты",
+      "casts": "Трансляции",
+      "meets": "Конференции",
+      "cloud": "Облако",
+      "themes": "Темы",
+      "stickers": "Стикеры",
+      "build_version": "Версия сборки:"
+    },
+    "image_cropper": {
+      "cancel": "Отмена",
+      "crop": "Вырезать"
+    },
+    "bot_editor": {
+      "name_long": "Наберите название (от 2 до 64 символов)",
+      "name_short": "Наберите название",
+      "description": "Некорректное описание",
+      "link": "Неправильная короткая ссылка",
+      "url_https": "Неверный формат URL (требуется HTTPS адрес)",
+      "command": "Наберите команду",
+      "error": "Произошла ошибка"
     }
   }
 }

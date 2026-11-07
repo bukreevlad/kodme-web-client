@@ -10,6 +10,7 @@ import { saveBotLinkRequest } from "../requests/save.js";
 
 // Импортируем типы
 import type { BotSettingLink } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -34,7 +35,7 @@ export async function saveBotLinkHandler(form: BotSettingLink): Promise<void> {
         if (response.status) {
 
             // Toast
-            Toast.success(window._lc.forms.bot_setting_link.toasts.success_save);
+            Toast.success(t("forms.bot_setting_link.toasts.success_save"));
 
             // Закрываем форму
             form.modal?.close();
@@ -51,7 +52,7 @@ export async function saveBotLinkHandler(form: BotSettingLink): Promise<void> {
         if (getErrorMessage(error).includes("LINK_ALREADY_TAKEN")) {
 
             // Toast
-            Toast.error(window._lc.forms.bot_setting_link.toasts.link_already_taken);
+            Toast.error(t("forms.bot_setting_link.toasts.link_already_taken"));
             isToastShown = true;
         }
 
@@ -60,13 +61,13 @@ export async function saveBotLinkHandler(form: BotSettingLink): Promise<void> {
             link?.classList.add("invalid");
 
             // Toast
-            Toast.error(window._lc.forms.bot_setting_link.toasts.link_invalid);
+            Toast.error(t("forms.bot_setting_link.toasts.link_invalid"));
             isToastShown = true;
         }
 
         // Прочая ошибка сервера
         if (!isToastShown) {
-            Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+            Toast.error(t("api.errors.server_error"));
         }
 
     }

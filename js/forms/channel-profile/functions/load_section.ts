@@ -16,6 +16,7 @@ import { sectionRequest } from "../requests/index.js";
 
 // Импортируем типы
 import type { ChannelProfile, MediaSection, SectionAddOptions } from "../types.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -274,7 +275,7 @@ export async function loadSection(
                 form[errorToastKey] = now;
                 toastError(error, {
                     context: `[app][channel-profile][load-section][${section.id}]`,
-                    fallback: window._lc?.forms?.channel_profile?.toasts?.load_media_error
+                    fallback: t("forms.channel_profile.toasts.load_media_error")
                 });
             }
 

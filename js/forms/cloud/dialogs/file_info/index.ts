@@ -22,6 +22,7 @@ import { getFileIcon } from "../../functions/file_icon.js";
 
 // Импортируем типы
 import type { CloudFilePayload, CloudSharedItem, CloudSharedOwner } from "../../types.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * Настройки окна информации о файле.
@@ -274,7 +275,7 @@ export class CloudFileInfo {
             if (type) {
                 let ext = (this.file?.extname || "").toLowerCase().replace(/^\./, "");
                 let mime = this.file?.mime_type || "";
-                type.textContent = `${window._lc.forms.cloud.dialogs.file_info.type}: ${ext || mime || "—"}`;
+                type.textContent = `${t("forms.cloud.dialogs.file_info.type")}: ${ext || mime || "—"}`;
             }
 
         } catch (error) {
@@ -339,7 +340,7 @@ export class CloudFileInfo {
 
             <div class="cdm-modal cloud-file-info flex flex-col p-0 gap-0 ${CDM_MODAL_CLASSES()}">
                 <div class="${CDM_MODAL_HEADER_CLASSES()}">
-                    <span class="flex flex-row gap-2 items-center font-semibold text-lg truncate">${window._lc.forms.cloud.dialogs.file_info.title}</span>
+                    <span class="flex flex-row gap-2 items-center font-semibold text-lg truncate">${t("forms.cloud.dialogs.file_info.title")}</span>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "x" })}
                 </div>
                 <div class="content w-full flex flex-col items-center p-3 gap-2.5">
@@ -351,8 +352,8 @@ export class CloudFileInfo {
                     </div>
                 </div>
                 <div class="${CDM_MODAL_FOOTER_CLASSES()}">
-                    ${Buttons.primary({ attributes: ["action-download"], classes: ["w-full"], text: window._lc.forms.cloud.dialogs.file_info.action_download })}
-                    ${Buttons.create({ attributes: ["action-close"], classes: ["w-full"], text: window._lc.forms.cloud.dialogs.file_info.action_close })}
+                    ${Buttons.primary({ attributes: ["action-download"], classes: ["w-full"], text: t("forms.cloud.dialogs.file_info.action_download") })}
+                    ${Buttons.create({ attributes: ["action-close"], classes: ["w-full"], text: t("forms.cloud.dialogs.file_info.action_close") })}
                 </div>
             </div>
 

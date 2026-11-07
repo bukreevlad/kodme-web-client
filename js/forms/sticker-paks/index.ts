@@ -25,6 +25,7 @@ import { onPaksScrollHandler } from "./handlers/on_paks_scroll.js";
 
 // Импортируем типы
 import { StickerPakItem } from "./types.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы паков стикеров.
@@ -252,7 +253,7 @@ export class StickerPaks {
                 <div class="header flex flex-row gap-2 p-2 items-center justify-between ${CDM_FORM_HEADER_CLASSES()}">
                     <div class="flex flex-row gap-2 items-center">
                         ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "ArrowLeft" })}
-                        <span data-title class="flex flex-row gap-2 items-center font-semibold text-lg">${window._lc.forms.sticker_paks.title}</span>
+                        <span data-title class="flex flex-row gap-2 items-center font-semibold text-lg">${t("forms.sticker_paks.title")}</span>
                     </div>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-create"], icon: "Plus" })}
                 </div>
@@ -260,8 +261,8 @@ export class StickerPaks {
                     <div data-list class="flex flex-col gap-0 p-2 w-full"></div>
 
                     ${EmptyState.create({
-                        title: window._lc.forms.sticker_paks.empty.title,
-                        description: window._lc.forms.sticker_paks.empty.desc,
+                        title: t("forms.sticker_paks.empty.title"),
+                        description: t("forms.sticker_paks.empty.desc"),
                         icon: "sticker",
                         compact: true,
                         attributes: ["data-empty"],

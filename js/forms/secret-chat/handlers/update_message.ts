@@ -14,6 +14,7 @@ import { updateStateButtons } from "../functions/update_state_buttons.js";
 
 // Импортируем типы
 import type { SecretChat } from "../index.js";
+import { I18n } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -51,7 +52,7 @@ export async function updateMessageHandler(form: SecretChat): Promise<void> {
             // Подсвечиваем поле только для «пустого» текста
             if (validation.code === "empty_message") textarea.classList.add("invalid");
 
-            Toast.warning(window._lc.forms.secret_chat.toasts[validation.code], {
+            Toast.warning(I18n.tree.forms.secret_chat.toasts[validation.code], {
                 position: "bottom-center"
             });
 

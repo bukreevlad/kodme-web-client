@@ -8,6 +8,7 @@ import { Toast } from "../../../components/toast.js";
 
 // Импортируем forms
 import { SecretChat } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /** Метаданные передаваемого файла (поля file_offer). */
 export interface SecretSendFileMeta {
@@ -138,7 +139,7 @@ export async function sendingMessages(form: SecretChat): Promise<void> {
                     // Форма могла закрыться — тостить уже некому
                     if (SecretChat.instances.get(form.chatId) !== form) return;
 
-                    Toast.warning(window._lc.forms.secret_chat.toasts.uploading_failed, { position: "bottom-center" });
+                    Toast.warning(t("forms.secret_chat.toasts.uploading_failed"), { position: "bottom-center" });
                     return;
 
                 }

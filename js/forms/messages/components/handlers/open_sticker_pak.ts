@@ -15,6 +15,7 @@ import { emojiHandler } from "../../handlers/emoji.js";
 
 // Импортируем типы
 import type { MessageItem } from "../message.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -34,7 +35,7 @@ export async function openStickerPakHandler(message: MessageItem): Promise<void>
         const pakId = message.data.sticker_pak_id;
         const documentId = message.data.sticker_document_id;
         if (!pakId || !documentId) {
-            Toast.error(window._lc.forms.messages.toasts.sticker_pak_unavailable);
+            Toast.error(t("forms.messages.toasts.sticker_pak_unavailable"));
             return;
         }
 
@@ -61,7 +62,7 @@ export async function openStickerPakHandler(message: MessageItem): Promise<void>
         // Показываем тост (набор удалён/недоступен и любые ошибки сервера)
         toastError(error, {
             context: "[app][messages][open-sticker-pak]",
-            fallback: window._lc.forms.messages.toasts.sticker_pak_unavailable
+            fallback: t("forms.messages.toasts.sticker_pak_unavailable")
         });
 
     }

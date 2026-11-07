@@ -18,6 +18,7 @@ import { MeetPlay } from "../meet-play/index.js";
 
 // Импортируем handlers
 import { saveScreenSettingsHandler } from "./handlers/save.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Данные формы настроек демонстрации экрана.
@@ -307,7 +308,7 @@ export class MeetScreenSettings {
             <div class="cdm-form meet-screen-settings flex flex-col gap-0 ${CDM_FORM_CLASSES()} w-full">
                 <div class="header flex flex-row gap-2 p-2 items-center ${CDM_FORM_HEADER_CLASSES()}">
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "ArrowLeft" })}
-                    <span class="flex-1 font-semibold text-base truncate">${window._lc.forms.meet_play.dialogs.screen_settings.title}</span>
+                    <span class="flex-1 font-semibold text-base truncate">${t("forms.meet_play.dialogs.screen_settings.title")}</span>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-save"], icon: "device-floppy" })}
                 </div>
                 <div class="content w-full h-full flex ${CDM_FORM_CONTENT_CLASSES()}">
@@ -319,13 +320,13 @@ export class MeetScreenSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("aspect-ratio", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.meet_play.dialogs.screen_settings.resolution}
+                                ${t("forms.meet_play.dialogs.screen_settings.resolution")}
                             </span>
                             <select data-setting="resolution" class="w-full p-2 rounded-md bg-[var(--form-bg)] border border-[var(--border-color)] outline-none cursor-pointer">
-                                <option value="original" ${this.currentSettings.presetKey === "original" ? "selected" : ""}>${window._lc.forms.meet_play.dialogs.screen_settings.original}</option>
-                                <option value="h1080fps30" ${this.currentSettings.presetKey.includes("h1080") ? "selected" : ""}>${window._lc.forms.meet_play.dialogs.screen_settings.h1080}</option>
-                                <option value="h720fps30" ${this.currentSettings.presetKey.includes("h720") ? "selected" : ""}>${window._lc.forms.meet_play.dialogs.screen_settings.h720}</option>
-                                <option value="h360fps30" ${this.currentSettings.presetKey.includes("h360") ? "selected" : ""}>${window._lc.forms.meet_play.dialogs.screen_settings.h360}</option>
+                                <option value="original" ${this.currentSettings.presetKey === "original" ? "selected" : ""}>${t("forms.meet_play.dialogs.screen_settings.original")}</option>
+                                <option value="h1080fps30" ${this.currentSettings.presetKey.includes("h1080") ? "selected" : ""}>${t("forms.meet_play.dialogs.screen_settings.h1080")}</option>
+                                <option value="h720fps30" ${this.currentSettings.presetKey.includes("h720") ? "selected" : ""}>${t("forms.meet_play.dialogs.screen_settings.h720")}</option>
+                                <option value="h360fps30" ${this.currentSettings.presetKey.includes("h360") ? "selected" : ""}>${t("forms.meet_play.dialogs.screen_settings.h360")}</option>
                             </select>
                         </div>
 
@@ -334,15 +335,15 @@ export class MeetScreenSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("clock", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.meet_play.dialogs.screen_settings.fps}
+                                ${t("forms.meet_play.dialogs.screen_settings.fps")}
                             </span>
                             <select data-setting="fps" class="w-full p-2 rounded-md bg-[var(--form-bg)] border border-[var(--border-color)] outline-none cursor-pointer">
-                                <option value="5" ${this.currentSettings.fps === 5 ? "selected" : ""}>${window._lc.forms.meet_play.dialogs.screen_settings.fps_5}</option>
-                                <option value="15" ${this.currentSettings.fps === 15 ? "selected" : ""}>${window._lc.forms.meet_play.dialogs.screen_settings.fps_15}</option>
-                                <option value="30" ${this.currentSettings.fps === 30 ? "selected" : ""}>${window._lc.forms.meet_play.dialogs.screen_settings.fps_30}</option>
-                                <option value="60" ${this.currentSettings.fps === 60 ? "selected" : ""}>${window._lc.forms.meet_play.dialogs.screen_settings.fps_60}</option>
+                                <option value="5" ${this.currentSettings.fps === 5 ? "selected" : ""}>${t("forms.meet_play.dialogs.screen_settings.fps_5")}</option>
+                                <option value="15" ${this.currentSettings.fps === 15 ? "selected" : ""}>${t("forms.meet_play.dialogs.screen_settings.fps_15")}</option>
+                                <option value="30" ${this.currentSettings.fps === 30 ? "selected" : ""}>${t("forms.meet_play.dialogs.screen_settings.fps_30")}</option>
+                                <option value="60" ${this.currentSettings.fps === 60 ? "selected" : ""}>${t("forms.meet_play.dialogs.screen_settings.fps_60")}</option>
                             </select>
-                            <p class="text-xs text-secondary">${window._lc.forms.meet_play.dialogs.screen_settings.fps_desc}</p>
+                            <p class="text-xs text-secondary">${t("forms.meet_play.dialogs.screen_settings.fps_desc")}</p>
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -350,8 +351,8 @@ export class MeetScreenSettings {
                 name: "screen-audio",
                 checked: this.currentSettings.captureAudio,
                 attributes: ["data-audio"],
-                text: window._lc.forms.meet_play.dialogs.screen_settings.audio,
-                description: window._lc.forms.meet_play.dialogs.screen_settings.audio_desc
+                text: t("forms.meet_play.dialogs.screen_settings.audio"),
+                description: t("forms.meet_play.dialogs.screen_settings.audio_desc")
             })}
                         </div>
 

@@ -12,6 +12,7 @@ import { getSessionIceServers } from "./session_identity.js";
 
 // Импортируем типы
 import type { MeetPlay } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -73,7 +74,7 @@ export async function connect(form: MeetPlay): Promise<void> {
         setConnecting(form, true);
 
         // Toast
-        Toast.error(window._lc.forms.meet_play.toasts.connect_error, {
+        Toast.error(t("forms.meet_play.toasts.connect_error"), {
             duration: 4000
         });
 

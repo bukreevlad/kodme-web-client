@@ -8,6 +8,7 @@ import { CDM_FORM_CLASSES, CDM_FORM_HEADER_CLASSES, CDM_FORM_CONTENT_CLASSES } f
 import { Logger } from "../../utils/logs/logger.js";
 import { LocalStorage } from "../../utils/local_storage.js";
 import { Icons } from "../../utils/icons.js";
+import { t } from "../../utils/i18n/index.js";
 
 // Импортируем components
 import { Overlay } from "../../components/overlay/index.js";
@@ -254,7 +255,7 @@ export class BotProfile {
                     data: {
                         instance: this,
                         title: this.profile.link,
-                        subtitle: "Профиль бота"
+                        subtitle: t("forms.bot_profile.subtitle")
                     }
                 }
             }));
@@ -316,8 +317,8 @@ export class BotProfile {
                                 <span data-bio class="empty:hidden text-muted font-mono text-sm"></span>
                             </div>
                             <div data-actions class="flex flex-row w-full gap-2 justify-center">
-                                ${Buttons.create({ attributes: ["action-create-chat"], classes: ["flex-col", "flex-1", "p-2", "gap-2", "text-secondary", "text-sm"], icon: "message-circle", text: window._lc.forms.bot_profile.chat })}
-                                ${Buttons.create({ attributes: ["action-open-apps"], classes: ["flex-col", "flex-1", "p-2", "gap-2", "text-secondary", "text-sm"], icon: "app-window", text: window._lc.forms.bot_profile.apps })}
+                                ${Buttons.create({ attributes: ["action-create-chat"], classes: ["flex-col", "flex-1", "p-2", "gap-2", "text-secondary", "text-sm"], icon: "message-circle", text: t("forms.bot_profile.chat") })}
+                                ${Buttons.create({ attributes: ["action-open-apps"], classes: ["flex-col", "flex-1", "p-2", "gap-2", "text-secondary", "text-sm"], icon: "app-window", text: t("forms.bot_profile.apps") })}
                             </div>
                         </div>
 

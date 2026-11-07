@@ -28,6 +28,7 @@ import { getNotifySettingsRequest } from "./requests/get_notify_settings.js";
 
 // Импортируем типы
 import type { SessionUserFields } from "../user-settings/types.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы уведомлений.
@@ -249,9 +250,9 @@ export class UserSettingNotifications {
 
             // Описание в зависимости от типа уведомлений web или андроид
             if (isPushes === "web") {
-                pushDesc.textContent = window._lc.forms.user_setting_notifications.notify_desc_web
+                pushDesc.textContent = t("forms.user_setting_notifications.notify_desc_web")
             } else if (["hms", "fcm"].includes(isPushes ?? "")) {
-                pushDesc.textContent = window._lc.forms.user_setting_notifications.notify_desc_android
+                pushDesc.textContent = t("forms.user_setting_notifications.notify_desc_android")
             }
 
             // Инициализируем скроллбар
@@ -313,12 +314,12 @@ export class UserSettingNotifications {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("bell", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_setting_notifications.notify_enabled}
+                                ${t("forms.user_setting_notifications.notify_enabled")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.user_setting_notifications.notify_enabled_desc}</span>
-                            ${Buttons.primary({ attributes: ["action-enable"], classes: ["w-full", "hidden"], text: window._lc.forms.user_setting_notifications.enable })}
-                            ${Buttons.warning({ attributes: ["action-disable"], classes: ["w-full", "hidden"], text: window._lc.forms.user_setting_notifications.disable })}
-                            <span data-push-desc class="text-sm text-muted">${window._lc.forms.user_setting_notifications.notify_enabled_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.user_setting_notifications.notify_enabled_desc")}</span>
+                            ${Buttons.primary({ attributes: ["action-enable"], classes: ["w-full", "hidden"], text: t("forms.user_setting_notifications.enable") })}
+                            ${Buttons.warning({ attributes: ["action-disable"], classes: ["w-full", "hidden"], text: t("forms.user_setting_notifications.disable") })}
+                            <span data-push-desc class="text-sm text-muted">${t("forms.user_setting_notifications.notify_enabled_desc")}</span>
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -326,16 +327,16 @@ export class UserSettingNotifications {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("user-exclamation", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_setting_notifications.account_action}
+                                ${t("forms.user_setting_notifications.account_action")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.user_setting_notifications.account_action_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.user_setting_notifications.account_action_desc")}</span>
 
                             ${Toggle.switch({
             name: "action-accounts",
             checked: false,
             toggleText: {
-                on: window._lc.forms.user_setting_notifications.enabled,
-                off: window._lc.forms.user_setting_notifications.disabled
+                on: t("forms.user_setting_notifications.enabled"),
+                off: t("forms.user_setting_notifications.disabled")
             }
         })}
                         </div>
@@ -345,16 +346,16 @@ export class UserSettingNotifications {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("phone", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_setting_notifications.calls}
+                                ${t("forms.user_setting_notifications.calls")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.user_setting_notifications.calls_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.user_setting_notifications.calls_desc")}</span>
 
                             ${Toggle.switch({
             name: "calls",
             checked: false,
             toggleText: {
-                on: window._lc.forms.user_setting_notifications.enabled,
-                off: window._lc.forms.user_setting_notifications.disabled
+                on: t("forms.user_setting_notifications.enabled"),
+                off: t("forms.user_setting_notifications.disabled")
             }
         })}
                         </div>
@@ -364,16 +365,16 @@ export class UserSettingNotifications {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("message", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_setting_notifications.messages}
+                                ${t("forms.user_setting_notifications.messages")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.user_setting_notifications.messages_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.user_setting_notifications.messages_desc")}</span>
 
                             ${Toggle.switch({
             name: "messages",
             checked: false,
             toggleText: {
-                on: window._lc.forms.user_setting_notifications.enabled,
-                off: window._lc.forms.user_setting_notifications.disabled
+                on: t("forms.user_setting_notifications.enabled"),
+                off: t("forms.user_setting_notifications.disabled")
             }
         })}
                         </div>
@@ -383,16 +384,16 @@ export class UserSettingNotifications {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("messages", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_setting_notifications.comments}
+                                ${t("forms.user_setting_notifications.comments")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.user_setting_notifications.comments_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.user_setting_notifications.comments_desc")}</span>
 
                             ${Toggle.switch({
             name: "comments",
             checked: false,
             toggleText: {
-                on: window._lc.forms.user_setting_notifications.enabled,
-                off: window._lc.forms.user_setting_notifications.disabled
+                on: t("forms.user_setting_notifications.enabled"),
+                off: t("forms.user_setting_notifications.disabled")
             }
         })}
                         </div>
@@ -402,16 +403,16 @@ export class UserSettingNotifications {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("corner-up-left", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_setting_notifications.reply_message}
+                                ${t("forms.user_setting_notifications.reply_message")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.user_setting_notifications.reply_message_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.user_setting_notifications.reply_message_desc")}</span>
 
                             ${Toggle.switch({
             name: "reply-message",
             checked: false,
             toggleText: {
-                on: window._lc.forms.user_setting_notifications.enabled,
-                off: window._lc.forms.user_setting_notifications.disabled
+                on: t("forms.user_setting_notifications.enabled"),
+                off: t("forms.user_setting_notifications.disabled")
             }
         })}
                         </div>

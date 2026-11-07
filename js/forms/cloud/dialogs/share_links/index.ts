@@ -21,6 +21,7 @@ import { fullLink } from "../../functions/full_link.js";
 // Импортируем типы
 import type { Cloud } from "../../index.js";
 import type { CloudItem, CloudShareLinkRow } from "../../types.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * Настройки диалога списка ссылок.
@@ -275,8 +276,8 @@ export class ShareLinks {
         // Уровень доступа
         if (accessEl) {
             accessEl.textContent = link.access_level === "write"
-                ? window._lc.forms.cloud.badges.write
-                : window._lc.forms.cloud.badges.read;
+                ? t("forms.cloud.badges.write")
+                : t("forms.cloud.badges.read");
         }
 
         // Копировать
@@ -323,21 +324,21 @@ export class ShareLinks {
 
             <div class="cdm-modal cloud-share-links flex flex-col p-0 gap-0 w-[26rem] ${CDM_MODAL_CLASSES()}">
                 <div class="${CDM_MODAL_HEADER_CLASSES()}">
-                    <span class="flex flex-row gap-2 items-center font-semibold text-lg truncate">${window._lc.forms.cloud.dialogs.share_links.title}</span>
+                    <span class="flex flex-row gap-2 items-center font-semibold text-lg truncate">${t("forms.cloud.dialogs.share_links.title")}</span>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "x" })}
                 </div>
                  <div class="${CDM_MODAL_CONTENT_CLASSES()} max-h-[26rem]">
-                    <span class="text-secondary text-sm truncate">${window._lc.forms.cloud.dialogs.share_links.item}: ${this.item?.name || ""}</span>
+                    <span class="text-secondary text-sm truncate">${t("forms.cloud.dialogs.share_links.item")}: ${this.item?.name || ""}</span>
                     <div class="flex flex-col gap-1">
                         <div data-empty class="flex flex-col gap-1 items-center text-center text-muted text-sm p-4">
                             ${Icons.icon("link")?.outerHTML ?? ""}
-                            <span>${window._lc.forms.cloud.dialogs.share_links.empty}</span>
+                            <span>${t("forms.cloud.dialogs.share_links.empty")}</span>
                         </div>
                         <div data-list class="flex flex-col gap-1"></div>
                     </div>
                 </div>
                 <div class="${CDM_MODAL_FOOTER_CLASSES()}">
-                    ${Buttons.primary({ attributes: ["action-close"], classes: ["w-full"], text: window._lc.forms.cloud.dialogs.share_links.action_close })}
+                    ${Buttons.primary({ attributes: ["action-close"], classes: ["w-full"], text: t("forms.cloud.dialogs.share_links.action_close") })}
                 </div>
             </div>
 
@@ -362,13 +363,13 @@ function _formatMeta(link: CloudShareLinkRow): string {
     // Дата создания
     if (link.created_at) {
         let date = new Date(link.created_at);
-        parts.push(`${window._lc.forms.cloud.dates.created} ${date.toLocaleDateString()}`);
+        parts.push(`${t("forms.cloud.dates.created")} ${date.toLocaleDateString()}`);
     }
 
     // Дата истечения
     if (link.expires_at) {
         let date = new Date(link.expires_at);
-        parts.push(`${window._lc.forms.cloud.dates.until} ${date.toLocaleDateString()}`);
+        parts.push(`${t("forms.cloud.dates.until")} ${date.toLocaleDateString()}`);
     }
 
     // Склеиваем части

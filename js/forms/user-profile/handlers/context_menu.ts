@@ -17,6 +17,7 @@ import { removeContactRequest } from "../requests/remove_contact.js";
 // Импортируем типы
 import type { PopoverMenuItem } from "../../../components/overlay/popover_menu.js";
 import type { UserProfile } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -40,7 +41,7 @@ export async function contextMenuHandler(event: Event, form: UserProfile): Promi
 
         // menu item
         let secretChat: PopoverMenuItem = {
-            text: window._lc.forms.user_profile.context_menu.secret_chat,
+            text: t("forms.user_profile.context_menu.secret_chat"),
             iconName: "lock",
             onClick: () => openSecretChatHandler(form)
         };
@@ -48,7 +49,7 @@ export async function contextMenuHandler(event: Event, form: UserProfile): Promi
 
         // menu item: секретный звонок (вызов уходит всем онлайн-устройствам)
         let secretCall: PopoverMenuItem = {
-            text: window._lc.forms.user_profile.context_menu.secret_call,
+            text: t("forms.user_profile.context_menu.secret_call"),
             iconName: "phone",
             onClick: () => startSecretCallHandler(form)
         };
@@ -56,7 +57,7 @@ export async function contextMenuHandler(event: Event, form: UserProfile): Promi
 
         // menu item
         let addContact: PopoverMenuItem = {
-            text: window._lc.forms.user_profile.context_menu.add_contact,
+            text: t("forms.user_profile.context_menu.add_contact"),
             iconName: "UserPlus",
             onClick: async () => {
 
@@ -71,13 +72,13 @@ export async function contextMenuHandler(event: Event, form: UserProfile): Promi
                     profile.is_contact = true;
 
                     // Toast
-                    Toast.success(window._lc.forms.user_profile.context_menu.toasts.contact_added);
+                    Toast.success(t("forms.user_profile.context_menu.toasts.contact_added"));
 
                 } catch (error) {
                     Logger.error(error);
 
                     // Toast
-                    Toast.error(window._lc.forms.user_profile.context_menu.toasts.contact_add_error);
+                    Toast.error(t("forms.user_profile.context_menu.toasts.contact_add_error"));
                 }
 
             }
@@ -85,7 +86,7 @@ export async function contextMenuHandler(event: Event, form: UserProfile): Promi
 
         // menu item
         let removeContact: PopoverMenuItem = {
-            text: window._lc.forms.user_profile.context_menu.remove_contact,
+            text: t("forms.user_profile.context_menu.remove_contact"),
             iconName: "UserMinus",
             cssClasses: ["text-[var(--color-red)]"],
             onClick: async () => {
@@ -101,13 +102,13 @@ export async function contextMenuHandler(event: Event, form: UserProfile): Promi
                     profile.is_contact = false;
 
                     // Toast
-                    Toast.success(window._lc.forms.user_profile.context_menu.toasts.contact_removed);
+                    Toast.success(t("forms.user_profile.context_menu.toasts.contact_removed"));
 
                 } catch (error) {
                     Logger.error(error);
 
                     // Toast
-                    Toast.error(window._lc.forms.user_profile.context_menu.toasts.contact_remove_error);
+                    Toast.error(t("forms.user_profile.context_menu.toasts.contact_remove_error"));
                 }
 
             }

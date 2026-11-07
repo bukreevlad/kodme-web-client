@@ -6,12 +6,14 @@
  * @returns Отформатированная строка, например "100 МБ".
  * ***************************************************************************
  */
+import { I18n } from "../i18n/index.js";
+
 export function formatBytes(bytes: number, float = 2): string {
 
-    if (0 == bytes) return "0 б.";
+    const e = I18n.tree.utils.format_bites.sizes; // В локализации
+    if (0 == bytes) return `0 ${e[0]}.`;
     const c = 1024;
     const d = float || 2;
-    const e = window._lc.utils.format_bites.sizes; // В локализации
     const f = Math.floor(Math.log(bytes) / Math.log(c));
 
     return `${parseFloat((bytes / Math.pow(c, f)).toFixed(d))} ${e[f]}.`;

@@ -10,6 +10,7 @@ import { sendRequest } from "../requests/send.js";
 
 // Импортируем типы
 import type { ForgotPassword } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -36,7 +37,7 @@ export async function stepSendHandler(form: ForgotPassword): Promise<void> {
         if (response.status) {
 
             // Toast успеха: код отправлен на почту
-            Toast.success(window._lc.forms.forgot_password.toasts.success_code_sent);
+            Toast.success(t("forms.forgot_password.toasts.success_code_sent"));
 
             // Переключаем таб на ввод кода
             form.tabs?.activateTab("code");
@@ -51,25 +52,25 @@ export async function stepSendHandler(form: ForgotPassword): Promise<void> {
 
         // Если не ввели email
         if (getErrorMessage(error).includes("EMAIL_REQUIRED")) {
-            Toast.error(window._lc.forms.forgot_password.toasts.not_email);
+            Toast.error(t("forms.forgot_password.toasts.not_email"));
             isToastShown = true;
         }
 
         // Если email некорректный
         if (getErrorMessage(error).includes("INVALID_EMAIL")) {
-            Toast.error(window._lc.forms.forgot_password.toasts.invalid_email);
+            Toast.error(t("forms.forgot_password.toasts.invalid_email"));
             isToastShown = true;
         }
 
         // Если превышен лимит запросов
         if (getErrorMessage(error).includes("RATE_LIMIT_EXCEEDED") || getErrorStatus(error) === 429) {
-            Toast.warning(window._lc.forms.forgot_password.toasts.too_many_requests);
+            Toast.warning(t("forms.forgot_password.toasts.too_many_requests"));
             isToastShown = true;
         }
 
         // Если ошибка не распознана — показываем общую
         if (!isToastShown) {
-            Toast.error(window._lc.api.errors.server_error);
+            Toast.error(t("api.errors.server_error"));
         }
 
     }

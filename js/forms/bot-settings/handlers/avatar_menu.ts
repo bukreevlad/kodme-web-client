@@ -12,6 +12,7 @@ import { removePhoto } from "../functions/remove_photo.js";
 // Импортируем типы
 import type { PopoverMenuItem } from "../../../components/overlay/popover_menu.js";
 import type { BotSettings } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -30,14 +31,14 @@ export function avatarContextMenuHandler(event: Event, form: BotSettings): void 
 
             // Загрузка фото
             {
-                text: window._lc.forms.bot_settings.context_menu.upload_avatar,
+                text: t("forms.bot_settings.context_menu.upload_avatar"),
                 iconName: "Upload",
                 onClick: () => choosePhoto(form)
             },
 
             // Удаление аватара
             {
-                text: window._lc.forms.bot_settings.context_menu.remove_avatar,
+                text: t("forms.bot_settings.context_menu.remove_avatar"),
                 iconName: "trash",
                 cssClasses: ["text-[var(--color-red)]"],
                 onClick: () => removePhoto(form)

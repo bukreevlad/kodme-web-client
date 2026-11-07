@@ -10,6 +10,7 @@ import { updateParticipant } from "../../meet-play/functions/update_participant.
 
 // Импортируем типы
 import type { MeetDeviceSettings } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -76,7 +77,7 @@ export async function selectDeviceHandler(
 
         Logger.error("🚨 [meet-play][devices]: Ошибка переключения устройства:", error);
 
-        Toast.error(window._lc.forms.meet_play.toasts.device_error);
+        Toast.error(t("forms.meet_play.toasts.device_error"));
 
         // Возвращаем список в реальность: неудачное переключение
         // могло оставить отметку на устройстве, которое не работает

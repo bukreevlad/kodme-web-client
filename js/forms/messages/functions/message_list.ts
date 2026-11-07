@@ -1,5 +1,4 @@
 // Импортируем utils
-import { TimeAgoFormatter } from "../../../utils/date/time_ago_formatter.js";
 import { areDatesDifferent } from "../../../utils/date/different_dates.js";
 
 // Импортируем config
@@ -7,6 +6,7 @@ import { MESSAGES_WINDOW_SIZE } from "../../../config/constants.js";
 
 // Импортируем типы
 import type { Messages } from "../index.js";
+import { I18n, t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -29,15 +29,18 @@ export class MessageList {
      */
     static templateDateSeparator(createdAt: string): HTMLElement | null {
 
-        // Устанавливаем дату
-        const timeAgo = new TimeAgoFormatter(createdAt, "date");
-
         // Мы используем <template> tag или DOMParser для создания DOM без innerHTML
-        return new DOMParser().parseFromString(`
+        const separator = new DOMParser().parseFromString(`
             <div data-date-separator class="flex w-full my-2 justify-center pointer-events-none">
-                <span data-text class="flex p-1 bg-white/50 dark:bg-white/10 justify-center text-sm rounded-md shadow-sm">${timeAgo.formattedTime}</span>
+                <span data-text class="flex p-1 bg-white/50 dark:bg-white/10 justify-center text-sm rounded-md shadow-sm"></span>
             </div>
             `, "text/html").querySelector<HTMLElement>("[data-date-separator]");
+
+        // Дата-разделитель пересобирается при смене языка (Intl на новой локали)
+        const timeEl = separator?.querySelector<HTMLElement>("[data-text]");
+        if (timeEl) I18n.setTime(timeEl, createdAt, "date");
+
+        return separator;
     }
 
     /**
@@ -49,7 +52,7 @@ export class MessageList {
     static templateUnreadMarker(): HTMLElement | null {
 
         // Текст маркера берём из локали (fallback - захардкоженное значение)
-        const text = window._lc?.forms?.messages?.unread_messages || "Непрочитанные сообщения";
+        const text = t("forms.messages.unread_messages");
 
         // Мы используем <template> tag или DOMParser для создания DOM без innerHTML
         return new DOMParser().parseFromString(`

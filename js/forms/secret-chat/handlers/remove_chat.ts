@@ -13,6 +13,7 @@ import { RemoveChat } from "../dialogs/remove-chat/index.js";
 
 // Импортируем типы
 import type { SecretChat } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -44,7 +45,7 @@ export async function removeChatHandler(form: SecretChat): Promise<void> {
                     await manager.closeChat(form.chatId);
 
                     // Сообщение
-                    Toast.success(window._lc.forms.secret_chat.toasts.chat_removed, { position: "bottom-center" });
+                    Toast.success(t("forms.secret_chat.toasts.chat_removed"), { position: "bottom-center" });
 
                     // Закрываем форму: чата больше нет ни у кого
                     form.modal?.close();

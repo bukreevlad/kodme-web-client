@@ -30,6 +30,7 @@ import { ChannelProfile } from "../channel-profile/index.js";
 
 // Импортируем типы
 import type { GroupTopicSettingsRecord } from "./types.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Данные формы настроек темы группы.
@@ -349,10 +350,10 @@ export class GroupTopicSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("label", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.group_topic_settings.name}
+                                ${t("forms.group_topic_settings.name")}
                             </span>
                             ${Inputs.create({
-            placeholder: window._lc.forms.group_topic_settings.name,
+            placeholder: t("forms.group_topic_settings.name"),
             name: "name",
             attributes: ["required"]
         })}
@@ -363,10 +364,10 @@ export class GroupTopicSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("message-circle", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.group_topic_settings.about}
+                                ${t("forms.group_topic_settings.about")}
                             </span>
                             ${Inputs.textarea({
-            placeholder: window._lc.forms.group_topic_settings.about,
+            placeholder: t("forms.group_topic_settings.about"),
             name: "about",
             rows: 4
         })}
@@ -377,15 +378,15 @@ export class GroupTopicSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("world", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.group_topic_settings.type}
+                                ${t("forms.group_topic_settings.type")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.group_topic_settings.type_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.group_topic_settings.type_desc")}</span>
                             ${Toggle.switch({
             name: "is-public",
             checked: false,
             toggleText: {
-                on: window._lc.forms.group_topic_settings.opened,
-                off: window._lc.forms.group_topic_settings.closed
+                on: t("forms.group_topic_settings.opened"),
+                off: t("forms.group_topic_settings.closed")
             }
         })}
                         </div>
@@ -395,15 +396,15 @@ export class GroupTopicSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("pencil", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.group_topic_settings.can_posting}
+                                ${t("forms.group_topic_settings.can_posting")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.group_topic_settings.can_posting_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.group_topic_settings.can_posting_desc")}</span>
                             ${Toggle.switch({
             name: "is-posting",
             checked: false,
             toggleText: {
-                on: window._lc.forms.group_topic_settings.all_posting,
-                off: window._lc.forms.group_topic_settings.admin_posting
+                on: t("forms.group_topic_settings.all_posting"),
+                off: t("forms.group_topic_settings.admin_posting")
             }
         })}
                         </div>
@@ -413,13 +414,13 @@ export class GroupTopicSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("user-plus", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.group_topic_settings.invites}
+                                ${t("forms.group_topic_settings.invites")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.group_topic_settings.invites_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.group_topic_settings.invites_desc")}</span>
                             ${Buttons.create({
             shape: "square",
             attributes: ["action-manage-invites"],
-            text: window._lc.forms.group_topic_settings.invites
+            text: t("forms.group_topic_settings.invites")
         })}
                         </div>
 
@@ -428,10 +429,10 @@ export class GroupTopicSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("trash", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.group_topic_settings.remove}
+                                ${t("forms.group_topic_settings.remove")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.group_topic_settings.remove_desc}</span>
-                            ${Buttons.danger({ attributes: ["action-remove"], text: window._lc.forms.group_topic_settings.remove })}
+                            <span class="text-sm text-secondary">${t("forms.group_topic_settings.remove_desc")}</span>
+                            ${Buttons.danger({ attributes: ["action-remove"], text: t("forms.group_topic_settings.remove") })}
                         </div>
 
                     </div>

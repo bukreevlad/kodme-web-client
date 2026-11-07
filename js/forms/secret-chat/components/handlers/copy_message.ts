@@ -4,6 +4,7 @@ import { copyText } from "../../../../utils/helpers/clipboard.js";
 
 // Импортируем типы
 import type { SecretChatMessageItem } from "../message.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -22,7 +23,7 @@ export async function copyMessageHandler(message: SecretChatMessageItem): Promis
         // Копируем текст сообщения
         await copyText(message.data.text, {
             context: "[app][secret-chat][copy-message]",
-            successText: window._lc.forms.secret_chat.toasts.message_copied
+            successText: t("forms.secret_chat.toasts.message_copied")
         });
 
     } catch (error) {

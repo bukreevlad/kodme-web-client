@@ -22,6 +22,7 @@ import { removeHandler } from "./handlers/remove.js";
 
 // Импортируем типы
 import type { BotCommandEditResult, BotMenuRecord } from "../bot-settings/types.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки диалога редактирования команды.
@@ -262,7 +263,7 @@ export class EditBotCommand {
             <div class="cdm-form bot-edit-command flex flex-col gap-0 ${CDM_FORM_CLASSES()} w-full">
                 <div class="header flex flex-row gap-2 p-2 items-center ${CDM_FORM_HEADER_CLASSES()}">
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "ArrowLeft" })}
-                    <span class="flex-1 font-semibold text-base truncate">${window._lc.forms.bot_settings.dialogs.edit_command.title}</span>
+                    <span class="flex-1 font-semibold text-base truncate">${t("forms.bot_settings.dialogs.edit_command.title")}</span>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-save"], icon: "device-floppy" })}
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-remove"], icon: "trash" })}
                 </div>
@@ -274,9 +275,9 @@ export class EditBotCommand {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("command", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.bot_settings.dialogs.edit_command.command}
+                                ${t("forms.bot_settings.dialogs.edit_command.command")}
                             </span>
-                            ${Inputs.create({ placeholder: window._lc.forms.bot_settings.dialogs.edit_command.command, name: "command", classes: ["font-mono"] })}
+                            ${Inputs.create({ placeholder: t("forms.bot_settings.dialogs.edit_command.command"), name: "command", classes: ["font-mono"] })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -284,9 +285,9 @@ export class EditBotCommand {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("label", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.bot_settings.dialogs.edit_command.name}
+                                ${t("forms.bot_settings.dialogs.edit_command.name")}
                             </span>
-                            ${Inputs.create({ placeholder: window._lc.forms.bot_settings.dialogs.edit_command.name, name: "name" })}
+                            ${Inputs.create({ placeholder: t("forms.bot_settings.dialogs.edit_command.name"), name: "name" })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -294,9 +295,9 @@ export class EditBotCommand {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("message-circle", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.bot_settings.dialogs.edit_command.about}
+                                ${t("forms.bot_settings.dialogs.edit_command.about")}
                             </span>
-                            ${Inputs.textarea({ placeholder: window._lc.forms.bot_settings.dialogs.edit_command.about, name: "about" })}
+                            ${Inputs.textarea({ placeholder: t("forms.bot_settings.dialogs.edit_command.about"), name: "about" })}
                         </div>
 
                     </div>

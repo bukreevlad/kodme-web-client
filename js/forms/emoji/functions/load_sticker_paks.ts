@@ -9,6 +9,7 @@ import { getStickerPaksRequest } from "../requests/get_sticker_paks.js";
 
 // Импортируем типы
 import type { Emoji } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * Количество паков в одной выборке панели (максимум сервера).
@@ -60,7 +61,7 @@ export async function loadStickerPaks(form: Emoji): Promise<void> {
         // Показываем тост (коды ошибок разбирает сам toastError)
         toastError(error, {
             context: "[app][emoji][load-sticker-paks]",
-            fallback: window._lc.forms.emoji.stickers.load_error
+            fallback: t("forms.emoji.stickers.load_error")
         });
 
     }

@@ -12,6 +12,7 @@ import { setButtonIcon } from "../functions/set_button_icon.js";
 
 // Импортируем типы
 import type { SecretCall } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -35,7 +36,7 @@ export function toggleVideoHandler(form: SecretCall): void {
     } catch (error) {
 
         Logger.error("[app][secret-call]: ошибка переключения камеры:", error);
-        Toast.error(window._lc.forms.secret_call.toasts.camera_error);
+        Toast.error(t("forms.secret_call.toasts.camera_error"));
 
     }
 

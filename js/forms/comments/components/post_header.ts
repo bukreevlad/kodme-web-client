@@ -1,7 +1,6 @@
 // Импортируем utils
 import { Avatars } from "../../../components/avatars.js";
-import { TimeAgoFormatter } from "../../../utils/date/time_ago_formatter.js";
-import { getDeclension } from "../../../utils/string/declensions.js";
+import { I18n, t } from "../../../utils/i18n/index.js";
 import { unescapeHtml } from "../../../utils/string/unescape_html.js";
 import * as Attachments from "../../../utils/messages/attachments.js";
 
@@ -95,7 +94,7 @@ function fillCard(card: HTMLElement, post: MessageData): void {
 
     // Автор и время
     if (name) name.textContent = post.display_name ?? "";
-    if (createdAt && post.created_at) createdAt.textContent = new TimeAgoFormatter(post.created_at).formattedTime;
+    if (createdAt && post.created_at) I18n.setTime(createdAt, post.created_at);
 
     // Текст поста (сервер отдаёт HTML-экранированным — раскодируем для
     // отображения, переводы строк сохраняем)
@@ -118,7 +117,7 @@ function fillCard(card: HTMLElement, post: MessageData): void {
         if (!filesCount) {
             attaches.classList.add("hidden");
         } else {
-            attaches.textContent = `${filesCount} ${getDeclension(filesCount, window._lc.forms.comments.dec_files)}`;
+            attaches.textContent = `${filesCount} ${t("forms.comments.dec_files", { count: filesCount })}`;
         }
 
     }

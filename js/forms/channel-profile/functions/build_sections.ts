@@ -11,6 +11,7 @@ import { loadSection } from "./load_section.js";
 
 // Импортируем типы
 import type { ChannelProfile, MediaSection } from "../types.js";
+import { I18n } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -60,7 +61,7 @@ function templatePane(section: MediaSection, layout: MediaSection["layout"], nam
         : "flex flex-col w-full gap-0";
 
     // Текст пустого состояния: свой ключ на каждую секцию
-    const emptyText = window._lc?.forms?.channel_profile?.empty?.[section.localeKey] || name;
+    const emptyText = I18n.tree.forms.channel_profile.empty?.[section.localeKey] || name;
 
     // DOMParser вместо innerHTML
     const pane = new DOMParser().parseFromString(`
@@ -110,7 +111,7 @@ export function buildSections(form: ChannelProfile, sections: MediaSection[]): v
             // Название вкладки из локали. Отдельного ключа на каждую секцию
             // не заводим: по умолчанию показываем id, чтобы вкладка была
             // кликабельной даже если перевод ещё не добавлен
-            const name = window._lc?.forms?.channel_profile?.[section.localeKey] || section.id;
+            const name = I18n.tree.forms.channel_profile?.[section.localeKey] || section.id;
 
             const tab = templateTab(section, name);
             const pane = templatePane(section, section.layout, name);

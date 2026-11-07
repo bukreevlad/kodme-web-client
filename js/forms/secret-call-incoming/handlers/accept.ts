@@ -10,6 +10,7 @@ import { SecretCallsManager } from "../../../core/managers/secret_calls_manager.
 // Импортируем forms
 import { SecretCall } from "../../secret-call/index.js";
 import { SecretCallIncoming } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -40,7 +41,7 @@ export async function acceptCallHandler(form: SecretCallIncoming): Promise<void>
         // Модалка могла закрыться (взяли на другом устройстве) — тостить
         // имеет смысл только пока она открыта
         if (!SecretCallIncoming.instances.has(form.callId)) return;
-        Toast.error(window._lc.forms.secret_call.toasts.media_error);
+        Toast.error(t("forms.secret_call.toasts.media_error"));
         form.modal?.close();
 
     }

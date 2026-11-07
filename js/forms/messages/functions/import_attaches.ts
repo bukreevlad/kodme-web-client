@@ -23,6 +23,7 @@ import type { AttachmentsRaw } from "../../../utils/messages/attachments.js";
 import type { FileValidationError } from "../../../utils/validation/file_validator.js";
 import type { MessageRecord } from "../types.js";
 import type { Messages } from "../index.js";
+import { I18n, t } from "../../../utils/i18n/index.js";
 
 /** Объект-мап вложений черновика (тот же тип, что хранит MessageRecord.attachments). */
 type AttachmentsMap = Extract<AttachmentsRaw, Record<string, unknown>>;
@@ -242,7 +243,7 @@ function showValidationErrors(errors: FileValidationError[]): void {
 
 /**
  * ***************************************************************************
- * Подставить параметры в текст тоста (`%{name}%`, `%{count}%`).
+ * Подставить параметры в текст тоста (`{{name}}`, `{{count}}`).
  * @param code - Код тоста в локали.
  * @param params - Значения для подстановки.
  * @returns Готовый текст.
@@ -252,11 +253,11 @@ function formatToast(code: string, params?: ToastParams): string {
 
     // Локаль типизирована фиксированными ключами, а коды ошибок приходят
     // динамически — копируем секцию в словарь для поиска по строке
-    const toasts: Record<string, string> = { ...window._lc?.forms?.messages?.toasts };
-    let text = toasts[code] || toasts.invalid_extension || "Файл нельзя прикреплять";
+    const toasts: Record<string, string> = { ...I18n.tree.forms.messages.toasts };
+    let text = toasts[code] || toasts.invalid_extension || t("api.errors.invalid_extension");
 
     for (const [key, value] of Object.entries(params || {})) {
-        text = text.replaceAll(`%{${key}}%`, String(value));
+        text = text.replaceAll(`{{${key}}}`, String(value));
     }
 
     return text;

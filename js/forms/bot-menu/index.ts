@@ -20,6 +20,7 @@ import { createCommandItem } from "./components/command.js";
 
 // Импортируем типы
 import type { OverlayOptions } from "../../components/overlay/types.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Узел дерева меню бота: категория либо команда.
@@ -504,7 +505,7 @@ export class BotMenu {
 
         // Создаем корневой элемент и отображаем
         let root = this.menuTree;
-        root.name = `./${window._lc.forms.bot_menu.menu}`;
+        root.name = `./${t("forms.bot_menu.menu")}`;
         let item = createPathItem(root);
         list.append(item);
 
@@ -581,7 +582,7 @@ export class BotMenu {
                 } else {
 
                     // Отображаем сообщение, что нет меню бота
-                    Toast.info(window._lc.forms.bot_menu.toasts.bot_not_menu);
+                    Toast.info(t("forms.bot_menu.toasts.bot_not_menu"));
 
                 }
 
@@ -614,7 +615,7 @@ export class BotMenu {
         
             <div class="cdm-modal bot-menu flex flex-col p-0 gap-0 ${CDM_MODAL_CLASSES()}">
                 <div class="header flex flex-col gap-0 p-3 bg-[var(--second-bg)] justify-start">
-                    <span data-title class="font-semibold">${window._lc.forms.bot_menu.title}</span>
+                    <span data-title class="font-semibold">${t("forms.bot_menu.title")}</span>
                     <div data-bots class="flex flex-row"></div>
                     <div data-path class="flex flex-row flex-wrap gap-1"></div>
                 </div>

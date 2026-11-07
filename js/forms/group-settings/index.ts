@@ -33,6 +33,7 @@ import { GroupModeratorsManager } from "../group-moderators-manager/index.js";
 
 // Импортируем типы
 import type { GroupSettingsRecord } from "./types.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Данные формы настроек группы.
@@ -306,7 +307,7 @@ export class GroupSettings {
         // не «утекало» undefined/null)
         name.value = data.name;
         about.value = data.about ?? "";
-        link.textContent = data.link || window._lc.forms.group_settings.not_select;
+        link.textContent = data.link || t("forms.group_settings.not_select");
 
         // Приватность
         if (data.is_public) {
@@ -357,9 +358,9 @@ export class GroupSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("label", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.group_settings.name}
+                                ${t("forms.group_settings.name")}
                             </span>
-                            ${Inputs.create({ placeholder: window._lc.forms.group_settings.name, name: "name", attributes: ["required"] })}
+                            ${Inputs.create({ placeholder: t("forms.group_settings.name"), name: "name", attributes: ["required"] })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -367,9 +368,9 @@ export class GroupSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("message-circle", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.group_settings.about}
+                                ${t("forms.group_settings.about")}
                             </span>
-                            ${Inputs.textarea({ placeholder: window._lc.forms.group_settings.about, name: "about", rows: 4 })}
+                            ${Inputs.textarea({ placeholder: t("forms.group_settings.about"), name: "about", rows: 4 })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -377,9 +378,9 @@ export class GroupSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("link", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.group_settings.link}
+                                ${t("forms.group_settings.link")}
                             </span>
-                            ${Buttons.create({ attributes: ["action-set-link"], text: window._lc.forms.group_settings.not_select })}
+                            ${Buttons.create({ attributes: ["action-set-link"], text: t("forms.group_settings.not_select") })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -387,15 +388,15 @@ export class GroupSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("world", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.group_settings.type}
+                                ${t("forms.group_settings.type")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.group_settings.type_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.group_settings.type_desc")}</span>
                             ${Toggle.switch({
             name: "is-public",
             checked: false,
             toggleText: {
-                on: window._lc.forms.group_settings.opened,
-                off: window._lc.forms.group_settings.closed
+                on: t("forms.group_settings.opened"),
+                off: t("forms.group_settings.closed")
             }
         })}
                         </div>
@@ -405,15 +406,15 @@ export class GroupSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("pencil", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.group_settings.can_posting}
+                                ${t("forms.group_settings.can_posting")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.group_settings.can_posting_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.group_settings.can_posting_desc")}</span>
                             ${Toggle.switch({
             name: "is-posting",
             checked: false,
             toggleText: {
-                on: window._lc.forms.group_settings.all_posting,
-                off: window._lc.forms.group_settings.admin_posting
+                on: t("forms.group_settings.all_posting"),
+                off: t("forms.group_settings.admin_posting")
             }
         })}
                         </div>
@@ -423,10 +424,10 @@ export class GroupSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("user-plus", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.group_settings.invites}
+                                ${t("forms.group_settings.invites")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.group_settings.invites_desc}</span>
-                            ${Buttons.create({ attributes: ["action-manage-invites"], text: window._lc.forms.group_settings.invites })}
+                            <span class="text-sm text-secondary">${t("forms.group_settings.invites_desc")}</span>
+                            ${Buttons.create({ attributes: ["action-manage-invites"], text: t("forms.group_settings.invites") })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -434,9 +435,9 @@ export class GroupSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("folder", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.group_settings.topic_manager}
+                                ${t("forms.group_settings.topic_manager")}
                             </span>
-                            ${Buttons.create({ attributes: ["action-topic-manager"], text: window._lc.forms.group_settings.topic_manager })}
+                            ${Buttons.create({ attributes: ["action-topic-manager"], text: t("forms.group_settings.topic_manager") })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -444,10 +445,10 @@ export class GroupSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("user-shield", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.group_settings.moderators_manager}
+                                ${t("forms.group_settings.moderators_manager")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.group_settings.moderators_manager_desc}</span>
-                            ${Buttons.create({ attributes: ["action-moderator-manager"], text: window._lc.forms.group_settings.moderators_manager })}
+                            <span class="text-sm text-secondary">${t("forms.group_settings.moderators_manager_desc")}</span>
+                            ${Buttons.create({ attributes: ["action-moderator-manager"], text: t("forms.group_settings.moderators_manager") })}
                         </div>
 
                         <div data-invites class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -455,10 +456,10 @@ export class GroupSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("trash", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.group_settings.remove}
+                                ${t("forms.group_settings.remove")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.group_settings.remove_desc}</span>
-                            ${Buttons.danger({ attributes: ["action-remove"], text: window._lc.forms.group_settings.remove })}
+                            <span class="text-sm text-secondary">${t("forms.group_settings.remove_desc")}</span>
+                            ${Buttons.danger({ attributes: ["action-remove"], text: t("forms.group_settings.remove") })}
                         </div>
 
                     </div>

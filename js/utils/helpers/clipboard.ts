@@ -3,6 +3,7 @@ import { Toast } from "../../components/toast.js";
 
 // Импортируем utils
 import { Logger } from "../logs/logger.js";
+import { t } from "../i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -53,11 +54,9 @@ export async function copyText(text: string, options: CopyTextOptions = {}): Pro
 
     // Тексты тостов: кастомные из вызывающего кода, иначе дефолтные из локали
     const successText = options.successText
-        || window._lc?.components?.clipboard?.success
-        || "Скопировано";
+        || t("components.clipboard.success");
     const errorText = options.errorText
-        || window._lc?.components?.clipboard?.error
-        || "Не удалось скопировать. Скопируйте текст вручную";
+        || t("components.clipboard.error");
 
     // Пустой текст копировать нечего
     if (!text) {

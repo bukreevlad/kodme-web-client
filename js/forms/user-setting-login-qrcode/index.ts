@@ -17,6 +17,7 @@ import { UserProfile } from "../user-profile/index.js";
 // Импортируем functions
 import { startScanner } from "./functions/start_scanner.js";
 import { stopScanner } from "./functions/stop_scanner.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы входа по QR-коду.
@@ -208,7 +209,7 @@ export class UserSettingLoginWithQRCode {
             <div class="cdm-form user-setting-login-qrcode flex flex-col gap-0 ${CDM_FORM_CLASSES()} w-full">
                 <div class="header flex flex-row gap-2 p-2 items-center justify-start ${CDM_FORM_HEADER_CLASSES()}">
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "ArrowLeft" })}
-                    <span class="flex flex-row gap-2 items-center font-semibold text-lg">${window._lc.forms.user_setting_login_qrcode.scan_desc}</span>
+                    <span class="flex flex-row gap-2 items-center font-semibold text-lg">${t("forms.user_setting_login_qrcode.scan_desc")}</span>
                 </div>
                  <div class="content w-full h-full flex flex-col ${CDM_FORM_CONTENT_CLASSES()}">
                     <div id="video-qrcode-container" class="flex h-full w-full overflow-hidden"></div>

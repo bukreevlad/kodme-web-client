@@ -14,6 +14,7 @@ import { getThemesRequest } from "../requests/get_themes.js";
 // Импортируем типы
 import { ThemeAddOptions, ThemePaginationDirection } from "../types.js";
 import type { Themes } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -172,7 +173,7 @@ function _toastError(form: Themes, error: unknown): void {
         // Показываем тост (коды ошибок разбирает сам toastError)
         toastError(error, {
             context: "[app][themes][get-themes]",
-            fallback: window._lc?.forms?.themes?.toasts?.load_error
+            fallback: t("forms.themes.toasts.load_error")
         });
 
     } catch (toastError) {

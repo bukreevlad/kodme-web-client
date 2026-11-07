@@ -15,6 +15,7 @@ import { unmoveFromFolderRequest } from "../requests/unmove_from_folder.js";
 
 // Импортируем типы
 import type { ChannelRecord } from "../types.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * Элемент выбора папки, который возвращает MainFoldersManager
@@ -69,7 +70,7 @@ export async function moveToFolderHandler(channel: ChannelRecord): Promise<void>
                             });
 
                             // Toast
-                            Toast.success(window._lc.forms.main.components.channels.context_menu.toasts.success_move_to_folder, {
+                            Toast.success(t("forms.main.components.channels.context_menu.toasts.success_move_to_folder"), {
                                 position: "bottom-center"
                             });
 
@@ -98,7 +99,7 @@ export async function moveToFolderHandler(channel: ChannelRecord): Promise<void>
                             });
 
                             // Toast
-                            Toast.success(window._lc.forms.main.components.channels.context_menu.toasts.success_unmove_from_folder, {
+                            Toast.success(t("forms.main.components.channels.context_menu.toasts.success_unmove_from_folder"), {
                                 position: "bottom-center"
                             });
 

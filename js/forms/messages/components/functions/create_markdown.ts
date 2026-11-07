@@ -20,6 +20,7 @@ import { cloudShareLinkRenderPlugin } from "./render_cloud_share_link.js";
 import { urlLinkRenderPlugin } from "./render_url_link.js";
 import { blockquoteClassPlugin } from "./render_blockquote.js";
 import { codeClassPlugin } from "./render_code.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * Настройки выбора markdown-it рендерера.
@@ -122,7 +123,7 @@ function createRenderer(variant: string): MarkdownItInstance {
         // Шаблон карточки блока кода с кнопкой копирования
         return `<div data-pre-code class="flex flex-col w-full bg-[var(--color-black)]/5 dark:bg-[var(--color-black)]/40 rounded-md overflow-hidden text-sm">
                     <div class="flex flex-row w-full p-1 px-2 bg-[var(--color-black)]/10 dark:bg-[var(--color-black)]/30 items-center justify-between">
-                        <span>${lang || "Блок кода"}</span>
+                        <span>${lang || t("components.markdown.code_block")}</span>
                         <button action-copy class="p-1 cursor-pointer">${Icons.icon("Copy")?.outerHTML}</button>
                     </div>
                     <pre class="flex relative p-3 max-h-[40rem]"><code class="hljs ${langClass}">${highlightedCode}</code></pre>

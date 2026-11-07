@@ -13,6 +13,7 @@ import { Buttons } from "../../components/buttons.js";
 
 // Импортируем handlers
 import { openHandler } from "./handlers/open.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы приглашения в трансляцию.
@@ -253,7 +254,7 @@ export class InviteBroadcast {
         
             <div class="cdm-modal invite-broadcast flex flex-col gap-0 ${CDM_MODAL_CLASSES()}">
                  <div class="${CDM_MODAL_HEADER_CLASSES()}">
-                    <span class="font-semibold text-lg">${window._lc.forms.invite_broadcast.title}</span>
+                    <span class="font-semibold text-lg">${t("forms.invite_broadcast.title")}</span>
                 </div>
                  <div class="${CDM_MODAL_CONTENT_CLASSES()}">
 
@@ -261,7 +262,7 @@ export class InviteBroadcast {
 
                         <div class="flex flex-col gap-1 items-center ${CDM_FORM_SECTION_CLASSES()} p-4 w-full">
                             <span data-name class="font-semibold"></span>
-                            <span class="text-[var(--color-brand)] dark:text-[var(--color-brand)] text-sm">${window._lc.forms.invite_broadcast.broadcast}</span>
+                            <span class="text-[var(--color-brand)] dark:text-[var(--color-brand)] text-sm">${t("forms.invite_broadcast.broadcast")}</span>
                             <span data-about class="empty:hidden text-secondary text-sm"></span>
                         </div>
 
@@ -269,8 +270,8 @@ export class InviteBroadcast {
 
                 </div>
                 <div class="${CDM_MODAL_FOOTER_CLASSES()}">
-                    ${Buttons.create({ attributes: ["action-close"], classes: ["w-full"], text: window._lc.forms.invite_broadcast.cancel })}
-                    ${Buttons.primary({ attributes: ["action-open"], classes: ["w-full"], text: window._lc.forms.invite_broadcast.open })}
+                    ${Buttons.create({ attributes: ["action-close"], classes: ["w-full"], text: t("forms.invite_broadcast.cancel") })}
+                    ${Buttons.primary({ attributes: ["action-open"], classes: ["w-full"], text: t("forms.invite_broadcast.open") })}
                 </div>
             </div>
 

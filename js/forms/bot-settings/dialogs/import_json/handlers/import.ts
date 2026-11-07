@@ -6,6 +6,7 @@ import { Toast } from "../../../../../components/toast.js";
 
 // Импортируем типы
 import type { ImportBotCommands } from "../index.js";
+import { t } from "../../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -24,7 +25,7 @@ export async function importHandler(form: ImportBotCommands): Promise<void> {
         // Проверяем JSON (нет поля ввода — то же, что пустая строка)
         const codeValue = code?.value;
         if (!codeValue || !Validator.isJSON(codeValue)) {
-            throw "Некорректный JSON";
+            throw t("forms.bot_settings.toasts.json_invalid");
         }
 
         // Отправляем ответ

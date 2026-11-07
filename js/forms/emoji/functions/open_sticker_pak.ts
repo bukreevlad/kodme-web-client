@@ -12,6 +12,7 @@ import { getStickerPakRequest } from "../requests/get_sticker_pak.js";
 import type { StickerPakItem } from "../../sticker-paks/types.js";
 import type { StickerPakData } from "../../sticker-pak/types.js";
 import type { Emoji } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -62,7 +63,7 @@ export async function openStickerPak(form: Emoji, pak: Pick<StickerPakItem, "id"
         // Показываем тост (коды ошибок разбирает сам toastError)
         toastError(error, {
             context: "[app][emoji][open-sticker-pak]",
-            fallback: window._lc.forms.emoji.stickers.pak_load_error
+            fallback: t("forms.emoji.stickers.pak_load_error")
         });
 
     }

@@ -9,6 +9,7 @@ import { TabsManager } from "../../../core/managers/form_tabs_manager.js";
 import { isWindowGeometryOverlay } from "../types.js";
 import type { BotApp } from "../index.js";
 import type { FormTabData } from "../../../core/managers/form_tabs_manager.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -64,7 +65,7 @@ export async function maximizeHandler(form: BotApp): Promise<void> {
 
         const tabData: FormTabData = {
             instance: form,
-            subtitle: window._lc.forms.bot_app.webapp_subtitle
+            subtitle: t("forms.bot_app.webapp_subtitle")
         };
         if (form.initData) tabData.title = form.initData.name;
 

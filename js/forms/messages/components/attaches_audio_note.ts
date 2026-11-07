@@ -17,6 +17,7 @@ import { audioContextMenuHandler } from "./handlers/audio_context_menu.js";
 import type { AudioPlayerCallback, AudioPlayerState, AudioPlayerTrack } from "../../../utils/audio/audio_player.js";
 import { normalizeAttachments } from "./types.js";
 import type { AttachParent, AttachmentData } from "./types.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -222,8 +223,8 @@ export function createAudioNoteItem(message: AttachParent, data: AttachmentData)
                 .filter(at => at.metadata?.flags?.is_audio_note === true || isKind("audio", at.mime_type))
                 .map(at => ({
                     ...at,
-                    author: at.author || message.data.display_name || window._lc.forms.messages.components.messages.voice_item.voice_message,
-                    title: at.title || window._lc.forms.messages.components.messages.voice_item.voice_note
+                    author: at.author || message.data.display_name || t("forms.messages.components.messages.voice_item.voice_message"),
+                    title: at.title || t("forms.messages.components.messages.voice_item.voice_note")
                 }));
 
             // Текущий индекс трека

@@ -19,6 +19,7 @@ import { deleteStickerRequest } from "../requests/delete_sticker.js";
 import type { PopoverMenuItem } from "../../../components/overlay/popover_menu.js";
 import type { StickerItem } from "../types.js";
 import type { StickerPak } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -44,7 +45,7 @@ export function stickerContextMenuHandler(x: number, y: number, form: StickerPak
 
         // menu item
         const remove: PopoverMenuItem = {
-            text: window._lc.forms.sticker_pak.menu.delete,
+            text: t("forms.sticker_pak.menu.delete"),
             iconName: "trash",
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => confirmDeleteSticker(form, sticker)
@@ -77,10 +78,10 @@ function confirmDeleteSticker(form: StickerPak, sticker: StickerItem): void {
 
     // Подтверждение удаления
     new ConfirmStickerDialog({
-        title: window._lc.forms.sticker_pak.confirm.title,
-        description: window._lc.forms.sticker_pak.confirm.description,
-        actionClose: window._lc.forms.sticker_pak.confirm.cancel,
-        actionRemove: window._lc.forms.sticker_pak.confirm.confirm,
+        title: t("forms.sticker_pak.confirm.title"),
+        description: t("forms.sticker_pak.confirm.description"),
+        actionClose: t("forms.sticker_pak.confirm.cancel"),
+        actionRemove: t("forms.sticker_pak.confirm.confirm"),
         callback: async (response) => {
 
             // Отмена — выходим
@@ -102,7 +103,7 @@ function confirmDeleteSticker(form: StickerPak, sticker: StickerItem): void {
                 // Показываем тост (коды ошибок разбирает сам toastError)
                 toastError(error, {
                     context: "[app][sticker-pak][delete-sticker]",
-                    fallback: window._lc.forms.sticker_pak.toasts.delete_error
+                    fallback: t("forms.sticker_pak.toasts.delete_error")
                 });
 
             }

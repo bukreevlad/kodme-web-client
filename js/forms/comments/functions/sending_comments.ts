@@ -21,6 +21,7 @@ import { saveAttachRequest } from "../requests/save_attach.js";
 import { isRecord } from "../../main/types.js";
 import type { CommentRecord } from "../types.js";
 import type { Comments } from "../index.js";
+import { I18n, t } from "../../../utils/i18n/index.js";
 
 /** Локальная форма мапы вложений (массив возможен только в ответе сервера). */
 type AttachmentsMap = Extract<Attachments.AttachmentsRaw, Record<string, unknown>>;
@@ -325,7 +326,7 @@ export async function sendingComments(form: Comments): Promise<void> {
                             // превью — сообщаем отправителю. При выключенном
                             // конфиге поле приходит без причины и молчим
                             if (saveResult.data.processed === false && saveResult.data.reason === "failed") {
-                                Toast.info(window._lc.forms.comments.toasts.sent_without_preview, { position: "bottom-center" });
+                                Toast.info(t("forms.comments.toasts.sent_without_preview"), { position: "bottom-center" });
                             }
 
                             // Сохраняем данные для финальной отправки комментария:
@@ -400,7 +401,7 @@ export async function sendingComments(form: Comments): Promise<void> {
                         // Помечаем комментарий ошибкой (пользователь увидит статус),
                         // но очередь НЕ останавливаем: проблема в конкретном файле
                         form.store.update(localId, { is_error_sending: true });
-                        Toast.warning(window._lc?.forms?.comments?.toasts?.uploading_failed || "Не удалось загрузить файл", { position: "bottom-center" });
+                        Toast.warning(t("forms.comments.toasts.uploading_failed"), { position: "bottom-center" });
 
                         continue;
 
@@ -514,16 +515,16 @@ export async function sendingComments(form: Comments): Promise<void> {
                         || (info.code != null ? UPLOAD_LOCALE[info.code] : undefined);
 
                     // Локаль типизирована фиксированными ключами — копируем секцию
-                    const toasts: Record<string, string> = { ...window._lc?.forms?.comments?.toasts };
+                    const toasts: Record<string, string> = { ...I18n.tree.forms.comments.toasts };
 
                     // Отклонение хранилищем (400 от S3, например пустое тело
                     // запроса от Safari) — свой текст вместо generic-ошибки
                     const isRejected = info.code === "UPLOAD_REJECTED" || info.name === "UPLOAD_REJECTED";
                     const text = specificKey
                         ? toasts[specificKey]
-                        : (isRejected ? window._lc.api.errors.upload_rejected : null);
+                        : (isRejected ? t("api.errors.upload_rejected") : null);
 
-                    Toast.warning(text || toasts.uploading_failed || "Не удалось загрузить файл", { position: "bottom-center" });
+                    Toast.warning(text || toasts.uploading_failed || t("forms.comments.toasts.uploading_failed"), { position: "bottom-center" });
 
                     // Причина внятная и очередь не встанет — продолжаем
                     if (specificKey) continue;

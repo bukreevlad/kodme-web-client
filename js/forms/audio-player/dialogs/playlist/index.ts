@@ -18,6 +18,7 @@ import { trackChangeHandler } from "../../handlers/track_change.js";
 // Импортируем типы
 import type { AudioPlayer } from "../../index.js";
 import type { AudioPlayerManager } from "../../../../utils/audio/audio_player.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -220,7 +221,7 @@ export class PlaylistDialog {
         const countEl = this.tpl.querySelector("[data-playlist-count]");
         if (countEl) {
             countEl.textContent = playlist.length
-                ? window._lc.forms.audio_player.tracks_count.replace("{count}", String(playlist.length))
+                ? t("forms.audio_player.tracks_count", { count: playlist.length })
                 : "";
         }
 
@@ -229,7 +230,7 @@ export class PlaylistDialog {
             container.innerHTML = `
                 <div class="flex flex-col items-center justify-center gap-2 p-8 text-secondary dark:text-secondary">
                     ${Icons.icon("playlist", { classes: ["text-muted"] })?.outerHTML}
-                    <span class="text-sm">${window._lc.forms.audio_player.playlist_empty}</span>
+                    <span class="text-sm">${t("forms.audio_player.playlist_empty")}</span>
                 </div>
             `;
             return;
@@ -252,8 +253,8 @@ export class PlaylistDialog {
                     ${isActive ? Icons.icon("player-play", { settings: { filled: true } })?.outerHTML : Icons?.icon("Music")?.outerHTML}
                 </div>
                 <div class="flex flex-col flex-1 overflow-hidden min-w-0">
-                    <span class="text-sm font-semibold truncate ${isActive ? "text-[var(--color-brand)]" : ""}">${track.title || window._lc.forms.audio_player.untitled}</span>
-                    <span class="text-xs text-secondary dark:text-secondary truncate">${track.author || window._lc.forms.audio_player.unknown}</span>
+                    <span class="text-sm font-semibold truncate ${isActive ? "text-[var(--color-brand)]" : ""}">${track.title || t("forms.audio_player.untitled")}</span>
+                    <span class="text-xs text-secondary dark:text-secondary truncate">${track.author || t("forms.audio_player.unknown")}</span>
                 </div>
             `;
 
@@ -296,7 +297,7 @@ export class PlaylistDialog {
             <div class="cdm-modal audio-player-playlist flex flex-col p-0 gap-0 w-[26rem] ${CDM_MODAL_CLASSES()}">
                 <div class="${CDM_MODAL_HEADER_CLASSES()}">
                     <span class="flex flex-col gap-0 items-start font-semibold text-lg">
-                        ${window._lc.forms.audio_player.playlist_title}
+                        ${t("forms.audio_player.playlist_title")}
                         <span data-playlist-count class="text-xs font-normal text-secondary dark:text-secondary"></span>
                     </span>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "x" })}

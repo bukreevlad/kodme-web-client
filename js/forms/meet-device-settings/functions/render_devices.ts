@@ -12,6 +12,7 @@ import { renderNoiseSetting } from "./render_noise_setting.js";
 import type { AccessResult } from "./ensure_access.js";
 import type { MediaDeviceItem } from "./enumerate_devices.js";
 import type { MeetDeviceSettings } from "../index.js";
+import { I18n } from "../../../utils/i18n/index.js";
 
 /**
  * Секции списка устройств. Ключ `kind` совпадает с `MediaDeviceKind`,
@@ -111,7 +112,7 @@ function buildItems(
     options?: RenderDevicesOptions
 ): HTMLElement[] {
 
-    const locales = window._lc.forms.meet_play.dialogs.device_settings;
+    const locales = I18n.tree.forms.meet_play.dialogs.device_settings;
 
     // ---------- EMPTY ----------
     if (!Array.isArray(list) || list.length === 0) {
@@ -160,7 +161,7 @@ function buildItems(
  * ***************************************************************************
  */
 function buildEmpty(
-    locales: typeof window._lc.forms.meet_play.dialogs.device_settings,
+    locales: typeof I18n.tree.forms.meet_play.dialogs.device_settings,
     section: { kind: "videoinput" | "audioinput"; slot: string; icon: string },
     options?: RenderDevicesOptions
 ): HTMLElement {

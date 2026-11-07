@@ -10,6 +10,7 @@ import { saveRequest } from "../requests/save.js";
 
 // Импортируем типы
 import type { BroadcastSettings } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -46,7 +47,7 @@ export async function saveHandler(form: BroadcastSettings): Promise<void> {
         });
 
         // Toast
-        Toast.success(window._lc.forms.broadcast_settings.toasts.success_save);
+        Toast.success(t("forms.broadcast_settings.toasts.success_save"));
 
         // Закрываем форму
         form.modal?.close();
@@ -64,7 +65,7 @@ export async function saveHandler(form: BroadcastSettings): Promise<void> {
             name.focus();
 
             // Toast
-            Toast.error(window._lc.forms.broadcast_settings.toasts.invalid_name);
+            Toast.error(t("forms.broadcast_settings.toasts.invalid_name"));
             isToastShown = true;
         }
 
@@ -75,13 +76,13 @@ export async function saveHandler(form: BroadcastSettings): Promise<void> {
             about.focus();
 
             // Toast
-            Toast.error(window._lc.forms.broadcast_settings.toasts.invalid_about);
+            Toast.error(t("forms.broadcast_settings.toasts.invalid_about"));
             isToastShown = true;
         }
 
         // Прочая ошибка сервера
         if (!isToastShown) {
-            Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+            Toast.error(t("api.errors.server_error"));
         }
 
     }

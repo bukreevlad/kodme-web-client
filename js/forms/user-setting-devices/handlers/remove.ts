@@ -14,6 +14,7 @@ import { ConfirmDeviceDialog } from "../dialogs/confirm/index.js";
 // Импортируем типы
 import type { UserSettingDevices } from "../index.js";
 import type { SessionListItem } from "../types.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -28,10 +29,10 @@ export async function removeSessionHandler(form: UserSettingDevices, data: Sessi
 
         // Диалог подтверждения удаления сессии
         let dialogConfirm = new ConfirmDeviceDialog({
-            title: window._lc.forms.user_setting_devices.dialogs.remove.title,
-            description: window._lc.forms.user_setting_devices.dialogs.remove.description,
-            actionClose: window._lc.forms.user_setting_devices.dialogs.remove.action_close,
-            actionRemove: window._lc.forms.user_setting_devices.dialogs.remove.action_remove,
+            title: t("forms.user_setting_devices.dialogs.remove.title"),
+            description: t("forms.user_setting_devices.dialogs.remove.description"),
+            actionClose: t("forms.user_setting_devices.dialogs.remove.action_close"),
+            actionRemove: t("forms.user_setting_devices.dialogs.remove.action_remove"),
             insertInto: form.modal?.content,
             callback: async (response) => {
 
@@ -52,7 +53,7 @@ export async function removeSessionHandler(form: UserSettingDevices, data: Sessi
                         dialogConfirm?.modal?.close();
 
                         // Toast
-                        Toast.success(window._lc.forms.user_setting_devices.toasts.success_remove);
+                        Toast.success(t("forms.user_setting_devices.toasts.success_remove"));
 
                         // Удаляем элемент из Store формы
                         form.store.remove(data.id);
@@ -69,13 +70,13 @@ export async function removeSessionHandler(form: UserSettingDevices, data: Sessi
                     if (getErrorMessage(error).includes("SESSION_ID_") || getErrorMessage(error).includes("USER_ID_")) {
 
                         // Toast
-                        Toast.error(window._lc.forms.user_setting_devices.toasts.remove_error);
+                        Toast.error(t("forms.user_setting_devices.toasts.remove_error"));
                         isToastShown = true;
                     }
 
                     // Прочая ошибка сервера
                     if (!isToastShown) {
-                        Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+                        Toast.error(t("api.errors.server_error"));
                     }
 
                 }

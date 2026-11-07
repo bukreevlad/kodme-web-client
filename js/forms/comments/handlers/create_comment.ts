@@ -14,6 +14,7 @@ import { CommentList } from "../functions/comment_list.js";
 // Импортируем типы
 import type { CommentRecord, CommentStoreAddOptions } from "../types.js";
 import type { Comments } from "../index.js";
+import { I18n, t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -39,7 +40,7 @@ export async function createCommentHandler(form: Comments): Promise<void> {
 
         // Комментирование запрещено (футер скрыт, но Enter мог пройти мимо)
         if (!form.isCommentingAllowed) {
-            Toast.warning(window._lc?.forms?.comments?.toasts?.commenting_disabled || "Комментирование отключено", { position: "bottom-center" });
+            Toast.warning(t("forms.comments.toasts.commenting_disabled"), { position: "bottom-center" });
             return;
         }
 
@@ -54,15 +55,15 @@ export async function createCommentHandler(form: Comments): Promise<void> {
         if (!validation.isValid) {
 
             // Коды валидации — ключи локали forms.comments.toasts.*
-            const toasts: Record<string, string> = { ...window._lc?.forms?.comments?.toasts };
+            const toasts: Record<string, string> = { ...I18n.tree.forms.comments.toasts };
             let toastText = validation.code ? toasts[validation.code] : null;
 
-            // Подстановка параметров (%{count}% и т.п.)
+            // Подстановка параметров ({{count}} и т.п.)
             for (const [key, value] of Object.entries(validation.params)) {
-                toastText = toastText?.replaceAll(`%{${key}}%`, String(value)) ?? null;
+                toastText = toastText?.replaceAll(`{{${key}}}`, String(value)) ?? null;
             }
 
-            Toast.warning(toastText || toasts.empty_message || "Комментарий пустой", { position: "bottom-center" });
+            Toast.warning(toastText || toasts.empty_message || t("forms.comments.toasts.empty_message"), { position: "bottom-center" });
             form.textarea?.classList.add("invalid");
 
             return;
@@ -117,7 +118,7 @@ export async function createCommentHandler(form: Comments): Promise<void> {
         sendingComments(form);
 
     } catch (error) {
-        Toast.warning(window._lc?.forms?.comments?.toasts?.send_failed || "Комментарий не отправлен", { position: "bottom-center" });
+        Toast.warning(t("forms.comments.toasts.send_failed"), { position: "bottom-center" });
     }
 
 }

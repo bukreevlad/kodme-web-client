@@ -21,6 +21,7 @@ import { showTopics } from "./functions/show_topics.js";
 
 // Импортируем типы
 import type { ChannelRecord } from "../main/types.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Данные формы тем группы.
@@ -249,7 +250,7 @@ export class GroupTopics {
 
         // Отображаем данные (display_name опционален — нормализуем к null)
         displayName.textContent = data.display_name ?? null;
-        subtitle.textContent = window._lc.forms.group_topics.subtitle;
+        subtitle.textContent = t("forms.group_topics.subtitle");
 
         // Отображаем темы группы
         showTopics(this);

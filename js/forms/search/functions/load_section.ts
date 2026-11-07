@@ -16,6 +16,7 @@ import type { SectionId } from "../config/sections.js";
 import type { SearchSection } from "../config/sections.js";
 import type { SearchStoreAddOptions } from "../types.js";
 import type { Search } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -216,7 +217,7 @@ function toastOnce(form: Search, id: SectionId, error: unknown): void {
             "INVALID_USER_ID",
             "USER_ID_REQUIRED"
         ],
-        fallback: window._lc?.forms?.search?.toasts?.load_error
+        fallback: t("forms.search.toasts.load_error")
     });
 
 }

@@ -19,6 +19,7 @@ import { getUserInfoRequest } from "../user-profile/requests/get_user_info.js";
 // Импортируем handlers
 import { acceptCallHandler } from "./handlers/accept.js";
 import { declineCallHandler } from "./handlers/decline.js";
+import { I18n } from "../../utils/i18n/index.js";
 
 /**
  * Данные конструктора модалки входящего звонка.
@@ -236,7 +237,7 @@ export class SecretCallIncoming {
     _template(): HTMLElement | null {
 
         // Локализация
-        const locale = window._lc.forms.secret_call;
+        const locale = I18n.tree.forms.secret_call;
 
         return new DOMParser().parseFromString(`
 

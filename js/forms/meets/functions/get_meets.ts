@@ -15,6 +15,7 @@ import { getMeetsRequest } from "../requests/get_meets.js";
 import type { StoreId } from "../../../utils/store.js";
 import type { MeetDirection, MeetStoreAddOptions } from "../types.js";
 import type { Meets } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -185,7 +186,7 @@ function toastErrorOnce(form: Meets, error: unknown): void {
         // Показываем тост (коды ошибок разбирает сам toastError)
         toastError(error, {
             context: "[app][meets][get-meets]",
-            fallback: window._lc?.forms?.meets?.toasts?.load_error
+            fallback: t("forms.meets.toasts.load_error")
         });
 
     } catch (toastError) {

@@ -12,6 +12,7 @@ import { disableNotifyRequest } from "../requests/disable_notify.js";
 
 // Импортируем типы
 import type { Messages } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -37,7 +38,7 @@ export async function disableNotifyHandler(form: Messages): Promise<void> {
         }
 
         // Toast
-        Toast.success(window._lc.forms.messages.context_menu.toasts.success_disable_notify, { position: "bottom-center" });
+        Toast.success(t("forms.messages.context_menu.toasts.success_disable_notify"), { position: "bottom-center" });
 
     } catch (error) {
         Logger.error(error);

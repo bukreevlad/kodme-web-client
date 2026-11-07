@@ -28,6 +28,7 @@ import { onThemesScrollHandler } from "./handlers/on_themes_scroll.js";
 
 // Импортируем типы
 import { ThemeListItem } from "./types.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы тем оформления.
@@ -269,7 +270,7 @@ export class Themes {
                 <div class="header flex flex-row gap-2 p-2 items-center justify-between ${CDM_FORM_HEADER_CLASSES()}">
                     <div class="flex flex-row gap-2 items-center">
                         ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "ArrowLeft" })}
-                        <span data-title class="flex flex-row gap-2 items-center font-semibold text-lg">${window._lc.forms.themes.title}</span>
+                        <span data-title class="flex flex-row gap-2 items-center font-semibold text-lg">${t("forms.themes.title")}</span>
                     </div>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-create"], icon: "Plus" })}
                 </div>
@@ -277,8 +278,8 @@ export class Themes {
                     <div data-list class="flex flex-col gap-0 p-2 w-full"></div>
 
                     ${EmptyState.create({
-                        title: window._lc.forms.themes.empty.title,
-                        description: window._lc.forms.themes.empty.desc,
+                        title: t("forms.themes.empty.title"),
+                        description: t("forms.themes.empty.desc"),
                         icon: "palette",
                         compact: true,
                         attributes: ["data-empty"],

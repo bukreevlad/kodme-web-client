@@ -13,6 +13,7 @@ import { getPaksRequest } from "../requests/get_paks.js";
 
 // Импортируем типы
 import type { StickerPaks } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -126,7 +127,7 @@ function _toastError(form: StickerPaks, error: unknown): void {
         // Показываем тост (коды ошибок разбирает сам toastError)
         toastError(error, {
             context: "[app][sticker-paks][get-paks]",
-            fallback: window._lc?.forms?.sticker_paks?.toasts?.load_error
+            fallback: t("forms.sticker_paks.toasts.load_error")
         });
 
     } catch (toastError) {

@@ -9,6 +9,7 @@ import { BotProfile } from "../../bot-profile/index.js";
 // Импортируем типы
 import type { MessageData } from "./types.js";
 import type { MessageItem } from "./message.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -55,7 +56,7 @@ function template(): HTMLElement {
     // с текстовым HTML всегда находит его
     return new DOMParser().parseFromString(`
         <div class="forward-wrap flex flex-row gap-1 p-1 items-start w-full rounded-md cursor-pointer bg-[var(--color-brand)]/10 dark:bg-[var(--color-brand)]/10 border-l-3 border-[var(--color-brand)]">
-            <span class="text-sm text-[var(--color-brand)] dark:text-[var(--color-brand)]">${window._lc.forms.messages.components.messages.forward.forwarded_from}</span>
+            <span class="text-sm text-[var(--color-brand)] dark:text-[var(--color-brand)]">${t("forms.messages.components.messages.forward.forwarded_from")}</span>
             <span data-display-name class="font-semibold text-sm text-[var(--color-brand)] dark:text-[var(--color-brand)]"></span>
         </div>
     `, "text/html").querySelector<HTMLDivElement>(".forward-wrap")!;
@@ -83,7 +84,7 @@ function setup(element: HTMLElement, data?: MessageData | null): void {
 
         // Если данных пересланного сообщения нет
         if (!data) {
-            displayName.textContent = window._lc.forms.messages.components.messages.forward.unknown;
+            displayName.textContent = t("forms.messages.components.messages.forward.unknown");
         } else {
 
             // Записываем данные (display_name опционален — нормализуем к null)

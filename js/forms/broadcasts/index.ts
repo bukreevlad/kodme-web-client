@@ -29,6 +29,7 @@ import { onCastsScrollHandler } from "./handlers/on_casts_scroll.js";
 
 // Импортируем типы
 import type { BroadcastCast } from "./types.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы трансляций.
@@ -268,7 +269,7 @@ export class Broadcasts {
                     id: this.modal?.options.id,
                     data: {
                         instance: this,
-                        title: "Трансляции"
+                        title: t("forms.broadcasts.title")
                     }
                 }
             }));
@@ -326,7 +327,7 @@ export class Broadcasts {
                 <div class="header flex flex-row gap-2 p-2 items-center justify-between ${CDM_FORM_HEADER_CLASSES()}">
                     <div class="flex flex-row gap-2 items-center">
                         ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "ArrowLeft" })}
-                        <span data-title class="flex flex-row gap-2 items-center font-semibold text-lg">${window._lc.forms.broadcasts.title}</span>
+                        <span data-title class="flex flex-row gap-2 items-center font-semibold text-lg">${t("forms.broadcasts.title")}</span>
                     </div>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-menu"], icon: "dots-vertical" })}
                 </div>
@@ -334,14 +335,14 @@ export class Broadcasts {
                     <div data-list class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 p-2 w-full"></div>
 
                     ${EmptyState.create({
-                        title: window._lc.forms.broadcasts.empty.title,
-                        description: window._lc.forms.broadcasts.empty.desc,
+                        title: t("forms.broadcasts.empty.title"),
+                        description: t("forms.broadcasts.empty.desc"),
                         icon: "video",
                         compact: true,
                         attributes: ["data-empty"],
                         classes: ["hidden", "flex-1"],
                         action: {
-                            text: window._lc.forms.broadcasts.empty.create,
+                            text: t("forms.broadcasts.empty.create"),
                             icon: "plus",
                             attributes: ["action-create-cast"]
                         }

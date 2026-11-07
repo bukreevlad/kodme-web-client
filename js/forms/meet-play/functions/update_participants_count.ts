@@ -1,6 +1,6 @@
 // Импортируем utils
 import { Logger } from "../../../utils/logs/logger.js";
-import { getDeclension } from "../../../utils/string/declensions.js";
+import { I18n } from "../../../utils/i18n/index.js";
 
 // Импортируем functions
 import { isCastIdentity } from "./parse_room_state.js";
@@ -30,7 +30,7 @@ export function updateParticipantsCount(form: MeetPlay): void {
         const total = countParticipants(form);
 
         // ---------- ФОРМАТ ----------
-        const locale = window._lc.forms.meet_play.participants;
+        const locale = I18n.tree.forms.meet_play.participants;
 
         // Один участник — это всегда локальный пользователь: он не мог
         // выйти из собственной конференции, не закрыв форму. Такую
@@ -43,8 +43,7 @@ export function updateParticipantsCount(form: MeetPlay): void {
         }
 
         element.classList.remove("hidden");
-        const suffix = getDeclension(total, locale.count);
-        element.textContent = `${total} ${suffix ?? ""}`.trim();
+        I18n.setCount(element, "forms.meet_play.participants.count", total);
 
     } catch (error) {
         Logger.error("🚨 [meet-play]: Не удалось обновить счётчик участников:", error);

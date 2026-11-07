@@ -18,6 +18,7 @@ import { stepConfirmHandler } from "./handlers/step_confirm.js";
 import { stepSetPasswordHandler } from "./handlers/step_set_password.js";
 import { backEmailHandler } from "./handlers/back_email.js";
 import { backCodeHandler } from "./handlers/back_code.js";
+import { t } from "../../utils/i18n/index.js";
 
 // Типы настроек формы
 /**
@@ -218,9 +219,7 @@ export class ForgotPassword {
             if (stepsRoot) {
                 AuthSteps.update(stepsRoot, {
                     current: index,
-                    label: window._lc.forms.forgot_password.step
-                        .replace("{current}", String(index + 1))
-                        .replace("{total}", String(order.length))
+                    label: t("forms.forgot_password.step", { current: index + 1, total: order.length })
                 });
             }
 
@@ -236,9 +235,7 @@ export class ForgotPassword {
     _template(): HTMLElement | null {
 
         // Подпись стартового шага
-        const stepLabel = window._lc.forms.forgot_password.step
-            .replace("{current}", String(1))
-            .replace("{total}", String(3));
+        const stepLabel = t("forms.forgot_password.step", { current: 1, total: 3 });
 
         return new DOMParser().parseFromString(`
 
@@ -246,8 +243,8 @@ export class ForgotPassword {
                 <div class="${CDM_MODAL_CENTERED_CONTENT_CLASSES()}">
 
                     <div class="flex flex-col items-center text-center gap-0.5 select-none">
-                        <span class="text-base font-bold mt-1 leading-snug">${window._lc.forms.forgot_password.title}</span>
-                        <span class="text-sm text-secondary font-normal leading-snug">${window._lc.forms.forgot_password.subtitle}</span>
+                        <span class="text-base font-bold mt-1 leading-snug">${t("forms.forgot_password.title")}</span>
+                        <span class="text-sm text-secondary font-normal leading-snug">${t("forms.forgot_password.subtitle")}</span>
                     </div>
 
                     ${AuthSteps.html({
@@ -257,9 +254,9 @@ export class ForgotPassword {
                     })}
 
                     <ul class="cdm-tabs flex flex-row hidden" id="fogot-tabs">
-                        <li data-target="email" class="item"><span>${window._lc.forms.forgot_password.email}</span></li>
-                        <li data-target="code" class="item"><span>${window._lc.forms.forgot_password.code}</span></li>
-                        <li data-target="password" class="item"><span>${window._lc.forms.forgot_password.password}</span></li>
+                        <li data-target="email" class="item"><span>${t("forms.forgot_password.email")}</span></li>
+                        <li data-target="code" class="item"><span>${t("forms.forgot_password.code")}</span></li>
+                        <li data-target="password" class="item"><span>${t("forms.forgot_password.password")}</span></li>
                     </ul>
 
                     <div class="cdm-tabs-content">
@@ -267,26 +264,26 @@ export class ForgotPassword {
                         <!-- Шаг 1: Email -->
                         <div class="item active flex flex-col gap-5" data-target="email">
                             <div class="flex flex-col gap-2 w-full">
-                                <span class="text-sm font-semibold">${window._lc.forms.forgot_password.email}</span>
+                                <span class="text-sm font-semibold">${t("forms.forgot_password.email")}</span>
                                 ${Inputs.email({
-                                    placeholder: window._lc.forms.forgot_password.email,
+                                    placeholder: t("forms.forgot_password.email"),
                                     name: "email",
                                     icon: "mail",
                                     attributes: ["required"]
                                 })}
                             </div>
-                            <p class="text-xs text-secondary leading-snug">${window._lc.forms.forgot_password.desc_send}</p>
+                            <p class="text-xs text-secondary leading-snug">${t("forms.forgot_password.desc_send")}</p>
                             <div class="flex flex-row gap-3 w-full">
                                 ${Buttons.create({
                                     attributes: ["action-back"],
                                     classes: ["flex-1"],
-                                    text: window._lc.forms.forgot_password.back,
+                                    text: t("forms.forgot_password.back"),
                                     icon: "arrow-left"
                                 })}
                                 ${Buttons.primary({
                                     attributes: ["action-send"],
                                     classes: ["flex-1"],
-                                    text: window._lc.forms.forgot_password.send
+                                    text: t("forms.forgot_password.send")
                                 })}
                             </div>
                         </div>
@@ -294,27 +291,27 @@ export class ForgotPassword {
                         <!-- Шаг 2: Код подтверждения -->
                         <div class="item flex flex-col gap-5" data-target="code">
                             <div class="flex flex-col gap-2 w-full">
-                                <span class="text-sm font-semibold">${window._lc.forms.forgot_password.code}</span>
+                                <span class="text-sm font-semibold">${t("forms.forgot_password.code")}</span>
                                 ${Inputs.create({
-                                    placeholder: window._lc.forms.forgot_password.code,
+                                    placeholder: t("forms.forgot_password.code"),
                                     name: "code",
                                     icon: "key",
                                     attributes: ["required", { name: "maxlength", value: "6" }, { name: "autocomplete", value: "off" }],
                                     classes: ["font-mono", "tracking-widest"]
                                 })}
                             </div>
-                            <p class="text-xs text-secondary text-center leading-snug">${window._lc.forms.forgot_password.desc_code}</p>
+                            <p class="text-xs text-secondary text-center leading-snug">${t("forms.forgot_password.desc_code")}</p>
                             <div class="flex flex-row gap-3 w-full">
                                 ${Buttons.create({
                                     attributes: ["action-back-email"],
                                     classes: ["flex-1"],
-                                    text: window._lc.forms.forgot_password.back,
+                                    text: t("forms.forgot_password.back"),
                                     icon: "arrow-left"
                                 })}
                                 ${Buttons.primary({
                                     attributes: ["action-confirm"],
                                     classes: ["flex-1"],
-                                    text: window._lc.forms.forgot_password.confirm,
+                                    text: t("forms.forgot_password.confirm"),
                                     icon: "check"
                                 })}
                             </div>
@@ -323,18 +320,18 @@ export class ForgotPassword {
                         <!-- Шаг 3: Новый пароль -->
                         <div class="item flex flex-col gap-5" data-target="password">
                             <div class="flex flex-col gap-2 w-full">
-                                <span class="text-sm font-semibold">${window._lc.forms.forgot_password.password}</span>
+                                <span class="text-sm font-semibold">${t("forms.forgot_password.password")}</span>
                                 ${Inputs.password({
-                                    placeholder: window._lc.forms.forgot_password.password,
+                                    placeholder: t("forms.forgot_password.password"),
                                     name: "password",
                                     icon: "lock",
                                     attributes: ["required"]
                                 })}
                             </div>
                             <div class="flex flex-col gap-2 w-full">
-                                <span class="text-sm font-semibold">${window._lc.forms.forgot_password.retry_password}</span>
+                                <span class="text-sm font-semibold">${t("forms.forgot_password.retry_password")}</span>
                                 ${Inputs.password({
-                                    placeholder: window._lc.forms.forgot_password.retry_password,
+                                    placeholder: t("forms.forgot_password.retry_password"),
                                     name: "retry-password",
                                     icon: "lock-check",
                                     attributes: ["required"]
@@ -344,13 +341,13 @@ export class ForgotPassword {
                                 ${Buttons.create({
                                     attributes: ["action-back-code"],
                                     classes: ["flex-1"],
-                                    text: window._lc.forms.forgot_password.back,
+                                    text: t("forms.forgot_password.back"),
                                     icon: "arrow-left"
                                 })}
                                 ${Buttons.primary({
                                     attributes: ["action-set-password"],
                                     classes: ["flex-1"],
-                                    text: window._lc.forms.forgot_password.set_password,
+                                    text: t("forms.forgot_password.set_password"),
                                     icon: "key"
                                 })}
                             </div>
@@ -363,7 +360,7 @@ export class ForgotPassword {
                 <div class="${CDM_MODAL_FOOTER_CLASSES()}">
                     <div class="flex flex-1 flex-row items-center justify-center">
                     ${Buttons.link({
-                        text: window._lc.forms.auth.back_to_login,
+                        text: t("forms.auth.back_to_login"),
                         attributes: ["action-to-login"],
                         classes: ["text-sm"]
                     })}

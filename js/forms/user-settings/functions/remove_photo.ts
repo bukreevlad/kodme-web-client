@@ -13,6 +13,7 @@ import { removeAvatarRequest } from "../requests/remove_avatar.js";
 // Импортируем типы
 import type { UserSettings } from "../index.js";
 import type { SessionUserFields } from "../types.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -53,7 +54,7 @@ export async function removePhoto(form: UserSettings): Promise<void> {
         }
 
         // Toast
-        Toast.success(window._lc.forms.user_settings.toasts.success_remove_avatar);
+        Toast.success(t("forms.user_settings.toasts.success_remove_avatar"));
 
     } catch (error) {
         Logger.error(error);
@@ -63,9 +64,9 @@ export async function removePhoto(form: UserSettings): Promise<void> {
 
         // Отказ в доступе — свой текст, остальное — общий фолбэк
         if (info.isAccessDenied) {
-            Toast.error(window._lc.api.errors.access_denied);
+            Toast.error(t("api.errors.access_denied"));
         } else {
-            Toast.error(window._lc.forms.user_settings.toasts.remove_avatar_error);
+            Toast.error(t("forms.user_settings.toasts.remove_avatar_error"));
         }
     }
 

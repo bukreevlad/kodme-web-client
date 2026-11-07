@@ -20,6 +20,7 @@ import { fullLink } from "../cloud/functions/full_link.js";
 // Импортируем типы
 import type { Cloud } from "../cloud/index.js";
 import type { CloudItem, CloudShareLinkRow } from "../cloud/types.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки диалога создания ссылки.
@@ -255,25 +256,25 @@ export class CreateShareLink {
             <div class="cdm-form cloud-create-share-link flex flex-col gap-0 ${CDM_FORM_CLASSES()} w-full">
                 <div class="header flex flex-row gap-2 p-2 items-center ${CDM_FORM_HEADER_CLASSES()}">
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "ArrowLeft" })}
-                    <span class="flex-1 font-semibold text-base truncate">${window._lc.forms.cloud.dialogs.create_share_link.title}</span>
+                    <span class="flex-1 font-semibold text-base truncate">${t("forms.cloud.dialogs.create_share_link.title")}</span>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-create"], icon: "device-floppy" })}
                 </div>
 
                 <div data-form class="w-full flex flex-col gap-3">
                     <div class="content w-full h-full flex ${CDM_FORM_CONTENT_CLASSES()}">
                         <div class="flex flex-col gap-3 p-3 max-w-[var(--form-max-content-width)] m-auto w-full">
-                        <span class="text-secondary text-sm truncate">${window._lc.forms.cloud.dialogs.create_share_link.item_name}: ${this.item?.name || ""}</span>
+                        <span class="text-secondary text-sm truncate">${t("forms.cloud.dialogs.create_share_link.item_name")}: ${this.item?.name || ""}</span>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
                             <span class="flex flex-row gap-2 items-center font-semibold">
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("lock-open", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.cloud.dialogs.create_share_link.access}
+                                ${t("forms.cloud.dialogs.create_share_link.access")}
                             </span>
                             ${Toggle.cardGroup([
-                                { name: "access_level", value: "read", text: window._lc.forms.cloud.dialogs.create_share_link.access_read, checked: true },
-                                { name: "access_level", value: "write", text: window._lc.forms.cloud.dialogs.create_share_link.access_write }
+                                { name: "access_level", value: "read", text: t("forms.cloud.dialogs.create_share_link.access_read"), checked: true },
+                                { name: "access_level", value: "write", text: t("forms.cloud.dialogs.create_share_link.access_write") }
                             ])}
                         </div>
 
@@ -282,12 +283,12 @@ export class CreateShareLink {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("clock", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.cloud.dialogs.create_share_link.expires}
+                                ${t("forms.cloud.dialogs.create_share_link.expires")}
                             </span>
                             ${Inputs.create({ type: "datetime-local", name: "expires_at" })}
                         </div>
 
-                        <span class="text-secondary text-xs">${window._lc.forms.cloud.dialogs.create_share_link.desc}</span>
+                        <span class="text-secondary text-xs">${t("forms.cloud.dialogs.create_share_link.desc")}</span>
                         </div>
                     </div>
                 </div>
@@ -295,13 +296,13 @@ export class CreateShareLink {
                 <div data-result class="hidden w-full flex-col gap-3 p-3">
                     <div class="content w-full h-full flex ${CDM_FORM_CONTENT_CLASSES()}">
                         <div class="flex flex-col gap-3 max-w-[var(--form-max-content-width)] m-auto w-full">
-                            <span class="text-secondary text-sm">${window._lc.forms.cloud.dialogs.create_share_link.link_result}</span>
+                            <span class="text-secondary text-sm">${t("forms.cloud.dialogs.create_share_link.link_result")}</span>
                             ${Inputs.create({ name: "link", attributes: ["readonly"] })}
                         </div>
                     </div>
                     <div class="flex flex-row gap-2">
-                        ${Buttons.create({ classes: ["w-full"], attributes: ["action-copy"], text: window._lc.forms.cloud.dialogs.create_share_link.action_copy })}
-                        ${Buttons.primary({ classes: ["w-full"], attributes: ["action-done"], text: window._lc.forms.cloud.dialogs.create_share_link.action_close })}
+                        ${Buttons.create({ classes: ["w-full"], attributes: ["action-copy"], text: t("forms.cloud.dialogs.create_share_link.action_copy") })}
+                        ${Buttons.primary({ classes: ["w-full"], attributes: ["action-done"], text: t("forms.cloud.dialogs.create_share_link.action_close") })}
                     </div>
                 </div>
             </div>

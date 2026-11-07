@@ -1,5 +1,5 @@
 // Импортируем utils
-import { getDeclension } from "../../../utils/string/declensions.js";
+import { t } from "../../../utils/i18n/index.js";
 
 // Импортируем типы
 import type { Comments } from "../index.js";
@@ -27,7 +27,7 @@ export function updateCommentsCount(form: Comments, total: number): void {
 
     // Подзаголовок шапки — числом и склонённым словом из локализации
     if (form.subtitle) {
-        form.subtitle.textContent = `${total} ${getDeclension(total, window._lc.forms.comments.dec_comments)}`;
+        form.subtitle.textContent = `${total} ${t("forms.comments.dec_comments", { count: total })}`;
     }
 
 }
@@ -80,7 +80,7 @@ export function markCommentRemoved(form: Comments, id: string): void {
     // требует явного присутствия ключа при передаче null
     const patch = {
         is_deleted: true,
-        text: window._lc.forms.comments.removed_comment,
+        text: t("forms.comments.removed_comment"),
         attachments: null,
         reactions: [],
         reply_to_comment: null,

@@ -19,6 +19,7 @@ import { Main } from "../../main/index.js";
 // Импортируем типы
 import { isRecord } from "../../main/types.js";
 import type { MainFolderCreate } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -52,7 +53,7 @@ export async function createMainFolderHandler(form: MainFolderCreate): Promise<v
             LocalStorage.updateSession(LocalStorage.session);
 
             // Toast
-            Toast.success(window._lc.forms.main_folder_create.toasts.success_create);
+            Toast.success(t("forms.main_folder_create.toasts.success_create"));
 
             // Закрываем форму
             form.modal?.close();
@@ -78,13 +79,13 @@ export async function createMainFolderHandler(form: MainFolderCreate): Promise<v
             name?.focus();
 
             // Toast
-            Toast.error(window._lc.forms.main_folder_create.toasts.invalid_name);
+            Toast.error(t("forms.main_folder_create.toasts.invalid_name"));
             isToastShown = true;
         }
 
         // Прочая ошибка сервера
         if (!isToastShown) {
-            Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+            Toast.error(t("api.errors.server_error"));
         }
 
     }

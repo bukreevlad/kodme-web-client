@@ -1,5 +1,6 @@
 // Импортируем utils
 import { Logger } from "../logs/logger.js";
+import { t } from "../i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -174,7 +175,7 @@ export class FileRenditions extends EventTarget {
             });
         }
         this._options.push({
-            label: "Оригинал",
+            label: t("utils.file_renditions.original"),
             url: this.originalUrl
         });
 

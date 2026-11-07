@@ -11,6 +11,7 @@ import { getPakRequest } from "../requests/get_pak.js";
 // Импортируем типы
 import { createStickerItem } from "../components/sticker_item.js";
 import type { StickerPak } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -72,7 +73,7 @@ export async function loadStickerPak(form: StickerPak): Promise<void> {
         // Показываем тост (коды ошибок разбирает сам toastError)
         toastError(error, {
             context: "[app][sticker-pak][load-pak]",
-            fallback: window._lc.forms.sticker_pak.toasts.load_error
+            fallback: t("forms.sticker_pak.toasts.load_error")
         });
 
         // Пак недоступен — закрываем форму

@@ -13,6 +13,7 @@ import { declineCallRequest } from "../requests/decline.js";
 // Импортируем типы
 import type { CallIncoming } from "../index.js";
 import type { CallDeclineReason } from "../requests/decline.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * Опции отклонения входящего звонка.
@@ -62,7 +63,7 @@ export async function declineCallHandler(form: CallIncoming, options: DeclineCal
 
             // Фолбэк: сервер не различает причины отказа кодами — показываем
             // единственный тост ошибки отклонения
-            Toast.error(window._lc.forms.call_incoming.toasts.decline_error, {
+            Toast.error(t("forms.call_incoming.toasts.decline_error"), {
                 position: "top-center"
             });
 

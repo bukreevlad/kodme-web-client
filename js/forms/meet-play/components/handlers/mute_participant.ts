@@ -14,6 +14,7 @@ import { resolveStateBlocks, isCastIdentity } from "../../functions/parse_room_s
 import type { MeetPlay } from "../../index.js";
 import type { MeetBlockFlag } from "../../types.js";
 import type { Participant, RemoteParticipant } from "livekit-client";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -72,8 +73,8 @@ export async function muteParticipantHandler(
 
             // Toast
             Toast.success(blocks[flag]
-                ? window._lc.forms.meet_play.toasts.success_block
-                : window._lc.forms.meet_play.toasts.success_unblock);
+                ? t("forms.meet_play.toasts.success_block")
+                : t("forms.meet_play.toasts.success_unblock"));
 
         }
 
@@ -87,21 +88,21 @@ export async function muteParticipantHandler(
         // Участник вышел из комнаты, пока организатор нажимал кнопку
         if (String((error as Error)?.message).includes("PARTICIPANT_NOT_FOUND")) {
 
-            Toast.error(window._lc.forms.meet_play.toasts.participant_not_found);
+            Toast.error(t("forms.meet_play.toasts.participant_not_found"));
             isToastShown = true;
         }
 
         // Организатора заблокировать нельзя
         if (String((error as Error)?.message).includes("CANNOT_BLOCK_SELF")) {
 
-            Toast.error(window._lc.forms.meet_play.toasts.cannot_block_self);
+            Toast.error(t("forms.meet_play.toasts.cannot_block_self"));
             isToastShown = true;
         }
 
         // Флаги совпали с текущим состоянием: запрос не изменил ничего
         if (String((error as Error)?.message).includes("NOTHING_TO_CHANGE")) {
 
-            Toast.error(window._lc.forms.meet_play.toasts.nothing_to_change);
+            Toast.error(t("forms.meet_play.toasts.nothing_to_change"));
             isToastShown = true;
         }
         // ---------- УЧАСТНИК ----------
@@ -110,7 +111,7 @@ export async function muteParticipantHandler(
         // Клиент отправил флаги, которых сервер не знает
         if (String((error as Error)?.message).includes("INVALID_BLOCKS")) {
 
-            Toast.error(window._lc.forms.meet_play.toasts.mute_error);
+            Toast.error(t("forms.meet_play.toasts.mute_error"));
             isToastShown = true;
         }
         // ---------- ВАЛИДАЦИЯ ----------
@@ -119,14 +120,14 @@ export async function muteParticipantHandler(
         // Модерация доступна только создателю конференции
         if (String((error as Error)?.message).includes("ACCESS_DENIED")) {
 
-            Toast.error(window._lc.forms.meet_play.toasts.access_denied);
+            Toast.error(t("forms.meet_play.toasts.access_denied"));
             isToastShown = true;
         }
         // ---------- ДОСТУП ----------
 
         // Прочая ошибка сервера
         if (!isToastShown) {
-            Toast.error(window._lc.forms.meet_play.toasts.mute_error);
+            Toast.error(t("forms.meet_play.toasts.mute_error"));
         }
 
     }

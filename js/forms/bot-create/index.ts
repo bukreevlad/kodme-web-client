@@ -16,6 +16,7 @@ import { Toggle } from "../../components/toggle.js";
 
 // Импортируем handlers
 import { createBotHandler } from "./handlers/create.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы создания бота.
@@ -224,10 +225,10 @@ export class BotCreate {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("link", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.bot_create.link}
+                                ${t("forms.bot_create.link")}
                             </span>
                             ${Inputs.create({
-                                placeholder: window._lc.forms.broadcast_create.name,
+                                placeholder: t("forms.broadcast_create.name"),
                                 name: "link",
                                 attributes: ["required"],
                                 classes: ["font-mono"]
@@ -239,10 +240,10 @@ export class BotCreate {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("message-circle", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.bot_create.bio}
+                                ${t("forms.bot_create.bio")}
                             </span>
                             ${Inputs.textarea({
-                                placeholder: window._lc.forms.bot_create.bio,
+                                placeholder: t("forms.bot_create.bio"),
                                 name: "bio"
                             })}
                         </div>
@@ -252,15 +253,15 @@ export class BotCreate {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("world", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.bot_create.private_type}
+                                ${t("forms.bot_create.private_type")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.bot_create.private_type_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.bot_create.private_type_desc")}</span>
                             ${Toggle.switch({
                                 name: "is-public",
                                 checked: true,
                                 toggleText: {
-                                    on: window._lc.forms.bot_create.opened,
-                                    off: window._lc.forms.bot_create.closed
+                                    on: t("forms.bot_create.opened"),
+                                    off: t("forms.bot_create.closed")
                                 }
                             })}
                         </div>

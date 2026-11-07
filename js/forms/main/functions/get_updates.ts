@@ -21,6 +21,7 @@ import { channelsTable, messagesTable, pendingUpdatesTable } from "../db.js";
 import { isDeletedUpdate } from "../types.js";
 import type { Main } from "../index.js";
 import type { ChannelUpdateItem } from "../types.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -102,7 +103,7 @@ export async function getUpdates(form: Main): Promise<void> {
     } catch (error) {
         Logger.error(`[app][GetUpdates]: Критическая ошибка:`, error);
         if (getErrorName(error) === "QuotaExceededError") {
-            Toast.error(window._lc.forms.main.toasts.storage_overflow);
+            Toast.error(t("forms.main.toasts.storage_overflow"));
         }
     }
 }

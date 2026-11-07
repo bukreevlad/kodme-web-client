@@ -11,6 +11,7 @@ import { setPasswordRequest } from "../requests/save.js";
 
 // Импортируем типы
 import type { UserSettingPassword } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -48,7 +49,7 @@ export async function saveHandler(form: UserSettingPassword): Promise<void> {
         if (response.status) {
 
             // Toast
-            Toast.success(window._lc.forms.user_setting_password.toasts.success_set_password);
+            Toast.success(t("forms.user_setting_password.toasts.success_set_password"));
 
             // Закрываем форму
             form.modal?.close();
@@ -72,7 +73,7 @@ export async function saveHandler(form: UserSettingPassword): Promise<void> {
             Inputs.markInvalid(currentPassword, true);
 
             // Toast
-            Toast.error(window._lc.forms.user_setting_password.toasts.old_password_not_match);
+            Toast.error(t("forms.user_setting_password.toasts.old_password_not_match"));
             isToastShown = true;
         }
 
@@ -81,7 +82,7 @@ export async function saveHandler(form: UserSettingPassword): Promise<void> {
             Inputs.markInvalid(newPassword, true);
 
             // Toast
-            Toast.error(window._lc.forms.user_setting_password.toasts.new_password_required);
+            Toast.error(t("forms.user_setting_password.toasts.new_password_required"));
             isToastShown = true;
         }
 
@@ -90,7 +91,7 @@ export async function saveHandler(form: UserSettingPassword): Promise<void> {
             Inputs.markInvalid(newPassword, true);
 
             // Toast
-            Toast.error(window._lc.forms.user_setting_password.toasts.new_password_too_short);
+            Toast.error(t("forms.user_setting_password.toasts.new_password_too_short"));
             isToastShown = true;
         }
 
@@ -99,7 +100,7 @@ export async function saveHandler(form: UserSettingPassword): Promise<void> {
             Inputs.markInvalid(retryPassword, true);
 
             // Toast
-            Toast.error(window._lc.forms.user_setting_password.toasts.retry_password_required);
+            Toast.error(t("forms.user_setting_password.toasts.retry_password_required"));
             isToastShown = true;
         }
 
@@ -109,13 +110,13 @@ export async function saveHandler(form: UserSettingPassword): Promise<void> {
             Inputs.markInvalid(retryPassword, true);
 
             // Toast
-            Toast.error(window._lc.forms.user_setting_password.toasts.passwords_not_match);
+            Toast.error(t("forms.user_setting_password.toasts.passwords_not_match"));
             isToastShown = true;
         }
 
         // Прочая ошибка сервера
         if (!isToastShown) {
-            Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+            Toast.error(t("api.errors.server_error"));
         }
 
     }

@@ -20,6 +20,7 @@ import { declineCallHandler } from "./handlers/decline.js";
 import type { CallAvatar } from "../call/types.js";
 import { toCallAvatar } from "./types.js";
 import type { CallIncomingData } from "./types.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -242,10 +243,10 @@ export class CallIncoming {
             });
 
             // Имя
-            if (name) name.textContent = this.displayName || window._lc.forms.call.title;
+            if (name) name.textContent = this.displayName || t("forms.call.title");
 
             // Статус
-            if (subtitle) subtitle.textContent = window._lc.forms.call_incoming.status.incoming;
+            if (subtitle) subtitle.textContent = t("forms.call_incoming.status.incoming");
 
         } catch (error) {
             Logger.error(error);
@@ -298,7 +299,7 @@ export class CallIncoming {
 
             <div class="cdm-modal call-incoming flex flex-col ${CDM_MODAL_CLASSES()}">
                 <div class="${CDM_MODAL_HEADER_CLASSES()}">
-                    <span class="font-semibold text-lg">${window._lc.forms.call_incoming.title}</span>
+                    <span class="font-semibold text-lg">${t("forms.call_incoming.title")}</span>
                 </div>
                 <div class="${CDM_MODAL_CONTENT_CLASSES()} items-center">
 
@@ -314,8 +315,8 @@ export class CallIncoming {
 
                 </div>
                 <div class="${CDM_MODAL_FOOTER_CLASSES()}">
-                    ${Buttons.danger({ attributes: ["action-decline"], classes: ["w-full"], text: window._lc.forms.call_incoming.decline })}
-                    ${Buttons.primary({ attributes: ["action-accept"], classes: ["w-full"], text: window._lc.forms.call_incoming.accept })}
+                    ${Buttons.danger({ attributes: ["action-decline"], classes: ["w-full"], text: t("forms.call_incoming.decline") })}
+                    ${Buttons.primary({ attributes: ["action-accept"], classes: ["w-full"], text: t("forms.call_incoming.accept") })}
                 </div>
             </div>
 

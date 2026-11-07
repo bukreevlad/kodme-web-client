@@ -15,6 +15,7 @@ import { getSessionsRequest } from "../requests/get_devices.js";
 import type { StoreId } from "../../../utils/store.js";
 import type { DeviceDirection, SessionStoreAddOptions } from "../types.js";
 import type { UserSettingDevices } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -188,7 +189,7 @@ function toastErrorOnce(form: UserSettingDevices, error: unknown): void {
         // Показываем тост (коды ошибок разбирает сам toastError)
         toastError(error, {
             context: "[app][user-setting-devices][get-devices]",
-            fallback: window._lc?.forms?.user_setting_devices?.toasts?.load_error
+            fallback: t("forms.user_setting_devices.toasts.load_error")
         });
 
     } catch (toastError) {

@@ -4,7 +4,7 @@ import { isKind } from "../../../config/file_types.js";
 // Импортируем utils
 import { Logger } from "../../../utils/logs/logger.js";
 import { Icons } from "../../../utils/icons.js";
-import { getDeclension } from "../../../utils/string/declensions.js";
+import { t } from "../../../utils/i18n/index.js";
 
 // Импортируем components
 import { Badges } from "../../../components/badges.js";
@@ -61,7 +61,7 @@ export function createSecretChatLastMessage(item: SecretChatItem): HTMLElement |
             // Создаем элемент для безопасной вставки (textContent исключает XSS)
             const itsYouSpan = document.createElement("span");
             itsYouSpan.classList.add("text-[var(--color-brand)]");
-            itsYouSpan.textContent = window._lc.forms.main.components.channels.last_message.you;
+            itsYouSpan.textContent = t("forms.main.components.channels.last_message.you");
             itsYou?.appendChild(itsYouSpan);
 
         }
@@ -108,7 +108,7 @@ function renderContent(data: SecretPreviewMessage, text: HTMLElement, media: HTM
 
     // Стикер-сообщение без текста: в превью показываем подпись
     if (!data.text && data.type === "sticker") {
-        text.textContent = window._lc.forms.main.components.channels.last_message.sticker;
+        text.textContent = t("forms.main.components.channels.last_message.sticker");
         return;
     }
 
@@ -145,7 +145,7 @@ function renderContent(data: SecretPreviewMessage, text: HTMLElement, media: HTM
 
         // Если нет текста и одна картинка — подпись
         if (!data.text && images.length === 1) {
-            text.textContent = window._lc.forms.main.components.channels.last_message.image;
+            text.textContent = t("forms.main.components.channels.last_message.image");
             text.classList.add("text-[var(--color-brand)]", "dark:text-[var(--color-brand)]");
         }
 
@@ -155,12 +155,12 @@ function renderContent(data: SecretPreviewMessage, text: HTMLElement, media: HTM
         // Голосовое сообщение
         const isAudioNote = audios.some((ref) => ref.flags?.is_audio_note === true);
         if (isAudioNote) {
-            text.textContent = window._lc.forms.main.components.channels.last_message.voice_note;
+            text.textContent = t("forms.main.components.channels.last_message.voice_note");
             text.classList.add("text-[var(--color-brand)]", "dark:text-[var(--color-brand)]");
         } else if (audios.length === 1) {
             appendFileName(media, audios[0]);
         } else {
-            appendFilesCount(media, audios.length, window._lc.forms.messages.components.reply_footer.dec_audios);
+            appendFilesCount(media, audios.length, t("forms.messages.components.reply_footer.dec_audios", { count: audios.length }));
         }
 
         // Если видео найдено
@@ -169,12 +169,12 @@ function renderContent(data: SecretPreviewMessage, text: HTMLElement, media: HTM
         // Видео-сообщение (кружок)
         const isVideoNote = videos.some((ref) => ref.flags?.is_video_note === true);
         if (isVideoNote) {
-            text.textContent = window._lc.forms.main.components.channels.last_message.video_note;
+            text.textContent = t("forms.main.components.channels.last_message.video_note");
             text.classList.add("text-[var(--color-brand)]", "dark:text-[var(--color-brand)]");
         } else if (videos.length === 1) {
             appendFileName(media, videos[0]);
         } else {
-            appendFilesCount(media, videos.length, window._lc.forms.messages.components.reply_footer.dec_videos);
+            appendFilesCount(media, videos.length, t("forms.messages.components.reply_footer.dec_videos", { count: videos.length }));
         }
 
         // Получаем документы
@@ -183,7 +183,7 @@ function renderContent(data: SecretPreviewMessage, text: HTMLElement, media: HTM
         if (files.length === 1) {
             appendFileName(media, files[0]);
         } else {
-            appendFilesCount(media, files.length, window._lc.forms.main.components.channels.last_message.dec_files);
+            appendFilesCount(media, files.length, t("forms.main.components.channels.last_message.dec_files", { count: files.length }));
         }
 
     }
@@ -215,15 +215,15 @@ function appendFileName(media: HTMLElement, ref: SecretFileRef | undefined): voi
  * Подпись числа файлов в медиа-блоке превью («3 файла» и т.п.).
  * @param media - Узел медиа-блока превью.
  * @param count - Число файлов.
- * @param forms - Формы множественного числа для склонения.
+ * @param word - Склонённое слово для количества.
  * @returns void
  * ***************************************************************************
  */
-function appendFilesCount(media: HTMLElement, count: number, forms: string[]): void {
+function appendFilesCount(media: HTMLElement, count: number, word: string): void {
 
     // Создаем элемент для безопасной вставки (textContent исключает XSS)
     const label = document.createElement("span");
-    label.textContent = `${count} ${getDeclension(count, forms)}`;
+    label.textContent = `${count} ${word}`;
     label.classList.add("text-[var(--color-brand)]", "dark:text-[var(--color-brand)]", "truncate");
     media.append(label);
 

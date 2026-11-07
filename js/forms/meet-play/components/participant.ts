@@ -24,6 +24,7 @@ import { BLOCK_FLAGS, hasAnyBlock, resolveStateBlocks } from "../functions/parse
 import { isMeetParticipantItem } from "../types.js";
 import type { MeetPlay } from "../index.js";
 import type { MeetBlockFlag, MeetParticipantItem } from "../types.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * Иконки бейджей блокировки по флагам.
@@ -163,7 +164,7 @@ export class ParticipantItem {
                              Видимость переключает renderPin. -->
                         <span data-pin class="hidden shrink-0 items-center opacity-80"></span>
                     </div>
-                    ${Buttons.circle({ intent: "transparent", attributes: ["action-remove", "title=" + window._lc.forms.meet_play.context_menu.remove, "aria-label=" + window._lc.forms.meet_play.context_menu.remove], icon: "trash", classes: ["shrink-0", "w-6", "h-6"] })}
+                    ${Buttons.circle({ intent: "transparent", attributes: ["action-remove", "title=" + t("forms.meet_play.context_menu.remove"), "aria-label=" + t("forms.meet_play.context_menu.remove")], icon: "trash", classes: ["shrink-0", "w-6", "h-6"] })}
                 </div>
             </div>
         `, "text/html").querySelector<HTMLElement>(".item");
@@ -199,9 +200,9 @@ export class ParticipantItem {
 
             // Имя
             if (this.nameEl) {
-                const displayName = participant.name || participant.identity || "Участник";
+                const displayName = participant.name || participant.identity || t("forms.meet_play.participant_fallback");
                 const label = isLocal
-                    ? `${displayName} (${window._lc.forms.meet_play.you_suffix})`
+                    ? `${displayName} (${t("forms.meet_play.you_suffix")})`
                     : displayName;
 
                 this.nameEl.textContent = label;

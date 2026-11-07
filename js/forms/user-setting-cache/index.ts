@@ -24,6 +24,7 @@ import { clearDatabaseTable } from "./functions/clear_database_table.js";
 
 // Импортируем forms
 import { UserProfile } from "../user-profile/index.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы кеша.
@@ -279,7 +280,7 @@ export class UserSettingCache {
             <div class="cdm-form user-setting-cache flex flex-col gap-0 w-full ${CDM_FORM_CLASSES()}">
                 <div class="header flex flex-row gap-2 p-2 items-center ${CDM_FORM_HEADER_CLASSES()}">
                     ${Buttons.circle({ intent: "transparent", attributes: ["action-close"], icon: "ArrowLeft" })}
-                    <span class="flex flex-row gap-2 items-center font-semibold text-lg ml-xs">${window._lc.forms.user_setting_cache.title}</span>
+                    <span class="flex flex-row gap-2 items-center font-semibold text-lg ml-xs">${t("forms.user_setting_cache.title")}</span>
                 </div>
                  <div class="content w-full h-full flex relative h-full ${CDM_FORM_CONTENT_CLASSES()}">
 
@@ -290,16 +291,16 @@ export class UserSettingCache {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("layout-grid", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_setting_cache.app_storage}
+                                ${t("forms.user_setting_cache.app_storage")}
                             </span>
                             <div id="storage-quota-content" class="flex flex-col gap-1">
-                                <div class="flex justify-center py-2">${window._lc.forms.user_setting_cache.calculate_quota}</div>
+                                <div class="flex justify-center py-2">${t("forms.user_setting_cache.calculate_quota")}</div>
                             </div>
                             ${Buttons.primary({
             shape: "square",
             attributes: ["action-update-app"],
             classes: ["w-full"],
-            text: window._lc.forms.user_setting_cache.update_app
+            text: t("forms.user_setting_cache.update_app")
         })}
                         </div>
 
@@ -309,16 +310,16 @@ export class UserSettingCache {
                                     <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                         ${Icons.icon("device-sd-card", { settings: { size: 20 } })?.outerHTML ?? ""}
                                     </span>
-                                    ${window._lc.forms.user_setting_cache.media_cache}
+                                    ${t("forms.user_setting_cache.media_cache")}
                                 </span>
                                 ${Buttons.transparent({
             shape: "square",
             attributes: [`action-clear-cache=all`],
-            text: window._lc.forms.user_setting_cache.clear_cache
+            text: t("forms.user_setting_cache.clear_cache")
         })}
                             </div>
                             <div id="cache-stats" class="flex flex-col gap-3 mt-1">
-                                <div class="flex justify-center py-2">${window._lc.forms.user_setting_cache.analize_cache_files}</div>
+                                <div class="flex justify-center py-2">${t("forms.user_setting_cache.analize_cache_files")}</div>
                             </div>
                         </div>
 
@@ -328,16 +329,16 @@ export class UserSettingCache {
                                     <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                         ${Icons.icon("database", { settings: { size: 20 } })?.outerHTML ?? ""}
                                     </span>
-                                    ${window._lc.forms.user_setting_cache.local_db}
+                                    ${t("forms.user_setting_cache.local_db")}
                                 </span>
                                 ${Buttons.transparent({
             shape: "square",
             attributes: ["action-clear-db"],
-            text: window._lc.forms.user_setting_cache.clear_db
+            text: t("forms.user_setting_cache.clear_db")
         })}
                             </div>
                             <div id="db-stats" class="flex flex-col gap-3 mt-1">
-                                <div class="flex justify-center py-2">${window._lc.forms.user_setting_cache.analize_tables}</div>
+                                <div class="flex justify-center py-2">${t("forms.user_setting_cache.analize_tables")}</div>
                             </div>
                         </div>
 

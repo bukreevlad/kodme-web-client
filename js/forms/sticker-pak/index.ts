@@ -21,6 +21,7 @@ import { subscribeHandler } from "./handlers/subscribe.js";
 
 // Импортируем типы
 import { StickerItem, StickerPakData } from "./types.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы содержимого пака стикеров.
@@ -254,7 +255,7 @@ export class StickerPak {
                     </div>
                     <div class="flex flex-row gap-2 items-center">
                         <div data-member-actions class="flex flex-row gap-2 items-center hidden">
-                            ${Buttons.primary({ text: window._lc.forms.sticker_pak.subscribe.add, size: "sm", attributes: ["action-subscribe"] })}
+                            ${Buttons.primary({ text: t("forms.sticker_pak.subscribe.add"), size: "sm", attributes: ["action-subscribe"] })}
                         </div>
                         <div data-author-actions class="flex flex-row gap-2 items-center hidden">
                             ${Buttons.transparent({ shape: "circle", attributes: ["action-add"], icon: "Plus" })}
@@ -266,8 +267,8 @@ export class StickerPak {
                     <div data-list class="grid grid-cols-3 gap-1 p-2 w-full"></div>
 
                     ${EmptyState.create({
-                        title: window._lc.forms.sticker_pak.empty.title,
-                        description: window._lc.forms.sticker_pak.empty.desc,
+                        title: t("forms.sticker_pak.empty.title"),
+                        description: t("forms.sticker_pak.empty.desc"),
                         icon: "sticker",
                         compact: true,
                         attributes: ["data-empty"],

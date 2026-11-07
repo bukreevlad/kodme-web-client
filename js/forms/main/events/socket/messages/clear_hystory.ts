@@ -18,6 +18,7 @@ import { channelsTable, messagesTable, pendingMessagesTable } from "../../../db.
 
 // Импортируем типы
 import { isRecord } from "../../../types.js";
+import { t } from "../../../../../utils/i18n/index.js";
 
 /**
  * Нагрузка ws-события очистки истории канала.
@@ -134,7 +135,7 @@ export function subscribeMessagesClearHistory(asyncQueue: AsyncQueue): void {
 
                 // Если ошибка была вызвана IndexedDB
                 if (getErrorName(error) === "QuotaExceededError" || getErrorName(error) === "ConstraintError") {
-                    Toast.error(window._lc.forms.main.toasts.storage_write_failed);
+                    Toast.error(t("forms.main.toasts.storage_write_failed"));
                 }
             }
 

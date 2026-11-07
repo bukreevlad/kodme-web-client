@@ -18,6 +18,7 @@ import { queueFiles } from "./sending_messages.js";
 import type { SecretFileRef } from "../../../utils/secret_chats/secret_frames.js";
 import type { StickerItem } from "../../sticker-pak/types.js";
 import type { SecretChat } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -108,7 +109,7 @@ export async function sendSticker(form: SecretChat, sticker: StickerItem): Promi
         // Показываем тост (коды ошибок разбирает сам toastError)
         toastError(error, {
             context: "[app][secret-chat][send-sticker]",
-            fallback: window._lc.forms.secret_chat.toasts.sticker_send_error
+            fallback: t("forms.secret_chat.toasts.sticker_send_error")
         });
 
         // Лог для отладки

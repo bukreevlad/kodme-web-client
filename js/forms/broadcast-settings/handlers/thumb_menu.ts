@@ -12,6 +12,7 @@ import { removeThumb } from "../functions/remove_thumb.js";
 // Импортируем типы
 import type { PopoverMenuItem } from "../../../components/overlay/popover_menu.js";
 import type { BroadcastSettings } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -31,14 +32,14 @@ export async function thumbnailContextMenuHandler(event: Event, form: BroadcastS
 
         // menu item
         const upload: PopoverMenuItem = {
-            text: window._lc.forms.broadcast_settings.context_menu.upload,
+            text: t("forms.broadcast_settings.context_menu.upload"),
             iconName: "Upload",
             onClick: () => choosePhoto(form)
         };
 
         // menu item
         const remove: PopoverMenuItem = {
-            text: window._lc.forms.broadcast_settings.context_menu.remove,
+            text: t("forms.broadcast_settings.context_menu.remove"),
             iconName: "Trash2",
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => removeThumb(form)

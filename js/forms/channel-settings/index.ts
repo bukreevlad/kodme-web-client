@@ -31,6 +31,7 @@ import { ChannelSettingLink } from "../channel-setting-link/index.js";
 
 // Импортируем типы
 import type { ChannelSettingsRecord } from "./types.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Данные формы настроек канала.
@@ -296,7 +297,7 @@ export class ChannelSettings {
         // не «утекало» undefined/null)
         name.value = data.name;
         about.value = data.about ?? "";
-        link.textContent = data.link || window._lc.forms.channel_settings.not_select;
+        link.textContent = data.link || t("forms.channel_settings.not_select");
 
         // Приватность
         if (data.is_public) {
@@ -352,9 +353,9 @@ export class ChannelSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("label", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.channel_settings.name}
+                                ${t("forms.channel_settings.name")}
                             </span>
-                            ${Inputs.create({ placeholder: window._lc.forms.channel_settings.name, name: "name", attributes: ["required"] })}
+                            ${Inputs.create({ placeholder: t("forms.channel_settings.name"), name: "name", attributes: ["required"] })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -362,9 +363,9 @@ export class ChannelSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("message-circle", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.channel_settings.about}
+                                ${t("forms.channel_settings.about")}
                             </span>
-                            ${Inputs.textarea({ placeholder: window._lc.forms.channel_settings.about, name: "about", rows: 4 })}
+                            ${Inputs.textarea({ placeholder: t("forms.channel_settings.about"), name: "about", rows: 4 })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -372,9 +373,9 @@ export class ChannelSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("link", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.channel_settings.link}
+                                ${t("forms.channel_settings.link")}
                             </span>
-                            ${Buttons.create({ shape: "square", attributes: ["action-set-link"], text: window._lc.forms.channel_settings.not_select })}
+                            ${Buttons.create({ shape: "square", attributes: ["action-set-link"], text: t("forms.channel_settings.not_select") })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -382,15 +383,15 @@ export class ChannelSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("world", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.channel_settings.type}
+                                ${t("forms.channel_settings.type")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.channel_settings.type_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.channel_settings.type_desc")}</span>
                             ${Toggle.switch({
             name: "is-public",
             checked: false,
             toggleText: {
-                on: window._lc.forms.channel_settings.opened,
-                off: window._lc.forms.channel_settings.closed
+                on: t("forms.channel_settings.opened"),
+                off: t("forms.channel_settings.closed")
             }
         })}
                         </div>
@@ -400,10 +401,10 @@ export class ChannelSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("user-plus", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.channel_settings.invites}
+                                ${t("forms.channel_settings.invites")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.channel_settings.invites_desc}</span>
-                            ${Buttons.create({ attributes: ["action-manage-invites"], text: window._lc.forms.channel_settings.invites })}
+                            <span class="text-sm text-secondary">${t("forms.channel_settings.invites_desc")}</span>
+                            ${Buttons.create({ attributes: ["action-manage-invites"], text: t("forms.channel_settings.invites") })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -411,15 +412,15 @@ export class ChannelSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("pencil", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.channel_settings.can_posting}
+                                ${t("forms.channel_settings.can_posting")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.channel_settings.can_posting_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.channel_settings.can_posting_desc")}</span>
                             ${Toggle.switch({
             name: "is-posting",
             checked: false,
             toggleText: {
-                on: window._lc.forms.channel_settings.all_posting,
-                off: window._lc.forms.channel_settings.admin_posting
+                on: t("forms.channel_settings.all_posting"),
+                off: t("forms.channel_settings.admin_posting")
             }
         })}
                         </div>
@@ -429,15 +430,15 @@ export class ChannelSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("message", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.channel_settings.commenting}
+                                ${t("forms.channel_settings.commenting")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.channel_settings.commenting_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.channel_settings.commenting_desc")}</span>
                             ${Toggle.switch({
             name: "is-commenting",
             checked: false,
             toggleText: {
-                on: window._lc.forms.channel_settings.enabled,
-                off: window._lc.forms.channel_settings.disabled
+                on: t("forms.channel_settings.enabled"),
+                off: t("forms.channel_settings.disabled")
             }
         })}
                         </div>
@@ -447,10 +448,10 @@ export class ChannelSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("trash", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.channel_settings.remove}
+                                ${t("forms.channel_settings.remove")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.channel_settings.remove_desc}</span>
-                            ${Buttons.danger({ attributes: ["action-remove"], text: window._lc.forms.channel_settings.remove })}
+                            <span class="text-sm text-secondary">${t("forms.channel_settings.remove_desc")}</span>
+                            ${Buttons.danger({ attributes: ["action-remove"], text: t("forms.channel_settings.remove") })}
                         </div>
 
                     </div>

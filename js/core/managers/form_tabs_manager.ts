@@ -3,6 +3,7 @@ import { IsMobile } from "../../utils/helpers/is_mobile.js";
 
 // Загружаем forms
 import { Home } from "../../forms/home/index.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Модалка формы, нужная менеджеру табов: показать/скрыть шаблон и
@@ -326,7 +327,7 @@ export class TabsManager {
 
         // Доступное имя кнопки закрытия — из локали (уклон от «×», как у тоста)
         tab.querySelector(".tab-close")
-            ?.setAttribute("aria-label", window._lc?.components?.tabs?.close ?? "Закрыть вкладку");
+            ?.setAttribute("aria-label", t("components.tabs.close"));
 
         return tab;
 

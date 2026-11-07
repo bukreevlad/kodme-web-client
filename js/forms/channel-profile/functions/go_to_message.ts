@@ -17,6 +17,7 @@ import { Messages } from "../../messages/index.js";
 // Импортируем типы
 import type { MessageRecord } from "../../messages/types.js";
 import type { ChannelProfile } from "../types.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * Сколько ждать первой отрисовки окна чата, мс. Нужно только при переходе
@@ -84,7 +85,7 @@ export async function goToMessage(form: ChannelProfile, messageId: string): Prom
 
         // Сообщение недоступно (удалено либо доступ к нему закрыт)
         if (!data) {
-            Toast.error(window._lc?.forms?.channel_profile?.toasts?.message_not_found ?? "", {
+            Toast.error(t("forms.channel_profile.toasts.message_not_found"), {
                 type: "error",
                 duration: 3000,
                 position: "top-right"
@@ -100,7 +101,7 @@ export async function goToMessage(form: ChannelProfile, messageId: string): Prom
         // Ошибка запросов/сокета — пользователь должен её увидеть
         toastError(error, {
             context: "[app][channel-profile][go-to-message]",
-            fallback: window._lc?.forms?.channel_profile?.toasts?.load_error
+            fallback: t("forms.channel_profile.toasts.load_error")
         });
 
     }

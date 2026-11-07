@@ -1,11 +1,9 @@
-// Загружаем locales
-import ru from "../locales/ru.json";
-
 // Импортируем сторонние пакеты
 import "overlayscrollbars/overlayscrollbars.css";
 
 // Загружаем utils
 import { LocalStorage } from "./utils/local_storage.js";
+import { I18n } from "./utils/i18n/index.js";
 import { Themes } from "./utils/themes.js";
 import { Decorations } from "./utils/decorations.js";
 import { Logger } from "./utils/logs/logger.js";
@@ -49,6 +47,9 @@ PlatformBridge.init({ isDarkTheme: precalcIsDark });
 // ***************************************************************************
 window.addEventListener("load", async () => {
 
+    // Инициализируем локализацию — до первых форм и тостов
+    await I18n.init();
+
     // Проверка запуска онлайн чата для стрима
     const openParams = new URL(`${window.location.protocol}//${window.location.hostname}/${window.location.search}`).searchParams;
     const openBroadcastLiveChat = openParams.get("broadcastOnlineChat");
@@ -66,9 +67,6 @@ window.addEventListener("load", async () => {
     }
 
     // ==================================
-
-    // Записываем локализацию
-    window._lc = ru;
 
     // Записываем глобальный проигрыватель
     window.audioPlayer = new AudioPlayerManager();

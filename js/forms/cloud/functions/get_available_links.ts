@@ -8,6 +8,7 @@ import { getAvailableLinksRequest } from "../requests/get_available_links.js";
 import type { Answer } from "../../../types/domain.js";
 import type { CloudAvailableLink } from "../types.js";
 import type { Cloud } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -61,8 +62,8 @@ export async function getAvailableLinks(form: Cloud): Promise<Answer<CloudAvaila
         toastError(error, {
             context: "[app][cloud][get-available-links]",
             codes: ["USER_ID_INVALID", "USER_ID_REQUIRED"],
-            text: window._lc?.forms?.cloud?.toasts?.load_links_error,
-            fallback: window._lc?.forms?.cloud?.toasts?.load_links_error
+            text: t("forms.cloud.toasts.load_links_error"),
+            fallback: t("forms.cloud.toasts.load_links_error")
         });
 
         return null;

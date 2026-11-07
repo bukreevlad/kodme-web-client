@@ -10,6 +10,7 @@ import { Icons } from "../../utils/icons.js";
 import { Overlay } from "../../components/overlay/index.js";
 import { Buttons } from "../../components/buttons.js";
 import { Inputs } from "../../components/inputs.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки диалога включения TOTP.
@@ -165,7 +166,7 @@ export class TotpSetupDialog {
                 // Тосты об успехе/ошибке показывает сам copyText
                 await copyText(this.options.secret, {
                     context: "[app][user-setting-security][totp-setup][copy-secret]",
-                    successText: window._lc.forms.user_setting_security.totp_secret_copied
+                    successText: t("forms.user_setting_security.totp_secret_copied")
                 });
 
             });
@@ -206,19 +207,19 @@ export class TotpSetupDialog {
             <div class="cdm-form security-totp-setup flex flex-col gap-0 ${CDM_FORM_CLASSES()} w-full">
                 <div class="header flex flex-row gap-2 p-2 items-center ${CDM_FORM_HEADER_CLASSES()}">
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "ArrowLeft" })}
-                    <span class="flex-1 font-semibold text-base truncate">${window._lc.forms.user_setting_security.totp_setup_title}</span>
+                    <span class="flex-1 font-semibold text-base truncate">${t("forms.user_setting_security.totp_setup_title")}</span>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-confirm"], icon: "check" })}
                 </div>
                 <div class="content w-full h-full flex ${CDM_FORM_CONTENT_CLASSES()}">
                     <div class="flex flex-col gap-3 p-3 max-w-[var(--form-max-content-width)] m-auto w-full">
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
-                            <span class="text-secondary text-sm">${window._lc.forms.user_setting_security.totp_setup_desc}</span>
+                            <span class="text-secondary text-sm">${t("forms.user_setting_security.totp_setup_desc")}</span>
 
                             <div class="flex justify-center">
                                 <!-- QR-картинка сама содержит белый фон (генерация на сервере),
                                      контейнер — на токене темы, чтобы рамка читалась в обеих темах -->
-                                <img src="${this.options.qrImage}" alt="${window._lc.forms.user_setting_security.totp_setup_title}" class="w-40 h-40 rounded-xl bg-[var(--form-bg)] p-2 select-none" />
+                                <img src="${this.options.qrImage}" alt="${t("forms.user_setting_security.totp_setup_title")}" class="w-40 h-40 rounded-xl bg-[var(--form-bg)] p-2 select-none" />
                             </div>
                         </div>
 
@@ -226,7 +227,7 @@ export class TotpSetupDialog {
                              Иконка-бейдж справа — визуальная подсказка действия -->
                         <div action-copy-secret class="flex flex-row gap-3 items-center ${CDM_FORM_SECTION_CLASSES()} hover:bg-[color-mix(in_srgb,var(--second-bg),var(--color-brand)_10%)] cursor-pointer">
                             <div class="flex flex-col gap-1 flex-1 min-w-0">
-                                <span class="text-xs text-muted">${window._lc.forms.user_setting_security.totp_secret}</span>
+                                <span class="text-xs text-muted">${t("forms.user_setting_security.totp_secret")}</span>
                                 <span class="font-mono text-sm break-all">${this.options.secret}</span>
                             </div>
                             <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
@@ -235,9 +236,9 @@ export class TotpSetupDialog {
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
-                            <span class="text-sm font-semibold">${window._lc.forms.user_setting_security.totp_code}</span>
+                            <span class="text-sm font-semibold">${t("forms.user_setting_security.totp_code")}</span>
                             ${Inputs.create({
-                                placeholder: window._lc.forms.user_setting_security.totp_code,
+                                placeholder: t("forms.user_setting_security.totp_code"),
                                 name: "code",
                                 icon: "key",
                                 attributes: [

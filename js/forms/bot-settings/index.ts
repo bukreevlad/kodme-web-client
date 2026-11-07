@@ -38,6 +38,7 @@ import { subscribeStoreEvents } from "./events/store-apps/index.js";
 
 // Импортируем типы
 import type { BotAppRecord, BotMenuNode, BotSettingsProfile } from "./types.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы настроек бота.
@@ -367,9 +368,9 @@ export class BotSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("link", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.bot_settings.link}
+                                ${t("forms.bot_settings.link")}
                             </span>
-                            ${Buttons.create({ attributes: ["action-set-link"], classes: ["font-mono"], text: window._lc.forms.bot_settings.not_select })}
+                            ${Buttons.create({ attributes: ["action-set-link"], classes: ["font-mono"], text: t("forms.bot_settings.not_select") })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -377,9 +378,9 @@ export class BotSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("message-circle", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.bot_settings.bio}
+                                ${t("forms.bot_settings.bio")}
                             </span>
-                            ${Inputs.textarea({ placeholder: window._lc.forms.bot_settings.bio, name: "bio", rows: 4 })}
+                            ${Inputs.textarea({ placeholder: t("forms.bot_settings.bio"), name: "bio", rows: 4 })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -387,9 +388,9 @@ export class BotSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("id", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.bot_settings.id}
+                                ${t("forms.bot_settings.id")}
                             </span>
-                            ${Inputs.create({ placeholder: window._lc.forms.bot_settings.id, name: "id", classes: ["font-mono"] })}
+                            ${Inputs.create({ placeholder: t("forms.bot_settings.id"), name: "id", classes: ["font-mono"] })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -397,9 +398,9 @@ export class BotSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("key", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.bot_settings.token}
+                                ${t("forms.bot_settings.token")}
                             </span>
-                            ${Inputs.create({ placeholder: window._lc.forms.bot_settings.token, name: "token", classes: ["font-mono"] })}
+                            ${Inputs.create({ placeholder: t("forms.bot_settings.token"), name: "token", classes: ["font-mono"] })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -409,7 +410,7 @@ export class BotSettings {
                                         <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                             ${Icons.icon("menu", { settings: { size: 20 } })?.outerHTML ?? ""}
                                         </span>
-                                        ${window._lc.forms.bot_settings.bot_menu}
+                                        ${t("forms.bot_settings.bot_menu")}
                                     </span>
                                     ${Buttons.transparent({ shape: "circle", attributes: ["action-context-menu"], icon: "dots-vertical" })}
                                 </div>
@@ -424,7 +425,7 @@ export class BotSettings {
                                     <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                         ${Icons.icon("apps", { settings: { size: 20 } })?.outerHTML ?? ""}
                                     </span>
-                                    ${window._lc.forms.bot_settings.apps}
+                                    ${t("forms.bot_settings.apps")}
                                 </span>
                                 ${Buttons.transparent({ shape: "circle", attributes: ["action-add-app"], icon: "plus" })}
                             </div>

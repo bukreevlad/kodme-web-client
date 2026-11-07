@@ -11,6 +11,7 @@ import { saveSettingsRequest } from "../requests/save.js";
 
 // Импортируем типы
 import type { UserSettings } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -46,7 +47,7 @@ export async function saveHandler(form: UserSettings): Promise<void> {
         if (response.status) {
 
             // Toast
-            Toast.success(window._lc.forms.user_settings.toasts.success_save);
+            Toast.success(t("forms.user_settings.toasts.success_save"));
 
             // Обновляем данные в сессии (сессии может не быть — тогда
             // просто закрываем форму)
@@ -80,7 +81,7 @@ export async function saveHandler(form: UserSettings): Promise<void> {
             firstName.classList.add("invalid");
 
             // Toast
-            Toast.error(window._lc.forms.user_settings.toasts.first_name_required);
+            Toast.error(t("forms.user_settings.toasts.first_name_required"));
             isToastShown = true;
         }
 
@@ -89,7 +90,7 @@ export async function saveHandler(form: UserSettings): Promise<void> {
             firstName.classList.add("invalid");
 
             // Toast
-            Toast.error(window._lc.forms.user_settings.toasts.first_name_invalid);
+            Toast.error(t("forms.user_settings.toasts.first_name_invalid"));
             isToastShown = true;
         }
 
@@ -98,7 +99,7 @@ export async function saveHandler(form: UserSettings): Promise<void> {
             lastName.classList.add("invalid");
 
             // Toast
-            Toast.error(window._lc.forms.user_settings.toasts.last_name_invalid);
+            Toast.error(t("forms.user_settings.toasts.last_name_invalid"));
             isToastShown = true;
         }
 
@@ -107,13 +108,13 @@ export async function saveHandler(form: UserSettings): Promise<void> {
             bio.classList.add("invalid");
 
             // Toast
-            Toast.error(window._lc.forms.user_settings.toasts.bio_invalid);
+            Toast.error(t("forms.user_settings.toasts.bio_invalid"));
             isToastShown = true;
         }
 
         // Прочая ошибка сервера
         if (!isToastShown) {
-            Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+            Toast.error(t("api.errors.server_error"));
         }
 
     }

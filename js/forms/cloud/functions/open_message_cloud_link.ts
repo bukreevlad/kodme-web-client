@@ -12,6 +12,7 @@ import { Cloud } from "../index.js";
 
 // Импортируем dialogs
 import { CloudFileInfo } from "../dialogs/file_info/index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -51,7 +52,7 @@ export async function openMessageCloudLink(token: string): Promise<boolean> {
             ? String(error.message)
             : "";
         if (message.includes("Ссылка недействительна")) {
-            Toast.error(window._lc.forms.messages.toasts.cloud_link_not_valid);
+            Toast.error(t("forms.messages.toasts.cloud_link_not_valid"));
         } else {
             Logger.error(error);
         }

@@ -10,6 +10,7 @@ import { saveSettingsRequest } from "../requests/save_settings.js";
 
 // Импортируем типы
 import type { GroupTopicSettings } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -48,7 +49,7 @@ export async function saveHandler(form: GroupTopicSettings): Promise<void> {
         if (response.status) {
 
             // Toast
-            Toast.success(window._lc.forms.group_topic_settings.toasts.success_save);
+            Toast.success(t("forms.group_topic_settings.toasts.success_save"));
 
             // Закрываем форму
             form.modal?.close();
@@ -68,7 +69,7 @@ export async function saveHandler(form: GroupTopicSettings): Promise<void> {
             name.focus();
 
             // Toast
-            Toast.error(window._lc.forms.group_topic_settings.toasts.invalid_name);
+            Toast.error(t("forms.group_topic_settings.toasts.invalid_name"));
             isToastShown = true;
         }
 
@@ -79,13 +80,13 @@ export async function saveHandler(form: GroupTopicSettings): Promise<void> {
             about.focus();
 
             // Toast
-            Toast.error(window._lc.forms.group_topic_settings.toasts.invalid_about);
+            Toast.error(t("forms.group_topic_settings.toasts.invalid_about"));
             isToastShown = true;
         }
 
         // Прочая ошибка сервера
         if (!isToastShown) {
-            Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+            Toast.error(t("api.errors.server_error"));
         }
 
     }

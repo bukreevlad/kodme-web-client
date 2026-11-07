@@ -16,6 +16,7 @@ import { confirmTotpHandler } from "./confirm_totp.js";
 
 // Импортируем типы
 import type { UserSettingSecurity } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -54,25 +55,25 @@ export async function enableTotpHandler(form: UserSettingSecurity): Promise<void
 
         // Если TOTP уже включён
         if (getErrorMessage(error).includes("ALREADY_ENABLED")) {
-            Toast.error(window._lc.forms.user_setting_security.toasts.totp_already_enabled);
+            Toast.error(t("forms.user_setting_security.toasts.totp_already_enabled"));
             isToastShown = true;
         }
 
         // Если TOTP запрещён на сервере
         if (getErrorMessage(error).includes("DISABLED")) {
-            Toast.error(window._lc.forms.user_setting_security.toasts.security_disabled);
+            Toast.error(t("forms.user_setting_security.toasts.security_disabled"));
             isToastShown = true;
         }
 
         // Если превышен лимит запросов
         if (getErrorMessage(error).includes("RATE_LIMIT_EXCEEDED") || getErrorStatus(error) === 429) {
-            Toast.warning(window._lc.forms.user_setting_security.toasts.too_many_requests);
+            Toast.warning(t("forms.user_setting_security.toasts.too_many_requests"));
             isToastShown = true;
         }
 
         // Если ошибка не распознана — показываем общую
         if (!isToastShown) {
-            Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+            Toast.error(t("api.errors.server_error"));
         }
 
     }

@@ -6,6 +6,7 @@ import { Toast } from "../../../components/toast.js";
 
 // Импортируем типы
 import type { AppNewVersionAvailable } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -24,7 +25,7 @@ export async function updateAppHandler(form: AppNewVersionAvailable): Promise<vo
             form.callback(true);
 
             // Toast
-            Toast.warning(window._lc.forms.app_new_version_available.toasts.update_ready);
+            Toast.warning(t("forms.app_new_version_available.toasts.update_ready"));
 
         }
 

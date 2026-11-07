@@ -9,6 +9,7 @@ import { renderWaveForm } from "./render_wave_form.js";
 // Импортируем типы
 import type { AudioPlayer } from "../index.js";
 import { isThumbnails } from "../types.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -71,8 +72,8 @@ export function updateTrackInfo(form: AudioPlayer): void {
         // Тексты
         const titleEl = form.tpl?.querySelector("[data-title]");
         const authorEl = form.tpl?.querySelector("[data-author]");
-        if (titleEl) titleEl.textContent = track.title || window._lc.forms.audio_player.unknown_track;
-        if (authorEl) authorEl.textContent = track.author || window._lc.forms.audio_player.unknown_author;
+        if (titleEl) titleEl.textContent = track.title || t("forms.audio_player.unknown_track");
+        if (authorEl) authorEl.textContent = track.author || t("forms.audio_player.unknown_author");
 
         // Рендерим wave bars
         renderWaveForm(form);

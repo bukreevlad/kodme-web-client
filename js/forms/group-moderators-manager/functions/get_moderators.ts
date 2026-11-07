@@ -14,6 +14,7 @@ import { getModeratorsRequest } from "../requests/get_moderators.js";
 // Импортируем типы
 import type { GroupModeratorsManager } from "../index.js";
 import type { GroupModeratorAddOptions } from "../types.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -183,7 +184,7 @@ function toastErrorWithThrottle(form: GroupModeratorsManager, error: unknown): v
         // Показываем тост (коды ошибок разбирает сам toastError)
         toastError(error, {
             context: "[app][group-moderators-manager][get-moderators]",
-            fallback: window._lc?.forms?.group_moderators_manager?.toasts?.load_error
+            fallback: t("forms.group_moderators_manager.toasts.load_error")
         });
 
     } catch (toastError_) {

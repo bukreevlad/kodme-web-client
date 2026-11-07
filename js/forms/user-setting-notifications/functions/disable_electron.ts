@@ -6,6 +6,7 @@ import { Toast } from "../../../components/toast.js";
 
 // Импортируем типы
 import type { UserSettingNotifications } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -20,7 +21,7 @@ export async function disableElectron(form: UserSettingNotifications): Promise<v
     ElectronNotifications.setEnabled(false);
 
     // Toast
-    Toast.success(window._lc.forms.user_setting_notifications.toasts.electron_disabled);
+    Toast.success(t("forms.user_setting_notifications.toasts.electron_disabled"));
 
     // Закрываем форму
     form.modal?.close();

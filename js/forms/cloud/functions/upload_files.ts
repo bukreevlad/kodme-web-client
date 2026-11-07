@@ -17,6 +17,7 @@ import type { SaveFileData } from "../requests/save_file.js";
 // Импортируем типы
 import type { Cloud } from "../index.js";
 import type { CloudItem } from "../types.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -38,7 +39,7 @@ export async function uploadFiles(form: Cloud, files: FileList): Promise<void> {
 
     } catch (error) {
         Logger.error(error);
-        Toast.error(window._lc.forms.cloud.toasts.upload_error);
+        Toast.error(t("forms.cloud.toasts.upload_error"));
     } finally {
 
         // Сбрасываем выбор файлов
@@ -207,7 +208,7 @@ async function _uploadFile(form: Cloud, file: File): Promise<void> {
         // здесь и не поднимаем ошибку наверх: там её поймал бы generic-тост
         if (getErrorCode(error) === "UPLOAD_REJECTED") {
             store.remove(tempId);
-            Toast.error(window._lc.api.errors.upload_rejected);
+            Toast.error(t("api.errors.upload_rejected"));
             return;
         }
 
@@ -236,9 +237,9 @@ function _showUploadError(response: unknown): void {
 
     // Если расширение не разрешено — показываем соответствующее сообщение
     if (code === "124206") {
-        Toast.error(window._lc.forms.cloud.toasts.invalid_extension);
+        Toast.error(t("forms.cloud.toasts.invalid_extension"));
     } else {
-        Toast.error(window._lc.forms.cloud.toasts.upload_error);
+        Toast.error(t("forms.cloud.toasts.upload_error"));
     }
 
 }

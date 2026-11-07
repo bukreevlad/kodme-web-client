@@ -15,6 +15,7 @@ import { sourceHandler } from "./source.js";
 // Импортируем типы
 import type { SessionProfile } from "../../menu/types.js";
 import type { BroadcastPlay } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -42,7 +43,7 @@ export async function menuHandler(event: Event, form: BroadcastPlay): Promise<vo
         // плашка поверх видео, но она перекрывала кадр и убрана
         if (form.cast?.stream?.online) {
             menuItems.push({
-                text: window._lc.forms.broadcast_play.context_menu.source,
+                text: t("forms.broadcast_play.context_menu.source"),
                 iconName: "antenna-bars-5",
                 onClick: () => sourceHandler(form, form.menuButton)
             });
@@ -50,7 +51,7 @@ export async function menuHandler(event: Event, form: BroadcastPlay): Promise<vo
 
         // menu item
         const settings = {
-            text: window._lc.forms.broadcast_play.context_menu.settings,
+            text: t("forms.broadcast_play.context_menu.settings"),
             iconName: "Settings",
             onClick: () => new BroadcastSettings({ castId: form.castId })
         };

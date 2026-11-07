@@ -3,6 +3,7 @@ import { ApiError } from "./api_error.js";
 
 // Импортируем типы
 import type { ServerErrorPayload } from "../../types/domain.js";
+import { t } from "../i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -55,13 +56,13 @@ export class ResponseHandler {
             }
 
         } catch (e) {
-            errorDetails.message = errorDetails.message || "Невозможно прочитать тело ответа.";
+            errorDetails.message = errorDetails.message || t("utils.fetch_handler.body_read_failed");
         }
 
         // Формируем структурированное сообщение об ошибке
         const errorMessage = errorDetails.message
-            ? `Ошибка ${response.status}: ${errorDetails.message}`
-            : `Запрос не удался. Статус: ${response.status} (${response.statusText})`;
+            ? t("utils.fetch_handler.http_error", { status: response.status, message: errorDetails.message })
+            : t("utils.fetch_handler.request_failed", { status: response.status, statusText: response.statusText });
 
         // Создаем и выбрасываем типизированную ошибку API, включая статус и детали
         throw new ApiError(errorMessage, {

@@ -13,6 +13,7 @@ import { Toast } from "../../../components/toast.js";
 
 // Импортируем типы
 import type { MeetPlay } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -80,7 +81,7 @@ export async function applyNoiseSuppression(form: MeetPlay, enabled: boolean): P
 
         // Тост вместо падения: включение микрофона уже состоялось,
         // сбой обработки не должен его отменить
-        Toast.error(window._lc.forms.meet_play.toasts.noise_error);
+        Toast.error(t("forms.meet_play.toasts.noise_error"));
 
     }
 

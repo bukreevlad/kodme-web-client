@@ -1,5 +1,6 @@
 // Импортируем utils
 import { Icons } from "../../../../utils/icons.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -51,6 +52,6 @@ export function renderPin(tile: HTMLElement | null | undefined, isPinned = false
     // скринридер промолчит. Подпись — из меню, отдельного ключа ради
     // одного слова не заводим
     element.setAttribute("role", "img");
-    element.setAttribute("aria-label", pinned ? window._lc?.forms?.meet_play?.context_menu?.make_main || "" : "");
+    element.setAttribute("aria-label", pinned ? t("forms.meet_play.context_menu.make_main") : "");
 
 }

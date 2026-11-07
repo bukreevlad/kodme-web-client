@@ -1,6 +1,5 @@
 // Импортируем utils
 import { Logger } from "../../../utils/logs/logger.js";
-import { TimeAgoFormatter } from "../../../utils/date/time_ago_formatter.js";
 
 // Импортируем components
 import { Avatars } from "../../../components/avatars.js";
@@ -11,6 +10,7 @@ import { UserProfile } from "../../user-profile/index.js";
 // Импортируем типы
 import type { SearchRecord } from "../types.js";
 import type { Search } from "../index.js";
+import { I18n, t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -113,14 +113,13 @@ export function createUserItem(form: Search, data: SearchRecord): HTMLElement {
             if (name) name.textContent = next.display_name ?? "";
 
             // Подпись: «В сети» / «Был(а) …» / «Не в сети»
-            const texts = window._lc?.forms?.search?._components?.users;
-            if (subtitle && texts) {
+            if (subtitle) {
                 if (next.is_online) {
-                    subtitle.textContent = texts.online ?? "";
+                    I18n.setPlain(subtitle, t("forms.search._components.users.online"));
                 } else if (next.last_action_at) {
-                    subtitle.textContent = `${texts.was ?? ""} ${new TimeAgoFormatter(next.last_action_at).formattedTime}`;
+                    I18n.setTime(subtitle, next.last_action_at, undefined, "forms.search._components.users.was");
                 } else {
-                    subtitle.textContent = texts.not_online ?? "";
+                    I18n.setPlain(subtitle, t("forms.search._components.users.not_online"));
                 }
             }
 

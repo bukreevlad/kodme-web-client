@@ -11,6 +11,7 @@ import { Sessions } from "../../sessions/index.js";
 // Импортируем типы
 import type { LoginWithQRCode } from "../index.js";
 import type { QRCodeStatusResponse } from "../types.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -57,7 +58,7 @@ export async function qrCodePollingHandler(form: LoginWithQRCode, response: QRCo
             form.modal?.close();
 
             // Toast успеха: авторизация завершена
-            Toast.success(window._lc.forms.login_with_qrcode.toasts.success_login);
+            Toast.success(t("forms.login_with_qrcode.toasts.success_login"));
 
             // Открываем форму sessions
             new Sessions();
@@ -68,7 +69,7 @@ export async function qrCodePollingHandler(form: LoginWithQRCode, response: QRCo
         Logger.error(error);
 
         // Toast: общая ошибка сервера
-        Toast.error(window._lc.api.errors.server_error);
+        Toast.error(t("api.errors.server_error"));
 
     }
 

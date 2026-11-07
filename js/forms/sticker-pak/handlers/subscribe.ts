@@ -9,6 +9,7 @@ import { subscribeRequest } from "../../sticker-paks/requests/subscribe.js";
 
 // Импортируем типы
 import type { StickerPak } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -33,7 +34,7 @@ export async function subscribeHandler(form: StickerPak): Promise<void> {
         // Кнопка переходит в состояние «Добавлен»
         const button = form.tpl?.querySelector<HTMLButtonElement>(":scope >.header [action-subscribe]");
         if (button) {
-            button.textContent = window._lc.forms.sticker_pak.subscribe.added;
+            button.textContent = t("forms.sticker_pak.subscribe.added");
             button.disabled = true;
         }
 
@@ -45,7 +46,7 @@ export async function subscribeHandler(form: StickerPak): Promise<void> {
         // Показываем тост (коды ошибок разбирает сам toastError)
         toastError(error, {
             context: "[app][sticker-pak][subscribe]",
-            fallback: window._lc.forms.sticker_pak.toasts.subscribe_error
+            fallback: t("forms.sticker_pak.toasts.subscribe_error")
         });
 
     }

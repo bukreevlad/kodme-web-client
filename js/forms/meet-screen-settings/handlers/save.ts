@@ -9,6 +9,7 @@ import { Toast } from "../../../components/toast.js";
 
 // Импортируем типы
 import type { MeetScreenSettings } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * Guard: ключ пресета есть в списке ScreenSharePresets.
@@ -135,7 +136,7 @@ export async function saveScreenSettingsHandler(form: MeetScreenSettings): Promi
         }
 
         // Toast
-        Toast.success(window._lc.forms.meet_play.toasts.success_save);
+        Toast.success(t("forms.meet_play.toasts.success_save"));
 
         form.modal?.close();
 
@@ -143,7 +144,7 @@ export async function saveScreenSettingsHandler(form: MeetScreenSettings): Promi
         Logger.error("Ошибка сохранения настроек экрана:", error);
 
         // Toast
-        Toast.error(window._lc.forms.meet_play.toasts.save_error);
+        Toast.error(t("forms.meet_play.toasts.save_error"));
 
         // Возвращаем кнопку в исходное состояние при ошибке
         const saveBtn = form.tpl?.querySelector<HTMLButtonElement>(":scope >.header [action-save]");

@@ -13,6 +13,7 @@ import { Buttons } from "../../components/buttons.js";
 
 // Импортируем handlers
 import { updateAppHandler } from "./handlers/update.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Данные формы уведомления о новой версии приложения.
@@ -187,11 +188,11 @@ export class AppNewVersionAvailable {
         
             <div class="cdm-modal app-new-version-available flex flex-col ${CDM_MODAL_CLASSES()}">
                  <div class="${CDM_MODAL_HEADER_CLASSES()}">
-                    <span class="font-semibold text-lg">${window._lc.forms.app_new_version_available.update_desc}</span>
+                    <span class="font-semibold text-lg">${t("forms.app_new_version_available.update_desc")}</span>
                 </div>
                  <div class="${CDM_MODAL_CONTENT_CLASSES()} items-center">
 
-                    <span class="text-sm text-secondary">${window._lc.forms.app_new_version_available.update_last_desc}</span>
+                    <span class="text-sm text-secondary">${t("forms.app_new_version_available.update_last_desc")}</span>
 
                 </div>
                 <div class="${CDM_MODAL_FOOTER_CLASSES()}">
@@ -199,13 +200,13 @@ export class AppNewVersionAvailable {
                         shape: "square",
                         attributes: ["action-cancel"],
                         classes: ["w-full"],
-                        text: window._lc.forms.app_new_version_available.cancel
+                        text: t("forms.app_new_version_available.cancel")
                     })}
                     ${Buttons.primary({
                         shape: "square",
                         attributes: ["action-update"],
                         classes: ["w-full"],
-                        text: window._lc.forms.app_new_version_available.update
+                        text: t("forms.app_new_version_available.update")
                     })}
                 </div>
             </div>

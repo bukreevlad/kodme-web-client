@@ -21,6 +21,7 @@ import { saveHandler } from "./handlers/save.js";
 
 // Импортируем типы
 import type { BotAppRecord } from "../bot-settings/types.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки диалога редактирования приложения.
@@ -254,7 +255,7 @@ export class EditBotApp {
             <div class="cdm-form bot-edit-app flex flex-col gap-0 ${CDM_FORM_CLASSES()} w-full">
                 <div class="header flex flex-row gap-2 p-2 items-center ${CDM_FORM_HEADER_CLASSES()}">
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "ArrowLeft" })}
-                    <span class="flex-1 font-semibold text-base truncate">${window._lc.forms.bot_settings.dialogs.edit_app.title}</span>
+                    <span class="flex-1 font-semibold text-base truncate">${t("forms.bot_settings.dialogs.edit_app.title")}</span>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-save"], icon: "device-floppy" })}
                 </div>
                  <div class="content w-full h-full flex ${CDM_FORM_CONTENT_CLASSES()}">
@@ -265,9 +266,9 @@ export class EditBotApp {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("label", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.bot_settings.dialogs.edit_app.name}
+                                ${t("forms.bot_settings.dialogs.edit_app.name")}
                             </span>
-                            ${Inputs.create({ placeholder: window._lc.forms.bot_settings.dialogs.edit_app.name, name: "name" })}
+                            ${Inputs.create({ placeholder: t("forms.bot_settings.dialogs.edit_app.name"), name: "name" })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -275,9 +276,9 @@ export class EditBotApp {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("link", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.bot_settings.dialogs.edit_app.link}
+                                ${t("forms.bot_settings.dialogs.edit_app.link")}
                             </span>
-                            ${Inputs.create({ placeholder: window._lc.forms.bot_settings.dialogs.edit_app.link, name: "link" })}
+                            ${Inputs.create({ placeholder: t("forms.bot_settings.dialogs.edit_app.link"), name: "link" })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -285,9 +286,9 @@ export class EditBotApp {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("message-circle", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.bot_settings.dialogs.edit_app.about}
+                                ${t("forms.bot_settings.dialogs.edit_app.about")}
                             </span>
-                            ${Inputs.textarea({ placeholder: window._lc.forms.bot_settings.dialogs.edit_app.about, name: "about", rows: 4 })}
+                            ${Inputs.textarea({ placeholder: t("forms.bot_settings.dialogs.edit_app.about"), name: "about", rows: 4 })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -295,9 +296,9 @@ export class EditBotApp {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("external-link", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.bot_settings.dialogs.edit_app.url}
+                                ${t("forms.bot_settings.dialogs.edit_app.url")}
                             </span>
-                            ${Inputs.create({ placeholder: window._lc.forms.bot_settings.dialogs.edit_app.url, name: "url" })}
+                            ${Inputs.create({ placeholder: t("forms.bot_settings.dialogs.edit_app.url"), name: "url" })}
                         </div>
 
                     </div>

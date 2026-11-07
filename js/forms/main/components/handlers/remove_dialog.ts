@@ -18,6 +18,7 @@ import { messagesTable, pendingMessagesTable } from "../../db.js";
 
 // Импортируем типы
 import type { ChannelItem } from "../channel.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -79,7 +80,7 @@ export async function removeDialogHandler(channel: ChannelItem): Promise<void> {
                 });
 
                 // Уведомление
-                Toast.success(window._lc.forms.main.components.channels.context_menu.toasts.success_remove_dialog, {
+                Toast.success(t("forms.main.components.channels.context_menu.toasts.success_remove_dialog"), {
                     position: "bottom-center"
                 });
             }

@@ -7,6 +7,7 @@ import { Inputs } from "../../../components/inputs.js";
 
 // Импортируем типы
 import type { Registration } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -27,14 +28,14 @@ export function stepNamesHandler(form: Registration): void {
         // Если email пустой
         if (!form.email) {
             Inputs.markInvalid(email, true);
-            Toast.error(window._lc.forms.registration.toasts.not_email);
+            Toast.error(t("forms.registration.toasts.not_email"));
             return;
         }
 
         // Если email некорректный (предупреждение)
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
             Inputs.markInvalid(email, true);
-            Toast.warning(window._lc.forms.registration.toasts.invalid_email);
+            Toast.warning(t("forms.registration.toasts.invalid_email"));
             return;
         }
 

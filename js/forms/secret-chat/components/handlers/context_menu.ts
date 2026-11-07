@@ -16,6 +16,7 @@ import { removeTemporaryMessageHandler } from "./remove_temporary_message.js";
 // Импортируем типы
 import type { PopoverMenuInput } from "../../../../components/overlay/popover_menu.js";
 import type { SecretChatMessageItem } from "../message.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -49,7 +50,7 @@ export async function contextMenuHandler(event: Event, message: SecretChatMessag
 
         // menu item
         let copy = {
-            text: window._lc.forms.secret_chat.context_menu.copy,
+            text: t("forms.secret_chat.context_menu.copy"),
             iconName: "Copy",
             onClick: () => copyMessageHandler(message)
         };
@@ -61,7 +62,7 @@ export async function contextMenuHandler(event: Event, message: SecretChatMessag
 
         // menu item
         let reply = {
-            text: window._lc.forms.secret_chat.context_menu.reply,
+            text: t("forms.secret_chat.context_menu.reply"),
             iconName: "arrow-back-up-double",
             onClick: () => replyMessageHandler(message)
         };
@@ -73,7 +74,7 @@ export async function contextMenuHandler(event: Event, message: SecretChatMessag
 
         // menu item
         let edit = {
-            text: window._lc.forms.secret_chat.context_menu.edit,
+            text: t("forms.secret_chat.context_menu.edit"),
             iconName: "pencil",
             onClick: () => editMessageHandler(message)
         };
@@ -85,7 +86,7 @@ export async function contextMenuHandler(event: Event, message: SecretChatMessag
 
         // menu item
         let remove = {
-            text: window._lc.forms.secret_chat.context_menu.remove,
+            text: t("forms.secret_chat.context_menu.remove"),
             iconName: "trash",
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => removeMessageHandler(message)
@@ -98,7 +99,7 @@ export async function contextMenuHandler(event: Event, message: SecretChatMessag
 
         // menu item
         let removeTemporary = {
-            text: window._lc.forms.secret_chat.context_menu.remove,
+            text: t("forms.secret_chat.context_menu.remove"),
             iconName: "trash",
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => removeTemporaryMessageHandler(message)

@@ -12,7 +12,7 @@ import { LocalStorage } from "../../utils/local_storage.js";
 import { Buttons } from "../../components/buttons.js";
 import { Inputs } from "../../components/inputs.js";
 import { Icons } from "../../utils/icons.js";
-import { getDeclension } from "../../utils/string/declensions.js";
+import { t } from "../../utils/i18n/index.js";
 import { getErrorCode, getErrorName } from "../../utils/helpers/error_util.js";
 import { CDM_FORM_CLASSES, CDM_FORM_HEADER_CLASSES, CDM_FORM_CONTENT_CLASSES } from "../../config/constants.js";
 
@@ -487,7 +487,7 @@ export class Comments {
                     id: this.modal.options.id,
                     data: {
                         instance: this,
-                        title: window._lc.forms.comments.title,
+                        title: t("forms.comments.title"),
                         subtitle: ""
                     }
                 }
@@ -576,11 +576,11 @@ export class Comments {
         this.subtitle = this.tpl.querySelector(":scope >.header [data-subtitle]");
 
         // Заголовок — «Комментарии», подзаголовок — число комментариев поста
-        if (this.name) this.name.textContent = window._lc.forms.comments.title;
+        if (this.name) this.name.textContent = t("forms.comments.title");
         if (this.subtitle) {
 
             const total = data.message.count_comments ?? 0;
-            this.subtitle.textContent = `${total} ${getDeclension(total, window._lc.forms.comments.dec_comments)}`;
+            this.subtitle.textContent = `${total} ${t("forms.comments.dec_comments", { count: total })}`;
 
         }
 
@@ -743,14 +743,14 @@ export class Comments {
                             ${Buttons.danger({ shape: "circle", attributes: ["action-voice-note-send"], icon: { name: "send-2", settings: { filled: true } } })}
                         </div>
                         <div data-voice-note-cancel-hint class="hidden absolute inset-0 items-center justify-center gap-2 font-semibold text-sm text-[var(--color-red)]">
-                            ${slideToCancelIcon} ${window._lc.forms.comments.voice_recorder.slide_to_cancel}
+                            ${slideToCancelIcon} ${t("forms.comments.voice_recorder.slide_to_cancel")}
                         </div>
                     </div>
 
                     <div class="wrap-footer flex flex-row gap-0 p-2 w-full md:w-[var(--messages-block-max-width)] md:max-w-[var(--messages-block-max-width)] shadow-sm rounded-4xl max-md:rounded-none items-center m-auto bg-[var(--form-bg)]">
                         <div class="flex flex-row gap-0 h-full w-full items-end">
                             ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-emoji"], icon: "mood-smile" })}
-                            ${Inputs.textarea({ intent: "transparent", placeholder: window._lc.forms.comments.enter_comment, name: "comment", rows: 1 })}
+                            ${Inputs.textarea({ intent: "transparent", placeholder: t("forms.comments.enter_comment"), name: "comment", rows: 1 })}
                             ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-attach-file"], icon: "Paperclip" })}
                             ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-video-recorder"], icon: "Video" })}
                             ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-voice-recorder"], icon: "microphone" })}

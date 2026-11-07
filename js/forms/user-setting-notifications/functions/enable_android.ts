@@ -16,6 +16,7 @@ import { enableFcmPushRequest } from "../requests/enable_fcm.js";
 // Импортируем типы
 import type { Answer } from "../../../types/domain.js";
 import type { UserSettingNotifications } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -42,7 +43,7 @@ export async function enableAndroid(form: UserSettingNotifications): Promise<voi
         if (!subscription) {
 
             // Toast
-            Toast.error(window._lc.forms.user_setting_notifications.toasts.not_access);
+            Toast.error(t("forms.user_setting_notifications.toasts.not_access"));
 
         } else {
 
@@ -54,7 +55,7 @@ export async function enableAndroid(form: UserSettingNotifications): Promise<voi
             if (!token) {
 
                 // Toast
-                Toast.error(window._lc.forms.user_setting_notifications.toasts.not_access);
+                Toast.error(t("forms.user_setting_notifications.toasts.not_access"));
 
                 // Если провайдер huawei
             } else if (subscription.provider === "hms") {
@@ -80,7 +81,7 @@ export async function enableAndroid(form: UserSettingNotifications): Promise<voi
         if (response && response?.status) {
 
             // Toast
-            Toast.success(window._lc.forms.user_setting_notifications.toasts.success_enable);
+            Toast.success(t("forms.user_setting_notifications.toasts.success_enable"));
 
             // Закрываем форму
             form.modal?.close();
@@ -88,7 +89,7 @@ export async function enableAndroid(form: UserSettingNotifications): Promise<voi
         } else {
 
             // Toast
-            Toast.error(window._lc.forms.user_setting_notifications.toasts.not_access_push);
+            Toast.error(t("forms.user_setting_notifications.toasts.not_access_push"));
 
         }
 

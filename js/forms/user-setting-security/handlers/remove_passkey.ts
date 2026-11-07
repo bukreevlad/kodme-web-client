@@ -17,6 +17,7 @@ import { PasskeyRemoveDialog } from "../dialogs/passkey_remove/index.js";
 // Импортируем типы
 import type { UserSettingSecurity } from "../index.js";
 import type { PasskeyListItem } from "../types.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -52,7 +53,7 @@ export async function removePasskeyHandler(form: UserSettingSecurity, data: Pass
                         dialogConfirm?.modal?.close();
 
                         // Toast
-                        Toast.success(window._lc.forms.user_setting_security.toasts.passkey_removed);
+                        Toast.success(t("forms.user_setting_security.toasts.passkey_removed"));
 
                         // Удаляем элемент из Store формы (DOM убирает событие item::removed)
                         form.store.remove(data.id);
@@ -70,7 +71,7 @@ export async function removePasskeyHandler(form: UserSettingSecurity, data: Pass
 
                     // Если ключ не найден (уже удалён)
                     if (getErrorMessage(error).includes("NOT_FOUND")) {
-                        Toast.error(window._lc.forms.user_setting_security.toasts.passkey_not_found);
+                        Toast.error(t("forms.user_setting_security.toasts.passkey_not_found"));
                         isToastShown = true;
 
                         // Закрываем диалог (удалять больше нечего)
@@ -79,13 +80,13 @@ export async function removePasskeyHandler(form: UserSettingSecurity, data: Pass
 
                     // Если превышен лимит запросов
                     if (getErrorMessage(error).includes("RATE_LIMIT_EXCEEDED") || getErrorStatus(error) === 429) {
-                        Toast.warning(window._lc.forms.user_setting_security.toasts.too_many_requests);
+                        Toast.warning(t("forms.user_setting_security.toasts.too_many_requests"));
                         isToastShown = true;
                     }
 
                     // Если ошибка не распознана — показываем общую
                     if (!isToastShown) {
-                        Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+                        Toast.error(t("api.errors.server_error"));
                     }
 
                 }

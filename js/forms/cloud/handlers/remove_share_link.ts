@@ -10,6 +10,7 @@ import { removeShareLinkRequest } from "../requests/remove_share_link.js";
 // Импортируем типы
 import type { CloudShareLinkRow } from "../types.js";
 import type { Cloud } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -35,7 +36,7 @@ export async function removeShareLinkHandler(form: Cloud, linkData: CloudShareLi
             }
 
             // Показываем уведомление
-            Toast.success(window._lc.forms.cloud.toasts.link_revoked);
+            Toast.success(t("forms.cloud.toasts.link_revoked"));
 
         }
 

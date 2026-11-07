@@ -17,6 +17,7 @@ import { startCallRequest } from "../requests/start.js";
 // «index → handlers/start_call → index» безопасен: к моменту вызова
 // обработчика класс уже объявлен (обращение к Call отложено на runtime)
 import { Call } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -75,13 +76,13 @@ export async function startCallHandler(form: Call): Promise<boolean> {
         // ---------- ДОСТУП ----------
         // Звонки запрещены настройками приватности
         if (message.includes("ACCESS_DENIED_CALLS_RESTRICTED")) {
-            Toast.error(window._lc.forms.call.toasts.calls_restricted, { position: "top-center" });
+            Toast.error(t("forms.call.toasts.calls_restricted"), { position: "top-center" });
             isToastShown = true;
         }
 
         // Собеседник не найден или скрыт от нас
         if (message.includes("ACCESS_DENIED_USER_NOT_FOUND")) {
-            Toast.error(window._lc.forms.call.toasts.user_not_found, { position: "top-center" });
+            Toast.error(t("forms.call.toasts.user_not_found"), { position: "top-center" });
             isToastShown = true;
         }
         // ---------- ДОСТУП ----------
@@ -90,14 +91,14 @@ export async function startCallHandler(form: Call): Promise<boolean> {
         // У звонящего уже идёт другой звонок (или звонок собеседника
         // ещё не принят — в него вливаться рано)
         if (message.includes("CALL_BUSY")) {
-            Toast.error(window._lc.forms.call.toasts.busy, { position: "top-center" });
+            Toast.error(t("forms.call.toasts.busy"), { position: "top-center" });
             isToastShown = true;
         }
         // ---------- ЗАНЯТОСТЬ ----------
 
         // Прочая ошибка сервера
         if (!isToastShown) {
-            Toast.error(window._lc.forms.call.toasts.start_error, { position: "top-center" });
+            Toast.error(t("forms.call.toasts.start_error"), { position: "top-center" });
         }
 
         return false;

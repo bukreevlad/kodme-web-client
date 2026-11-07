@@ -9,6 +9,7 @@ import { formatDuration } from "./start_timer.js";
 
 // Импортируем типы
 import type { Call } from "../index.js";
+import { I18n } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -29,7 +30,7 @@ export function startNoAnswerTimer(form: Call): void {
         if (form?.noAnswerTimer) return;
 
         const deadline = Date.now() + CALL_NO_ANSWER_TIMEOUT;
-        const locale = window._lc.forms.call;
+        const locale = I18n.tree.forms.call;
 
         const tick = () => {
 

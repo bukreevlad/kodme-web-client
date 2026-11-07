@@ -16,6 +16,7 @@ import { getPasskeys } from "../functions/get_passkeys.js";
 
 // Импортируем типы
 import type { UserSettingSecurity } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -30,7 +31,7 @@ export async function addPasskeyHandler(form: UserSettingSecurity): Promise<void
 
         // Если WebAuthn недоступен (старый браузер/обёртка)
         if (!isWebauthnSupported()) {
-            Toast.error(window._lc.forms.user_setting_security.toasts.passkey_not_supported);
+            Toast.error(t("forms.user_setting_security.toasts.passkey_not_supported"));
             return;
         }
 
@@ -66,7 +67,7 @@ export async function addPasskeyHandler(form: UserSettingSecurity): Promise<void
         });
 
         // Toast: ключ добавлен
-        Toast.success(window._lc.forms.user_setting_security.toasts.passkey_added);
+        Toast.success(t("forms.user_setting_security.toasts.passkey_added"));
 
         // Обновляем список ключей
         await getPasskeys(form);
@@ -83,37 +84,37 @@ export async function addPasskeyHandler(form: UserSettingSecurity): Promise<void
 
         // Если достигнут лимит ключей
         if (getErrorMessage(error).includes("LIMIT_REACHED")) {
-            Toast.error(window._lc.forms.user_setting_security.toasts.passkey_limit);
+            Toast.error(t("forms.user_setting_security.toasts.passkey_limit"));
             isToastShown = true;
         }
 
         // Если такой ключ уже зарегистрирован
         if (getErrorMessage(error).includes("DUPLICATE")) {
-            Toast.error(window._lc.forms.user_setting_security.toasts.passkey_duplicate);
+            Toast.error(t("forms.user_setting_security.toasts.passkey_duplicate"));
             isToastShown = true;
         }
 
         // Если ceremony истекла или неверна
         if (getErrorMessage(error).includes("CEREMONY_")) {
-            Toast.error(window._lc.forms.user_setting_security.toasts.passkey_ceremony_expired);
+            Toast.error(t("forms.user_setting_security.toasts.passkey_ceremony_expired"));
             isToastShown = true;
         }
 
         // Если ответ аутентификатора не прошёл проверку
         if (getErrorMessage(error).includes("RESPONSE_INVALID")) {
-            Toast.error(window._lc.forms.user_setting_security.toasts.passkey_invalid);
+            Toast.error(t("forms.user_setting_security.toasts.passkey_invalid"));
             isToastShown = true;
         }
 
         // Если превышен лимит запросов
         if (getErrorMessage(error).includes("RATE_LIMIT_EXCEEDED") || getErrorStatus(error) === 429) {
-            Toast.warning(window._lc.forms.user_setting_security.toasts.too_many_requests);
+            Toast.warning(t("forms.user_setting_security.toasts.too_many_requests"));
             isToastShown = true;
         }
 
         // Если ошибка не распознана — показываем общую
         if (!isToastShown) {
-            Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+            Toast.error(t("api.errors.server_error"));
         }
 
     }

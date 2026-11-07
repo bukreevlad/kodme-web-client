@@ -1,19 +1,14 @@
 // ***************************************************************************
 // Глобальные объявления приложения (window.*, токены сборки).
-// Тип дерева локализации выводится из locales/ru.json — компилятор сверяет
-// пути ключей window._lc.<...> со структурой файла локализации.
 // ***************************************************************************
 
 // Импортируем типы
-import type ruLocale from "../../locales/ru.json";
 import type { AudioPlayerManager } from "../utils/audio/audio_player.js";
 import type { KodmeDesktopBridge } from "../utils/platform.bridge.js";
 import type { AndroidDownloadMessage } from "../utils/network/file_downloader.js";
 
 declare global {
     interface Window {
-        /** Дерево локализации из locales/ru.json (записывается в main). */
-        _lc: typeof ruLocale;
         /** Глобальный аудиопроигрыватель (записывается в main). */
         audioPlayer: AudioPlayerManager;
         /** Мост десктоп-обёртки Electron (exposeInMainWorld из preload.js). */

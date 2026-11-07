@@ -12,6 +12,7 @@ import type { AddBotApp } from "../index.js";
 
 // Импортируем utils
 import { getErrorMessage } from "../../../utils/helpers/error_util.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -43,17 +44,17 @@ export async function addHandler(form: AddBotApp): Promise<void> {
 
         // Проверяем name
         if (!Validator.matches(name, pregName)) {
-            throw "Наберите название (от 2 до 64 символов)";
+            throw t("forms.bot_editor.name_long");
         }
 
         // Проверяем about
         if (about && !Validator.matches(about, pregAbout)) {
-            throw "Некорректное описание";
+            throw t("forms.bot_editor.description");
         }
 
         // Проверяем link
         if (link && !Validator.matches(link, pregLink)) {
-            throw "Неправильная короткая ссылка";
+            throw t("forms.bot_editor.link");
         }
 
         // Проверяем url (исправлен регистр Validator и выброс простой строки)
@@ -67,7 +68,7 @@ export async function addHandler(form: AddBotApp): Promise<void> {
             disallow_auth: true,
             validate_length: true
         })) {
-            throw "Неверный формат URL (требуется HTTPS адрес)";
+            throw t("forms.bot_editor.url_https");
         }
 
         // Запрос к API
@@ -87,7 +88,7 @@ export async function addHandler(form: AddBotApp): Promise<void> {
 
     } catch (error) {
         // Если пришла ошибка из слоя запроса (объект Error), берем .message, иначе простую строку
-        let errorMessage = typeof error === "string" ? error : (getErrorMessage(error) || "Произошла ошибка");
+        let errorMessage = typeof error === "string" ? error : (getErrorMessage(error) || t("forms.bot_editor.error"));
         Toast.error(errorMessage, { position: "bottom-center" });
     }
 

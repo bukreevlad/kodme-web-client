@@ -20,6 +20,7 @@ import { sendDataRequest } from "../requests/send_data.js";
 // Импортируем типы
 import type { AppPermission } from "../../../bot-app-sdk.js";
 import type { BotApp } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /** Максимальная длина данных приложения (web_app_send_data). */
 const MAX_SEND_DATA_LENGTH = 8000;
@@ -259,7 +260,7 @@ export class Bridge {
 
         // Лимит данных: при превышении — тост и ничего не отправляем
         if (data.length > MAX_SEND_DATA_LENGTH) {
-            Toast.error(window._lc.forms.bot_app.toasts.data_too_long);
+            Toast.error(t("forms.bot_app.toasts.data_too_long"));
             return;
         }
 
@@ -274,11 +275,11 @@ export class Bridge {
 
             // Разбираем коды ошибок сервера
             if (getErrorMessage(error).includes("BOT_NOT_IN_NETWORK")) {
-                Toast.error(window._lc.forms.bot_app.toasts.bot_offline);
+                Toast.error(t("forms.bot_app.toasts.bot_offline"));
             } else if (getErrorStatus(error) === 429 || getErrorMessage(error).includes("RATE_LIMIT_EXCEEDED")) {
-                Toast.error(window._lc.api.errors.rate_limit_exceeded);
+                Toast.error(t("api.errors.rate_limit_exceeded"));
             } else {
-                Toast.error(window._lc.api.errors.server_error);
+                Toast.error(t("api.errors.server_error"));
             }
 
         }

@@ -18,6 +18,7 @@ import { SecretChatsManager } from "../../../../core/managers/secret_chats_manag
 
 // Импортируем handlers
 import { verifyHandler } from "./handlers/verify.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * Настройки диалога сверки ключей.
@@ -177,7 +178,7 @@ export class VerifyChat {
                 // (text-md в Tailwind нет — средний кегль это text-base)
                 if (emojiWrap) {
                     emojiWrap.className = "flex flex-row gap-3 items-center text-center py-2 text-base font-medium";
-                    emojiWrap.textContent = window._lc.forms.secret_chat_verify.not_ready;
+                    emojiWrap.textContent = t("forms.secret_chat_verify.not_ready");
                 }
 
                 if (match) match.disabled = true;
@@ -204,14 +205,14 @@ export class VerifyChat {
                 const label = document.createElement("span");
                 label.classList.add("text-sm", data.verified ? "text-[var(--color-green)]" : "text-secondary");
                 label.textContent = data.verified
-                    ? window._lc.forms.secret_chat_verify.verified
-                    : window._lc.forms.secret_chat_verify.not_verified;
+                    ? t("forms.secret_chat_verify.verified")
+                    : t("forms.secret_chat_verify.not_verified");
                 statusWrap.appendChild(label);
 
                 if (data.verified) {
                     statusWrap.appendChild(Buttons.link({
                         attributes: ["action-unverify"],
-                        text: window._lc.forms.secret_chat_verify.action_unverify
+                        text: t("forms.secret_chat_verify.action_unverify")
                     }).dom);
                 }
             }
@@ -289,16 +290,16 @@ export class VerifyChat {
                         <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                             ${Icons.icon("fingerprint", { settings: { size: 20 } })?.outerHTML ?? ""}
                         </span>
-                        ${window._lc.forms.secret_chat_verify.title}
+                        ${t("forms.secret_chat_verify.title")}
                     </span>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "x" })}
                 </div>
                  <div class="${CDM_MODAL_CONTENT_CLASSES()}">
                     <div class="flex flex-col gap-3">
-                        <span class="text-sm text-secondary">${window._lc.forms.secret_chat_verify.desc}</span>
+                        <span class="text-sm text-secondary">${t("forms.secret_chat_verify.desc")}</span>
                         <div data-emoji class="flex flex-row gap-3 items-center justify-center py-2 text-3xl"></div>
                         <div class="flex flex-col gap-1 items-center">
-                            <span class="text-xs text-muted">${window._lc.forms.secret_chat_verify.fingerprint_title}</span>
+                            <span class="text-xs text-muted">${t("forms.secret_chat_verify.fingerprint_title")}</span>
                             <span data-fingerprint class="text-sm font-mono break-all text-center"></span>
                         </div>
                         <div data-status class="flex flex-row gap-2 items-center justify-center flex-wrap"></div>
@@ -309,13 +310,13 @@ export class VerifyChat {
             shape: "square",
             attributes: ["action-mismatch"],
             classes: ["w-full"],
-            text: window._lc.forms.secret_chat_verify.action_mismatch
+            text: t("forms.secret_chat_verify.action_mismatch")
         })}
                     ${Buttons.primary({
             shape: "square",
             attributes: ["action-match"],
             classes: ["w-full"],
-            text: window._lc.forms.secret_chat_verify.action_match
+            text: t("forms.secret_chat_verify.action_match")
         })}
                 </div>
             </div>

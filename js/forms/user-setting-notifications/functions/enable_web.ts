@@ -15,6 +15,7 @@ import { enableWebPushRequest } from "../requests/enable_web.js";
 import type { StoredSession } from "../../../utils/local_storage.js";
 import { getErrorMessage } from "../../../utils/helpers/error_util.js";
 import type { UserSettingNotifications } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * Сессия с серверными данными: поле `server` дописывается в сессию через
@@ -48,11 +49,11 @@ export async function enableWeb(form: UserSettingNotifications): Promise<void> {
         const session = LocalStorage.session;
 
         // Без сессии подписку включать не на чем
-        if (!session) throw new Error(window._lc.forms.user_setting_notifications.toasts.not_access);
+        if (!session) throw new Error(t("forms.user_setting_notifications.toasts.not_access"));
 
         // Проверяем доступ
         const access = await _access();
-        if (!access) throw new Error(window._lc.forms.user_setting_notifications.toasts.not_access);
+        if (!access) throw new Error(t("forms.user_setting_notifications.toasts.not_access"));
 
         // Получаем subscription
         const subscription = await _subscribe(session);
@@ -64,7 +65,7 @@ export async function enableWeb(form: UserSettingNotifications): Promise<void> {
 
         // Ключи обязательны для push-подписки: null означает непригодную
         // подписку, регистрировать её на сервере не имеет смысла
-        if (!p256dhKey || !authKey) throw new Error(window._lc.forms.user_setting_notifications.toasts.not_access);
+        if (!p256dhKey || !authKey) throw new Error(t("forms.user_setting_notifications.toasts.not_access"));
 
         const key = btoa(String.fromCharCode(...new Uint8Array(p256dhKey)));
         const auth = btoa(String.fromCharCode(...new Uint8Array(authKey)));
@@ -80,7 +81,7 @@ export async function enableWeb(form: UserSettingNotifications): Promise<void> {
         if (response.status) {
 
             // Toast
-            Toast.success(window._lc.forms.user_setting_notifications.toasts.success_enable);
+            Toast.success(t("forms.user_setting_notifications.toasts.success_enable"));
 
             // Закрываем форму
             form.modal?.close();
@@ -88,7 +89,7 @@ export async function enableWeb(form: UserSettingNotifications): Promise<void> {
         } else {
 
             // Toast
-            Toast.error(window._lc.forms.user_setting_notifications.toasts.not_access_push);
+            Toast.error(t("forms.user_setting_notifications.toasts.not_access_push"));
 
         }
 
@@ -166,7 +167,7 @@ async function _subscribe(session: StoredSession): Promise<PushSubscription> {
 
                 // Если после попытки подписки она все еще не создана
                 if (!subscription) {
-                    throw new Error(window._lc.forms.user_setting_notifications.toasts.not_access_push);
+                    throw new Error(t("forms.user_setting_notifications.toasts.not_access_push"));
                 }
             }
 
@@ -174,7 +175,7 @@ async function _subscribe(session: StoredSession): Promise<PushSubscription> {
             return subscription;
 
         } else {
-            throw new Error(window._lc.forms.user_setting_notifications.toasts.not_device);
+            throw new Error(t("forms.user_setting_notifications.toasts.not_device"));
         }
 
     } catch (error) {

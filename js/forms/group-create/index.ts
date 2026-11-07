@@ -16,6 +16,7 @@ import { Toggle } from "../../components/toggle.js";
 
 // Импортируем handlers
 import { createHandler } from "./handlers/create.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы создания группы.
@@ -224,10 +225,10 @@ export class GroupCreate {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("label", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.group_create.name}
+                                ${t("forms.group_create.name")}
                             </span>
                             ${Inputs.create({
-            placeholder: window._lc.forms.group_create.name,
+            placeholder: t("forms.group_create.name"),
             name: "name",
             attributes: ["required"],
         })}
@@ -238,10 +239,10 @@ export class GroupCreate {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("message-circle", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.group_create.about}
+                                ${t("forms.group_create.about")}
                             </span>
                             ${Inputs.textarea({
-            placeholder: window._lc.forms.group_create.about,
+            placeholder: t("forms.group_create.about"),
             name: "about",
             attributes: ["required"],
         })}
@@ -252,15 +253,15 @@ export class GroupCreate {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("world", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.group_create.type}
+                                ${t("forms.group_create.type")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.group_create.type_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.group_create.type_desc")}</span>
                             ${Toggle.switch({
             name: "is-public",
             checked: true,
             toggleText: {
-                on: window._lc.forms.group_create.opened,
-                off: window._lc.forms.group_create.closed
+                on: t("forms.group_create.opened"),
+                off: t("forms.group_create.closed")
             }
         })}
                         </div>
@@ -270,15 +271,15 @@ export class GroupCreate {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("pencil", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.group_create.can_posting}
+                                ${t("forms.group_create.can_posting")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.group_create.can_posting_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.group_create.can_posting_desc")}</span>
                             ${Toggle.switch({
             name: "is-posting",
             checked: false,
             toggleText: {
-                on: window._lc.forms.group_create.all_posting,
-                off: window._lc.forms.group_create.admin_posting
+                on: t("forms.group_create.all_posting"),
+                off: t("forms.group_create.admin_posting")
             }
         })}
                         </div>

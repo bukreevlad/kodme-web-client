@@ -22,6 +22,7 @@ import { toggleNoiseSuppressionHandler } from "./handlers/toggle_noise_suppressi
 // Импортируем functions
 import { ensureAccess } from "./functions/ensure_access.js";
 import { renderDevices } from "./functions/render_devices.js";
+import { I18n } from "../../utils/i18n/index.js";
 
 /**
  * Данные формы выбора камеры и микрофона.
@@ -355,7 +356,7 @@ export class MeetDeviceSettings {
      */
     _template(): HTMLElement {
 
-        const locales = window._lc.forms.meet_play.dialogs.device_settings;
+        const locales = I18n.tree.forms.meet_play.dialogs.device_settings;
 
         // Списки пустые: наполняет renderDevices. Без него остались бы
         // заголовки без единого устройства (см. комментарий там)

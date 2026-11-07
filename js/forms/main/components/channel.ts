@@ -1,6 +1,5 @@
 // Импортируем utils
 import { Logger } from "../../../utils/logs/logger.js";
-import { TimeAgoFormatter } from "../../../utils/date/time_ago_formatter.js";
 import { Icons } from "../../../utils/icons.js";
 import { GestureController } from "../../../utils/gesture_controller.js";
 
@@ -20,6 +19,7 @@ import { channelContextMenuHandler } from "./handlers/channel_context_menu.js";
 import { isChannelRecord } from "../types.js";
 import type { Main } from "../index.js";
 import type { ChannelRecord } from "../types.js";
+import { I18n, t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -164,7 +164,7 @@ export class ChannelItem {
                 avatarEl.setIcon("bookmark");
 
                 // Название
-                name.textContent = window._lc.forms.main.components.channels.favorite;
+                name.textContent = t("forms.main.components.channels.favorite");
 
             }
 
@@ -263,12 +263,11 @@ export class ChannelItem {
             const lastMessageEl = createLastMessage(this);
             if (lastMessageEl) this.lastMessage.appendChild(lastMessageEl);
 
-            // Парсим created_at
-            const timeAgo = new TimeAgoFormatter(this.data?.last_message.created_at, "telegram-list");
-            this.lastMessagecreatedAt.textContent = timeAgo.formattedTime;
+            // Дата в списке пересобирается при смене языка (Intl на новой локали)
+            I18n.setTime(this.lastMessagecreatedAt, this.data?.last_message.created_at, "telegram-list");
 
         } else {
-            this.lastMessage.textContent = window._lc.forms.main.components.channels.last_message.empty_messages;
+            this.lastMessage.textContent = t("forms.main.components.channels.last_message.empty_messages");
         }
 
     }

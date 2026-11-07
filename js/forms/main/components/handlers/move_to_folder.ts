@@ -22,6 +22,7 @@ import { channelsTable } from "../../db.js";
 
 // Импортируем типы
 import type { ChannelRecord } from "../../types.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * Выбор папки в диалоге менеджера папок: канал добавляется в папку
@@ -83,7 +84,7 @@ export async function moveToFolderHandler(channel: ChannelItem): Promise<void> {
                                 if (Main.instance) updateFolderUnread(Main.instance);
 
                                 // Toast
-                                Toast.success(window._lc.forms.main.components.channels.context_menu.toasts.success_move_to_folder, {
+                                Toast.success(t("forms.main.components.channels.context_menu.toasts.success_move_to_folder"), {
                                     position: "bottom-center"
                                 });
 
@@ -118,7 +119,7 @@ export async function moveToFolderHandler(channel: ChannelItem): Promise<void> {
                                 if (Main.instance) updateFolderUnread(Main.instance);
 
                                 // Toast
-                                Toast.success(window._lc.forms.main.components.channels.context_menu.toasts.success_unmove_from_folder, {
+                                Toast.success(t("forms.main.components.channels.context_menu.toasts.success_unmove_from_folder"), {
                                     position: "bottom-center"
                                 });
 
@@ -130,7 +131,7 @@ export async function moveToFolderHandler(channel: ChannelItem): Promise<void> {
                         Logger.error(error);
 
                         // Прочая ошибка сервера
-                        Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+                        Toast.error(t("api.errors.server_error"));
 
                     }
 

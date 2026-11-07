@@ -23,6 +23,7 @@ import { checkHandler } from "./handlers/check.js";
 
 // Импортируем типы
 import type { SessionItemData } from "./components/session.js";
+import { t } from "../../utils/i18n/index.js";
 
 // Form
 export class Sessions {
@@ -241,8 +242,8 @@ export class Sessions {
                     <div class="w-full flex flex-col gap-4">
 
                         <div class="flex flex-col items-center text-center gap-0.5 select-none">
-                            <span class="text-base font-bold mt-1 leading-snug">${window._lc.forms.sessions.title}</span>
-                            <span class="text-sm text-secondary font-normal leading-snug">${window._lc.forms.sessions.subtitle}</span>
+                            <span class="text-base font-bold mt-1 leading-snug">${t("forms.sessions.title")}</span>
+                            <span class="text-sm text-secondary font-normal leading-snug">${t("forms.sessions.subtitle")}</span>
                         </div>
 
                         <div data-sessions-list class="flex flex-col gap-2.5"></div>
@@ -255,13 +256,13 @@ export class Sessions {
                     ${Buttons.create({
                         attributes: ["action-login"],
                         classes: ["flex-1"],
-                        text: window._lc.forms.sessions.login,
+                        text: t("forms.sessions.login"),
                         icon: "login-2"
                     })}
                     ${Buttons.primary({
                         attributes: ["action-registration"],
                         classes: ["flex-1"],
-                        text: window._lc.forms.sessions.registration,
+                        text: t("forms.sessions.registration"),
                         icon: "user-plus"
                     })}
                 </div>

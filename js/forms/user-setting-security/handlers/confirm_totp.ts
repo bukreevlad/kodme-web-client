@@ -16,6 +16,7 @@ import { TotpSetupDialog } from "../../user-totp-setup/index.js";
 
 // Импортируем типы
 import type { UserSettingSecurity } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -30,7 +31,7 @@ export async function confirmTotpHandler(form: UserSettingSecurity, code: string
 
         // Пустой код — вводить нечего
         if (!code) {
-            Toast.error(window._lc.forms.user_setting_security.toasts.code_required);
+            Toast.error(t("forms.user_setting_security.toasts.code_required"));
             return;
         }
 
@@ -44,7 +45,7 @@ export async function confirmTotpHandler(form: UserSettingSecurity, code: string
             TotpSetupDialog.instance?.modal?.close();
 
             // Toast: TOTP включён
-            Toast.success(window._lc.forms.user_setting_security.toasts.totp_enabled);
+            Toast.success(t("forms.user_setting_security.toasts.totp_enabled"));
 
             // Обновляем карточку TOTP
             await refreshTotpStatus(form);
@@ -59,37 +60,37 @@ export async function confirmTotpHandler(form: UserSettingSecurity, code: string
 
         // Если код неверный
         if (getErrorMessage(error).includes("CODE_INVALID")) {
-            Toast.error(window._lc.forms.user_setting_security.toasts.totp_invalid_code);
+            Toast.error(t("forms.user_setting_security.toasts.totp_invalid_code"));
             isToastShown = true;
         }
 
         // Если код не введён
         if (getErrorMessage(error).includes("CODE_REQUIRED")) {
-            Toast.error(window._lc.forms.user_setting_security.toasts.code_required);
+            Toast.error(t("forms.user_setting_security.toasts.code_required"));
             isToastShown = true;
         }
 
         // Если превышено количество попыток
         if (getErrorMessage(error).includes("TOO_MANY_ATTEMPTS")) {
-            Toast.error(window._lc.forms.user_setting_security.toasts.too_many_attempts);
+            Toast.error(t("forms.user_setting_security.toasts.too_many_attempts"));
             isToastShown = true;
         }
 
         // Если настройка устарела (секрет перезаписан или сессия обновлена)
         if (getErrorMessage(error).includes("SETUP_NOT_STARTED")) {
-            Toast.error(window._lc.forms.user_setting_security.toasts.totp_setup_expired);
+            Toast.error(t("forms.user_setting_security.toasts.totp_setup_expired"));
             isToastShown = true;
         }
 
         // Если превышен лимит запросов
         if (getErrorMessage(error).includes("RATE_LIMIT_EXCEEDED") || getErrorStatus(error) === 429) {
-            Toast.warning(window._lc.forms.user_setting_security.toasts.too_many_requests);
+            Toast.warning(t("forms.user_setting_security.toasts.too_many_requests"));
             isToastShown = true;
         }
 
         // Если ошибка не распознана — показываем общую
         if (!isToastShown) {
-            Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+            Toast.error(t("api.errors.server_error"));
         }
 
     }

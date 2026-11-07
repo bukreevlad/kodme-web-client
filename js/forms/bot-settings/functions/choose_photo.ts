@@ -16,6 +16,7 @@ import { saveBotAvatarRequest } from "../requests/save_avatar.js";
 
 // Импортируем типы
 import type { BotSettings } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -113,7 +114,7 @@ export async function choosePhoto(form: BotSettings): Promise<void> {
                         form.avatar?.setImage(response.data);
 
                         // Toast
-                        Toast.success(window._lc.forms.bot_settings.toasts.success_avatar);
+                        Toast.success(t("forms.bot_settings.toasts.success_avatar"));
 
                     } catch (error) {
                         Logger.error(error);
@@ -126,16 +127,16 @@ export async function choosePhoto(form: BotSettings): Promise<void> {
                         // Хранилище отклонило запрос (400 от S3, например
                         // пустое тело от Safari) — свой текст
                         if (info.code === "UPLOAD_REJECTED") {
-                            Toast.error(window._lc.api.errors.upload_rejected);
+                            Toast.error(t("api.errors.upload_rejected"));
                         } else if (info.name === "MEDIA_PROCESSING_DISABLED") {
                             // Обработка выключена конфигом
-                            Toast.error(window._lc.api.errors.media_processing_disabled);
+                            Toast.error(t("api.errors.media_processing_disabled"));
                         } else if (info.name === "ACCESS_DENIED") {
                             // Чужой бот — доступ запрещён
-                            Toast.error(window._lc.api.errors.access_denied);
+                            Toast.error(t("api.errors.access_denied"));
                         } else {
                             // Toast
-                            Toast.error(window._lc.forms.bot_settings.toasts.avatar_error);
+                            Toast.error(t("forms.bot_settings.toasts.avatar_error"));
                         }
                     }
 
@@ -151,7 +152,7 @@ export async function choosePhoto(form: BotSettings): Promise<void> {
         Logger.error(error);
 
         // Прочая ошибка сервера
-        Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+        Toast.error(t("api.errors.server_error"));
     }
 
 }

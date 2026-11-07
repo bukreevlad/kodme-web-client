@@ -23,6 +23,7 @@ import { isRecord } from "../../main/types.js";
 import type { AttachmentsRaw } from "../../../utils/messages/attachments.js";
 import type { MessageRecord } from "../types.js";
 import type { Messages } from "../index.js";
+import { I18n, t } from "../../../utils/i18n/index.js";
 
 /** Объект-мап вложений (тот же тип, что хранит MessageRecord.attachments). */
 type AttachmentsMap = Extract<AttachmentsRaw, Record<string, unknown>>;
@@ -468,7 +469,7 @@ export async function sendingMessages(form: Messages): Promise<void> {
                             // превью — сообщаем отправителю. При выключенном
                             // конфиге поле приходит без причины и молчим
                             if (saveResult.data.processed === false && saveResult.data.reason === "failed") {
-                                Toast.info(window._lc.forms.messages.toasts.sent_without_preview, { position: "bottom-center" });
+                                Toast.info(t("forms.messages.toasts.sent_without_preview"), { position: "bottom-center" });
                             }
 
                             // Сохраняем данные для финальной отправки сообщения
@@ -545,7 +546,7 @@ export async function sendingMessages(form: Messages): Promise<void> {
                             form.store.update(localId, failed);
                         }
 
-                        Toast.warning(window._lc.forms.messages.toasts.uploading_failed, { position: "bottom-center" });
+                        Toast.warning(t("forms.messages.toasts.uploading_failed"), { position: "bottom-center" });
 
                         continue;
 
@@ -648,16 +649,16 @@ export async function sendingMessages(form: Messages): Promise<void> {
 
                     // Локаль типизирована фиксированными ключами — копируем секцию
                     // в словарь для поиска по строке
-                    const toasts: Record<string, string> = { ...window._lc?.forms?.messages?.toasts };
+                    const toasts: Record<string, string> = { ...I18n.tree.forms.messages.toasts };
 
                     // Отклонение хранилищем (400 от S3, например пустое тело
                     // запроса от Safari) — свой текст вместо generic-ошибки
                     const isRejected = info.code === "UPLOAD_REJECTED" || info.name === "UPLOAD_REJECTED";
                     const text = specificKey
                         ? toasts[specificKey]
-                        : (isRejected ? window._lc.api.errors.upload_rejected : null);
+                        : (isRejected ? t("api.errors.upload_rejected") : null);
 
-                    Toast.warning(text || window._lc.forms.messages.toasts.uploading_failed, { position: "bottom-center" });
+                    Toast.warning(text || t("forms.messages.toasts.uploading_failed"), { position: "bottom-center" });
 
                     // Причина внятная и очередь не встанет — продолжаем
                     if (specificKey) continue;

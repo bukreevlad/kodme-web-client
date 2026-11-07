@@ -9,6 +9,7 @@ import { updateParticipant } from "../functions/update_participant.js";
 
 // Импортируем типы
 import type { Call } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -46,7 +47,7 @@ export async function toggleAudioHandler(event: Event, form: Call): Promise<void
         Logger.error("🚨 [app][call]: Ошибка переключения аудио:", error);
 
         // Toast
-        Toast.error(window._lc.forms.call.toasts.mic_error);
+        Toast.error(t("forms.call.toasts.mic_error"));
 
     }
 

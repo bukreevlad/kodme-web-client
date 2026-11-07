@@ -1,6 +1,5 @@
 // Импортируем utils
 import { Avatars } from "../../../components/avatars.js";
-import { TimeAgoFormatter } from "../../../utils/date/time_ago_formatter.js";
 import { unescapeHtml } from "../../../utils/string/unescape_html.js";
 
 // Импортируем functions
@@ -15,6 +14,7 @@ import { commentReactions } from "./comment_reactions.js";
 // Импортируем типы
 import type { Comments } from "../index.js";
 import type { CommentRecord } from "../types.js";
+import { I18n, t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -127,7 +127,7 @@ function fillItem(form: Comments, item: HTMLElement, data: CommentRecord): void 
 
     // Автор и время
     if (displayName) displayName.textContent = data.display_name ?? "";
-    if (createdAt && data.created_at) createdAt.textContent = new TimeAgoFormatter(data.created_at).formattedTime;
+    if (createdAt && data.created_at) I18n.setTime(createdAt, data.created_at);
 
     // Текст комментария (сервер отдаёт HTML-экранированным — раскодируем;
     // комментарий без текста — только вложения, текст-контейнер пуст)
@@ -138,7 +138,7 @@ function fillItem(form: Comments, item: HTMLElement, data: CommentRecord): void 
     if (text) {
 
         if (data.is_deleted) {
-            text.textContent = window._lc.forms.comments.removed_comment;
+            text.textContent = t("forms.comments.removed_comment");
             text.classList.add("italic", "text-muted");
         } else {
             text.textContent = data.text ? unescapeHtml(data.text) : "";

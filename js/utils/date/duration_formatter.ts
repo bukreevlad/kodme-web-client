@@ -1,5 +1,5 @@
 // Импортируем utils
-import { getDeclension } from "../string/declensions.js";
+import { t } from "../i18n/index.js";
 
 /**
  * Опции форматирования продолжительности.
@@ -113,7 +113,7 @@ export class DurationFormatter {
 
         // 5. Формирование финальной строки
         if (showDays) {
-            const dayText = `${days} ${getDeclension(days, window._lc.utils.duration_formatter.days)}`;
+            const dayText = `${days} ${t("utils.duration_formatter.days", { count: days })}`;
             return `${dayText} ${timePart}`;
         }
 

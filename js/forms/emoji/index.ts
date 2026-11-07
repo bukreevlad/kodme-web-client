@@ -23,6 +23,7 @@ import { showSticker } from "./functions/show_sticker.js";
 
 // Импортируем типы
 import type { StickerSelectCallback, EmojiFocusSticker } from "./types.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки панели эмодзи (позиционирование и монтирование — те же поля,
@@ -371,8 +372,8 @@ export class Emoji {
 
                     <div data-tabs class="p-1 mb-0 w-full relative bg-[var(--second-bg)] rounded-3xl overflow-hidden flex-shrink-0">
                         <div data-tabs-list class="cdm-tabs flex flex-row gap-1 w-full rounded-3xl overflow-x-auto scrollbar-none">
-                            <div data-target="emoji" class="item flex flex-row flex-1 justify-center flex-shrink-0 gap-2 p-2 items-center rounded-lg transition-colors duration-150 cursor-pointer hover:text-[var(--text-color)] hover:bg-[var(--second-bg)] active:bg-[var(--second-bg)] [&.active]:text-[var(--text-color)] [&.active]:font-semibold [&.active]:bg-[var(--second-bg)] active">${window._lc.forms.emoji.tabs.emoji}</div>
-                            <div data-target="stickers" class="item flex flex-row flex-1 justify-center flex-shrink-0 gap-2 p-2 items-center rounded-lg transition-colors duration-150 cursor-pointer hover:text-[var(--text-color)] hover:bg-[var(--second-bg)] active:bg-[var(--second-bg)] [&.active]:text-[var(--text-color)] [&.active]:font-semibold [&.active]:bg-[var(--second-bg)]">${window._lc.forms.emoji.tabs.stickers}</div>
+                            <div data-target="emoji" class="item flex flex-row flex-1 justify-center flex-shrink-0 gap-2 p-2 items-center rounded-lg transition-colors duration-150 cursor-pointer hover:text-[var(--text-color)] hover:bg-[var(--second-bg)] active:bg-[var(--second-bg)] [&.active]:text-[var(--text-color)] [&.active]:font-semibold [&.active]:bg-[var(--second-bg)] active">${t("forms.emoji.tabs.emoji")}</div>
+                            <div data-target="stickers" class="item flex flex-row flex-1 justify-center flex-shrink-0 gap-2 p-2 items-center rounded-lg transition-colors duration-150 cursor-pointer hover:text-[var(--text-color)] hover:bg-[var(--second-bg)] active:bg-[var(--second-bg)] [&.active]:text-[var(--text-color)] [&.active]:font-semibold [&.active]:bg-[var(--second-bg)]">${t("forms.emoji.tabs.stickers")}</div>
                         </div>
                     </div>
 
@@ -397,7 +398,7 @@ export class Emoji {
                                     <div class="flex flex-row gap-2 p-2 items-center">
                                         <button data-back class="flex flex-row gap-2 items-center p-2 rounded-lg hover:bg-[var(--second-bg)] active:bg-[var(--second-bg)] cursor-pointer text-secondary">
                                             ${Icons.icon("arrow-left")?.outerHTML ?? ""}
-                                            <span>${window._lc.forms.emoji.stickers.back}</span>
+                                            <span>${t("forms.emoji.stickers.back")}</span>
                                         </button>
                                         <span data-pak-name class="flex flex-row gap-2 items-center font-semibold truncate"></span>
                                     </div>
@@ -405,8 +406,8 @@ export class Emoji {
                                 </div>
 
                                 ${EmptyState.create({
-                                    title: window._lc.forms.emoji.stickers.empty_title,
-                                    description: window._lc.forms.emoji.stickers.empty_desc,
+                                    title: t("forms.emoji.stickers.empty_title"),
+                                    description: t("forms.emoji.stickers.empty_desc"),
                                     icon: "sticker",
                                     compact: true,
                                     attributes: ["data-stickers-empty"],
@@ -414,8 +415,8 @@ export class Emoji {
                                 })}
 
                                 ${EmptyState.create({
-                                    title: window._lc.forms.emoji.stickers.pak_empty_title,
-                                    description: window._lc.forms.emoji.stickers.pak_empty_desc,
+                                    title: t("forms.emoji.stickers.pak_empty_title"),
+                                    description: t("forms.emoji.stickers.pak_empty_desc"),
                                     icon: "sticker",
                                     compact: true,
                                     attributes: ["data-stickers-pak-empty"],

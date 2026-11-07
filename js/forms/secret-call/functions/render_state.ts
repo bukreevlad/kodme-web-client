@@ -7,6 +7,7 @@ import { startTimer, stopTimer } from "./start_timer.js";
 // Импортируем типы
 import type { SecretCallEndReason, SecretCallState } from "../../../core/managers/secret_calls_manager.js";
 import type { SecretCall } from "../index.js";
+import { I18n } from "../../../utils/i18n/index.js";
 
 // Пауза перед закрытием формы после завершения звонка (мс) — чтобы
 // пользователь увидел причину
@@ -21,7 +22,7 @@ const END_SCREEN_DELAY = 1500;
  */
 export function endReasonLabel(reason: SecretCallEndReason): string {
 
-    const locale = window._lc.forms.secret_call;
+    const locale = I18n.tree.forms.secret_call;
     switch (reason) {
         case "declined": return locale.status_declined;
         case "no_answer": return locale.status_no_answer;
@@ -47,7 +48,7 @@ export function renderCallState(form: SecretCall, state: SecretCallState, overla
 
         if (!form.tpl) return;
 
-        const locale = window._lc.forms.secret_call;
+        const locale = I18n.tree.forms.secret_call;
         const status = form.tpl.querySelector<HTMLElement>(":scope >[data-header] [data-status]");
         const overlay = form.tpl.querySelector<HTMLElement>(":scope >[data-content] [data-call-overlay]");
         const overlayStatus = form.tpl.querySelector<HTMLElement>(":scope >[data-content] [data-overlay-status]");

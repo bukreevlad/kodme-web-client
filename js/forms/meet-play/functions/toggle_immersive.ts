@@ -6,6 +6,7 @@ import { Toast } from "../../../components/toast.js";
 
 // Импортируем типы
 import type { MeetPlay } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -82,7 +83,7 @@ export function toggleImmersive(form: MeetPlay, force: boolean | null = null): v
         // Без подсказки режим выглядит как «у меня сломался интерфейс».
         if (wasChanged && isImmersive) {
             try {
-                const hint = window._lc?.forms?.meet_play?.immersive_hint;
+                const hint = t("forms.meet_play.immersive_hint");
                 if (hint) {
                     Toast.info(hint, {
                         duration: 4000, position: "bottom-center"

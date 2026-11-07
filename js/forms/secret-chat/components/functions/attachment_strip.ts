@@ -1,6 +1,6 @@
 // Импортируем utils
 import { Logger } from "../../../../utils/logs/logger.js";
-import { getDeclension } from "../../../../utils/string/declensions.js";
+import { I18n, t } from "../../../../utils/i18n/index.js";
 import * as Attachments from "../../../../utils/messages/attachments.js";
 import * as AttachClassifier from "../../../../utils/messages/attach_classifier.js";
 
@@ -50,7 +50,7 @@ export function attachmentStrip(data: AttachmentStripData | null | undefined, el
         }
 
         // Локализация превью (своя ветка секретного чата)
-        const locale = window._lc?.forms?.secret_chat?.components?.reply;
+        const locale = I18n.tree.forms.secret_chat.components.reply;
 
         // Заполняем текст и имя (текст секретного чата — открытый plaintext,
         // сервера нет и экранировать нечего)
@@ -117,7 +117,7 @@ export function attachmentStrip(data: AttachmentStripData | null | undefined, el
             if (audios.some(au => au?.metadata?.flags?.is_audio_note === true)) {
                 _setAccentText(elements.text, locale?.voice_note);
             } else {
-                _setFileOrCount(elements.media, elements.text, audios, locale?.dec_audios);
+                _setFileOrCount(elements.media, elements.text, audios, t("forms.secret_chat.components.reply.dec_audios", { count: audios.length }));
             }
 
         } else if (videos.length > 0) {
@@ -126,13 +126,13 @@ export function attachmentStrip(data: AttachmentStripData | null | undefined, el
             if (videos.some(vid => vid?.metadata?.flags?.is_video_note === true)) {
                 _setAccentText(elements.text, locale?.video_note);
             } else {
-                _setFileOrCount(elements.media, elements.text, videos, locale?.dec_videos);
+                _setFileOrCount(elements.media, elements.text, videos, t("forms.secret_chat.components.reply.dec_videos", { count: videos.length }));
             }
 
         } else {
 
             // Документы и прочее
-            _setFileOrCount(elements.media, elements.text, all, locale?.dec_files);
+            _setFileOrCount(elements.media, elements.text, all, t("forms.secret_chat.components.reply.dec_files", { count: all.length }));
 
         }
 
@@ -171,10 +171,10 @@ function _setAccentText(element: Element | null | undefined, text?: string): voi
  * @param media - Контейнер превью вложений.
  * @param text - Элемент подписи (не используется, оставлен для единообразия вызова).
  * @param items - Массив вложений одного типа.
- * @param declensions - Формы слова: ["файл", "файла", "файлов"].
+ * @param word - Склонённое слово для количества.
  * ***************************************************************************
  */
-function _setFileOrCount(media: Element | null | undefined, text: Element | null | undefined, items: AttachmentData[], declensions?: string[]): void {
+function _setFileOrCount(media: Element | null | undefined, text: Element | null | undefined, items: AttachmentData[], word: string): void {
 
     // Один файл — имя файла
     if (items.length === 1) {
@@ -190,13 +190,9 @@ function _setFileOrCount(media: Element | null | undefined, text: Element | null
     // Несколько — «N файлов»
     if (!media) return;
 
-    const forms = Array.isArray(declensions) && declensions.length === 3
-        ? declensions
-        : ["файл", "файла", "файлов"];
-
     const count = document.createElement("span");
     count.classList.add("text-[var(--color-brand)]", "dark:text-[var(--color-brand)]", "truncate");
-    count.textContent = `${items.length} ${getDeclension(items.length, forms)}`;
+    count.textContent = `${items.length} ${word}`;
     media.innerHTML = "";
     media.appendChild(count);
 

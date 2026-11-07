@@ -9,6 +9,7 @@ import { syncStore } from "../../functions/sync_store.js";
 
 // Импортируем типы
 import type { Call } from "../../index.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -43,7 +44,7 @@ export function subscribeParticipantDisconnected(form: Call): void {
 
                 form.endCall({
                     reason: "remote_hangup",
-                    toast: window._lc.forms.call.toasts.ended,
+                    toast: t("forms.call.toasts.ended"),
                     toastType: "default"
                 });
 

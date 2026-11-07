@@ -130,7 +130,7 @@ export type MessageButtonRow = MessageButton[];
  */
 export interface SystemMessageLocaleEntry {
 
-    /** Строковый шаблон с %{placeholders}%. */
+    /** Строковый шаблон с {{placeholders}}. */
     string?: string;
 
     /** Составной шаблон (массив частей). */

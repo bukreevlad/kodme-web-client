@@ -31,6 +31,7 @@ import { MainFolderCreate } from "../main-folder-create/index.js";
 
 // Импортируем типы
 import type { MainFoldersManagerChoice, MainFoldersManagerFolder } from "./types.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы менеджера папок.
@@ -327,7 +328,7 @@ export class MainFoldersManager {
                         attributes: ["action-close"],
                         icon: "ArrowLeft"
                     })}
-                    <span class="font-semibold text-base truncate">${window._lc.forms.main_folders_manager.title}</span>
+                    <span class="font-semibold text-base truncate">${t("forms.main_folders_manager.title")}</span>
                     ${Buttons.create({
                         intent: "standard",
                         shape: "circle",
@@ -344,7 +345,7 @@ export class MainFoldersManager {
                             <div data-hero-icon class="flex items-center justify-center w-14 h-14 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                 ${Icons.icon("Folder", { settings: { filled: true, size: 28, stroke: 1 } })?.outerHTML ?? ""}
                             </div>
-                            <span class="text-sm text-muted max-w-[22rem]">${window._lc.forms.main_folders_manager.subtitle}</span>
+                            <span class="text-sm text-muted max-w-[22rem]">${t("forms.main_folders_manager.subtitle")}</span>
                         </div>
 
                         <!-- Список папок -->
@@ -352,8 +353,8 @@ export class MainFoldersManager {
 
                         <!-- Пустое состояние -->
                         ${EmptyState.create({
-                            title: window._lc.forms.main_folders_manager.empty_title,
-                            description: window._lc.forms.main_folders_manager.empty_desc,
+                            title: t("forms.main_folders_manager.empty_title"),
+                            description: t("forms.main_folders_manager.empty_desc"),
                             icon: "folder-open",
                             compact: true,
                             attributes: ["data-empty"],
@@ -361,7 +362,7 @@ export class MainFoldersManager {
                             // плашка — просто компактный текст по центру
                             classes: ["hidden"],
                             action: {
-                                text: window._lc.forms.main_folders_manager.create_folder,
+                                text: t("forms.main_folders_manager.create_folder"),
                                 icon: "plus",
                                 attributes: ["action-create-folder"]
                             }

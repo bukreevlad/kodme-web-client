@@ -10,6 +10,7 @@ import { CallIncoming } from "../../../../call-incoming/index.js";
 
 // Импортируем типы
 import { isRecord } from "../../../types.js";
+import { t } from "../../../../../utils/i18n/index.js";
 
 /**
  * Нагрузка ws-события отклонения звонка.
@@ -65,7 +66,7 @@ export function subscribeCallDeclined(): void {
             if (callForm) {
 
                 callForm.endCall({
-                    toast: window._lc.forms.call.toasts.declined,
+                    toast: t("forms.call.toasts.declined"),
                     toastType: "warning"
                 });
                 return;

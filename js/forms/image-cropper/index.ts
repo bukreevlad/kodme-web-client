@@ -6,6 +6,7 @@ import { Logger } from "../../utils/logs/logger.js";
 // Импортируем components
 import { Overlay } from "../../components/overlay/index.js";
 import { Buttons } from "../../components/buttons.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Данные для создания кроппера.
@@ -320,8 +321,8 @@ export class ImageCropper {
                     ${Buttons.circle({ intent: "transparent", attributes: ["action-close"], classes: ["absolute", "top-[1rem]", "right-[1rem]", "z-30"], icon: "X" })}
 
                     <div class="cdm-ic-controls absolute bottom-0 w-full flex justify-center z-20 gap-3 p-3">
-                        ${Buttons.create({ attributes: ["action-cancel"], text: "Отмена" })}
-                        ${Buttons.primary({ attributes: ["action-save"], text: "Вырезать" })}
+                        ${Buttons.create({ attributes: ["action-cancel"], text: t("forms.image_cropper.cancel") })}
+                        ${Buttons.primary({ attributes: ["action-save"], text: t("forms.image_cropper.crop") })}
                     </div>
                 </div>
             </div>

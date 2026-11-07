@@ -10,6 +10,7 @@ import { removeThumbRequest } from "../requests/remove_thumb.js";
 
 // Импортируем типы
 import type { BroadcastSettings } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /** Прозрачная заглушка обложки (как в шаблоне формы до загрузки). */
 const THUMB_PLACEHOLDER = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
@@ -32,7 +33,7 @@ export async function removeThumb(form: BroadcastSettings): Promise<void> {
         if (form.thumbImage) form.thumbImage.src = THUMB_PLACEHOLDER;
 
         // Toast
-        Toast.success(window._lc.forms.broadcast_settings.toasts.success_remove_thumb);
+        Toast.success(t("forms.broadcast_settings.toasts.success_remove_thumb"));
 
     } catch (error) {
         Logger.error(error);
@@ -42,9 +43,9 @@ export async function removeThumb(form: BroadcastSettings): Promise<void> {
 
         // Отказ в доступе — свой текст, остальное — общий фолбэк
         if (info.isAccessDenied) {
-            Toast.error(window._lc.forms.broadcast_settings.toasts.access_denied);
+            Toast.error(t("forms.broadcast_settings.toasts.access_denied"));
         } else {
-            Toast.error(window._lc.forms.broadcast_settings.toasts.remove_thumb_error);
+            Toast.error(t("forms.broadcast_settings.toasts.remove_thumb_error"));
         }
     }
 

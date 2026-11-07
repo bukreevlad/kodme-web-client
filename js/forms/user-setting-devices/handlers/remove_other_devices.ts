@@ -13,6 +13,7 @@ import { ConfirmDeviceDialog } from "../dialogs/confirm/index.js";
 
 // Импортируем типы
 import type { UserSettingDevices } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -26,10 +27,10 @@ export async function removeAllOtherDevicesHandler(form: UserSettingDevices): Pr
 
         // Диалог подтверждения удаления всех других сеансов
         let dialogConfirm = new ConfirmDeviceDialog({
-            title: window._lc.forms.user_setting_devices.dialogs.remove_all.title,
-            description: window._lc.forms.user_setting_devices.dialogs.remove_all.description,
-            actionClose: window._lc.forms.user_setting_devices.dialogs.remove_all.action_close,
-            actionRemove: window._lc.forms.user_setting_devices.dialogs.remove_all.action_remove,
+            title: t("forms.user_setting_devices.dialogs.remove_all.title"),
+            description: t("forms.user_setting_devices.dialogs.remove_all.description"),
+            actionClose: t("forms.user_setting_devices.dialogs.remove_all.action_close"),
+            actionRemove: t("forms.user_setting_devices.dialogs.remove_all.action_remove"),
             insertInto: form.modal?.content,
             callback: async (response) => {
 
@@ -55,7 +56,7 @@ export async function removeAllOtherDevicesHandler(form: UserSettingDevices): Pr
                         dialogConfirm?.modal?.close();
 
                         // Toast
-                        Toast.success(window._lc.forms.user_setting_devices.toasts.success_remove_all_other_devices);
+                        Toast.success(t("forms.user_setting_devices.toasts.success_remove_all_other_devices"));
 
                         // Закрываем форму
                         form.modal?.close();

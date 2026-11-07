@@ -9,6 +9,7 @@ import { updateParticipant } from "../functions/update_participant.js";
 
 // Импортируем типы
 import type { MeetPlay } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -49,7 +50,7 @@ export async function toggleScreenHandler(form: MeetPlay): Promise<void> {
 
         Logger.error("Ошибка шаринга экрана:", error);
 
-        Toast.error(window._lc.forms.meet_play.toasts.screen_error);
+        Toast.error(t("forms.meet_play.toasts.screen_error"));
 
     }
 

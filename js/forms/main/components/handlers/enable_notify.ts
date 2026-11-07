@@ -12,6 +12,7 @@ import { enableNotifyRequest } from "../../../messages/requests/enable_notify.js
 
 // Импортируем типы
 import type { ChannelItem } from "../channel.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -31,7 +32,7 @@ export async function enableNotifyHandler(channel: ChannelItem): Promise<void> {
         Main.instance?.store.update(channel.data.id, channel.data);
 
         // Toast
-        Toast.success(window._lc.forms.main.components.channels.context_menu.toasts.success_enable_notify, {
+        Toast.success(t("forms.main.components.channels.context_menu.toasts.success_enable_notify"), {
             position: "bottom-center"
         });
 

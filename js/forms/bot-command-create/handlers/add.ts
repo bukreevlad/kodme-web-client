@@ -6,6 +6,7 @@ import { Toast } from "../../../components/toast.js";
 
 // Импортируем типы
 import type { AddBotCommand } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -35,7 +36,7 @@ export async function addHandler(form: AddBotCommand): Promise<void> {
 
         // Проверяем команду
         if (!Validator.matches(command.value, pregCommand)) {
-            throw "Наберите команду";
+            throw t("forms.bot_editor.command");
         }
 
         // Отправляем ответ

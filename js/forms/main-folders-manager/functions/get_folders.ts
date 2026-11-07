@@ -12,6 +12,7 @@ import { getFoldersRequest } from "../requests/get_folders.js";
 // Импортируем типы
 import type { MainFoldersManager } from "../index.js";
 import type { MainFoldersAddOptions } from "../types.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * Минимальный интервал между одинаковыми тостами ошибки списка (мс).
@@ -209,7 +210,7 @@ function toastErrorWithThrottle(form: MainFoldersManager, error: unknown): void 
         // Показываем тост (коды ошибок разбирает сам toastError)
         toastError(error, {
             context: "[app][main-folders-manager][get-folders]",
-            fallback: window._lc?.forms?.main_folders_manager?.toasts?.load_error
+            fallback: t("forms.main_folders_manager.toasts.load_error")
         });
 
     } catch (toastError_) {

@@ -27,6 +27,7 @@ import { getSessionUserId } from "../meet-play/functions/session_identity.js";
 // Импортируем типы
 import { isMeetLayout } from "../meet-play/types.js";
 import type { MeetLayout } from "../meet-play/types.js";
+import { I18n, t } from "../../utils/i18n/index.js";
 
 /**
  * Иконки режимов сетки. Ключ совпадает со значением режима.
@@ -452,7 +453,7 @@ export class MeetGridSettings {
         // Индексируем строкой из SHORTCUTS, поэтому объявляем карта как
         // произвольные строки: сам объект локализации при этом остаётся
         // типизированным ru.json
-        const hotkeyLocales: Record<string, string> = window._lc.forms.meet_play.dialogs.grid_settings.hotkeys_map || {};
+        const hotkeyLocales: Record<string, string> = I18n.tree.forms.meet_play.dialogs.grid_settings.hotkeys_map || {};
         // ---------- LOCALES ----------
 
         // ---------- OPTIONS ----------
@@ -466,8 +467,8 @@ export class MeetGridSettings {
             name: "layout",
             value: layout,
             icon: LAYOUT_ICONS[layout] || "layout-grid",
-            text: window._lc.forms.meet_play.dialogs.grid_settings.layouts[layout],
-            description: window._lc.forms.meet_play.dialogs.grid_settings.layout_description[layout],
+            text: I18n.tree.forms.meet_play.dialogs.grid_settings.layouts[layout],
+            description: I18n.tree.forms.meet_play.dialogs.grid_settings.layout_description[layout],
             // Значение обязано ехать в атрибуте: обработчик читает выбор
             // именно отсюда, а не из замыкания. Голое «data-layout» поставило
             // бы его пустым, и режим не переключался бы вообще
@@ -485,8 +486,8 @@ export class MeetGridSettings {
             name: "force-layout",
             checked: this.currentSettings.force,
             attributes: ["data-force"],
-            text: window._lc.forms.meet_play.dialogs.grid_settings.force,
-            description: window._lc.forms.meet_play.dialogs.grid_settings.force_description
+            text: t("forms.meet_play.dialogs.grid_settings.force"),
+            description: t("forms.meet_play.dialogs.grid_settings.force_description")
         }).html}
             </div>
         ` : "";
@@ -503,8 +504,8 @@ export class MeetGridSettings {
             name: "force-focus",
             checked: this.currentSettings.focus,
             attributes: ["data-focus"],
-            text: window._lc.forms.meet_play.dialogs.grid_settings.focus,
-            description: window._lc.forms.meet_play.dialogs.grid_settings.focus_description
+            text: t("forms.meet_play.dialogs.grid_settings.focus"),
+            description: t("forms.meet_play.dialogs.grid_settings.focus_description")
         }).html}
             </div>
         ` : "";
@@ -528,7 +529,7 @@ export class MeetGridSettings {
             <div class="cdm-form meet-grid-settings flex flex-col gap-0 ${CDM_FORM_CLASSES()} w-full">
                 <div class="header flex flex-row gap-2 p-2 items-center ${CDM_FORM_HEADER_CLASSES()}">
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "ArrowLeft" })}
-                    <span class="flex-1 font-semibold text-base truncate">${window._lc.forms.meet_play.dialogs.grid_settings.title}</span>
+                    <span class="flex-1 font-semibold text-base truncate">${t("forms.meet_play.dialogs.grid_settings.title")}</span>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-save"], icon: "device-floppy" })}
                 </div>
                 <div class="content w-full h-full flex ${CDM_FORM_CONTENT_CLASSES()}">
@@ -539,7 +540,7 @@ export class MeetGridSettings {
                         ${forceBlock}
                         ${focusBlock}
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
-                            <span class="text-xs font-semibold text-secondary">${window._lc.forms.meet_play.dialogs.grid_settings.hotkeys}</span>
+                            <span class="text-xs font-semibold text-secondary">${t("forms.meet_play.dialogs.grid_settings.hotkeys")}</span>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5 text-xs">${hotkeyItems}</div>
                         </div>
                     </div>

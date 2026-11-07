@@ -5,6 +5,7 @@ import { ApiError } from "./api_error.js";
 
 // Импортируем utils
 import { getErrorName } from "../helpers/error_util.js";
+import { t } from "../i18n/index.js";
 
 /**
  * Колбэк прогресса скачивания: получено байт, всего байт, процент.
@@ -317,10 +318,10 @@ export class FileDownloader {
                     resolve(true);
                 } else if (data.status === "ERROR") {
                     cleanup();
-                    reject(new Error(data.message || "Ошибка скачивания"));
+                    reject(new Error(data.message || t("utils.file_downloader.download_failed")));
                 } else if (data.status === "CANCELLED") {
                     cleanup();
-                    reject(new DOMException("Загрузка отменена", "AbortError"));
+                    reject(new DOMException(t("utils.file_downloader.aborted"), "AbortError"));
                 }
             };
 
@@ -333,7 +334,7 @@ export class FileDownloader {
 
             const handleAbort = (): void => {
                 cleanup();
-                reject(new DOMException("Загрузка отменена", "AbortError"));
+                reject(new DOMException(t("utils.file_downloader.aborted"), "AbortError"));
             };
 
             // Прослушиватель

@@ -13,6 +13,7 @@ import { startHLSPlayer } from "../functions/start_hls_player.js";
 
 // Импортируем типы
 import type { BroadcastPlay } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -50,19 +51,19 @@ export async function sourceHandler(form: BroadcastPlay, targetNode?: HTMLElemen
         const menuItems = [
 
             {
-                text: window._lc.forms.broadcast_play.context_menu.play_rtc,
+                text: t("forms.broadcast_play.context_menu.play_rtc"),
                 iconName: "antenna-bars-5",
                 cssClasses: form.typePlay === "rtc" ? ["is-active"] : [],
                 onClick: () => startRTCPlayer(form)
             },
             {
-                text: window._lc.forms.broadcast_play.context_menu.play_flv,
+                text: t("forms.broadcast_play.context_menu.play_flv"),
                 iconName: "player-play",
                 cssClasses: form.typePlay === "flv" ? ["is-active"] : [],
                 onClick: () => startFLVPlayer(form)
             },
             {
-                text: window._lc.forms.broadcast_play.context_menu.play_hls,
+                text: t("forms.broadcast_play.context_menu.play_hls"),
                 iconName: "video",
                 cssClasses: form.typePlay === "hls" ? ["is-active"] : [],
                 onClick: () => startHLSPlayer(form)
@@ -80,7 +81,7 @@ export async function sourceHandler(form: BroadcastPlay, targetNode?: HTMLElemen
 
         const currentLabel = document.createElement("span");
         currentLabel.setAttribute("data-source-label", "");
-        currentLabel.textContent = window._lc.forms.broadcast_play.source_label;
+        currentLabel.textContent = t("forms.broadcast_play.source_label");
 
         const currentValue = document.createElement("span");
         currentValue.setAttribute("data-source-current-value", "");
@@ -111,9 +112,7 @@ export async function sourceHandler(form: BroadcastPlay, targetNode?: HTMLElemen
         // остаться только в консоли
         Logger.error(error);
 
-        new Toast(window._lc?.forms?.broadcast_play?.toasts?.source_error
-            || window._lc?.api?.errors?.server_error
-            || "Ошибка сервера", {
+        new Toast(t("forms.broadcast_play.toasts.source_error"), {
             type: "error",
             duration: 3000,
             position: "top-right"

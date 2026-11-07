@@ -6,6 +6,7 @@ import { isHandRaised } from "../../functions/parse_participant.js";
 
 // Импортируем типы
 import type { ParticipantItem } from "../participant.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -54,6 +55,6 @@ export function renderHand(item: ParticipantItem): void {
     // ничего. Роль `img` обязательна: на голом `div` с одной подписью
     // скринридер промолчит.
     element.setAttribute("role", "img");
-    element.setAttribute("aria-label", window._lc?.forms?.meet_play?.hand_raised || "");
+    element.setAttribute("aria-label", t("forms.meet_play.hand_raised"));
 
 }

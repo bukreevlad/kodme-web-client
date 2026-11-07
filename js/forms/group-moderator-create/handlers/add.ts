@@ -9,6 +9,7 @@ import { addModeratorRequest } from "../requests/add.js";
 
 // Импортируем типы
 import type { GroupAddModerator } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -46,7 +47,7 @@ export async function addModeratorHandler(form: GroupAddModerator): Promise<bool
             form.modal?.close();
 
             // Отображаем сообщение
-            Toast.success(window._lc.forms.group_moderator_add.toasts.success_add);
+            Toast.success(t("forms.group_moderator_add.toasts.success_add"));
 
         }
 
@@ -57,7 +58,7 @@ export async function addModeratorHandler(form: GroupAddModerator): Promise<bool
 
         // Прочая ошибка сервера: без тоста пользователь не узнал бы,
         // что модератор не добавился
-        Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+        Toast.error(t("api.errors.server_error"));
     }
 
 }

@@ -14,6 +14,7 @@ import { CallIncoming } from "../../../../call-incoming/index.js";
 
 // Импортируем типы
 import { isRecord } from "../../../types.js";
+import { t } from "../../../../../utils/i18n/index.js";
 
 /**
  * Нагрузка ws-события входящего звонка.
@@ -74,11 +75,9 @@ export function subscribeCallIncoming(): void {
             // новую форму не открываем, а сообщаем, кто звонил
             if (Call.instances.size > 0 || CallIncoming.instances.size > 0) {
 
-                const locale = window._lc.forms.call.toasts;
-
                 // Toast
                 Toast.warning(
-                    (locale.busy_incoming || "{name}").replace("{name}", data?.display_name || ""),
+                    t("forms.call.toasts.busy_incoming", { name: data?.display_name || "" }),
                     { position: "top-center" }
                 );
                 return;
@@ -99,7 +98,7 @@ export function subscribeCallIncoming(): void {
             // окно и открывает форму звонка
             ElectronNotifications.show({
                 title: data?.display_name || "",
-                body: window._lc.forms.call_incoming.title,
+                body: t("forms.call_incoming.title"),
                 tag: `call-${data.call_id}`,
                 url: `/?callId=${encodeURIComponent(data.call_id)}`
                     + (data?.user_id ? `&userId=${encodeURIComponent(data.user_id)}` : "")

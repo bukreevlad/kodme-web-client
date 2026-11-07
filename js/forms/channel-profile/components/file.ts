@@ -18,6 +18,7 @@ import { ContextMenuHandler } from "./handlers/context_menu.js";
 import type { StoreEventName } from "../../../utils/store.js";
 import { getErrorName } from "../../../utils/helpers/error_util.js";
 import type { ChannelSectionItemData, ChannelProfile } from "../types.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -249,7 +250,7 @@ export class FileItem {
 
             toastError(error, {
                 context: "[app][channel-profile][file]::download",
-                fallback: window._lc?.forms?.channel_profile?.toasts?.download_error
+                fallback: t("forms.channel_profile.toasts.download_error")
             });
 
         } finally {

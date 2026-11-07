@@ -3,6 +3,7 @@ import { Logger } from "../../../utils/logs/logger.js";
 
 // Импортируем типы
 import type { MeetPlay } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -34,7 +35,7 @@ export function setConnecting(form: MeetPlay, isConnecting: boolean): void {
 
         // ---------- ПОДПИСЬ ----------
         const label = overlay?.querySelector(":scope [data-connecting-text]");
-        if (label && isConnecting) label.textContent = window._lc.forms.meet_play.connecting;
+        if (label && isConnecting) label.textContent = t("forms.meet_play.connecting");
 
     } catch (error) {
         Logger.debug("🚨 [meet-play]: Не удалось переключить состояние подключения:", error);

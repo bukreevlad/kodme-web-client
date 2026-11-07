@@ -16,6 +16,7 @@ import { ExportBotCommands } from "../dialogs/export_json/index.js";
 // Импортируем типы
 import type { PopoverMenuItem } from "../../../components/overlay/popover_menu.js";
 import type { BotSettings } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -38,21 +39,21 @@ export function contextMenuHandler(event: Event, form: BotSettings): void {
 
             // Новая команда
             {
-                text: window._lc.forms.bot_settings.context_menu.add_command,
+                text: t("forms.bot_settings.context_menu.add_command"),
                 iconName: "Code",
                 onClick: () => addCommandHandler(form)
             },
 
             // Новая папка
             {
-                text: window._lc.forms.bot_settings.context_menu.add_category,
+                text: t("forms.bot_settings.context_menu.add_category"),
                 iconName: "Folder",
                 onClick: () => addCategoryHandler(form)
             },
 
             // Экспорт в JSON
             {
-                text: window._lc.forms.bot_settings.context_menu.export_to_json,
+                text: t("forms.bot_settings.context_menu.export_to_json"),
                 iconName: "Upload",
                 onClick: () => {
                     // Ссылка в замыкании читается в момент клика
@@ -66,7 +67,7 @@ export function contextMenuHandler(event: Event, form: BotSettings): void {
 
             // Импорт из JSON
             {
-                text: window._lc.forms.bot_settings.context_menu.import_from_json,
+                text: t("forms.bot_settings.context_menu.import_from_json"),
                 iconName: "Download",
                 onClick: () => importJsonHandler(form)
             }

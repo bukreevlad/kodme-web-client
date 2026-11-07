@@ -11,6 +11,7 @@ import { SecretChatsManager } from "../../../../core/managers/secret_chats_manag
 
 // Импортируем типы
 import type { SecretChatMessageItem } from "../message.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -43,7 +44,7 @@ export async function removeMessageHandler(message: SecretChatMessageItem): Prom
                     await manager.removeMessage(message.data.chat_id ?? "", message.data.id);
 
                     // Сообщение
-                    Toast.success(window._lc.forms.secret_chat.toasts.message_removed, { position: "bottom-center" });
+                    Toast.success(t("forms.secret_chat.toasts.message_removed"), { position: "bottom-center" });
 
                 } catch (error) {
 

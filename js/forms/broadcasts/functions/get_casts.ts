@@ -15,6 +15,7 @@ import { getCastsRequest } from "../requests/get_casts.js";
 import type { StoreId } from "../../../utils/store.js";
 import type { BroadcastDirection, BroadcastStoreAddOptions } from "../types.js";
 import type { Broadcasts } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -183,7 +184,7 @@ function toastErrorOnce(form: Broadcasts, error: unknown): void {
         // Показываем тост (коды ошибок разбирает сам toastError)
         toastError(error, {
             context: "[app][broadcasts][get-casts]",
-            fallback: window._lc?.forms?.broadcasts?.toasts?.load_error
+            fallback: t("forms.broadcasts.toasts.load_error")
         });
 
     } catch (toastError) {

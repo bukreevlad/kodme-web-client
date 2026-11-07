@@ -8,6 +8,7 @@ import { sendStickerRequest } from "../requests/send_sticker.js";
 // Импортируем типы
 import type { StickerItem } from "../../sticker-pak/types.js";
 import type { Messages } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -36,7 +37,7 @@ export async function sendSticker(form: Messages, sticker: StickerItem): Promise
         // Показываем тост (коды ошибок разбирает сам toastError)
         toastError(error, {
             context: "[app][messages][send-sticker]",
-            fallback: window._lc.forms.messages.toasts.sticker_send_error
+            fallback: t("forms.messages.toasts.sticker_send_error")
         });
 
         // Лог для отладки (стикер ушёл, но сервер отверг)

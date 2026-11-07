@@ -14,6 +14,7 @@ import { getSectionMessageId } from "../../functions/get_message_id.js";
 import type { PopoverMenuItem } from "../../../../components/overlay/popover_menu.js";
 import type { ChannelProfile, ChannelSectionItemData } from "../../types.js";
 import type { SectionRowKind } from "../../functions/get_message_id.js";
+import { I18n, t } from "../../../../utils/i18n/index.js";
 
 /**
  * Типы строк секций, различающиеся пунктом «Скачать» и типом записи.
@@ -59,7 +60,7 @@ type DownloadLocale = { download?: string } | null;
  ***************************************************************************
  */
 function getMessages() {
-    return window._lc?.forms?.messages?.components?.messages;
+    return I18n.tree.forms.messages.components.messages;
 }
 
 /** Тип ветки локали сообщений. */
@@ -75,9 +76,8 @@ type MessagesLocale = ReturnType<typeof getMessages>;
  * звался как ContextMenuHandler, но файл этот не импортировался вовсе —
  * долгий тап и правый клик по голосовому падали с ReferenceError.
  *
- * Локаль (`window._lc`) может быть ещё не загружена к моменту импорта
- * модуля, поэтому разыменовываем путь в момент вызова, как делает остальной
- * проект.
+ * Текст резолвится через `t()` в момент вызова: к моменту импорта
+ * модуля локализация ещё не инициализирована.
  *
  * Ключа `audio_note_item` в локали не было — добавлен в locales/ru.json.
  *
@@ -189,7 +189,7 @@ export async function ContextMenuHandler(
 
         if (form && messageId) {
             menuItems.push({
-                text: window._lc?.forms?.channel_profile?.context_menu?.go_to_message ?? "",
+                text: t("forms.channel_profile.context_menu.go_to_message"),
                 iconName: "MessageUp",
                 onClick: () => goToMessage(form, messageId)
             });

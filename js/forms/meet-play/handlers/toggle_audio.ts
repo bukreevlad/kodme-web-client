@@ -12,6 +12,7 @@ import { micCaptureOptions } from "../functions/mic_capture_options.js";
 
 // Импортируем типы
 import type { MeetPlay } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -57,7 +58,7 @@ export async function toggleAudioHandler(form: MeetPlay): Promise<void> {
 
         Logger.error("Ошибка переключения аудио:", error);
 
-        Toast.error(window._lc.forms.meet_play.toasts.mic_error);
+        Toast.error(t("forms.meet_play.toasts.mic_error"));
 
     }
 

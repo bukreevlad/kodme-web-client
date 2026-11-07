@@ -10,6 +10,7 @@ import { createRequest } from "../requests/create.js";
 
 // Импортируем типы
 import type { BroadcastInviteCreate } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -37,7 +38,7 @@ export async function createHandler(form: BroadcastInviteCreate): Promise<void> 
         if (response.status) {
 
             // Toast
-            Toast.success(window._lc.forms.broadcast_invite_create.toasts.success_create);
+            Toast.success(t("forms.broadcast_invite_create.toasts.success_create"));
 
             // Закрываем форму
             form.modal?.close();
@@ -55,7 +56,7 @@ export async function createHandler(form: BroadcastInviteCreate): Promise<void> 
             maxUsers?.classList.add("invalid");
 
             // Toast
-            Toast.error(window._lc.forms.broadcast_invite_create.toasts.max_users_range_invalid);
+            Toast.error(t("forms.broadcast_invite_create.toasts.max_users_range_invalid"));
             isToastShown = true;
         }
 
@@ -64,13 +65,13 @@ export async function createHandler(form: BroadcastInviteCreate): Promise<void> 
             name?.classList.add("invalid");
 
             // Toast
-            Toast.error(window._lc.forms.broadcast_invite_create.toasts.name_invalid);
+            Toast.error(t("forms.broadcast_invite_create.toasts.name_invalid"));
             isToastShown = true;
         }
 
         // Прочая ошибка сервера
         if (!isToastShown) {
-            Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+            Toast.error(t("api.errors.server_error"));
         }
 
     }

@@ -12,6 +12,7 @@ import { declineCallHandler } from "../handlers/decline.js";
 
 // Импортируем типы
 import type { CallIncoming } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -46,13 +47,13 @@ export function startRingTimer(form: CallIncoming): void {
                 if (subtitle) {
                     const minutes = String(Math.floor(left / 60)).padStart(2, "0");
                     const seconds = String(left % 60).padStart(2, "0");
-                    subtitle.textContent = `${window._lc.forms.call.status.ringing} ${minutes}:${seconds}`;
+                    subtitle.textContent = `${t("forms.call.status.ringing")} ${minutes}:${seconds}`;
                 }
                 return;
             }
 
             // Время вышло — сообщаем пользователю и отклоняем вызов
-            Toast.warning(window._lc.forms.call_incoming.toasts.no_answer, {
+            Toast.warning(t("forms.call_incoming.toasts.no_answer"), {
                 position: "top-center"
             });
 

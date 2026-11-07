@@ -221,7 +221,7 @@ constructor
 `INVALID_CURSOR_ID`, `INVALID_DIRECTION`, `INVALID_OFFSET`, `INVALID_USER_ID`,
 `USER_ID_REQUIRED`, плюс `RATE_LIMIT_EXCEEDED` по `error.status === 429`.
 
-Тексты — только через `locales/ru.json` (`window._lc.forms.search.*`).
+Тексты — только через `locales/ru.json` (`t("forms.search.*")`).
 
 Исключения: **фоновая** догрузка по скроллу. Пользователь ничего не нажимал,
 поэтому тост на каждый тик прокрутки был бы шумом — ошибка догрузки

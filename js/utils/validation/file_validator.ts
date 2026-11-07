@@ -5,6 +5,8 @@ import { getLimits } from "../../config/limits.js";
 // (namespace-импорт: в модуле уже есть локальные обёртки getExtension /
 // resolveMimeType / isMimeConsistent — прямые имена столкнулись бы с ними)
 import * as FileTypes from "../../config/file_types.js";
+import { t } from "../i18n/index.js";
+import { I18n } from "../i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -200,7 +202,7 @@ export function validateFile(file: File, options: FileValidationOptions = {}): F
     // чтобы вызывающий код отфильтровал файл молча
     if (!file) return { isValid: false, code: null, params: {} };
 
-    const name = file.name || "файл";
+    const name = file.name || t("api.errors.file_fallback_name");
 
     // Единый лимит размера: явная опция вызывающего либо серверный лимит
     const maxSize = options.maxSize ?? getLimits()?.files.max_size_bytes;
@@ -272,9 +274,10 @@ export function filterFiles(files: Iterable<File> | null | undefined, options: F
  */
 function formatBytes(bytes: number): string {
 
-    if (!Number.isFinite(bytes) || bytes <= 0) return "0 Б";
+    // Юниты — из локали (заглавные: «б»→«Б»), формат тоста не меняется
+    const units = I18n.tree.utils.format_bites.sizes.slice(0, 5).map((unit) => unit.toUpperCase());
+    if (!Number.isFinite(bytes) || bytes <= 0) return `0 ${units[0]}`;
 
-    const units = ["Б", "КБ", "МБ", "ГБ", "ТБ"];
     const index = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
     const value = bytes / Math.pow(1024, index);
 

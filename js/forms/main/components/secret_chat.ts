@@ -1,6 +1,5 @@
 // Импортируем utils
 import { Logger } from "../../../utils/logs/logger.js";
-import { TimeAgoFormatter } from "../../../utils/date/time_ago_formatter.js";
 import { Icons } from "../../../utils/icons.js";
 
 // Импортируем components
@@ -16,6 +15,7 @@ import { createSecretChatLastMessage } from "./secret_chat_last_message.js";
 import { isChannelRecord } from "../types.js";
 import type { Main } from "../index.js";
 import type { ChannelRecord } from "../types.js";
+import { I18n, t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -153,7 +153,7 @@ export class SecretChatItem {
 
             const secretLabel = document.createElement("span");
             secretLabel.classList.add("text-xs", "text-[var(--color-brand)]", "font-normal", "truncate");
-            secretLabel.textContent = window._lc.forms.main.components.channels.secret_chat;
+            secretLabel.textContent = t("forms.main.components.channels.secret_chat");
             name.append(secretLabel);
 
             // Бейдж на аватарке: зелёный при живом P2P-соединении, серый иначе
@@ -221,12 +221,11 @@ export class SecretChatItem {
             const lastMessageEl = createSecretChatLastMessage(this);
             if (lastMessageEl) this.lastMessage.appendChild(lastMessageEl);
 
-            // Парсим created_at
-            const timeAgo = new TimeAgoFormatter(preview.created_at, "telegram-list");
-            this.lastMessagecreatedAt.textContent = timeAgo.formattedTime;
+            // Дата в списке пересобирается при смене языка (Intl на новой локали)
+            I18n.setTime(this.lastMessagecreatedAt, preview.created_at, "telegram-list");
 
         } else {
-            this.lastMessage.textContent = window._lc.forms.main.components.channels.last_message.empty_messages;
+            this.lastMessage.textContent = t("forms.main.components.channels.last_message.empty_messages");
         }
 
     }

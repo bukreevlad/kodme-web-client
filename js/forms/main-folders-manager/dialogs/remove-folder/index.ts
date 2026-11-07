@@ -14,6 +14,7 @@ import { removeFolderHandler } from "../../handlers/remove_folder.js";
 
 // Импортируем типы
 import type { MainFoldersManagerFolder } from "../../types.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * Настройки диалога подтверждения удаления папки.
@@ -215,26 +216,26 @@ export class RemoveFolderDialog {
                 <div class="${CDM_MODAL_HEADER_CLASSES()}">
                     <span class="flex flex-row gap-2 items-center font-semibold text-base">
                         <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-red)]/10 text-[var(--color-red)]">${Icons.icon("trash", { settings: { size: 20 } })?.outerHTML ?? ""}</span>
-                        ${window._lc.forms.main_folders_manager.dialogs.remove_folder.desc}
+                        ${t("forms.main_folders_manager.dialogs.remove_folder.desc")}
                     </span>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "x" })}
                 </div>
                 <div class="${CDM_MODAL_CONTENT_CLASSES()}">
                     <span data-folder-name class="font-semibold"></span>
-                    <span class="text-sm text-muted">${window._lc.forms.main_folders_manager.dialogs.remove_folder.text}</span>
+                    <span class="text-sm text-muted">${t("forms.main_folders_manager.dialogs.remove_folder.text")}</span>
                 </div>
                 <div class="${CDM_MODAL_FOOTER_CLASSES()}">
                     ${Buttons.create({
                         shape: "square",
                         attributes: ["action-close"],
                         classes: ["w-full"],
-                        text: window._lc.forms.main_folders_manager.dialogs.remove_folder.action_cancel
+                        text: t("forms.main_folders_manager.dialogs.remove_folder.action_cancel")
                     })}
                     ${Buttons.danger({
                         shape: "square",
                         attributes: ["action-remove"],
                         classes: ["w-full"],
-                        text: window._lc.forms.main_folders_manager.dialogs.remove_folder.action_remove,
+                        text: t("forms.main_folders_manager.dialogs.remove_folder.action_remove"),
                         icon: "trash"
                     })}
                 </div>

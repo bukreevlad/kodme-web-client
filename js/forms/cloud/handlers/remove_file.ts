@@ -10,6 +10,7 @@ import { removeFileRequest } from "../requests/remove_file.js";
 // Импортируем типы
 import type { CloudItem } from "../types.js";
 import type { Cloud } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -40,12 +41,12 @@ export async function removeFileHandler(form: Cloud, data: CloudItem): Promise<v
             store.remove(data.id);
 
             // Показываем уведомление
-            Toast.success(window._lc.forms.cloud.toasts.file_removed);
+            Toast.success(t("forms.cloud.toasts.file_removed"));
 
         } else {
 
             // Показываем ошибку
-            Toast.error(window._lc.forms.cloud.toasts.access_denied);
+            Toast.error(t("forms.cloud.toasts.access_denied"));
 
         }
 

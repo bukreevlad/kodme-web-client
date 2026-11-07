@@ -5,10 +5,9 @@ import { MESSAGES_INTERACTIVE_ELEMENTS } from "../../../config/constants.js";
 import { IsMobile } from "../../../utils/helpers/is_mobile.js";
 import { Logger } from "../../../utils/logs/logger.js";
 import { Icons } from "../../../utils/icons.js";
-import { TimeAgoFormatter } from "../../../utils/date/time_ago_formatter.js";
 import { GestureController } from "../../../utils/gesture_controller.js";
 import { unescapeHtml } from "../../../utils/string/unescape_html.js";
-import { getDeclension } from "../../../utils/string/declensions.js";
+import { I18n, t } from "../../../utils/i18n/index.js";
 import * as Attachments from "../../../utils/messages/attachments.js";
 
 // Импортируем components
@@ -280,9 +279,8 @@ export class MessageItem {
                 this.avatar?.classList.add("hidden");
             }
 
-            // Парсим created_at
-            let timeAgo = new TimeAgoFormatter(data.created_at, "telegram-time");
-            this.createdAt.textContent = timeAgo.formattedTime;
+            // Время сообщения пересобирается при смене языка (Intl на новой локали)
+            I18n.setTime(this.createdAt, data.created_at, "telegram-time");
 
             // Аватар
             if (this.isAvatar) {
@@ -303,7 +301,7 @@ export class MessageItem {
 
             // Если модератор или владелец
             if (data.is_moderator && (getSessionUserId() !== this.data.created_user_id)) {
-                this.displayType.textContent = "модератор";
+                this.displayType.textContent = t("forms.messages.components.messages.moderator_badge");
             }
 
             // Если есть текст
@@ -482,10 +480,7 @@ export class MessageItem {
 
         // Счётчик и подпись — числом и склонённым словом из локализации
         this.commentsCount.textContent = String(count);
-        this.commentsText.textContent = getDeclension(
-            count,
-            window._lc.forms.messages.components.messages.comments.dec_comments
-        ) ?? "";
+        this.commentsText.textContent = t("forms.messages.components.messages.comments.dec_comments", { count });
 
     }
 

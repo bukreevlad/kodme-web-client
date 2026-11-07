@@ -1,0 +1,2633 @@
+{
+  "locale": "en-US",
+  "locale_name": "English",
+  "api": {
+    "errors": {
+      "server_not_responde": "The server is not responding",
+      "invalid_token_signature": "Token verification failed. Invalid signature",
+      "server_error": "Server error. Try again later",
+      "timeout": "The server did not respond in time. Check your connection",
+      "network_error": "No connection to the server",
+      "access_denied": "You don't have access to this action",
+      "rate_limit_exceeded": "Too many requests. Try again later",
+      "text_or_attachments_required": "Type a message or attach a file",
+      "text_too_long": "Message is too long",
+      "invalid_extension": "This file type cannot be attached",
+      "max_files_exceeded": "Too many files",
+      "file_too_large": "File is too large",
+      "invalid_mime": "Invalid file type",
+      "message_not_found": "Message not found",
+      "invalid_name": "Invalid name",
+      "unauthorized": "Sign in again",
+      "attachments_max_count_exceeded": "Too many attachments in the message",
+      "document_id_invalid": "File not found or not uploaded. Try attaching it again",
+      "invalid_file_size": "File is too large",
+      "invalid_mime_type": "Invalid file type",
+      "mime_type_required": "Could not detect the file type",
+      "mime_extension_mismatch": "File type does not match its extension",
+      "invalid_metadata": "Invalid file data",
+      "file_name_required": "File name is missing",
+      "file_name_too_long": "File name is too long",
+      "buttons_invalid": "Invalid buttons in the message",
+      "invalid_buttons": "Invalid buttons in the message",
+      "buttons_max_rows_exceeded": "Too many button rows in the message",
+      "buttons_max_per_row_exceeded": "Too many buttons in one row",
+      "button_text_invalid": "Invalid button text",
+      "button_classes_invalid": "Invalid button style",
+      "invalid_button_url": "Invalid link in the button",
+      "subscription_required": "You need to subscribe to the channel",
+      "commenting_disabled_in_channel": "Commenting is disabled in this channel",
+      "commenting_disabled_in_post": "Commenting is disabled for this post",
+      "entity_not_found": "The post was not found or has been deleted",
+      "post_not_found": "The post was not found or has been deleted",
+      "comment_not_found": "Comment not found or already deleted",
+      "comment_mismatch": "The comment has already been edited or deleted",
+      "edit_not_allowed": "You cannot edit this comment",
+      "remove_not_allowed": "You cannot delete this comment",
+      "reply_to_comment_not_found": "The comment you are replying to has been deleted",
+      "reply_to_comment_mismatch": "You cannot reply to this comment",
+      "invalid_attachments": "Invalid attachments",
+      "text_required": "The comment is empty",
+      "invalid_text": "Invalid comment text",
+      "reaction_required": "No reaction selected",
+      "reaction_unavailable": "This reaction is unavailable",
+      "media_processing_failed": "Failed to process the file",
+      "document_not_found": "File not found or deleted",
+      "object_not_uploaded": "The file was not fully uploaded",
+      "upload_size_mismatch": "Uploaded file size does not match",
+      "document_not_processed": "The file is still being processed, try sending it later",
+      "media_processing_disabled": "File processing is temporarily unavailable",
+      "upload_rejected": "Storage rejected the file (400). Try again later",
+      "file_fallback_name": "file"
+    }
+  },
+  "components": {
+    "toast": {
+      "close": "Dismiss notification"
+    },
+    "clipboard": {
+      "success": "Copied",
+      "error": "Could not copy. Copy the text manually"
+    },
+    "tabs": {
+      "close": "Close tab"
+    },
+    "video_player": {
+      "wide_expand": "Stretch video to full width",
+      "wide_collapse": "Return video to normal width"
+    },
+    "markdown": {
+      "code_block": "Code block"
+    }
+  },
+  "utils": {
+    "format_bites": {
+      "sizes": [
+        "B",
+        "KB",
+        "MB",
+        "GB",
+        "TB",
+        "PB",
+        "EB",
+        "ZB",
+        "YB"
+      ]
+    },
+    "duration_formatter": {
+      "days_one": "day",
+      "days_few": "days",
+      "days_many": "days",
+      "days_other": "days"
+    },
+    "fetch_handler": {
+      "body_read_failed": "Could not read the response body.",
+      "http_error": "Error {{status}}: {{message}}",
+      "request_failed": "Request failed. Status: {{status}} ({{statusText}})"
+    },
+    "file_downloader": {
+      "download_failed": "Download failed",
+      "aborted": "Download cancelled"
+    },
+    "file_renditions": {
+      "original": "Original"
+    }
+  },
+  "forms": {
+    "login": {
+      "title": "Welcome!",
+      "subtitle": "Sign in to continue",
+      "email": "Email",
+      "password": "Password",
+      "save_me": "Remember me",
+      "login": "Sign in",
+      "qr_login": "Sign in with QR code",
+      "passkey_login": "Sign in with a passkey",
+      "forgot_password": "Forgot password?",
+      "registration": "Create an account",
+      "toasts": {
+        "user_not_found": "User not found",
+        "not_password": "Enter your password",
+        "password_not_math": "Passwords do not match",
+        "not_email": "Enter your email",
+        "invalid_email": "Enter a valid email",
+        "user_blocked": "Account blocked",
+        "too_many_requests": "Too many requests. Try again later",
+        "success_code_sent": "Confirmation code sent to your email",
+        "success_totp_required": "Enter the code from your authenticator app",
+        "success_passkey_login": "Signed in with a passkey",
+        "passkey_unsupported": "Your browser does not support passkeys",
+        "passkey_no_credentials": "No passkeys registered for this account",
+        "passkey_expired": "Confirmation session expired. Sign in again",
+        "passkey_credential_not_found": "Passkey not found. Sign in with a password",
+        "passkey_invalid": "Could not verify the passkey",
+        "passkey_sign_count": "Passkey rejected. Sign in with a password and remove the passkey"
+      }
+    },
+    "registration": {
+      "title": "Create an account",
+      "subtitle": "Create an account to start chatting",
+      "step": "Step {{current}} of {{total}}",
+      "email": "Email",
+      "you_name": "Your name",
+      "first_name": "First name",
+      "last_name": "Last name",
+      "password": "Password",
+      "retry_password": "Confirm password",
+      "desc_code": "Enter the code from the email",
+      "back": "Back",
+      "next": "Next",
+      "registration": "Create",
+      "toasts": {
+        "not_email": "Enter your email",
+        "invalid_email": "Enter a valid email",
+        "not_first_name": "Enter your first name",
+        "not_last_name": "Enter your last name",
+        "invalid_first_name": "First name: 2 to 64 characters, letters only",
+        "invalid_last_name": "Last name: 2 to 64 characters, letters only",
+        "not_password": "Enter your password",
+        "not_retry_password": "Confirm your password",
+        "passwords_not_match": "Passwords do not match",
+        "password_too_short": "Password must be at least 8 characters",
+        "email_already_taken": "This email is already registered",
+        "user_blocked": "Account blocked",
+        "module_disabled": "Registration is temporarily unavailable",
+        "too_many_requests": "Too many requests. Try again later",
+        "success_registration": "You have successfully registered"
+      }
+    },
+    "forgot_password": {
+      "title": "Forgot your password?",
+      "subtitle": "We'll email you a code to restore access",
+      "step": "Step {{current}} of {{total}}",
+      "email": "Email",
+      "code": "Code",
+      "password": "Password",
+      "retry_password": "Confirm password",
+      "desc_send": "A confirmation code will be sent to the email you specify",
+      "desc_code": "Enter the code from the email",
+      "send": "Send",
+      "confirm": "Confirm",
+      "set_password": "Save",
+      "back": "Back",
+      "toasts": {
+        "invalid_email": "Enter a valid email",
+        "not_email": "Enter your email",
+        "code_invalid": "Incorrect or expired code",
+        "code_required": "Enter the code",
+        "too_many_attempts": "Too many attempts. Try again later",
+        "passwords_not_match": "Passwords do not match",
+        "password_too_short": "Password must be at least 8 characters",
+        "not_password": "Enter your password",
+        "not_retry_password": "Confirm your password",
+        "too_many_requests": "Too many requests. Try again later",
+        "success_code_sent": "Code sent to the specified email",
+        "success_code_confirmed": "Code confirmed",
+        "success_password_changed": "Password changed. Sign in again"
+      }
+    },
+    "confirm": {
+      "title": "Check your email",
+      "title_totp": "Sign-in confirmation",
+      "desc": "Confirmation code sent to {{email}}",
+      "code": "Code",
+      "desc_code": "Enter the code from the email",
+      "desc_totp": "Enter the code from your authenticator app",
+      "totp_code": "App code",
+      "desc_totp_code": "Open your authenticator app (Google Authenticator, Yandex Key, etc.) and enter the current code",
+      "check": "Verify",
+      "toasts": {
+        "code_invalid": "Incorrect code",
+        "code_expired": "Code expired. Try signing in again",
+        "code_required": "Enter the code",
+        "too_many_attempts": "Too many attempts. Try again later",
+        "session_not_found": "Session not found",
+        "user_blocked": "Account blocked",
+        "user_not_found": "User not found",
+        "too_many_requests": "Too many requests. Try again later",
+        "success_login": "You are signed in"
+      }
+    },
+    "auth": {
+      "or": "or",
+      "have_account": "Already have an account?",
+      "no_account": "No account?",
+      "back_to_login": "Back to sign in"
+    },
+    "sessions": {
+      "title": "Welcome back!",
+      "subtitle": "Choose an account to continue",
+      "login": "Sign in",
+      "registration": "Sign up",
+      "toasts": {
+        "session_not_exist": "Session not found",
+        "session_expired": "Session expired",
+        "success_remove": "Session removed",
+        "too_many_requests": "Too many requests. Try again later"
+      }
+    },
+    "login_with_qrcode": {
+      "title": "Sign in with QR code",
+      "scan_desc": "Scan the QR code in the app",
+      "back": "Back",
+      "toasts": {
+        "qr_not_found": "QR code not found. Try again",
+        "qr_expired": "QR code expired. Scan a new one",
+        "success_login": "Signed in successfully"
+      },
+      "qr_alt": "QR code"
+    },
+    "user_setting_login_qrcode": {
+      "scan_desc": "Point your camera at the QR code",
+      "dialogs": {
+        "confirm_qrcode_login": {
+          "confirm_enter": "Confirm sign-in",
+          "new_device": "New device",
+          "confirm": "Confirm",
+          "decline": "Decline",
+          "toasts": {
+            "too_many_requests": "Too many requests. Try again later",
+            "error": "Could not confirm sign-in"
+          }
+        }
+      }
+    },
+    "app_new_version_available": {
+      "update_desc": "A new version of the app has been downloaded. Update now?",
+      "update_last_desc": "You can do this by restarting the app, or from the cache settings menu.",
+      "update": "Update",
+      "cancel": "Cancel",
+      "toasts": {
+        "update_ready": "Update downloaded, restart the app"
+      }
+    },
+    "meet_play": {
+      "title": "Conference",
+      "camera_disabled": "Camera is off",
+      "you_suffix": "(You)",
+      "connecting": "Connecting to the conference…",
+      "cancel_connecting": "Cancel",
+      "grid_settings_button": "Grid settings",
+      "close": "Leave the conference",
+      "open_chat": "Open chat",
+      "menu_button": "Conference menu",
+      "participants_list": "Conference participants",
+      "immersive_hint": "Panels are hidden. Press Esc to bring them back.",
+      "participants": {
+        "alone": "You are alone in the conference",
+        "count_one": "participant",
+        "count_few": "participants",
+        "count_many": "participants",
+        "count_other": "participants"
+      },
+      "quality": {
+        "unknown": "No data",
+        "lost": "No connection",
+        "poor": "Poor",
+        "good": "Good",
+        "excellent": "Excellent"
+      },
+      "footer": {
+        "toggle_audio": "Microphone",
+        "toggle_video": "Camera",
+        "switch_camera": "Switch camera",
+        "toggle_screen": "Screen sharing",
+        "raise_hand": "Raise hand",
+        "leave": "Leave the conference"
+      },
+      "hand_raised": "Hand raised",
+      "blocked_by_organizer": "Blocked by the host",
+      "block_sources": {
+        "audio": "microphone",
+        "video": "camera",
+        "screen": "screen sharing"
+      },
+      "toasts": {
+        "success_save": "Screen settings applied",
+        "save_error": "Failed to apply screen settings",
+        "success_remove": "Participant removed",
+        "success_remove_ingress": "Broadcast removed",
+        "remove_error": "Failed to remove the participant",
+        "remove_ingress_error": "Failed to remove the broadcast",
+        "participant_not_found": "The participant has already left the conference",
+        "cannot_remove_owner": "The host cannot be removed",
+        "access_denied": "Not enough permissions for this action",
+        "open_error": "Failed to open the conference",
+        "connect_error": "Failed to connect to the conference",
+        "sync_error": "Failed to refresh the participant list",
+        "mic_error": "Failed to switch the microphone",
+        "camera_error": "Failed to switch the camera",
+        "device_error": "Failed to switch the device",
+        "noise_error": "Failed to switch noise suppression",
+        "screen_error": "Failed to start screen sharing",
+        "hand_error": "Failed to raise hand",
+        "add_cast_success": "Broadcast added to the conference",
+        "add_cast_error": "Failed to add the broadcast",
+        "reconnecting": "Connection lost, reconnecting…",
+        "reconnected": "Connection restored",
+        "disconnected": "Connection to the conference lost",
+        "you_were_removed": "You were removed by the host",
+        "success_block": "Source blocked",
+        "success_unblock": "Source allowed",
+        "success_mute_all_audio": "Microphones blocked for everyone, including those who join later",
+        "success_unmute_all_audio": "Microphones allowed for everyone, including those who join later",
+        "success_mute_all_video": "Cameras blocked for everyone, including those who join later",
+        "success_unmute_all_video": "Cameras allowed for everyone, including those who join later",
+        "success_mute_all_screen": "Screen sharing blocked for everyone, including those who join later",
+        "success_unmute_all_screen": "Screen sharing allowed for everyone, including those who join later",
+        "mute_error": "Failed to change the source access",
+        "mute_all_error": "Failed to change access for all participants",
+        "cannot_block_self": "You cannot block a source for yourself",
+        "nothing_to_change": "The state is already like this",
+        "you_were_blocked": "The host blocked you",
+        "success_layout": "Grid mode applied to everyone",
+        "success_layout_cleared": "Forced mode turned off — participants choose themselves",
+        "layout_error": "Failed to apply the grid mode",
+        "success_focus": "You are shown large for everyone",
+        "success_focus_cleared": "Your tile is no longer pinned large",
+        "focus_error": "Failed to pin you large"
+      },
+      "context_menu": {
+        "grid_settings": "Grid settings",
+        "screen_settings": "Sharing settings",
+        "device_settings": "Camera and microphone",
+        "settings": "General settings",
+        "add_cast": "Add broadcast",
+        "make_main": "Make main",
+        "unpin": "Unpin main",
+        "remove": "Remove",
+        "remove_participant": "Remove from the conference",
+        "remove_cast": "Disconnect broadcast",
+        "block": {
+          "audio": "Mute microphone",
+          "video": "Block camera",
+          "screen": "Block screen sharing"
+        },
+        "unblock": {
+          "audio": "Unmute microphone",
+          "video": "Allow camera",
+          "screen": "Allow screen sharing"
+        },
+        "mute_all_audio": "Mute everyone's microphone",
+        "mute_all_video": "Block everyone's camera",
+        "mute_all_screen": "Block everyone's screen sharing",
+        "unmute_all_audio": "Unmute everyone's microphone",
+        "unmute_all_video": "Allow everyone's camera",
+        "unmute_all_screen": "Allow everyone's screen sharing",
+        "hide_panels": "Hide panels",
+        "show_panels": "Show panels"
+      },
+      "dialogs": {
+        "grid_settings": {
+          "title": "Grid settings",
+          "layouts": {
+            "grid": "Grid",
+            "spotlight": "Spotlight",
+            "sidebar": "Sidebar",
+            "presentation": "Presentation"
+          },
+          "layout_description": {
+            "grid": "All participants as equal tiles.",
+            "spotlight": "One person large, the rest in rows below.",
+            "sidebar": "Participant videos in a column on the side, the screen in the center.",
+            "presentation": "Whatever is being shared from the screen is shown large."
+          },
+          "force": "Apply to everyone",
+          "force_description": "The grid mode will be forcibly applied to all conference participants.",
+          "focus": "Show me large to everyone",
+          "focus_description": "Your tile will be shown large to all conference participants, even if someone pinned another person.",
+          "hotkeys": "Hotkeys",
+          "hotkeys_map": {
+            "space": "microphone",
+            "video": "camera",
+            "screen": "screen sharing",
+            "hand": "raise hand",
+            "menu": "menu"
+          },
+          "save": "Apply"
+        },
+        "screen_settings": {
+          "title": "Sharing settings",
+          "resolution": "Resolution",
+          "fps": "Frame rate (FPS)",
+          "fps_desc": "Low FPS suits presentations; high FPS suits video and animations.",
+          "original": "Original (as on the monitor)",
+          "h1080": "1080p (Full HD)",
+          "h720": "720p (HD)",
+          "h360": "360p (Data saver)",
+          "fps_5": "5 FPS (For text)",
+          "fps_15": "15 FPS (Optimal)",
+          "fps_30": "30 FPS (Smooth)",
+          "fps_60": "60 FPS (Maximum)",
+          "audio": "Share tab audio",
+          "audio_desc": "Turn off if you don't want listeners to hear audio from the tab. Browser windows and screens are always shared without sound.",
+          "applying": "Applying…",
+          "save": "Save settings"
+        },
+        "device_settings": {
+          "title": "Camera and microphone",
+          "cameras": "Cameras",
+          "microphones": "Microphones",
+          "empty_camera": "No camera found",
+          "empty_microphone": "No microphone found",
+          "access_denied": "The browser denied access. Allow camera and microphone in the site settings",
+          "unsupported": "The browser did not grant access. Camera and microphone require HTTPS",
+          "hint": "The selection applies immediately. If a device is off, it turns on with the selection — the source state does not change.",
+          "device_fallback_camera": "Camera",
+          "device_fallback_microphone": "Microphone",
+          "noise": "Noise suppression",
+          "noise_desc": "Additionally removes background noise: hum, fan, rustling. The browser's basic filtering keeps working.",
+          "noise_unsupported": "The browser does not support audio processing — this option is unavailable",
+          "enabled": "On",
+          "disabled": "Off"
+        }
+      },
+      "participant_fallback": "Participant"
+    },
+    "messages": {
+      "favorite": "Favorites",
+      "online": "Online",
+      "was": "Last seen",
+      "offline": "Offline",
+      "subscribers_one": "member",
+      "subscribers_few": "members",
+      "subscribers_many": "members",
+      "subscribers_other": "members",
+      "group_topic": "Group topic",
+      "conference_chat": "Conference chat",
+      "broadcast_chat": "Broadcast chat",
+      "enter_message": "Message",
+      "unread_messages": "Unread messages",
+      "toasts": {
+        "empty_message": "Message is empty",
+        "bot_not_online": "The bot is offline",
+        "invite_not_valid": "The invite is invalid",
+        "cloud_link_not_valid": "The link is invalid",
+        "maximum_files": "No more than {{count}} files",
+        "file_too_large": "File {{name}} is larger than {{size}}",
+        "invalid_extension": "File {{name}} cannot be attached",
+        "invalid_mime": "Type of {{name}} does not match its extension",
+        "message_too_long": "Maximum {{count}} characters",
+        "uploading_failed": "Failed to upload the file",
+        "send_failed": "Message was not sent",
+        "sticker_send_error": "Failed to send the sticker",
+        "sticker_pak_unavailable": "The sticker pack is unavailable",
+        "rate_limit": "Too many requests. Try again later",
+        "drop_files_failed": "Failed to read the dropped files",
+        "invalid_characters": "The message contains invalid characters",
+        "attachments_upload_failed": "Not all files were uploaded. Try sending the message again",
+        "sent_without_preview": "File sent without a preview"
+      },
+      "voice_recorder": {
+        "slide_to_cancel": "Cancel"
+      },
+      "components": {
+        "messages": {
+          "document_item": {
+            "context_menu": {
+              "download": "Download"
+            }
+          },
+          "audio_item": {
+            "context_menu": {
+              "download": "Download"
+            }
+          },
+          "audio_note_item": {
+            "context_menu": {
+              "download": "Download"
+            }
+          },
+          "voice_item": {
+            "voice_message": "Voice message",
+            "voice_note": "voice message"
+          },
+          "reply": {
+            "image": "Image",
+            "voice_note": "Voice message",
+            "video_note": "Video message",
+            "dec_files_one": "file",
+            "dec_files_few": "files",
+            "dec_files_many": "files",
+            "dec_files_other": "files",
+            "dec_audios_one": "audio recording",
+            "dec_audios_few": "audio recordings",
+            "dec_audios_many": "audio recordings",
+            "dec_audios_other": "audio recordings",
+            "dec_videos_one": "video recording",
+            "dec_videos_few": "video recordings",
+            "dec_videos_many": "video recordings",
+            "dec_videos_other": "video recordings"
+          },
+          "forward": {
+            "forwarded_from": "Forwarded from",
+            "unknown": "Unknown"
+          },
+          "dialogs": {
+            "message_url_click_confirm": {
+              "desc": "Follow the external link?",
+              "cancel": "Cancel",
+              "open": "Open"
+            },
+            "remove_message_confirm": {
+              "desc": "Delete the message?",
+              "for_all": "Delete for everyone",
+              "action_cancel": "Cancel",
+              "action_remove": "Delete"
+            }
+          },
+          "context_menu": {
+            "copy": "Copy",
+            "resend": "Send",
+            "reply": "Reply",
+            "forward": "Forward",
+            "edit": "Edit",
+            "remove": "Delete"
+          },
+          "toasts": {
+            "message_removed": "Message deleted",
+            "message_copied": "Message copied",
+            "message_forwarded": "Message forwarded"
+          },
+          "system_messages": {
+            "USER_JOINED_GROUP": {
+              "string": "{{user_name}} joined the group",
+              "array": "joined the group"
+            },
+            "USER_LEFT_GROUP": {
+              "string": "{{user_name}} left the group",
+              "array": "left the group"
+            },
+            "USER_ROLE_CHANGED_TO_MODERATOR_IN_GROUP": {
+              "string": "{{user_name}} became a moderator",
+              "array": "became a moderator"
+            },
+            "USER_RENAMED_GROUP": {
+              "string": "{{user_name}} renamed the group to - {{group_name}} ",
+              "array": "renamed the group to - "
+            },
+            "BROADCAST_STARTED": {
+              "string": "Broadcast started",
+              "array": [
+                "Broadcast",
+                "started"
+              ]
+            },
+            "BROADCAST_ENDED": {
+              "string": "Broadcast stopped",
+              "array": [
+                "Broadcast",
+                "stopped"
+              ]
+            },
+            "CALL_INCOMING": {
+              "string": "Incoming call",
+              "array": "incoming call"
+            },
+            "CALL_ENDED": {
+              "string": "Call ended",
+              "array": "ended"
+            },
+            "CALL_MISSED": {
+              "string": "Missed call",
+              "array": "missed call"
+            }
+          },
+          "comments": {
+            "dec_comments_one": "comment",
+            "dec_comments_few": "comments",
+            "dec_comments_many": "comments",
+            "dec_comments_other": "comments"
+          },
+          "moderator_badge": "moderator"
+        },
+        "reply_footer": {
+          "image": "Image",
+          "sticker": "Sticker",
+          "voice_note": "Voice message",
+          "video_note": "Video message",
+          "dec_files_one": "file",
+          "dec_files_few": "files",
+          "dec_files_many": "files",
+          "dec_files_other": "files",
+          "dec_audios_one": "audio recording",
+          "dec_audios_few": "audio recordings",
+          "dec_audios_many": "audio recordings",
+          "dec_audios_other": "audio recordings",
+          "dec_videos_one": "video recording",
+          "dec_videos_few": "video recordings",
+          "dec_videos_many": "video recordings",
+          "dec_videos_other": "video recordings"
+        }
+      },
+      "context_menu": {
+        "profile": "Profile",
+        "user_profile": "User profile",
+        "call": "Call",
+        "enable_notify": "Turn sound on",
+        "disable_notify": "Turn sound off",
+        "subscribe_channel": "Join the community",
+        "unsubscribe_channel": "Leave the community",
+        "subscribe_group": "Join the group",
+        "unsubscribe_group": "Leave the group",
+        "clear_history": "Clear history",
+        "remove_dialog": "Delete chat",
+        "add_to_folder": "Add to folder",
+        "toasts": {
+          "success_enable_notify": "Notifications enabled",
+          "success_disable_notify": "Notifications disabled",
+          "success_subscribe": "Subscribed",
+          "success_unsubscribe": "Unsubscribed",
+          "success_clear_history": "Message history cleared",
+          "success_remove_dialog": "Chat deleted"
+        }
+      },
+      "dialogs": {
+        "clear_history_confirm": {
+          "desc": "Clear the message history?",
+          "for_all": "Clear for everyone",
+          "action_cancel": "Cancel",
+          "action_clear": "Clear"
+        },
+        "remove_dialog_confirm": {
+          "desc": "Delete the chat?",
+          "for_all": "Delete for everyone",
+          "action_cancel": "Cancel",
+          "action_remove": "Delete"
+        }
+      },
+      "title": "Messages"
+    },
+    "comments": {
+      "title": "Comments",
+      "enter_comment": "Comment",
+      "new_comments": "New comments",
+      "removed_comment": "Comment deleted",
+      "dec_comments_one": "comment",
+      "dec_comments_few": "comments",
+      "dec_comments_many": "comments",
+      "dec_comments_other": "comments",
+      "dec_files_one": "attachment",
+      "dec_files_few": "attachments",
+      "dec_files_many": "attachments",
+      "dec_files_other": "attachments",
+      "toasts": {
+        "empty_message": "The comment is empty",
+        "maximum_files": "No more than {{count}} files",
+        "file_too_large": "File {{name}} is larger than {{size}}",
+        "invalid_extension": "File {{name}} cannot be attached",
+        "invalid_mime": "Type of {{name}} does not match its extension",
+        "message_too_long": "Maximum {{count}} characters",
+        "invalid_characters": "The comment contains invalid characters",
+        "uploading_failed": "Failed to upload the file",
+        "send_failed": "Comment was not sent",
+        "drop_files_failed": "Failed to read the dropped files",
+        "commenting_disabled": "Commenting is disabled",
+        "comment_removed": "Comment deleted",
+        "sent_without_preview": "File sent without a preview"
+      },
+      "voice_recorder": {
+        "slide_to_cancel": "Cancel"
+      },
+      "components": {
+        "reply": {
+          "image": "Photo",
+          "sticker": "Sticker",
+          "voice_note": "Voice message",
+          "video_note": "Video message",
+          "dec_audios_one": "audio",
+          "dec_audios_few": "audio",
+          "dec_audios_many": "audio",
+          "dec_audios_other": "audio",
+          "dec_videos_one": "video",
+          "dec_videos_few": "video",
+          "dec_videos_many": "video",
+          "dec_videos_other": "video",
+          "dec_files_one": "attachment",
+          "dec_files_few": "attachments",
+          "dec_files_many": "attachments",
+          "dec_files_other": "attachments"
+        },
+        "document_item": {
+          "context_menu": {
+            "download": "Download"
+          }
+        },
+        "audio_item": {
+          "context_menu": {
+            "download": "Download"
+          }
+        },
+        "voice_item": {
+          "voice_message": "Voice message",
+          "voice_note": "voice message"
+        }
+      },
+      "context_menu": {
+        "reply": "Reply",
+        "edit": "Edit",
+        "remove": "Delete"
+      },
+      "dialogs": {
+        "remove_comment": {
+          "desc": "Delete the comment?",
+          "text": "The comment will be deleted for everyone, permanently.",
+          "action_cancel": "Cancel",
+          "action_remove": "Delete"
+        }
+      }
+    },
+    "bot_settings": {
+      "link": "Public name",
+      "bio": "Description",
+      "not_select": "Not selected",
+      "id": "ID",
+      "token": "Token",
+      "menu": "Menu",
+      "bot_menu": "Bot menu",
+      "apps": "Bot apps",
+      "toasts": {
+        "success_save": "Bot settings saved",
+        "bio_invalid": "Invalid description",
+        "button_url_invalid": "Invalid button link",
+        "success_avatar": "Bot avatar saved",
+        "avatar_error": "Failed to save the avatar",
+        "success_remove_avatar": "Bot avatar deleted",
+        "remove_avatar_error": "Failed to delete the avatar",
+        "json_invalid": "Invalid JSON",
+        "copied": "Text copied"
+      },
+      "context_menu": {
+        "add_command": "New command",
+        "add_category": "New folder",
+        "export_to_json": "Export to JSON",
+        "import_from_json": "Import from JSON",
+        "remove_menu": "Delete menu",
+        "upload_avatar": "Upload photo",
+        "remove_avatar": "Delete photo"
+      },
+      "dialogs": {
+        "add_command": {
+          "title": "New command",
+          "command": "Command",
+          "name": "Name",
+          "about": "Description",
+          "action_add": "Add",
+          "action_close": "Cancel"
+        },
+        "edit_command": {
+          "title": "Edit command",
+          "command": "Command",
+          "name": "Name",
+          "about": "Description",
+          "action_save": "Save",
+          "action_remove": "Delete",
+          "action_close": "Cancel"
+        },
+        "add_category": {
+          "title": "New folder",
+          "name": "Name",
+          "about": "Description",
+          "action_add": "Add",
+          "action_close": "Cancel"
+        },
+        "edit_category": {
+          "title": "Edit folder",
+          "name": "Name",
+          "about": "Description",
+          "action_save": "Save",
+          "action_remove": "Delete",
+          "action_close": "Cancel"
+        },
+        "export_json": {
+          "title": "Export to JSON",
+          "json_menu": "JSON menu",
+          "action_copy": "Copy",
+          "action_close": "Cancel"
+        },
+        "import_json": {
+          "title": "Import commands from JSON",
+          "json_menu": "JSON menu",
+          "action_save": "Save",
+          "action_close": "Cancel"
+        },
+        "add_app": {
+          "title": "New app",
+          "name": "Name",
+          "link": "Short link",
+          "about": "Description",
+          "url": "App URL",
+          "action_add": "Add",
+          "action_close": "Cancel"
+        },
+        "edit_app": {
+          "title": "Edit app",
+          "name": "Name",
+          "link": "Short link",
+          "about": "Description",
+          "url": "App URL",
+          "action_save": "Save",
+          "action_close": "Cancel"
+        }
+      }
+    },
+    "secret_chat": {
+      "title": "Secret chat",
+      "tab_subtitle": "Secret chat",
+      "enter_message": "Message",
+      "unread_messages": "Unread messages",
+      "reply_message_missing": "Message",
+      "voice_recorder": {
+        "slide_to_cancel": "Cancel"
+      },
+      "components": {
+        "reply": {
+          "image": "Photo",
+          "voice_note": "Voice message",
+          "video_note": "Video message",
+          "dec_audios_one": "audio",
+          "dec_audios_few": "audio",
+          "dec_audios_many": "audio",
+          "dec_audios_other": "audio",
+          "dec_videos_one": "video",
+          "dec_videos_few": "video",
+          "dec_videos_many": "video",
+          "dec_videos_other": "video",
+          "dec_files_one": "attachment",
+          "dec_files_few": "attachments",
+          "dec_files_many": "attachments",
+          "dec_files_other": "attachments"
+        },
+        "document_item": {
+          "context_menu": {
+            "download": "Download"
+          }
+        },
+        "audio_item": {
+          "context_menu": {
+            "download": "Download"
+          }
+        },
+        "voice_item": {
+          "voice_message": "Voice message",
+          "voice_note": "voice message"
+        }
+      },
+      "states": {
+        "pending": "Waiting for the peer…",
+        "connecting": "Connecting…",
+        "connected": "Secret connection",
+        "reconnecting": "Reconnecting…",
+        "failed": "Connection lost"
+      },
+      "typing": {
+        "typing": "typing…",
+        "recording_audio": "recording voice…",
+        "recording_video": "recording video…",
+        "uploading_document": "sending a file…"
+      },
+      "context_menu": {
+        "copy": "Copy",
+        "reply": "Reply",
+        "edit": "Edit",
+        "remove": "Delete",
+        "self_destruct": "Message timer",
+        "self_destruct_off": "Off",
+        "self_destruct_5s": "5 seconds",
+        "self_destruct_1m": "1 minute",
+        "self_destruct_1h": "1 hour",
+        "self_destruct_1d": "1 day",
+        "self_destruct_1w": "1 week",
+        "remove_chat": "Delete secret chat"
+      },
+      "self_destruct_badge": "Self-destruct",
+      "toasts": {
+        "empty_message": "Message is empty",
+        "message_too_long": "Maximum {{count}} characters",
+        "invalid_characters": "The message contains invalid characters",
+        "maximum_files": "No more than {{count}} files",
+        "file_too_large": "File {{name}} is larger than {{size}}",
+        "invalid_extension": "File {{name}} cannot be attached",
+        "invalid_mime": "Type of {{name}} does not match its extension",
+        "drop_files_failed": "Failed to read the dragged files",
+        "uploading_failed": "Failed to transfer the file",
+        "message_removed": "Message deleted",
+        "message_copied": "Message copied",
+        "send_failed": "Message was not sent",
+        "peer_offline": "The peer is offline. Try again later",
+        "sticker_send_error": "Failed to send the sticker",
+        "chat_removed": "Secret chat deleted",
+        "self_destruct_updated": "Self-destruct timer updated",
+        "invite_declined": "Invite declined",
+        "invite_timeout": "Invite not accepted",
+        "invite_error": "Failed to accept the invite"
+      },
+      "dialogs": {
+        "remove_chat_confirm": {
+          "desc": "Delete the secret chat? The history will be deleted on both devices.",
+          "action_cancel": "Cancel",
+          "action_remove": "Delete"
+        },
+        "remove_message_confirm": {
+          "desc": "Delete the message?",
+          "action_cancel": "Cancel",
+          "action_remove": "Delete"
+        },
+        "invite": {
+          "title": "Incoming secret chat",
+          "desc": "Someone is inviting you to a secret chat. Accept on this device to chat from it.",
+          "action_accept": "Accept",
+          "action_decline": "Decline"
+        }
+      }
+    },
+    "cloud": {
+      "root": "Cloud",
+      "tabs": {
+        "mine": "My cloud",
+        "available": "Available to me"
+      },
+      "shared": {
+        "root": "Shared"
+      },
+      "actions": {
+        "open": "Open",
+        "download": "Download",
+        "share": "Share",
+        "links": "Links",
+        "remove": "Delete"
+      },
+      "badges": {
+        "read": "Read",
+        "write": "Write"
+      },
+      "dates": {
+        "created": "Created",
+        "until": "Until"
+      },
+      "empty": {
+        "mine": "Cloud is empty. Upload files or create a folder",
+        "available": "No available links",
+        "shared": "Nothing in this folder"
+      },
+      "toasts": {
+        "folder_created": "Folder created",
+        "file_removed": "File deleted",
+        "folder_removed": "Folder deleted",
+        "folder_not_found": "Folder not found",
+        "access_denied": "Not enough permissions",
+        "link_created": "Link created",
+        "link_removed": "Link deleted",
+        "link_revoked": "Link revoked",
+        "link_not_valid": "The link is invalid",
+        "upload_error": "Failed to upload the file",
+        "invalid_extension": "Invalid file extension",
+        "download_error": "Failed to download the file",
+        "load_error": "Failed to load the folder contents",
+        "load_links_error": "Failed to load the link list"
+      },
+      "dialogs": {
+        "create_folder": {
+          "title": "New folder",
+          "name": "Folder name",
+          "action_create": "Create"
+        },
+        "create_share_link": {
+          "title": "Create link",
+          "item_name": "Item",
+          "access": "Access level",
+          "access_read": "Read",
+          "access_write": "Write",
+          "expires": "Expires",
+          "desc": "The link grants access to the item. \"Write\" level allows editing the folder contents",
+          "action_create": "Create",
+          "link_result": "Link is ready",
+          "action_copy": "Copy",
+          "action_close": "Done"
+        },
+        "share_links": {
+          "title": "Links",
+          "item": "Item",
+          "empty": "No links yet",
+          "action_close": "Close"
+        },
+        "file_info": {
+          "title": "File",
+          "type": "Type",
+          "action_download": "Download",
+          "action_close": "Close"
+        }
+      }
+    },
+    "user_setting_security": {
+      "totp_title": "Two-factor authentication (TOTP)",
+      "totp_desc_on": "Sign-in is protected by a code from your authenticator app",
+      "totp_desc_off": "An authenticator app code will additionally be required at sign-in",
+      "totp_desc_pending": "There is an unfinished setup — repeat the configuration",
+      "totp_enable": "Enable",
+      "totp_disable": "Disable",
+      "totp_setup_title": "Enabling TOTP",
+      "totp_setup_desc": "Scan the QR code with an authenticator app (Google Authenticator, Yandex Key, etc.) or enter the secret manually",
+      "totp_secret": "Secret",
+      "totp_secret_copied": "Secret copied",
+      "totp_code": "App code",
+      "totp_confirm": "Confirm enable",
+      "totp_disable_title": "Disabling TOTP",
+      "totp_disable_desc": "Enter a valid code from your authenticator app to disable two-factor authentication",
+      "action_cancel": "Cancel",
+      "passkeys_title": "Passkeys",
+      "passkeys_desc": "Sign in with a fingerprint, Face ID or security key — no password or email code",
+      "passkeys_empty": "No passkeys registered",
+      "passkey_add": "Add passkey",
+      "passkey_created": "Created",
+      "passkey_last_used": "Last used",
+      "passkey_name_placeholder": "Passkey name",
+      "passkey_rename": "Rename",
+      "passkey_rename_title": "Rename passkey",
+      "passkey_rename_save": "Save",
+      "passkey_remove": "Delete",
+      "passkey_remove_title": "Delete passkey",
+      "passkey_remove_desc": "Passkey \"{{name}}\" will be deleted. You will only be able to sign in on this device with a password",
+      "toasts": {
+        "totp_enabled": "Two-factor authentication enabled",
+        "totp_disabled": "Two-factor authentication disabled",
+        "totp_already_enabled": "Two-factor authentication is already enabled",
+        "totp_not_enabled": "Two-factor authentication is already disabled",
+        "totp_invalid_code": "Incorrect app code",
+        "totp_setup_expired": "Setup is no longer active. Start enabling again",
+        "code_required": "Enter the code",
+        "too_many_attempts": "Too many attempts. Try again later",
+        "security_disabled": "The feature is temporarily unavailable",
+        "name_required": "Enter a passkey name",
+        "invalid_name": "Name: up to 64 characters",
+        "passkey_added": "Passkey added",
+        "passkey_removed": "Passkey deleted",
+        "passkey_renamed": "Passkey renamed",
+        "passkey_not_found": "Passkey not found",
+        "passkey_not_supported": "Your browser does not support passkeys",
+        "passkey_limit": "Passkey limit reached",
+        "passkey_duplicate": "This passkey is already registered",
+        "passkey_ceremony_expired": "Setup session expired. Try again",
+        "passkey_invalid": "Could not verify the passkey",
+        "too_many_requests": "Too many requests. Try again later"
+      }
+    },
+    "user_setting_decoration": {
+      "brand_color": "Accent color",
+      "brand_color_desc": "Used to highlight active elements: buttons, links, indicators. Pick one of the preset colors or set your own.",
+      "brand_color_theme": "Theme color",
+      "brand_color_theme_desc": "Use the accent color of the current theme.",
+      "brand_color_custom": "Custom color",
+      "brand_color_custom_desc": "Pick any color from the palette.",
+      "custom_color": "Custom color",
+      "custom_color_desc": "Pick any color from the palette.",
+      "ui_radius": "Corner rounding",
+      "ui_radius_desc": "How round the interface element corners should be.",
+      "ui_radius_compact": "Compact",
+      "ui_radius_compact_desc": "Minimal corner rounding.",
+      "ui_radius_default": "Default",
+      "ui_radius_default_desc": "Default rounding.",
+      "ui_radius_round": "Round",
+      "ui_radius_round_desc": "Maximum corner rounding.",
+      "message_text_size": "Message text size",
+      "message_text_size_desc": "Choose a comfortable message text size.",
+      "interface_size": "Interface size",
+      "interface_size_desc": "Choose a comfortable interface size. All elements scale together.",
+      "color_scheme": "Color scheme",
+      "color_scheme_desc": "Choose the app color scheme. If you picked another theme, it must support both color schemes.",
+      "current_theme": "Current theme",
+      "not_selected": "Not set",
+      "chat_backgrounds": "Chat backgrounds",
+      "blur_elements": "Blur effect on elements",
+      "blur_elements_desc": "Enables background blur under some elements — modal windows, context menus, chat headers, etc.",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "system": "System",
+      "system_desc": "Follow the device settings",
+      "white": "Light",
+      "white_desc": "Always light scheme",
+      "dark": "Dark",
+      "dark_desc": "Always dark scheme",
+      "size_small": "Smaller",
+      "size_big": "Larger",
+      "size_label_very_small": "Very small",
+      "size_label_small": "Small",
+      "size_label_normal": "Normal",
+      "size_label_large": "Large",
+      "size_label_very_large": "Very large",
+      "preview_title": "Header",
+      "preview_text": "Interface text scales together with the controls.",
+      "message_name": "John: ",
+      "message_text": "Example message text in a chat."
+    },
+    "call": {
+      "title": "Call",
+      "group_title": "Group call",
+      "participant": "Participant",
+      "you_suffix": "you",
+      "participants_list": "Call participants",
+      "cancel": "Cancel",
+      "status": {
+        "starting": "Connecting…",
+        "ringing": "Ringing…",
+        "active": "Connected"
+      },
+      "participants": {
+        "count_one": "participant",
+        "count_few": "participants",
+        "count_many": "participants",
+        "count_other": "participants"
+      },
+      "quality": {
+        "excellent": "Excellent",
+        "good": "Good",
+        "poor": "Poor",
+        "lost": "No connection",
+        "unknown": "No data"
+      },
+      "footer": {
+        "toggle_audio": "Microphone",
+        "toggle_video": "Camera",
+        "switch_camera": "Switch camera",
+        "add_participant": "Add participant",
+        "back_to_grid": "Show all participants",
+        "leave": "End call"
+      },
+      "toasts": {
+        "start_error": "Failed to start the call",
+        "calls_restricted": "This user is not allowed to make calls",
+        "user_not_found": "User not found",
+        "busy": "Busy",
+        "busy_incoming": "{{name}} is trying to call you, but you are already in a call",
+        "no_answer": "No answer",
+        "declined": "Call declined",
+        "ended": "Call ended",
+        "connection_failed": "Failed to establish the connection",
+        "media_error": "Check your camera and microphone",
+        "mic_error": "Failed to switch the microphone",
+        "camera_error": "Failed to switch the camera",
+        "sync_error": "Failed to refresh the participants",
+        "invited": "Invite sent",
+        "call_not_active": "The call has already ended",
+        "already_in_call": "This user is already in the call",
+        "invite_self": "You cannot invite yourself",
+        "invite_error": "Failed to invite the participant"
+      }
+    },
+    "user_setting_notifications": {
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "notify_enabled": "Global setting",
+      "notify_enabled_desc": "Turn all notifications on or off.",
+      "notify_desc_web": "If notifications are not coming through — check your browser settings and grant the permission if needed. Or turn notifications off and on again.",
+      "notify_desc_android": "If notifications are not coming through — open Settings -> Apps -> Kodme -> permissions. Or turn notifications off and on again.",
+      "enable": "Enable",
+      "disable": "Disable",
+      "account_action": "Account actions",
+      "account_action_desc": "Password change, sign-in on a new device, and more.",
+      "calls": "Incoming calls",
+      "calls_desc": "Notifications about incoming calls.",
+      "messages": "New messages",
+      "messages_desc": "Notifications about new messages.",
+      "comments": "New comments",
+      "comments_desc": "New comments on your posts.",
+      "reply_message": "Replies to messages",
+      "reply_message_desc": "When someone replies to your message in a group or group topic.",
+      "toasts": {
+        "success_saved": "Settings saved",
+        "success_enable": "Subscribed successfully",
+        "success_disable": "Unsubscribed successfully",
+        "electron_enabled": "Notifications enabled",
+        "electron_disabled": "Notifications disabled",
+        "not_access": "No permission",
+        "not_access_push": "Failed to get notification permission",
+        "not_device": "Not supported by the device",
+        "timeout": "Error: timeout",
+        "browser_not_unsubscribe": "The browser could not unsubscribe",
+        "save_error": "Failed to save notification settings"
+      }
+    },
+    "main": {
+      "components": {
+        "channels": {
+          "favorite": "Favorites",
+          "secret_chat": "Secret",
+          "last_message": {
+            "you": "You:",
+            "empty_messages": "No messages",
+            "image": "Image",
+            "sticker": "Sticker",
+            "voice_note": "Voice message",
+            "video_note": "Video message",
+            "dec_files_one": "file",
+            "dec_files_few": "files",
+            "dec_files_many": "files",
+            "dec_files_other": "files",
+            "status_activity": {
+              "several_actions": "Several people are acting...",
+              "and_or": "and",
+              "recording_audio": [
+                "are recording voice...",
+                "is recording voice..."
+              ],
+              "recording_video": [
+                "are recording a video message...",
+                "is recording a video message..."
+              ],
+              "uploading_document": [
+                "are uploading files...",
+                "is uploading a file..."
+              ],
+              "typing": [
+                "are typing...",
+                "is typing..."
+              ]
+            }
+          },
+          "context_menu": {
+            "profile": "Profile",
+            "user_profile": "User profile",
+            "call": "Call",
+            "enable_notify": "Turn sound on",
+            "disable_notify": "Turn sound off",
+            "unsubscribe_channel": "Leave the community",
+            "unsubscribe_group": "Leave the group",
+            "clear_history": "Clear history",
+            "remove_dialog": "Delete chat",
+            "add_to_folder": "Add to folder",
+            "toasts": {
+              "success_enable_notify": "Notifications enabled",
+              "success_disable_notify": "Notifications disabled",
+              "success_unsubscribe": "Unsubscribed",
+              "success_clear_history": "Message history cleared",
+              "success_remove_dialog": "Chat deleted",
+              "success_move_to_folder": "Added to folder",
+              "success_unmove_from_folder": "Removed from folder"
+            }
+          }
+        }
+      },
+      "events": {
+        "socket": {
+          "messages": {
+            "message_deleted": "Message deleted"
+          }
+        }
+      },
+      "toasts": {
+        "storage_overflow": "Local storage is full",
+        "storage_overflow_or_unavailable": "Local storage is full or unavailable",
+        "storage_write_failed": "We could not write data to local storage..."
+      },
+      "connecting": "Connecting...",
+      "updating": "Updating...",
+      "all_folder": "All"
+    },
+    "user_settings": {
+      "email": "Email",
+      "first_name": "First name",
+      "last_name": "Last name",
+      "link": "Public name",
+      "bio": "About",
+      "not_select": "Not selected",
+      "decoration": "Appearance",
+      "decoration_desc": "Customize the app to your taste: pick chat backgrounds, text size...",
+      "notifications": "Notifications",
+      "notifications_desc": "Turn on and configure notifications that help you catch new messages, account actions, and more.",
+      "language": "Language",
+      "language_desc": "Choose the app language (locale).",
+      "privacy": "Privacy",
+      "privacy_desc": "Configure privacy settings. They affect all your sessions — for example, who can message, call, invite you to groups, etc.",
+      "security": "Security",
+      "security_desc": "Two-factor authentication (TOTP) and passkeys for signing in",
+      "account_actions": "Account actions",
+      "account_actions_desc": "Change password, sign out, and more.",
+      "devices": "Devices",
+      "set_password": "Change password",
+      "set_account": "Switch account",
+      "logout": "Sign out",
+      "about": "About",
+      "app_build_version": "Build version:",
+      "app_build_at": "Build date:",
+      "manage_cache": "Storage management",
+      "toasts": {
+        "success_save": "Settings saved",
+        "first_name_required": "Enter your first name",
+        "first_name_invalid": "Invalid first name",
+        "last_name_invalid": "Invalid last name",
+        "bio_invalid": "Invalid description",
+        "success_avatar": "Avatar saved",
+        "avatar_error": "Failed to save the avatar",
+        "success_remove_avatar": "Avatar deleted",
+        "remove_avatar_error": "Failed to delete the avatar"
+      },
+      "context_menu": {
+        "upload": "Upload photo",
+        "remove": "Delete photo",
+        "toasts": {
+          "contact_added": "Photo uploaded",
+          "contact_removed": "Photo deleted"
+        }
+      }
+    },
+    "broadcast_settings": {
+      "choose_thumb": "Choose cover",
+      "name": "Name",
+      "about": "Description",
+      "rtmp_url": "RTMP broadcast URL",
+      "rtmp_key": "Broadcast key",
+      "create_rtmp_key_ingress": "Get broadcast key",
+      "create_whip_key_ingress": "Get broadcast key",
+      "whip_url": "WHIP broadcast URL",
+      "whip_key": "Broadcast key",
+      "chat_url": "Broadcast chat URL",
+      "is_public_cast": "Broadcast type",
+      "is_public_cast_desc": "A public broadcast can be found in search; a private one can only be joined via an invite link.",
+      "opened": "Public",
+      "closed": "Private",
+      "is_chat_cast": "Broadcast chat",
+      "is_chat_cast_desc": "Users will be able to chat during the broadcast",
+      "invites": "Invites",
+      "invites_desc": "Manage invites to the broadcast.",
+      "enabled": "On",
+      "disabled": "Off",
+      "remove": " Delete",
+      "remove_desc": "Permanently delete the broadcast together with its chat.",
+      "toasts": {
+        "success_save": "Settings saved",
+        "success_remove": "Broadcast deleted",
+        "access_denied": "No access",
+        "success_thumb": "Cover saved",
+        "thumb_error": "Failed to save the cover",
+        "success_remove_thumb": "Cover deleted",
+        "remove_thumb_error": "Failed to delete the cover",
+        "invalid_name": "Name must be 2 to 128 characters",
+        "invalid_about": "Description can be at most 255 characters"
+      },
+      "context_menu": {
+        "upload": "Upload cover",
+        "remove": "Delete cover",
+        "toasts": {
+          "thumb_added": "Cover uploaded",
+          "thumb_removed": "Cover deleted"
+        }
+      },
+      "dialogs": {
+        "remove": {
+          "title": "Delete broadcast",
+          "description": "Are you sure you want to delete the broadcast and all its data, including all chat messages?",
+          "action_remove": "Delete",
+          "action_close": "Close"
+        }
+      }
+    },
+    "channel_settings": {
+      "name": "Name",
+      "about": "Description",
+      "link": "Public name",
+      "not_select": "Not selected",
+      "type": "Community type",
+      "type_desc": "An open community can be found in search; a closed one can only be joined via an invite link.",
+      "invites": "Invites",
+      "invites_desc": "Manage invites to the community.",
+      "can_posting": "Who can post?",
+      "can_posting_desc": "Whether all members or only the administrator can post in the community.",
+      "commenting": "Commenting",
+      "commenting_desc": "Allow commenting on community posts.",
+      "all_posting": "All members",
+      "admin_posting": "Administrator only",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "opened": "Open",
+      "closed": "Closed",
+      "remove": " Delete",
+      "remove_desc": "Permanently delete the community.",
+      "toasts": {
+        "success_save": "Settings saved",
+        "success_remove": "Community deleted",
+        "access_denied": "No access",
+        "success_avatar": "Avatar saved",
+        "avatar_error": "Failed to save the avatar",
+        "success_remove_avatar": "Avatar deleted",
+        "remove_avatar_error": "Failed to delete the avatar",
+        "invalid_name": "Name must be 2 to 128 characters",
+        "invalid_about": "Description can be at most 255 characters"
+      },
+      "context_menu": {
+        "upload": "Upload photo",
+        "remove": "Delete photo",
+        "toasts": {
+          "avatar_added": "Photo uploaded",
+          "avatar_removed": "Photo deleted"
+        }
+      },
+      "dialogs": {
+        "remove": {
+          "title": "Delete community",
+          "description": "Are you sure you want to delete the community and all its data?",
+          "action_remove": "Delete",
+          "action_close": "Close"
+        }
+      }
+    },
+    "search": {
+      "search": "Search",
+      "channels": "Communities",
+      "groups": "Groups",
+      "users": "People",
+      "bots": "Bots",
+      "create_bot": "Create a bot",
+      "states": {
+        "loading": "Loading...",
+        "not_found": "Nothing found",
+        "error": "Failed to load"
+      },
+      "empty": {
+        "channels": {
+          "title": "No communities found",
+          "desc": "Try a different query or check the spelling"
+        },
+        "groups": {
+          "title": "No groups found",
+          "desc": "Try a different query or check the spelling"
+        },
+        "users": {
+          "title": "No people found",
+          "desc": "Check the name or the profile link"
+        },
+        "bots": {
+          "title": "No bots found",
+          "desc": "Try a different query — or create your own bot"
+        }
+      },
+      "toasts": {
+        "load_error": "Failed to load search results",
+        "open_error": "Failed to open search",
+        "search_error": "Search failed",
+        "create_bot_error": "Failed to open bot creation"
+      },
+      "_components": {
+        "channels": {
+          "subscribers_one": "member",
+          "subscribers_few": "members",
+          "subscribers_many": "members",
+          "subscribers_other": "members"
+        },
+        "groups": {
+          "subscribers_one": "member",
+          "subscribers_few": "members",
+          "subscribers_many": "members",
+          "subscribers_other": "members"
+        },
+        "users": {
+          "online": "Online",
+          "not_online": "Offline",
+          "was": "Last seen"
+        },
+        "bots": {
+          "online": "Online",
+          "not_online": "Offline"
+        }
+      }
+    },
+    "group_settings": {
+      "name": "Name",
+      "about": "Description",
+      "link": "Public name",
+      "not_select": "Not selected",
+      "type": "Group type",
+      "type_desc": "An open group can be found in search; a closed one can only be joined via an invite link.",
+      "topic_manager": "Topic management",
+      "moderators_manager": "Moderation",
+      "moderators_manager_desc": "Manage the group moderators",
+      "invites": "Invites",
+      "invites_desc": "Manage invites to the group.",
+      "opened": "Open",
+      "closed": "Closed",
+      "can_posting": "Who can post?",
+      "can_posting_desc": "Whether all members or only the administrator can post in the group.",
+      "all_posting": "All members",
+      "admin_posting": "Administrator only",
+      "remove": " Delete",
+      "remove_desc": "Permanently delete the group.",
+      "toasts": {
+        "success_save": "Settings saved",
+        "success_remove": "Group deleted",
+        "access_denied": "No access",
+        "success_avatar": "Avatar saved",
+        "avatar_error": "Failed to save the avatar",
+        "success_remove_avatar": "Avatar deleted",
+        "remove_avatar_error": "Failed to delete the avatar",
+        "invalid_name": "Name must be 2 to 128 characters",
+        "invalid_about": "Description can be at most 255 characters"
+      },
+      "dialogs": {
+        "remove": {
+          "title": "Delete group",
+          "description": "Are you sure you want to delete the group and all its data?",
+          "action_remove": "Delete",
+          "action_close": "Close"
+        }
+      }
+    },
+    "meet_settings": {
+      "choose_thumb": "Choose cover",
+      "name": "Name",
+      "about": "Description",
+      "is_public_cast": "Conference type",
+      "is_public_cast_desc": "An open conference can be found in search; a closed one can only be joined via an invite link.",
+      "opened": "Open",
+      "closed": "Closed",
+      "is_chat_cast": "Conference chat",
+      "is_chat_cast_desc": "Users will be able to chat during the conference",
+      "invites": "Invites",
+      "invites_desc": "Manage invites to the conference.",
+      "enabled": "On",
+      "disabled": "Off",
+      "remove": " Delete",
+      "remove_desc": "Permanently delete the conference together with its chat.",
+      "toasts": {
+        "success_save": "Settings saved",
+        "success_remove": "Conference deleted",
+        "access_denied": "No access",
+        "success_thumb": "Cover saved",
+        "thumb_error": "Failed to save the cover",
+        "success_remove_thumb": "Cover deleted",
+        "remove_thumb_error": "Failed to delete the cover",
+        "invalid_name": "Name must be 2 to 128 characters",
+        "invalid_about": "Description can be at most 255 characters"
+      },
+      "context_menu": {
+        "upload": "Upload cover",
+        "remove": "Delete cover",
+        "toasts": {
+          "thumb_added": "Cover uploaded",
+          "thumb_removed": "Cover deleted"
+        }
+      },
+      "dialogs": {
+        "remove": {
+          "title": "Delete conference",
+          "description": "Are you sure you want to delete the conference and all its data, including all chat messages?",
+          "action_remove": "Delete",
+          "action_close": "Close"
+        }
+      }
+    },
+    "user_setting_cache": {
+      "title": "Storage management",
+      "calculate_quota": "Calculating quota...",
+      "update_app": "Update the app",
+      "used": "Used:",
+      "clearing": "Clearing...",
+      "media_cache": "Media cache",
+      "clear_all": "Clear everything",
+      "clear_cache": "Clear cache",
+      "clear_db": "Clear database",
+      "files": "Files:",
+      "clear": "Clear",
+      "local_db": "Local database",
+      "analize_tables": "Analyzing tables...",
+      "not_database_tables": "No tables available",
+      "pending_updates": "Pending updates",
+      "regular_channels": "Main chats",
+      "total_records": "Total records:",
+      "app_storage": "Total app storage",
+      "analize_cache_files": "Analyzing cache files...",
+      "storage_api_not_supported": "Storage API is not supported",
+      "cache_api_not_supported": "Cache API is not supported",
+      "records_count": "rec.",
+      "database_not_initialized": "Database is not initialized",
+      "caches_types": [
+        {
+          "image": "Images"
+        },
+        {
+          "voice": "Voice"
+        },
+        {
+          "audio": "Audio"
+        },
+        {
+          "video": "Video"
+        },
+        {
+          "file": "Files"
+        },
+        {
+          "media": "Media"
+        }
+      ],
+      "database_names": [
+        {
+          "channels": "Channels"
+        },
+        {
+          "messages": "Messages"
+        },
+        {
+          "pending_messages": "Unsent"
+        },
+        {
+          "pending_updates": "Updates"
+        }
+      ],
+      "toasts": {
+        "cache_cleared": "Cache cleared",
+        "database_cleared": "Database cleared",
+        "table_cleared": "Table cleared",
+        "cache_clear_error": "Failed to clear the cache",
+        "database_clear_error": "Failed to clear the database",
+        "table_clear_error": "Failed to clear the table"
+      }
+    },
+    "group_topic_settings": {
+      "name": "Name",
+      "about": "Description",
+      "type": "Topic type",
+      "type_desc": "An open topic can be found in search; a closed one can only be joined via an invite link.",
+      "invites": "Invites",
+      "invites_desc": "Manage invites to the topic.",
+      "opened": "Open",
+      "closed": "Closed",
+      "can_posting": "Who can post?",
+      "can_posting_desc": "Whether all members or only the administrator can post in the topic.",
+      "all_posting": "All members",
+      "admin_posting": "Administrator only",
+      "toasts": {
+        "success_save": "Settings saved",
+        "success_avatar": "Avatar saved",
+        "avatar_error": "Failed to save the avatar",
+        "access_denied": "No access",
+        "success_remove_avatar": "Avatar deleted",
+        "remove_avatar_error": "Failed to delete the avatar",
+        "invalid_name": "Name must be 2 to 128 characters",
+        "invalid_about": "Description can be at most 255 characters",
+        "success_remove": "Topic deleted"
+      },
+      "remove": " Delete topic",
+      "remove_desc": "Permanently delete the topic.",
+      "dialogs": {
+        "remove": {
+          "title": "Delete topic",
+          "description": "Are you sure you want to delete the topic and all its data?",
+          "action_remove": "Delete",
+          "action_close": "Close"
+        }
+      }
+    },
+    "admin": {
+      "title": "Administration",
+      "users": "Users",
+      "online_sessions": "Active sessions",
+      "online_users": "Online",
+      "bots": "Bots",
+      "online_bots": "Online",
+      "channels": "Communities",
+      "groups": "Groups",
+      "broadcasts": "Broadcasts",
+      "conferences": "Conferences",
+      "storage": "Storage",
+      "database": "Database",
+      "total": "Total",
+      "blocked": "Blocked",
+      "forms": {
+        "meets": {
+          "title": "Conference server"
+        },
+        "broadcasts": {
+          "title": "Broadcast server"
+        },
+        "database": {
+          "title": "Database",
+          "sql_console": "SQL console",
+          "execute": "Run",
+          "last_backups": "Recent backups",
+          "create": "Create",
+          "backups_not_found": "No backups found"
+        }
+      }
+    },
+    "broadcast_play": {
+      "title": "Broadcast",
+      "context_menu": {
+        "play_rtc": "Play WebRTC",
+        "play_flv": "Play FLV",
+        "play_hls": "Play HLS",
+        "settings": "Settings",
+        "source": "Video source"
+      },
+      "source_label": "Source",
+      "offline": "Stream is offline",
+      "aria": {
+        "back": "Back",
+        "chat": "Open broadcast chat",
+        "menu": "Broadcast menu"
+      },
+      "toasts": {
+        "unsupported_format": "Your browser cannot play this",
+        "source_error": "Failed to open the source picker"
+      },
+      "bot_badge": "Bot"
+    },
+    "user_profile": {
+      "subtitle": "Profile",
+      "chat": "Chat",
+      "call": "Call",
+      "other": "More",
+      "feed": "Posts",
+      "albums": "Albums",
+      "context_menu": {
+        "secret_chat": "Secret chat",
+        "add_contact": "Add to contacts",
+        "remove_contact": "Remove from contacts",
+        "toasts": {
+          "contact_added": "Contact added",
+          "contact_removed": "Contact removed",
+          "contact_add_error": "Failed to add the contact",
+          "contact_remove_error": "Failed to remove the contact"
+        },
+        "secret_call": "Secret call"
+      },
+      "dialogs": {
+        "user_is_not_contact": {
+          "add_user_contact": "Add the user to your contacts",
+          "info": "To create a secret chat, add the user to your contacts. This lets the devices connect automatically when your peer comes online",
+          "close": "Got it"
+        }
+      },
+      "toasts": {
+        "dialog_created": "Chat created",
+        "ids_cannot_match": "You cannot create a chat with yourself",
+        "user_not_found": "User not found",
+        "access_denied": "No access"
+      }
+    },
+    "sticker_pak": {
+      "empty": {
+        "title": "No stickers in the pack yet",
+        "desc": "Press \"+\" to upload the first sticker"
+      },
+      "subscribe": {
+        "add": "Add to mine",
+        "added": "Added"
+      },
+      "menu": {
+        "delete": "Delete sticker"
+      },
+      "confirm": {
+        "title": "Delete sticker?",
+        "description": "The sticker will be removed from the pack. This action cannot be undone",
+        "cancel": "Cancel",
+        "confirm": "Delete"
+      },
+      "toasts": {
+        "load_error": "Failed to load the pack",
+        "delete_error": "Failed to delete the sticker",
+        "add_error": "Failed to upload the sticker",
+        "subscribe_error": "Failed to add the pack",
+        "success_add": "Sticker added to the pack",
+        "success_add_many": "Added to the pack",
+        "dec_stickers_one": "sticker",
+        "dec_stickers_few": "stickers",
+        "dec_stickers_many": "stickers",
+        "dec_stickers_other": "stickers",
+        "limit_reached": "The pack already has 100 stickers — that's the limit",
+        "invalid_format": "A sticker must be a WEBP file",
+        "too_big": "Sticker file is larger than 512 KB",
+        "too_large_image": "Sticker side is larger than 512 px"
+      }
+    },
+    "sticker_paks": {
+      "title": "Stickers",
+      "empty": {
+        "title": "No packs yet",
+        "desc": "Create a sticker pack or add a public one"
+      },
+      "labels": {
+        "stickers_one": "sticker",
+        "stickers_few": "stickers",
+        "stickers_many": "stickers",
+        "stickers_other": "stickers",
+        "author_pack": "Yours",
+        "private": "Private",
+        "added": "Added"
+      },
+      "menu": {
+        "edit": "Edit",
+        "delete": "Delete",
+        "add": "Add to mine",
+        "remove": "Remove from mine"
+      },
+      "confirm": {
+        "title": "Delete pack?",
+        "description": "The pack and its stickers will be deleted forever. This action cannot be undone",
+        "cancel": "Cancel",
+        "confirm": "Delete"
+      },
+      "toasts": {
+        "load_error": "Failed to load the packs",
+        "delete_error": "Failed to delete the pack",
+        "subscribe_error": "Failed to add the pack",
+        "unsubscribe_error": "Failed to remove the pack"
+      }
+    },
+    "secret_call": {
+      "title": "Secret call",
+      "incoming_title": "Incoming secret call",
+      "status_calling": "Calling…",
+      "status_connecting": "Connecting…",
+      "status_reconnecting": "Connection lost…",
+      "status_ended": "Call ended",
+      "status_declined": "Call declined",
+      "status_no_answer": "No answer",
+      "status_taken": "Answered on another device",
+      "status_busy": "Busy",
+      "incoming_accept": "Accept",
+      "incoming_decline": "Decline",
+      "footer": {
+        "toggle_audio": "Microphone",
+        "toggle_video": "Camera",
+        "switch_camera": "Switch camera",
+        "hangup": "End",
+        "cancel": "Cancel"
+      },
+      "toasts": {
+        "peer_offline": "The peer is offline: calls are possible only when they are online",
+        "busy": "A call is already in progress",
+        "media_error": "Could not access the camera or microphone",
+        "mic_error": "Failed to switch the microphone",
+        "camera_error": "Failed to switch the camera"
+      }
+    },
+    "channel_create": {
+      "name": "Name",
+      "about": "Description",
+      "type": "Community type",
+      "type_desc": "An open community can be found in search; a closed one can only be joined via an invite link.",
+      "can_posting": "Who can post?",
+      "can_posting_desc": "Whether all members or only the administrator can post in the community.",
+      "commenting": "Commenting",
+      "commenting_desc": "Allow commenting on community posts.",
+      "all_posting": "All members",
+      "admin_posting": "Administrator only",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "opened": "Open",
+      "closed": "Closed",
+      "toasts": {
+        "success_create": "Community created successfully",
+        "name_required": "Enter the community name",
+        "name_invalid": "Invalid name",
+        "link_already_taken": "This link is already taken",
+        "link_invalid": "Invalid link",
+        "about_invalid": "Invalid description"
+      }
+    },
+    "main_folders_manager": {
+      "title": "Folders",
+      "subtitle": "Create folders and sort chats into them to keep your conversations tidy.",
+      "empty_title": "No folders yet",
+      "empty_desc": "Create your first folder to group chats by topic or project.",
+      "create_folder": "Create folder",
+      "chats_count_one": "chat",
+      "chats_count_few": "chats",
+      "chats_count_many": "chats",
+      "chats_count_other": "chats",
+      "toasts": {
+        "success_remove": "Folder deleted",
+        "folder_not_found": "Folder not found",
+        "access_denied": "No access",
+        "load_error": "Failed to load the folders"
+      },
+      "dialogs": {
+        "remove_folder": {
+          "desc": "Delete the folder?",
+          "text": "The chats stay in the list — only the folder itself is deleted.",
+          "action_cancel": "Cancel",
+          "action_remove": "Delete"
+        }
+      },
+      "components": {
+        "folder": {
+          "context_menu": {
+            "settings": "Edit folder",
+            "remove": "Delete folder"
+          }
+        }
+      }
+    },
+    "user_setting_devices": {
+      "login_qr_code": "Sign in with QR code",
+      "current_device": "This device",
+      "remove_all_other_devices": "Delete all other sessions",
+      "active_sessions": "Active sessions",
+      "not_in_online": "Last seen offline",
+      "no_sessions": "No other active sessions",
+      "dialogs": {
+        "remove": {
+          "title": "Delete session?",
+          "description": "The device will be signed out and its access revoked.",
+          "action_close": "Cancel",
+          "action_remove": "Delete"
+        },
+        "remove_all": {
+          "title": "Delete all other sessions?",
+          "description": "All devices except the current one will be signed out.",
+          "action_close": "Cancel",
+          "action_remove": "Delete all"
+        }
+      },
+      "toasts": {
+        "success_remove_all_other_devices": "All other sessions deleted",
+        "success_remove": "Session deleted",
+        "remove_error": "Failed to delete the session",
+        "load_error": "Failed to load the devices"
+      }
+    },
+    "channel_profile": {
+      "photos": "Photos",
+      "videos": "Videos",
+      "files": "Files",
+      "audios": "Audio",
+      "urls": "Links",
+      "voices": "Voice",
+      "empty": {
+        "photos": "No photos yet",
+        "videos": "No videos yet",
+        "files": "No files yet",
+        "audios": "No audio yet",
+        "urls": "No links yet",
+        "voices": "No voice messages yet"
+      },
+      "context_menu": {
+        "go_to_message": "Go to message"
+      },
+      "toasts": {
+        "load_error": "Failed to load the channel profile",
+        "download_error": "Failed to download the file",
+        "load_media_error": "Failed to load the media",
+        "message_not_found": "Message unavailable"
+      }
+    },
+    "audio_player": {
+      "playlist_title": "Play queue",
+      "playlist_empty": "The queue is empty",
+      "tracks_count": "Tracks: {{count}}",
+      "unknown_track": "Unknown track",
+      "unknown_author": "Unknown artist",
+      "untitled": "Untitled",
+      "unknown": "Unknown"
+    },
+    "bot_app": {
+      "webapp_subtitle": "WebApp",
+      "toasts": {
+        "load_error": "Failed to open the app",
+        "data_too_long": "Too much data — could not send",
+        "bot_offline": "The bot is offline — data was not sent"
+      },
+      "permission": {
+        "title": "Device access",
+        "desc": "App \"{{app}}\" requests access to {{permission}}.",
+        "camera": "the camera",
+        "microphone": "the microphone",
+        "geolocation": "location",
+        "clipboard_write": "the clipboard",
+        "allow": "Allow",
+        "deny": "Deny"
+      }
+    },
+    "bot_create": {
+      "title": "Create a bot",
+      "link": "Public name",
+      "bio": "Description",
+      "private_type": "Privacy setting",
+      "private_type_desc": "A closed bot is only visible to you; an open one is visible to everyone.",
+      "opened": "Open",
+      "closed": "Closed",
+      "close": "Close",
+      "create": "Create",
+      "toasts": {
+        "success_create": "Bot created successfully",
+        "invalid_link": "The link must be 3 to 28 Latin characters, digits or \"_\", and end with \"_bot\"",
+        "invalid_bio": "Description can be at most 255 characters",
+        "link_taken": "This name is already taken"
+      }
+    },
+    "bot_menu": {
+      "title": "Bot menu",
+      "menu": "Menu",
+      "toasts": {
+        "success_save": "Public name saved",
+        "link_already_taken": "This public name is already taken",
+        "link_invalid": "Invalid public name",
+        "bot_not_menu": "The bot has no menu"
+      }
+    },
+    "bot_profile": {
+      "chat": "Chat",
+      "apps": "Apps",
+      "dialogs": {
+        "apps_list": {
+          "title": "Bot apps"
+        }
+      },
+      "toasts": {
+        "dialog_created": "Chat created",
+        "id_cannot_match": "You cannot create a chat with yourself",
+        "invalid_bot_id": "Bot not found"
+      },
+      "subtitle": "Bot profile"
+    },
+    "bot_setting_link": {
+      "link": "Public name",
+      "set_link_desc": "You can pick a public name for the bot. Other people will then be able to find it by that name.",
+      "save": "Save",
+      "close": "Close",
+      "toasts": {
+        "success_save": "Public name saved",
+        "link_already_taken": "This public name is already taken",
+        "link_invalid": "Invalid public name"
+      }
+    },
+    "broadcast_create": {
+      "name": "Name",
+      "about": "Description",
+      "is_public_cast": "Broadcast type",
+      "is_public_cast_desc": "A public broadcast can be found in search; a private one can only be joined via an invite link.",
+      "opened": "Public",
+      "closed": "Private",
+      "is_chat_cast": "Broadcast chat",
+      "is_chat_cast_desc": "Users will be able to chat during the broadcast",
+      "enabled": "On",
+      "disabled": "Off",
+      "close": "Close",
+      "create": "Create",
+      "toasts": {
+        "success_create": "Broadcast created successfully",
+        "name_required": "Enter the broadcast name",
+        "name_invalid": "Invalid name",
+        "about_invalid": "Invalid description"
+      }
+    },
+    "broadcast_invite_create": {
+      "name": "Name",
+      "number_users": "Number of users",
+      "number_users_desc": "Choose how many users can join via this link.",
+      "infifnity": "Unlimited",
+      "limited": "Limited",
+      "toasts": {
+        "success_create": "Invite created",
+        "max_users_range_invalid": "Invalid number of participants",
+        "name_invalid": "Invalid name"
+      }
+    },
+    "broadcast_manage_invites": {
+      "components": {
+        "toasts": {
+          "success_copy": "Link copied"
+        }
+      },
+      "empty": {
+        "title": "No invites yet",
+        "desc": "Create an invite — it will appear here"
+      },
+      "toasts": {
+        "load_error": "Failed to load the invites"
+      }
+    },
+    "broadcasts": {
+      "title": "Broadcasts",
+      "context_menu": {
+        "create_cast": "New broadcast",
+        "settings": "Settings"
+      },
+      "empty": {
+        "title": "No broadcasts yet",
+        "desc": "Create your first broadcast — it will appear here",
+        "create": "Create broadcast"
+      },
+      "toasts": {
+        "load_error": "Failed to load the broadcasts"
+      }
+    },
+    "broadcasts_settings": {
+      "type_play": "Player type",
+      "flv": "FLV player",
+      "hls": "HLS player",
+      "rtc": "RTC player",
+      "flv_play_desc": "Less demanding on the network — 1-5 second delay.",
+      "hls_play_desc": "Less demanding on the network — 3-10 second delay.",
+      "rtc_play_desc": "More demanding on the network — 1-2 second delay.",
+      "type_blobal_media_event": "Global media actions",
+      "type_blobal_media_event_desc": "When the audio player starts, a call comes in, or another action happens — what should be done with the broadcast?",
+      "paused": "Pause it",
+      "muted": "Mute it",
+      "close": "Close"
+    },
+    "call_incoming": {
+      "title": "Incoming call",
+      "accept": "Accept",
+      "decline": "Decline",
+      "status": {
+        "incoming": "Incoming call…"
+      },
+      "toasts": {
+        "no_answer": "No answer",
+        "accept_error": "Failed to join the call",
+        "decline_error": "Failed to decline the call"
+      }
+    },
+    "channel_invite_create": {
+      "name": "Name",
+      "number_users": "Number of users",
+      "number_users_desc": "Choose how many users can join via this link.",
+      "infifnity": "Unlimited",
+      "limited": "Limited",
+      "toasts": {
+        "success_create": "Invite created",
+        "max_users_range_invalid": "Invalid number of participants",
+        "name_invalid": "Invalid name"
+      }
+    },
+    "channel_manage_invites": {
+      "components": {
+        "toasts": {
+          "success_copy": "Link copied"
+        }
+      },
+      "empty": {
+        "title": "No invites yet",
+        "desc": "Create an invite — it will appear here"
+      },
+      "toasts": {
+        "load_error": "Failed to load the invites"
+      }
+    },
+    "channel_setting_link": {
+      "link": "Public name",
+      "set_link_desc": "You can pick a public name for the community. Other people will then be able to find it by that name.",
+      "save": "Save",
+      "close": "Close",
+      "toasts": {
+        "success_save": "Public name saved",
+        "link_already_taken": "This public name is already taken",
+        "link_invalid": "Invalid public name"
+      }
+    },
+    "contacts": {
+      "title": "Contacts",
+      "empty": {
+        "title": "No contacts yet",
+        "desc": "Add users — they will appear here"
+      },
+      "toasts": {
+        "load_error": "Failed to load the contacts"
+      }
+    },
+    "emoji": {
+      "tabs": {
+        "emoji": "Emoji",
+        "stickers": "Stickers"
+      },
+      "stickers": {
+        "back": "Back",
+        "empty_title": "No packs yet",
+        "empty_desc": "Add a pack or create your own",
+        "pak_empty_title": "No stickers in the pack yet",
+        "pak_empty_desc": "The pack author hasn't added stickers yet",
+        "load_error": "Failed to load the packs",
+        "pak_load_error": "Failed to load the pack"
+      },
+      "categories": {
+        "smileys": "Smileys & Emoticons",
+        "gestures": "People & Body",
+        "animals": "Animals & Nature",
+        "food": "Food & Drink",
+        "travel": "Travel & Places",
+        "activities": "Activities & Sports",
+        "objects": "Objects",
+        "symbols": "Symbols",
+        "flags": "Flags"
+      }
+    },
+    "group_create": {
+      "name": "Name",
+      "about": "Description",
+      "type": "Group type",
+      "type_desc": "An open group can be found in search; a closed one can only be joined via an invite link.",
+      "opened": "Open",
+      "closed": "Closed",
+      "can_posting": "Who can post?",
+      "can_posting_desc": "Whether all members or only the administrator can post in the group.",
+      "all_posting": "All members",
+      "admin_posting": "Administrator only",
+      "toasts": {
+        "success_create": "Group created successfully",
+        "name_required": "Enter the group name",
+        "link_already_taken": "This link is already taken",
+        "invalid_link": "Invalid link",
+        "invalid_name": "Invalid name",
+        "invalid_description": "Invalid description"
+      }
+    },
+    "group_moderator_add": {
+      "title": "Add moderator",
+      "remove_post": "Delete messages",
+      "remove_post_desc": "Lets the moderator delete a chosen user's message",
+      "user_all_post_remove": "Delete all messages",
+      "user_all_post_remove_desc": "Lets the moderator delete all messages of the chosen user",
+      "block_user": "Block user",
+      "block_user_desc": "The moderator can block a user in the group",
+      "add": "Add",
+      "close": "Cancel",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "toasts": {
+        "success_add": "Moderator added to the group"
+      }
+    },
+    "group_moderator_profile": {
+      "title": "Moderator profile",
+      "remove_post": "Delete messages",
+      "remove_post_desc": "Lets the moderator delete a chosen user's message",
+      "user_all_post_remove": "Delete all messages",
+      "user_all_post_remove_desc": "Lets the moderator delete all messages of the chosen user",
+      "block_user": "Block user",
+      "block_user_desc": "The moderator can block a user in the group",
+      "add": "Add",
+      "close": "Cancel",
+      "save": "Save",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "toasts": {
+        "success_save": "Settings updated"
+      }
+    },
+    "group_moderators_manager": {
+      "title": "Moderation",
+      "components": {
+        "user": {
+          "can_deleted_message": "delete",
+          "can_clean_messages": "purge",
+          "can_restrict_members": "block"
+        }
+      },
+      "empty": {
+        "title": "No moderators yet",
+        "desc": "Assign moderators — they will appear here"
+      },
+      "toasts": {
+        "load_error": "Failed to load the moderators"
+      }
+    },
+    "group_setting_link": {
+      "link": "Public name",
+      "set_link_desc": "You can pick a public name for the group. Other people will then be able to find it by that name.",
+      "save": "Save",
+      "close": "Close",
+      "toasts": {
+        "success_save": "Public name saved",
+        "link_already_taken": "This public name is already taken",
+        "link_invalid": "Invalid public name"
+      }
+    },
+    "group_topic_create": {
+      "name": "Name",
+      "about": "Description",
+      "type": "Topic type",
+      "type_desc": "An open topic is available to all group members; a closed one only via an invite link.",
+      "opened": "Open",
+      "closed": "Closed",
+      "can_posting": "Who can post?",
+      "can_posting_desc": "Whether all members or only the administrator can post in the topic.",
+      "all_posting": "All members",
+      "admin_posting": "Administrator only",
+      "toasts": {
+        "success_create": "Group topic created successfully",
+        "name_required": "Enter the topic name",
+        "invalid_name": "Invalid name",
+        "invalid_about": "Invalid description"
+      }
+    },
+    "group_topics": {
+      "subtitle": "Group",
+      "components": {
+        "channels": {
+          "last_message": {
+            "you": "You",
+            "empty_messages": "No messages",
+            "image": "Image",
+            "voice": "Voice message"
+          }
+        }
+      }
+    },
+    "group_topics_manager": {
+      "title": "Group topic management",
+      "empty": {
+        "title": "No topics yet",
+        "desc": "Create a topic — it will appear here"
+      },
+      "toasts": {
+        "load_error": "Failed to load the topics"
+      }
+    },
+    "invite_broadcast": {
+      "title": "Invitation",
+      "broadcast": "Broadcast",
+      "cancel": "Cancel",
+      "open": "Open",
+      "toasts": {
+        "success_subscribe": "You are subscribed to the broadcast",
+        "invite_expired": "The invite has expired",
+        "invite_max_uses": "The invite usage limit has been reached",
+        "invite_required": "No invite specified",
+        "entity_mismatch": "This invite does not match the broadcast"
+      }
+    },
+    "invite_channel": {
+      "title": "Invitation",
+      "channel": "Community",
+      "group": "Group",
+      "members": "Members",
+      "cancel": "Cancel",
+      "open": "Open",
+      "toasts": {
+        "success_subscribe": "You are subscribed to the channel",
+        "invite_expired": "The invite has expired",
+        "invite_max_uses": "The invite usage limit has been reached",
+        "invite_required": "No invite specified",
+        "channel_not_found": "Channel not found",
+        "entity_mismatch": "This invite does not match the channel",
+        "user_not_found": "User not found"
+      }
+    },
+    "invite_meet": {
+      "title": "Invitation",
+      "meet": "Conference",
+      "cancel": "Cancel",
+      "open": "Open",
+      "toasts": {
+        "success_subscribe": "You joined the conference",
+        "invite_invalid_expired": "The invite has expired",
+        "invite_invalid_max_uses": "The invite usage limit has been reached",
+        "invite_required": "No invite specified",
+        "entity_mismatch": "This invite does not match the conference"
+      }
+    },
+    "main_folder_create": {
+      "name": "Name",
+      "title": "New folder",
+      "desc": "Come up with a short, clear name for the folder.",
+      "action_create": "Create",
+      "toasts": {
+        "success_create": "Folder created",
+        "invalid_name": "Name must be 2 to 128 characters and letters only"
+      }
+    },
+    "meet_create": {
+      "name": "Name",
+      "about": "Description",
+      "is_public_cast": "Conference type",
+      "is_public_cast_desc": "An open conference can be found in search; a closed one can only be joined via an invite link.",
+      "opened": "Open",
+      "closed": "Closed",
+      "is_chat_cast": "Conference chat",
+      "is_chat_cast_desc": "Users will be able to chat during the conference",
+      "enabled": "On",
+      "disabled": "Off",
+      "close": "Close",
+      "create": "Create",
+      "toasts": {
+        "success_create": "Conference created successfully",
+        "name_required": "Enter the conference name",
+        "invalid_name": "Invalid name",
+        "invalid_description": "Invalid description"
+      }
+    },
+    "meet_invite_create": {
+      "name": "Name",
+      "number_users": "Number of users",
+      "number_users_desc": "Choose how many users can join via this link.",
+      "infifnity": "Unlimited",
+      "limited": "Limited",
+      "toasts": {
+        "success_create": "Invite created",
+        "invalid_max_users": "Invalid number of participants",
+        "invalid_name": "Invalid name"
+      }
+    },
+    "meet_manage_invites": {
+      "components": {
+        "toasts": {
+          "success_copy": "Link copied"
+        }
+      },
+      "empty": {
+        "title": "No invites yet",
+        "desc": "Create an invite — it will appear here"
+      },
+      "toasts": {
+        "load_error": "Failed to load the invites"
+      }
+    },
+    "meets": {
+      "title": "Conferences",
+      "context_menu": {
+        "create_meet": "New conference",
+        "settings": "Settings"
+      },
+      "empty": {
+        "title": "No conferences yet",
+        "desc": "New conferences will appear here"
+      },
+      "toasts": {
+        "load_error": "Failed to load the conferences"
+      }
+    },
+    "secret_chat_verify": {
+      "title": "Key verification",
+      "desc": "Compare the emoji and code on both devices' screens. A match confirms that nobody is impersonating your conversation.",
+      "fingerprint_title": "Key fingerprint",
+      "verified": "Keys verified",
+      "not_verified": "Keys not verified",
+      "not_ready": "Keys are not generated yet: wait for the connection with your peer",
+      "action_match": "They match",
+      "action_mismatch": "They don't match",
+      "action_unverify": "Mark as unverified",
+      "toasts": {
+        "verified": "Keys verified",
+        "unverified": "Verification mark removed"
+      }
+    },
+    "sticker_pak_create": {
+      "name": "Name",
+      "about": "Description",
+      "public_on": "Public",
+      "public_off": "Private",
+      "toasts": {
+        "name_invalid": "Invalid name",
+        "about_invalid": "Description is too long",
+        "create_error": "Failed to create the pack"
+      }
+    },
+    "sticker_pak_edit": {
+      "name": "Name",
+      "about": "Description",
+      "public_on": "Public",
+      "public_off": "Private",
+      "toasts": {
+        "load_error": "Failed to load the pack",
+        "name_invalid": "Invalid name",
+        "about_invalid": "Description is too long",
+        "success": "Pack saved successfully",
+        "save_error": "Failed to save the pack"
+      }
+    },
+    "theme_create": {
+      "name": "Name",
+      "opened": "Open",
+      "closed": "Closed",
+      "style": "CSS styles",
+      "toasts": {
+        "success_create": "Theme created successfully",
+        "error_style": "Check the theme's CSS styles",
+        "name_invalid": "Invalid name",
+        "error": "Failed to create the theme"
+      }
+    },
+    "theme_edit": {
+      "name": "Name",
+      "opened": "Open",
+      "closed": "Closed",
+      "style": "CSS styles",
+      "toasts": {
+        "success_save": "Theme saved successfully",
+        "error_style": "Check the theme's CSS styles",
+        "name_invalid": "Invalid name",
+        "error": "Failed to save the theme"
+      }
+    },
+    "themes": {
+      "title": "Themes",
+      "empty": {
+        "title": "No themes yet",
+        "desc": "Create a theme — it will appear here"
+      },
+      "toasts": {
+        "load_error": "Failed to load the themes",
+        "save_error": "Couldn't save the theme"
+      }
+    },
+    "user_setting_email": {
+      "email": "Email",
+      "set_email_desc": "Enter your email address. Confirmation codes and other information will be sent there.",
+      "save": "Save",
+      "close": "Close",
+      "toasts": {
+        "success_save": "Email saved",
+        "email_required": "Enter your email",
+        "email_invalid": "Enter a valid email",
+        "email_already_taken": "This email is already taken"
+      }
+    },
+    "user_setting_link": {
+      "link": "Public name",
+      "set_link_desc": "You can pick a public username. Other people will then be able to find you by that name and reach you.",
+      "save": "Save",
+      "close": "Close",
+      "toasts": {
+        "success_save": "Public name saved",
+        "link_already_taken": "This public name is already taken",
+        "link_invalid": "Invalid public name"
+      }
+    },
+    "user_setting_password": {
+      "current_password": "Current password",
+      "new_password": "New password",
+      "retry_password": "Confirm password",
+      "exit_other_devices": "Sign out on other devices",
+      "exit_other_devices_desc": "If you sign out on other devices, you will need to sign in on them again.",
+      "toasts": {
+        "success_set_password": "Password changed successfully",
+        "old_password_not_match": "Current password is incorrect",
+        "new_password_required": "Enter a new password",
+        "new_password_too_short": "The new password is too short",
+        "retry_password_required": "Confirm the new password",
+        "passwords_not_match": "Passwords do not match"
+      }
+    },
+    "user_setting_privacy": {
+      "all": "Everyone",
+      "none": "Nobody",
+      "contacts": "My contacts",
+      "calls": "Who can call me?",
+      "messages": "Who can message me?",
+      "messages_voice": "Who can send voice messages?",
+      "search_users": "Who can see me in search?",
+      "sharing_files": "Who can share files with me?",
+      "toasts": {
+        "success_save": "Privacy settings saved",
+        "privacy_invalid": "Invalid privacy setting"
+      }
+    },
+    "user_setting_language": {
+      "title": "Language",
+      "desc": "Choose the interface language — the change applies immediately.",
+      "dialogs": {
+        "confirm": {
+          "title": "Change language",
+          "desc": "Switch the interface language to {{name}}?",
+          "action_cancel": "Cancel",
+          "action_change": "Change"
+        }
+      }
+    },
+    "menu": {
+      "profile": "My profile",
+      "create_channel": "Create community",
+      "create_group": "Create group",
+      "contacts": "Contacts",
+      "casts": "Broadcasts",
+      "meets": "Conferences",
+      "cloud": "Cloud",
+      "themes": "Themes",
+      "stickers": "Stickers",
+      "build_version": "Build version:"
+    },
+    "image_cropper": {
+      "cancel": "Cancel",
+      "crop": "Crop"
+    },
+    "bot_editor": {
+      "name_long": "Enter a name (2 to 64 characters)",
+      "name_short": "Enter a name",
+      "description": "Invalid description",
+      "link": "Invalid short link",
+      "url_https": "Invalid URL format (HTTPS address required)",
+      "command": "Enter a command",
+      "error": "An error occurred"
+    }
+  }
+}

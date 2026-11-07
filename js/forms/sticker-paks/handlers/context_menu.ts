@@ -21,6 +21,7 @@ import { unsubscribeRequest } from "../requests/unsubscribe.js";
 import type { PopoverMenuItem } from "../../../components/overlay/popover_menu.js";
 import type { StickerPakItem } from "../types.js";
 import type { StickerPaks } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -46,7 +47,7 @@ export function packContextMenuHandler(x: number, y: number, form: StickerPaks, 
 
         // menu item
         const edit: PopoverMenuItem = {
-            text: window._lc.forms.sticker_paks.menu.edit,
+            text: t("forms.sticker_paks.menu.edit"),
             iconName: "pencil-minus",
             onClick: () => new StickerPakEdit({ pakId: data.id })
         };
@@ -58,7 +59,7 @@ export function packContextMenuHandler(x: number, y: number, form: StickerPaks, 
 
         // menu item
         const remove: PopoverMenuItem = {
-            text: window._lc.forms.sticker_paks.menu.delete,
+            text: t("forms.sticker_paks.menu.delete"),
             iconName: "trash",
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => confirmDeletePak(form, data)
@@ -71,7 +72,7 @@ export function packContextMenuHandler(x: number, y: number, form: StickerPaks, 
 
         // menu item
         const subscribe: PopoverMenuItem = {
-            text: window._lc.forms.sticker_paks.menu.add,
+            text: t("forms.sticker_paks.menu.add"),
             iconName: "Plus",
             onClick: () => subscribePak(form, data)
         };
@@ -83,7 +84,7 @@ export function packContextMenuHandler(x: number, y: number, form: StickerPaks, 
 
         // menu item
         const unsubscribe: PopoverMenuItem = {
-            text: window._lc.forms.sticker_paks.menu.remove,
+            text: t("forms.sticker_paks.menu.remove"),
             iconName: "Minus",
             onClick: () => unsubscribePak(form, data)
         };
@@ -124,10 +125,10 @@ function confirmDeletePak(form: StickerPaks, data: StickerPakItem): void {
 
     // Подтверждение удаления
     new ConfirmStickerPakDialog({
-        title: window._lc.forms.sticker_paks.confirm.title,
-        description: window._lc.forms.sticker_paks.confirm.description,
-        actionClose: window._lc.forms.sticker_paks.confirm.cancel,
-        actionRemove: window._lc.forms.sticker_paks.confirm.confirm,
+        title: t("forms.sticker_paks.confirm.title"),
+        description: t("forms.sticker_paks.confirm.description"),
+        actionClose: t("forms.sticker_paks.confirm.cancel"),
+        actionRemove: t("forms.sticker_paks.confirm.confirm"),
         callback: async (response) => {
 
             // Отмена — выходим
@@ -146,7 +147,7 @@ function confirmDeletePak(form: StickerPaks, data: StickerPakItem): void {
                 // Показываем тост (коды ошибок разбирает сам toastError)
                 toastError(error, {
                     context: "[app][sticker-paks][delete-pak]",
-                    fallback: window._lc.forms.sticker_paks.toasts.delete_error
+                    fallback: t("forms.sticker_paks.toasts.delete_error")
                 });
 
             }
@@ -181,7 +182,7 @@ async function subscribePak(form: StickerPaks, data: StickerPakItem): Promise<vo
         // Показываем тост (коды ошибок разбирает сам toastError)
         toastError(error, {
             context: "[app][sticker-paks][subscribe]",
-            fallback: window._lc.forms.sticker_paks.toasts.subscribe_error
+            fallback: t("forms.sticker_paks.toasts.subscribe_error")
         });
 
     }
@@ -212,7 +213,7 @@ async function unsubscribePak(form: StickerPaks, data: StickerPakItem): Promise<
         // Показываем тост (коды ошибок разбирает сам toastError)
         toastError(error, {
             context: "[app][sticker-paks][unsubscribe]",
-            fallback: window._lc.forms.sticker_paks.toasts.unsubscribe_error
+            fallback: t("forms.sticker_paks.toasts.unsubscribe_error")
         });
 
     }

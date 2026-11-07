@@ -17,6 +17,7 @@ import { channelsTable, messagesTable, pendingMessagesTable } from "../../db.js"
 
 // Импортируем типы
 import type { ChannelItem } from "../channel.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -96,7 +97,7 @@ export async function unsubscribeChannelHandler(channel: ChannelItem): Promise<v
         });
 
         // Toast
-        Toast.success(window._lc.forms.main.components.channels.context_menu.toasts.success_unsubscribe, {
+        Toast.success(t("forms.main.components.channels.context_menu.toasts.success_unsubscribe"), {
             position: "bottom-center"
         });
 

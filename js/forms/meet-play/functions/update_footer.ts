@@ -10,6 +10,7 @@ import { isHandRaised } from "./parse_participant.js";
 import type { MeetPlay } from "../index.js";
 import type { MeetBlockFlag } from "../types.js";
 import type { Participant, RemoteParticipant } from "livekit-client";
+import { I18n, t } from "../../../utils/i18n/index.js";
 
 /**
  * Описание одного источника в футере конференции.
@@ -106,8 +107,8 @@ export function updateFooter(form: MeetPlay): void {
         // Подписи кнопок футера читаются по ключу источника, а набор
         // ключей узкий и известен — поэтому узкий Record<string, string>,
         // а не индексация по строке по умолчанию
-        const labels: Record<string, string> = window._lc.forms.meet_play.footer;
-        const blockedLabel = window._lc.forms.meet_play.blocked_by_organizer;
+        const labels: Record<string, string> = I18n.tree.forms.meet_play.footer;
+        const blockedLabel = t("forms.meet_play.blocked_by_organizer");
         // ---------- ЛОКАЛИЗАЦИЯ ----------
 
         for (const [flag, source] of Object.entries(SOURCES)) {

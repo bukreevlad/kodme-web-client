@@ -11,6 +11,7 @@ import { Logger } from "../../../utils/logs/logger.js";
 import type { SectionId } from "../config/sections.js";
 import type { SectionState } from "../types.js";
 import type { Search } from "../index.js";
+import { I18n, t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -78,12 +79,12 @@ export function setSectionState(form: Search, name: SectionId, state: SectionSta
         // Пусто — компонент с иконкой вкладки вместо строки «Ничего не найдено»
         if (state === "empty") {
 
-            const locale = window._lc?.forms?.search?.empty?.[name];
+            const locale = I18n.tree.forms.search.empty?.[name];
 
             element.replaceChildren(EmptyState.create({
                 // Фолбэк для новой категории без перевода: заглушка не может
                 // остаться пустой
-                title: locale?.title || window._lc?.forms?.search?.states?.not_found || "",
+                title: locale?.title || t("forms.search.states.not_found"),
                 description: locale?.desc,
                 icon: SECTIONS[name].emptyIcon,
                 compact: true
@@ -94,7 +95,7 @@ export function setSectionState(form: Search, name: SectionId, state: SectionSta
         // "states.loading": обращение через точку не сработает, так как
         // в локализации states — вложенный объект
         else if (state === "loading" || state === "error") {
-            const texts = window._lc?.forms?.search;
+            const texts = I18n.tree.forms.search;
             const [group, key] = STATES[state];
             element.textContent = texts?.[group]?.[key] || "";
         }

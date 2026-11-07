@@ -13,6 +13,7 @@ import { subscribeWithInviteRequest } from "../requests/subscribe_with_invite.js
 
 // Импортируем типы
 import type { InviteChannel } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -31,7 +32,7 @@ export async function openHandler(form: InviteChannel): Promise<void> {
         });
 
         // Toast
-        Toast.success(window._lc.forms.invite_channel.toasts.success_subscribe);
+        Toast.success(t("forms.invite_channel.toasts.success_subscribe"));
 
         // Открываем форму
         new Messages({ channelId: form.invite.channel_id });
@@ -49,7 +50,7 @@ export async function openHandler(form: InviteChannel): Promise<void> {
         if (getErrorMessage(error).includes("INVITE_EXPIRED")) {
 
             // Toast
-            Toast.error(window._lc.forms.invite_channel.toasts.invite_expired);
+            Toast.error(t("forms.invite_channel.toasts.invite_expired"));
             isToastShown = true;
         }
 
@@ -57,7 +58,7 @@ export async function openHandler(form: InviteChannel): Promise<void> {
         if (getErrorMessage(error).includes("INVITE_MAX_USES_EXCEEDED")) {
 
             // Toast
-            Toast.error(window._lc.forms.invite_channel.toasts.invite_max_uses);
+            Toast.error(t("forms.invite_channel.toasts.invite_max_uses"));
             isToastShown = true;
         }
 
@@ -65,7 +66,7 @@ export async function openHandler(form: InviteChannel): Promise<void> {
         if (getErrorMessage(error).includes("INVITE_REQUIRED")) {
 
             // Toast
-            Toast.error(window._lc.forms.invite_channel.toasts.invite_required);
+            Toast.error(t("forms.invite_channel.toasts.invite_required"));
             isToastShown = true;
         }
 
@@ -73,7 +74,7 @@ export async function openHandler(form: InviteChannel): Promise<void> {
         if (getErrorMessage(error).includes("CHANNEL_NOT_FOUND")) {
 
             // Toast
-            Toast.error(window._lc.forms.invite_channel.toasts.channel_not_found);
+            Toast.error(t("forms.invite_channel.toasts.channel_not_found"));
             isToastShown = true;
         }
 
@@ -81,7 +82,7 @@ export async function openHandler(form: InviteChannel): Promise<void> {
         if (getErrorMessage(error).includes("INVITE_ENTITY_MISMATCH")) {
 
             // Toast
-            Toast.error(window._lc.forms.invite_channel.toasts.entity_mismatch);
+            Toast.error(t("forms.invite_channel.toasts.entity_mismatch"));
             isToastShown = true;
         }
 
@@ -89,13 +90,13 @@ export async function openHandler(form: InviteChannel): Promise<void> {
         if (getErrorMessage(error).includes("USER_NOT_FOUND")) {
 
             // Toast
-            Toast.error(window._lc.forms.invite_channel.toasts.user_not_found);
+            Toast.error(t("forms.invite_channel.toasts.user_not_found"));
             isToastShown = true;
         }
 
         // Прочая ошибка сервера
         if (!isToastShown) {
-            Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+            Toast.error(t("api.errors.server_error"));
         }
 
     }

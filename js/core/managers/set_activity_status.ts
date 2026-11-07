@@ -3,6 +3,7 @@ import { Logger } from "../../utils/logs/logger.js";
 import { LocalStorage } from "../../utils/local_storage.js";
 import { Messages } from "../../forms/messages/index.js";
 import { Main } from "../../forms/main/index.js";
+import { I18n, t } from "../../utils/i18n/index.js";
 
 /** Действие пользователя, которое показывает статус активности. */
 export type ActivityAction = "typing" | "recording_audio" | "recording_video" | "uploading_document";
@@ -192,7 +193,7 @@ export class ActivityStatusManager {
         let finalString = "";
 
         if (actionTypes.length > 1) {
-            finalString = window._lc.forms.main.components.channels.last_message.status_activity.several_actions;
+            finalString = t("forms.main.components.channels.last_message.status_activity.several_actions");
         } else {
 
             const currentAction = actionTypes[0];
@@ -207,7 +208,7 @@ export class ActivityStatusManager {
             let namesString = usersInAction.slice(0, maxNamesToShow).join(", ");
 
             if (count > maxNamesToShow) {
-                namesString += ` ${window._lc.forms.main.components.channels.last_message.status_activity.and_or} ${count - maxNamesToShow}`;
+                namesString += ` ${t("forms.main.components.channels.last_message.status_activity.and_or")} ${count - maxNamesToShow}`;
             }
 
             const isMultiple = count > 1;
@@ -216,21 +217,21 @@ export class ActivityStatusManager {
             switch (currentAction) {
                 case "recording_audio":
                     actionText = isMultiple ?
-                        window._lc.forms.main.components.channels.last_message.status_activity.recording_audio[0] ?? ""
-                        : window._lc.forms.main.components.channels.last_message.status_activity.recording_audio[1] ?? "";
+                        I18n.tree.forms.main.components.channels.last_message.status_activity.recording_audio[0] ?? ""
+                        : I18n.tree.forms.main.components.channels.last_message.status_activity.recording_audio[1] ?? "";
                     break;
                 case "recording_video":
-                    actionText = isMultiple ? window._lc.forms.main.components.channels.last_message.status_activity.recording_video[0] ?? ""
-                        : window._lc.forms.main.components.channels.last_message.status_activity.recording_video[1] ?? "";
+                    actionText = isMultiple ? I18n.tree.forms.main.components.channels.last_message.status_activity.recording_video[0] ?? ""
+                        : I18n.tree.forms.main.components.channels.last_message.status_activity.recording_video[1] ?? "";
                     break;
                 case "uploading_document":
-                    actionText = isMultiple ? window._lc.forms.main.components.channels.last_message.status_activity.uploading_document[0] ?? ""
-                        : window._lc.forms.main.components.channels.last_message.status_activity.uploading_document[1] ?? "";
+                    actionText = isMultiple ? I18n.tree.forms.main.components.channels.last_message.status_activity.uploading_document[0] ?? ""
+                        : I18n.tree.forms.main.components.channels.last_message.status_activity.uploading_document[1] ?? "";
                     break;
                 case "typing":
                 default:
-                    actionText = isMultiple ? window._lc.forms.main.components.channels.last_message.status_activity.typing[0] ?? ""
-                        : window._lc.forms.main.components.channels.last_message.status_activity.typing[1] ?? "";
+                    actionText = isMultiple ? I18n.tree.forms.main.components.channels.last_message.status_activity.typing[0] ?? ""
+                        : I18n.tree.forms.main.components.channels.last_message.status_activity.typing[1] ?? "";
                     break;
             }
 

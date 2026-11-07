@@ -4,7 +4,6 @@ import Bowser from "bowser";
 // Импортируем utils
 import { Logger } from "../../../utils/logs/logger.js";
 import { Icons } from "../../../utils/icons.js";
-import { TimeAgoFormatter } from "../../../utils/date/time_ago_formatter.js";
 
 // Импортируем functions
 import { getDeviceIcon } from "../functions/get_device_icon.js";
@@ -19,6 +18,7 @@ import { removeSessionHandler } from "../handlers/remove.js";
 // Импортируем типы
 import type { UserSettingDevices } from "../index.js";
 import type { SessionListItem } from "../types.js";
+import { I18n } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -118,9 +118,9 @@ export function createSessionItem(form: UserSettingDevices, data: SessionListIte
             }
             if (platform) platform.textContent = osName && browserName ? `${osName} (${browserName})` : (osName ?? next.platform ?? "");
 
-            // Парсим last_action_at
-            let timeAgo = new TimeAgoFormatter(next.last_action_at, "short");
-            if (lastActionAt) lastActionAt.textContent = timeAgo.formattedTime || window._lc.forms.user_setting_devices.not_in_online;
+            // Последняя активность пересобирается при смене языка;
+            // пустая дата — ключ «не в сети»
+            if (lastActionAt) I18n.setTime(lastActionAt, next.last_action_at, "short", undefined, "forms.user_setting_devices.not_in_online");
 
             // Аватар: иконка устройства из user-agent (md — компактнее
             // дефолтного lg и совпадает с двойником-формой sessions)

@@ -15,6 +15,7 @@ import { refreshRequest } from "../requests/refresh.js";
 import type { StoredSession } from "../../../utils/local_storage.js";
 import { getErrorMessage, getErrorStatus } from "../../../utils/helpers/error_util.js";
 import type { Sessions } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -71,7 +72,7 @@ export async function refreshHandler(form: Sessions, data: StoredSession): Promi
             form.store.remove(data.id);
 
             // Toast
-            Toast.warning(window._lc.forms.sessions.toasts.session_expired);
+            Toast.warning(t("forms.sessions.toasts.session_expired"));
             isToastShown = true;
 
             // Получаем сессии
@@ -89,7 +90,7 @@ export async function refreshHandler(form: Sessions, data: StoredSession): Promi
 
         // Если превышен лимит запросов
         if (getErrorMessage(error).includes("RATE_LIMIT_EXCEEDED") || getErrorStatus(error) === 429) {
-            Toast.warning(window._lc.forms.sessions.toasts.too_many_requests);
+            Toast.warning(t("forms.sessions.toasts.too_many_requests"));
             isToastShown = true;
         }
 
@@ -98,7 +99,7 @@ export async function refreshHandler(form: Sessions, data: StoredSession): Promi
             Logger.error(error);
 
             // Toast
-            Toast.error(window._lc.api.errors.server_error);
+            Toast.error(t("api.errors.server_error"));
         }
 
     }

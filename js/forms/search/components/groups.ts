@@ -1,6 +1,6 @@
 // Импортируем utils
 import { Logger } from "../../../utils/logs/logger.js";
-import { getDeclension } from "../../../utils/string/declensions.js";
+import { I18n } from "../../../utils/i18n/index.js";
 
 // Импортируем components
 import { Avatars } from "../../../components/avatars.js";
@@ -111,14 +111,10 @@ export function createGroupItem(form: Search, data: SearchRecord): HTMLElement {
             if (name) name.textContent = next.display_name ?? "";
 
             // Подпись: количество участников со склонением. Свой раздел
-            // локализации (G4): раньше здесь читались ключи каналов
-            const texts = window._lc?.forms?.search?._components?.groups;
-            if (subtitle && texts) {
-                subtitle.textContent = `${next.total_members ?? 0} ${getDeclension(next.total_members ?? 0, [
-                    texts.dec_one_subscriber,
-                    texts.dec_two_subscribers,
-                    texts.dec_five_subscribers
-                ])}`;
+            // локализации: раньше здесь читались ключи каналов
+            if (subtitle) {
+                const members = next.total_members ?? 0;
+                I18n.setCount(subtitle, "forms.search._components.groups.subscribers", members);
             }
 
         } catch (error) {

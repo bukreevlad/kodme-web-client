@@ -22,6 +22,7 @@ import { checkRequest } from "../requests/check.js";
 import type { StoredSession } from "../../../utils/local_storage.js";
 import { getErrorMessage, getErrorStatus } from "../../../utils/helpers/error_util.js";
 import type { Sessions } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -113,7 +114,7 @@ export async function checkHandler(form: Sessions, data: StoredSession): Promise
 
             // Toast (флаг isToastShown не выставляем: ветка завершается
             // return и fallback-тост ниже недостижим)
-            Toast.error(window._lc.forms.sessions.toasts.session_not_exist);
+            Toast.error(t("forms.sessions.toasts.session_not_exist"));
 
             // Получаем сессии
             const sessions = LocalStorage.getAllSessions();
@@ -133,7 +134,7 @@ export async function checkHandler(form: Sessions, data: StoredSession): Promise
             Logger.warn("[app][auth]: Токен не прошёл проверку. Подпись недействительна");
 
             // Toast (флаг isToastShown не выставляем: ниже return)
-            Toast.error(window._lc.api.errors.invalid_token_signature);
+            Toast.error(t("api.errors.invalid_token_signature"));
 
             return;
 
@@ -143,7 +144,7 @@ export async function checkHandler(form: Sessions, data: StoredSession): Promise
         if (getErrorMessage(error).includes("502")) {
 
             // Toast (флаг isToastShown не выставляем: ниже return)
-            Toast.error(window._lc.api.errors.server_not_responde);
+            Toast.error(t("api.errors.server_not_responde"));
 
             return;
 
@@ -151,7 +152,7 @@ export async function checkHandler(form: Sessions, data: StoredSession): Promise
 
         // Если превышен лимит запросов
         if (getErrorMessage(error).includes("RATE_LIMIT_EXCEEDED") || getErrorStatus(error) === 429) {
-            Toast.warning(window._lc.forms.sessions.toasts.too_many_requests);
+            Toast.warning(t("forms.sessions.toasts.too_many_requests"));
             isToastShown = true;
         }
 
@@ -160,7 +161,7 @@ export async function checkHandler(form: Sessions, data: StoredSession): Promise
             Logger.error(error);
 
             // Toast
-            Toast.error(window._lc.api.errors.server_error);
+            Toast.error(t("api.errors.server_error"));
         }
 
     }

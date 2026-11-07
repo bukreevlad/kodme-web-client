@@ -1,6 +1,6 @@
 // Импортируем utils
 import { Logger } from "../../../utils/logs/logger.js";
-import { getDeclension } from "../../../utils/string/declensions.js";
+import { t } from "../../../utils/i18n/index.js";
 import { GestureController } from "../../../utils/gesture_controller.js";
 import { CacheManager } from "../../../utils/cache_manager.js";
 import { forStorage } from "../../../utils/network/storage_url.js";
@@ -170,17 +170,16 @@ function renderLabels(container: HTMLElement, itemData: StickerPakItem): void {
     container.replaceChildren();
 
     // Количество стикеров со склонением (1 стикер / 2 стикера / 5 стикеров)
-    const words = window._lc.forms.sticker_paks.labels.stickers as string[];
     const count = document.createElement("span");
     count.className = "text-muted text-xs";
-    count.textContent = `${itemData.stickers_count} ${getDeclension(itemData.stickers_count, words) ?? ""}`.trim();
+    count.textContent = `${itemData.stickers_count} ${t("forms.sticker_paks.labels.stickers", { count: itemData.stickers_count })}`.trim();
     container.appendChild(count);
 
     // Метка «Пак автора» — свой пак
     if (itemData.is_author) {
         const badge = document.createElement("span");
         badge.className = "badge px-1.5 py-0.5 rounded-md text-[0.65rem] font-medium bg-[var(--second-bg)] text-secondary";
-        badge.textContent = window._lc.forms.sticker_paks.labels.author_pack;
+        badge.textContent = t("forms.sticker_paks.labels.author_pack");
         container.appendChild(badge);
     }
 
@@ -188,7 +187,7 @@ function renderLabels(container: HTMLElement, itemData: StickerPakItem): void {
     if (!itemData.is_public) {
         const badge = document.createElement("span");
         badge.className = "badge px-1.5 py-0.5 rounded-md text-[0.65rem] font-medium bg-[var(--second-bg)] text-secondary";
-        badge.textContent = window._lc.forms.sticker_paks.labels.private;
+        badge.textContent = t("forms.sticker_paks.labels.private");
         container.appendChild(badge);
     }
 
@@ -196,7 +195,7 @@ function renderLabels(container: HTMLElement, itemData: StickerPakItem): void {
     if (itemData.is_member && !itemData.is_author) {
         const badge = document.createElement("span");
         badge.className = "badge px-1.5 py-0.5 rounded-md text-[0.65rem] font-medium bg-[var(--second-bg)] text-secondary";
-        badge.textContent = window._lc.forms.sticker_paks.labels.added;
+        badge.textContent = t("forms.sticker_paks.labels.added");
         container.appendChild(badge);
     }
 

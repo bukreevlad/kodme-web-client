@@ -13,6 +13,7 @@ import { UserIsNotContact } from "../dialogs/user_is_not_contact.js";
 
 // Импортируем типы
 import type { UserProfile } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -70,7 +71,7 @@ export async function openSecretChatHandler(form: UserProfile): Promise<void> {
 
         // Собеседник офлайн: его устройства не видны, создать чат не по чему
         if (!chatId) {
-            Toast.warning(window._lc.forms.secret_chat.toasts.peer_offline, { position: "bottom-center" });
+            Toast.warning(t("forms.secret_chat.toasts.peer_offline"), { position: "bottom-center" });
             return;
         }
 

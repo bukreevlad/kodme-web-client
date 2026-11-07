@@ -11,6 +11,7 @@ import { Inputs } from "../../components/inputs.js";
 
 // Импортируем handlers
 import { confirmHandler } from "./handlers/confirm.js";
+import { t } from "../../utils/i18n/index.js";
 
 // Типы данных формы
 /**
@@ -144,16 +145,15 @@ export class Confirm {
     _template(): HTMLElement | null {
 
         // Подставляем email в описание
-        let desc = window._lc.forms.confirm.desc || "";
-        if (desc.includes("{email}") && this.email) {
-            desc = desc.replace("{email}", this.email);
-        }
+        let desc = this.email
+            ? t("forms.confirm.desc", { email: this.email })
+            : t("forms.confirm.desc");
 
         // Подпись поля зависит от источника кода: TOTP или письмо
-        let codeLabel = window._lc.forms.confirm.code;
+        let codeLabel = t("forms.confirm.code");
         if (this.totpRequired) {
-            desc = window._lc.forms.confirm.desc_totp;
-            codeLabel = window._lc.forms.confirm.totp_code;
+            desc = t("forms.confirm.desc_totp");
+            codeLabel = t("forms.confirm.totp_code");
         }
 
         return new DOMParser().parseFromString(`
@@ -162,7 +162,7 @@ export class Confirm {
                 <div class="${CDM_MODAL_CENTERED_CONTENT_CLASSES()}">
 
                     <div class="flex flex-col items-center text-center gap-1 select-none">
-                        <span data-title class="text-lg font-bold mt-1 leading-snug">${this.totpRequired ? window._lc.forms.confirm.title_totp : window._lc.forms.confirm.title}</span>
+                        <span data-title class="text-lg font-bold mt-1 leading-snug">${this.totpRequired ? t("forms.confirm.title_totp") : t("forms.confirm.title")}</span>
                         <span class="text-sm text-secondary font-normal leading-snug">${desc}</span>
                     </div>
 
@@ -182,12 +182,12 @@ export class Confirm {
                         })}
                     </div>
 
-                    <p class="text-xs text-secondary text-center leading-snug">${this.totpRequired ? window._lc.forms.confirm.desc_totp_code : window._lc.forms.confirm.desc_code}</p>
+                    <p class="text-xs text-secondary text-center leading-snug">${this.totpRequired ? t("forms.confirm.desc_totp_code") : t("forms.confirm.desc_code")}</p>
 
                     ${Buttons.primary({
                         attributes: ["action-check"],
                         classes: ["w-full", "h-11"],
-                        text: window._lc.forms.confirm.check,
+                        text: t("forms.confirm.check"),
                         icon: "check"
                     })}
 

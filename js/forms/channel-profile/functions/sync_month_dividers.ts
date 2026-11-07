@@ -1,5 +1,6 @@
 // Импортируем типы
 import type { ChannelProfile, ChannelSectionItemData, MediaSection } from "../types.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -39,7 +40,7 @@ function monthTitle(key: string): string {
     const [year, month] = key.split("-").map(Number);
     const date = new Date(year ?? 1970, (month ?? 1) - 1, 1);
 
-    const name = new Intl.DateTimeFormat(window._lc?.locale || "ru-RU", { month: "long" }).format(date);
+    const name = new Intl.DateTimeFormat(t("locale"), { month: "long" }).format(date);
     return name.charAt(0).toUpperCase() + name.slice(1) + " " + date.getFullYear();
 }
 

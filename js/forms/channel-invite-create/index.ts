@@ -20,6 +20,7 @@ import { switchIsNumberUsersHandler } from "./handlers/switch-is-number-users.js
 
 // Импортируем forms
 import { ChannelProfile } from "../channel-profile/index.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы создания приглашения в канал.
@@ -250,9 +251,9 @@ export class ChannelInviteCreate {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("label", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.channel_invite_create.name}
+                                ${t("forms.channel_invite_create.name")}
                             </span>
-                            ${Inputs.create({ placeholder: window._lc.forms.channel_invite_create.name, name: "name", attributes: ["required"] })}
+                            ${Inputs.create({ placeholder: t("forms.channel_invite_create.name"), name: "name", attributes: ["required"] })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -260,21 +261,21 @@ export class ChannelInviteCreate {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("users", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.channel_invite_create.number_users}
+                                ${t("forms.channel_invite_create.number_users")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.channel_invite_create.number_users_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.channel_invite_create.number_users_desc")}</span>
 
                             ${Toggle.switch({
             name: "is-max-users",
             checked: false,
             toggleText: {
-                on: window._lc.forms.channel_invite_create.limited,
-                off: window._lc.forms.channel_invite_create.infifnity
+                on: t("forms.channel_invite_create.limited"),
+                off: t("forms.channel_invite_create.infifnity")
             }
         })}
 
                             <div data-max-users class="hidden">
-                                ${Inputs.number({ placeholder: window._lc.forms.channel_invite_create.number_users, min: "0", max: "1000", name: "max-users", attributes: ["required"] })}
+                                ${Inputs.number({ placeholder: t("forms.channel_invite_create.number_users"), min: "0", max: "1000", name: "max-users", attributes: ["required"] })}
                             </div>
                         </div>
 

@@ -15,6 +15,7 @@ import { channelsTable, messagesTable, pendingMessagesTable } from "../db.js";
 // Импортируем типы
 import type { Main } from "../index.js";
 import type { AddPageOptions, ChannelRecord } from "../types.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -127,10 +128,18 @@ export async function getConversations(form: Main): Promise<void> {
 
                 // Проходим по каналам из полученной порции
                 for (const channel of serverChannels) {
+
+                    // invariant: сервер не должен присылать пустые записи, но
+                    // payload — недоверенные данные: null в массиве роняет разбор
+                    if (!channel) continue;
+
                     await processEntity(channel);
 
                     if (channel.type === 2 && Array.isArray(channel.topics)) {
                         for (const topic of channel.topics) {
+                            // Тема могла исчезнуть между запросами сервера —
+                            // в JSON это null, разбираем только валидные
+                            if (!topic) continue;
                             await processEntity(topic, channel.id);
                         }
                     }
@@ -170,7 +179,7 @@ export async function getConversations(form: Main): Promise<void> {
         Logger.error("[app][GetUserConverstion]: Ошибка:", error);
 
         if (getErrorName(error) === "QuotaExceededError" || getErrorName(error) === "ConstraintError") {
-            Toast.error(window._lc.forms.main.toasts.storage_overflow_or_unavailable);
+            Toast.error(t("forms.main.toasts.storage_overflow_or_unavailable"));
         }
     }
 

@@ -8,6 +8,7 @@ import { Logger } from "../../../../utils/logs/logger.js";
 import { Overlay } from "../../../../components/overlay/index.js";
 import { Buttons } from "../../../../components/buttons.js";
 import { Inputs } from "../../../../components/inputs.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * Настройки диалога отключения TOTP.
@@ -170,18 +171,18 @@ export class TotpDisableDialog {
 
             <div class="cdm-modal security-totp-disable flex flex-col p-0 gap-0 ${CDM_MODAL_CLASSES()}">
                 <div class="${CDM_MODAL_HEADER_CLASSES()}">
-                    <span class="flex flex-row gap-2 items-center font-semibold text-base">${window._lc.forms.user_setting_security.totp_disable_title}</span>
+                    <span class="flex flex-row gap-2 items-center font-semibold text-base">${t("forms.user_setting_security.totp_disable_title")}</span>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "x" })}
                 </div>
                 <div class="${CDM_MODAL_CONTENT_CLASSES()}">
                     <div class="flex flex-col gap-4">
 
-                        <span class="text-secondary text-sm">${window._lc.forms.user_setting_security.totp_disable_desc}</span>
+                        <span class="text-secondary text-sm">${t("forms.user_setting_security.totp_disable_desc")}</span>
 
                         <div class="flex flex-col gap-2">
-                            <span class="text-sm font-semibold">${window._lc.forms.user_setting_security.totp_code}</span>
+                            <span class="text-sm font-semibold">${t("forms.user_setting_security.totp_code")}</span>
                             ${Inputs.create({
-                                placeholder: window._lc.forms.user_setting_security.totp_code,
+                                placeholder: t("forms.user_setting_security.totp_code"),
                                 name: "code",
                                 icon: "key",
                                 attributes: [
@@ -197,8 +198,8 @@ export class TotpDisableDialog {
                     </div>
                 </div>
                 <div class="${CDM_MODAL_FOOTER_CLASSES()}">
-                    ${Buttons.create({ attributes: ["action-close"], classes: ["w-full"], text: window._lc.forms.user_setting_security.action_cancel })}
-                    ${Buttons.danger({ attributes: ["action-confirm"], classes: ["w-full"], text: window._lc.forms.user_setting_security.totp_disable })}
+                    ${Buttons.create({ attributes: ["action-close"], classes: ["w-full"], text: t("forms.user_setting_security.action_cancel") })}
+                    ${Buttons.danger({ attributes: ["action-confirm"], classes: ["w-full"], text: t("forms.user_setting_security.totp_disable") })}
                 </div>
             </div>
 

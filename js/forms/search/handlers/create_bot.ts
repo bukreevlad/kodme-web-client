@@ -7,6 +7,7 @@ import { BotCreate } from "../../bot-create/index.js";
 
 // Импортируем типы
 import type { Search } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -40,7 +41,7 @@ export async function createBotHandler(form: Search): Promise<void> {
 
         toastError(error, {
             context: "[app][search][create-bot]",
-            fallback: window._lc?.forms?.search?.toasts?.create_bot_error
+            fallback: t("forms.search.toasts.create_bot_error")
         });
 
     }

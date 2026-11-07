@@ -4,6 +4,7 @@ import { SecretChatsManager } from "../../../core/managers/secret_chats_manager.
 // Импортируем типы
 import type { SecretConnectionState } from "../../../utils/secret_chats/secret_connection.js";
 import type { SecretChat } from "../index.js";
+import { I18n } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -72,7 +73,7 @@ export function renderHeader(form: SecretChat): void {
  */
 function connectionStateLabel(state: SecretConnectionState | null, chatStatus: string | undefined): string {
 
-    const locale = window._lc.forms.secret_chat.states;
+    const locale = I18n.tree.forms.secret_chat.states;
 
     // Живое состояние соединения — источник правды: запись чата могла
     // остаться "pending" до обработки accept, а канал уже работает

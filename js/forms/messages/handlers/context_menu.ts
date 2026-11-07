@@ -22,6 +22,7 @@ import { moveToFolderHandler } from "./move_to_folder.js";
 
 // Импортируем типы
 import type { Messages } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -44,7 +45,7 @@ export async function contextMenuHandler(event: Event, form: Messages): Promise<
 
         // menu item
         let enableNotify: PopoverMenuItem = {
-            text: window._lc.forms.messages.context_menu.enable_notify,
+            text: t("forms.messages.context_menu.enable_notify"),
             iconName: "Bell",
             onClick: () => enableNotifyHandler(form)
         };
@@ -56,7 +57,7 @@ export async function contextMenuHandler(event: Event, form: Messages): Promise<
 
         // menu item
         let disableNotify: PopoverMenuItem = {
-            text: window._lc.forms.messages.context_menu.disable_notify,
+            text: t("forms.messages.context_menu.disable_notify"),
             iconName: "BellOff",
             onClick: () => disableNotifyHandler(form)
         };
@@ -68,7 +69,7 @@ export async function contextMenuHandler(event: Event, form: Messages): Promise<
 
         // menu item
         let profile: PopoverMenuItem = {
-            text: window._lc.forms.messages.context_menu.profile,
+            text: t("forms.messages.context_menu.profile"),
             iconName: "info-square-rounded",
             onClick: () => new ChannelProfile({ channelId: form.channelId })
         };
@@ -78,7 +79,7 @@ export async function contextMenuHandler(event: Event, form: Messages): Promise<
 
         // menu item
         let userProfile: PopoverMenuItem = {
-            text: window._lc.forms.messages.context_menu.user_profile,
+            text: t("forms.messages.context_menu.user_profile"),
             iconName: "User",
             onClick: () => {
                 // Ссылки в замыкании читаются в момент клика
@@ -93,7 +94,7 @@ export async function contextMenuHandler(event: Event, form: Messages): Promise<
 
         // menu item
         let call: PopoverMenuItem = {
-            text: window._lc.forms.messages.context_menu.call,
+            text: t("forms.messages.context_menu.call"),
             iconName: "PhoneOutgoing",
             onClick: () => {
                 // Ссылки в замыкании читаются в момент клика
@@ -115,7 +116,7 @@ export async function contextMenuHandler(event: Event, form: Messages): Promise<
 
         // menu item
         let moveToFolder: PopoverMenuItem = {
-            text: window._lc.forms.messages.context_menu.add_to_folder,
+            text: t("forms.messages.context_menu.add_to_folder"),
             iconName: "folder-open",
             onClick: () => {
                 // Ссылка в замыкании читается в момент клика
@@ -129,7 +130,7 @@ export async function contextMenuHandler(event: Event, form: Messages): Promise<
 
         // menu item
         let subscribeChannel: PopoverMenuItem = {
-            text: window._lc.forms.messages.context_menu.subscribe_channel,
+            text: t("forms.messages.context_menu.subscribe_channel"),
             iconName: "user-plus",
             onClick: () => subscribeChannelHandler(form)
         };
@@ -139,7 +140,7 @@ export async function contextMenuHandler(event: Event, form: Messages): Promise<
 
         // menu item
         let unsubscribeChannel: PopoverMenuItem = {
-            text: window._lc.forms.messages.context_menu.unsubscribe_channel,
+            text: t("forms.messages.context_menu.unsubscribe_channel"),
             iconName: "user-minus",
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => unsubscribeChannelHandler(form)
@@ -150,7 +151,7 @@ export async function contextMenuHandler(event: Event, form: Messages): Promise<
 
         // menu item
         let subscribeGroup: PopoverMenuItem = {
-            text: window._lc.forms.messages.context_menu.subscribe_group,
+            text: t("forms.messages.context_menu.subscribe_group"),
             iconName: "user-plus",
             onClick: () => subscribeChannelHandler(form)
         };
@@ -160,7 +161,7 @@ export async function contextMenuHandler(event: Event, form: Messages): Promise<
 
         // menu item
         let unsubscribeGroup: PopoverMenuItem = {
-            text: window._lc.forms.messages.context_menu.unsubscribe_group,
+            text: t("forms.messages.context_menu.unsubscribe_group"),
             iconName: "user-minus",
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => unsubscribeChannelHandler(form)
@@ -171,7 +172,7 @@ export async function contextMenuHandler(event: Event, form: Messages): Promise<
 
         // menu item
         let clearHistory: PopoverMenuItem = {
-            text: window._lc.forms.messages.context_menu.clear_history,
+            text: t("forms.messages.context_menu.clear_history"),
             iconName: "history",
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => clearHistoryHandler(form)
@@ -182,7 +183,7 @@ export async function contextMenuHandler(event: Event, form: Messages): Promise<
 
         // menu item
         let removeDialog: PopoverMenuItem = {
-            text: window._lc.forms.messages.context_menu.remove_dialog,
+            text: t("forms.messages.context_menu.remove_dialog"),
             iconName: "trash",
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => removeDialogHandler(form)

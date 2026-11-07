@@ -17,6 +17,7 @@ import { Avatars } from "../../../components/avatars.js";
 import { isCallParticipantData } from "../types.js";
 import type { CallParticipantData } from "../types.js";
 import type { Call } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -168,9 +169,9 @@ export class ParticipantItem {
 
             // Имя
             if (this.nameEl) {
-                const displayName = participant.name || participant.identity || window._lc.forms.call.participant;
+                const displayName = participant.name || participant.identity || t("forms.call.participant");
                 const label = isLocal
-                    ? `${displayName} (${window._lc.forms.call.you_suffix})`
+                    ? `${displayName} (${t("forms.call.you_suffix")})`
                     : displayName;
 
                 this.nameEl.textContent = label;

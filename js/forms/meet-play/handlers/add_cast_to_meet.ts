@@ -10,6 +10,7 @@ import { addCastToMeetRequest } from "../requests/add_cast_to_meet.js";
 // Импортируем типы
 import type { MeetPlay } from "../index.js";
 import type { MeetCastData } from "../types.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -31,14 +32,14 @@ export async function addCastToMeetHandler(form: MeetPlay, cast: MeetCastData): 
 
         // Проверка запроса
         if (response?.status) {
-            Toast.success(window._lc.forms.meet_play.toasts.add_cast_success);
+            Toast.success(t("forms.meet_play.toasts.add_cast_success"));
         }
 
     } catch (error) {
 
         Logger.error("Ошибка при добавлении трансляции:", error);
 
-        Toast.error(window._lc.forms.meet_play.toasts.add_cast_error);
+        Toast.error(t("forms.meet_play.toasts.add_cast_error"));
 
     }
 

@@ -15,6 +15,7 @@ import { BotProfile } from "../bot-profile/index.js";
 
 // Импортируем handlers
 import { saveBotLinkHandler } from "./handlers/save.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Данные формы смены ссылки бота.
@@ -232,14 +233,14 @@ export class BotSettingLink {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("link", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.bot_setting_link.link}
+                                ${t("forms.bot_setting_link.link")}
                             </span>
                             ${Inputs.create({
-                                placeholder: window._lc.forms.bot_setting_link.link,
+                                placeholder: t("forms.bot_setting_link.link"),
                                 name: "link",
                                 attributes: ["required"],
                             })}
-                            <span class="text-sm text-secondary">${window._lc.forms.bot_setting_link.set_link_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.bot_setting_link.set_link_desc")}</span>
                         </div>
 
                     </div>

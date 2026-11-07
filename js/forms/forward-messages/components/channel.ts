@@ -13,6 +13,7 @@ import { isForwardChannel } from "../types.js";
 import type { StoreEventName } from "../../../utils/store.js";
 import type { ChannelItem, ForwardChannelRecord } from "../types.js";
 import type { ForwardMessages } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -159,7 +160,7 @@ export function createChannelItem(form: ForwardMessages, data: ForwardChannelRec
 
             // Заглушка превью: строки списка пересылки не показывают
             // текст последнего сообщения
-            lastMessage.textContent = window._lc.forms.main.components.channels.last_message.empty_messages;
+            lastMessage.textContent = t("forms.main.components.channels.last_message.empty_messages");
 
         } catch (error) {
             Logger.error(error);

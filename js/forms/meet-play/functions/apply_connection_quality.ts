@@ -4,6 +4,7 @@ import { Logger } from "../../../utils/logs/logger.js";
 
 // Импортируем типы
 import type { MeetPlay } from "../index.js";
+import { I18n, t } from "../../../utils/i18n/index.js";
 
 /**
  * Уровни качества связи. Ключи совпадают со значениями одноимённого enum
@@ -95,7 +96,7 @@ export function updateConnectionQuality(form: MeetPlay, quality?: string | null)
         // ---------- ПОДПИСЬ ----------
         const label = element.querySelector(":scope [data-quality-label]");
         if (label) {
-            label.textContent = window._lc.forms.meet_play.quality[level] ?? window._lc.forms.meet_play.quality.unknown;
+            label.textContent = I18n.tree.forms.meet_play.quality[level] ?? t("forms.meet_play.quality.unknown");
             element.title = label.textContent;
         }
 

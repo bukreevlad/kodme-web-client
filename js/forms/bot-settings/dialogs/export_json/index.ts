@@ -20,6 +20,7 @@ import { copyHandler } from "./handlers/copy.js";
 
 // Импортируем типы
 import type { BotMenuRecord } from "../../types.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * Настройки диалога экспорта меню в JSON.
@@ -237,18 +238,18 @@ export class ExportBotCommands {
 
             <div class="cdm-modal bot-export-commands-to-json flex flex-col p-0 gap-0 w-[26rem] ${CDM_MODAL_CLASSES()}">
                 <div class="${CDM_MODAL_HEADER_CLASSES()}">
-                    <span class="flex flex-row gap-2 items-center font-semibold text-lg">${window._lc.forms.bot_settings.dialogs.export_json.title}</span>
+                    <span class="flex flex-row gap-2 items-center font-semibold text-lg">${t("forms.bot_settings.dialogs.export_json.title")}</span>
                 </div>
                  <div class="${CDM_MODAL_CONTENT_CLASSES()}">
                     <div class="flex flex-col gap-2">
 
-                        ${Inputs.textarea({ placeholder: window._lc.forms.bot_settings.dialogs.export_json.json_menu, classes: ["font-mono", "text-xs"], name: "code" })}
+                        ${Inputs.textarea({ placeholder: t("forms.bot_settings.dialogs.export_json.json_menu"), classes: ["font-mono", "text-xs"], name: "code" })}
 
                     </div>
                 </div>
                 <div class="${CDM_MODAL_FOOTER_CLASSES()}">
-                    ${Buttons.primary({ shape: "square", attributes: ["action-copy"], classes: ["w-full"], text: window._lc.forms.bot_settings.dialogs.export_json.action_copy })}
-                    ${Buttons.create({ shape: "square", attributes: ["action-close"], classes: ["w-full"], text: window._lc.forms.bot_settings.dialogs.export_json.action_close })}
+                    ${Buttons.primary({ shape: "square", attributes: ["action-copy"], classes: ["w-full"], text: t("forms.bot_settings.dialogs.export_json.action_copy") })}
+                    ${Buttons.create({ shape: "square", attributes: ["action-close"], classes: ["w-full"], text: t("forms.bot_settings.dialogs.export_json.action_close") })}
                 </div>
             </div>
 

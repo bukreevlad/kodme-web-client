@@ -18,6 +18,7 @@ import { BotProfile } from "../../../bot-profile/index.js";
 
 // Импортируем handlers
 import { importHandler } from "./handlers/import.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * Настройки диалога импорта меню из JSON.
@@ -225,18 +226,18 @@ export class ImportBotCommands {
 
             <div class="cdm-modal bot-import-commands-from-json flex flex-col p-0 gap-0 w-[26rem] ${CDM_MODAL_CLASSES()}">
                 <div class="${CDM_MODAL_HEADER_CLASSES()}">
-                    <span class="flex flex-row gap-2 items-center font-semibold text-lg">${window._lc.forms.bot_settings.dialogs.import_json.title}</span>
+                    <span class="flex flex-row gap-2 items-center font-semibold text-lg">${t("forms.bot_settings.dialogs.import_json.title")}</span>
                 </div>
                  <div class="${CDM_MODAL_CONTENT_CLASSES()}">
                     <div class="flex flex-col gap-2">
 
-                        ${Inputs.textarea({ placeholder: window._lc.forms.bot_settings.dialogs.import_json.json_menu, classes: ["font-mono", "text-xs"], name: "code" })}
+                        ${Inputs.textarea({ placeholder: t("forms.bot_settings.dialogs.import_json.json_menu"), classes: ["font-mono", "text-xs"], name: "code" })}
 
                     </div>
                 </div>
                 <div class="${CDM_MODAL_FOOTER_CLASSES()}">
-                    ${Buttons.primary({ shape: "square", attributes: ["action-save"], classes: ["w-full"], text: window._lc.forms.bot_settings.dialogs.import_json.action_save })}
-                    ${Buttons.create({ shape: "square", attributes: ["action-close"], classes: ["w-full"], text: window._lc.forms.bot_settings.dialogs.import_json.action_close })}
+                    ${Buttons.primary({ shape: "square", attributes: ["action-save"], classes: ["w-full"], text: t("forms.bot_settings.dialogs.import_json.action_save") })}
+                    ${Buttons.create({ shape: "square", attributes: ["action-close"], classes: ["w-full"], text: t("forms.bot_settings.dialogs.import_json.action_close") })}
                 </div>
             </div>
 

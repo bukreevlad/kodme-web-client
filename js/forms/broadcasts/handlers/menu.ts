@@ -12,6 +12,7 @@ import { BroadcastsSettings } from "../../broadcasts-settings/index.js";
 // Импортируем типы
 import type { PopoverMenuItem } from "../../../components/overlay/popover_menu.js";
 import type { Broadcasts } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -30,14 +31,14 @@ export async function menuHandler(event: Event, form: Broadcasts): Promise<void>
 
         // menu item
         let addCast: PopoverMenuItem = {
-            text: window._lc.forms.broadcasts.context_menu.create_cast,
+            text: t("forms.broadcasts.context_menu.create_cast"),
             iconName: "Plus",
             onClick: () => new BroadcastCreate()
         }
 
         // menu item
         let settings: PopoverMenuItem = {
-            text: window._lc.forms.broadcasts.context_menu.settings,
+            text: t("forms.broadcasts.context_menu.settings"),
             iconName: "Settings",
             onClick: () => new BroadcastsSettings()
         };

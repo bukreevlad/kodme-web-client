@@ -17,6 +17,7 @@ import { getPakForEditRequest } from "./requests/get_pak.js";
 
 // Импортируем handlers
 import { stickerPakSaveHandler } from "./handlers/save.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы редактирования пака стикеров.
@@ -189,7 +190,7 @@ export class StickerPakEdit {
 
             // Редактировать пак может только автор — чужой закрываем сразу
             if (!response.data.is_author) {
-                Toast.error(window._lc.api.errors.access_denied);
+                Toast.error(t("api.errors.access_denied"));
                 this.modal?.close();
                 return;
             }
@@ -208,7 +209,7 @@ export class StickerPakEdit {
 
             // Пак недоступен — закрываем форму
             Logger.error("[app][sticker-pak-edit][load-pak]:", error);
-            Toast.error(window._lc.forms.sticker_pak_edit.toasts.load_error);
+            Toast.error(t("forms.sticker_pak_edit.toasts.load_error"));
             this.modal?.close();
 
         }
@@ -257,15 +258,15 @@ export class StickerPakEdit {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("label", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.sticker_pak_edit.name}
+                                ${t("forms.sticker_pak_edit.name")}
                             </span>
-                            ${Inputs.create({ placeholder: window._lc.forms.sticker_pak_edit.name, name: "name" })}
+                            ${Inputs.create({ placeholder: t("forms.sticker_pak_edit.name"), name: "name" })}
 
                             ${Toggle.switch({
                                 name: "is-public", checked: false,
                                 toggleText: {
-                                    on: window._lc.forms.sticker_pak_edit.public_on,
-                                    off: window._lc.forms.sticker_pak_edit.public_off
+                                    on: t("forms.sticker_pak_edit.public_on"),
+                                    off: t("forms.sticker_pak_edit.public_off")
                                 }
                             })}
                         </div>
@@ -275,9 +276,9 @@ export class StickerPakEdit {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("info-square-rounded", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.sticker_pak_edit.about}
+                                ${t("forms.sticker_pak_edit.about")}
                             </span>
-                            ${Inputs.textarea({ placeholder: window._lc.forms.sticker_pak_edit.about, name: "about", rows: 4 })}
+                            ${Inputs.textarea({ placeholder: t("forms.sticker_pak_edit.about"), name: "about", rows: 4 })}
                         </div>
 
                     </div>

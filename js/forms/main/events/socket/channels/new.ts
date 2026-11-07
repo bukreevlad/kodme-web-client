@@ -18,6 +18,7 @@ import { channelsTable, cleanChannel } from "../../../db.js";
 
 // Импортируем типы
 import { isChannelWithTopics } from "../../../types.js";
+import { t } from "../../../../../utils/i18n/index.js";
 
 // Очередь выполнения socket событий
 const asyncQueue = new AsyncQueue();
@@ -118,7 +119,7 @@ export function subscribeChannelsNew(): void {
 
                 // Если ошибка была вызвана IndexedDB
                 if (getErrorName(error) === "QuotaExceededError" || getErrorName(error) === "ConstraintError") {
-                    Toast.error(window._lc.forms.main.toasts.storage_write_failed);
+                    Toast.error(t("forms.main.toasts.storage_write_failed"));
                 }
             }
 

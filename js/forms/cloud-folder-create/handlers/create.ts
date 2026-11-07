@@ -10,6 +10,7 @@ import { createFolderRequest } from "../../cloud/requests/create_folder.js";
 // Импортируем типы
 import type { CreateFolderData } from "../../cloud/requests/create_folder.js";
 import type { CreateFolder } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -65,7 +66,7 @@ export async function createHandler(dialog: CreateFolder): Promise<void> {
             store.add({ ...response.data, item_type: "folder" });
 
             // Показываем уведомление
-            Toast.success(window._lc.forms.cloud.toasts.folder_created);
+            Toast.success(t("forms.cloud.toasts.folder_created"));
 
             // Закрываем диалог
             dialog.modal?.close();

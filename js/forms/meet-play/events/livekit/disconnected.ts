@@ -9,6 +9,7 @@ import { Toast } from "../../../../components/toast.js";
 
 // Импортируем типы
 import type { MeetPlay } from "../../index.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -37,7 +38,7 @@ export function subscribeDisconnected(form: MeetPlay): void {
             if (reason === DisconnectReason.PARTICIPANT_REMOVED) {
 
                 // Toast
-                Toast.error(window._lc.forms.meet_play.toasts.you_were_removed, {
+                Toast.error(t("forms.meet_play.toasts.you_were_removed"), {
                     duration: 4000
                 });
 
@@ -52,7 +53,7 @@ export function subscribeDisconnected(form: MeetPlay): void {
             if (reason === DisconnectReason.ROOM_DELETED) {
 
                 // Toast
-                Toast.error(window._lc.forms.meet_play.toasts.disconnected, {
+                Toast.error(t("forms.meet_play.toasts.disconnected"), {
                     duration: 4000
                 });
 
@@ -64,7 +65,7 @@ export function subscribeDisconnected(form: MeetPlay): void {
             // ---------- NETWORK ----------
             // Соединение отвалилось по сети: предупреждаем, но форму не закрываем,
             // пользователь может переподключиться сам.
-            Toast.error(window._lc.forms.meet_play.toasts.disconnected, {
+            Toast.error(t("forms.meet_play.toasts.disconnected"), {
                 duration: 4000
             });
             // ---------- NETWORK ----------

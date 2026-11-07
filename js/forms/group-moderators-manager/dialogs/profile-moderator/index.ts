@@ -25,6 +25,7 @@ import { getModeratorSettingsRequest } from "./requests/get_settings.js";
 
 // Импортируем типы
 import type { GroupModeratorRecord } from "../../types.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * Настройки диалога настроек модератора.
@@ -303,16 +304,16 @@ export class GroupProfileModerator {
                                     <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                         ${Icons.icon("trash", { settings: { size: 20 } })?.outerHTML ?? ""}
                                     </span>
-                                    ${window._lc.forms.group_moderator_profile.remove_post}
+                                    ${t("forms.group_moderator_profile.remove_post")}
                                 </span>
-                                <span class="text-sm text-secondary">${window._lc.forms.group_moderator_profile.remove_post_desc}</span>
+                                <span class="text-sm text-secondary">${t("forms.group_moderator_profile.remove_post_desc")}</span>
                             </div>
                             ${Toggle.switch({
                                 name: "can-deleted-message",
                                 checked: false,
                                 toggleText: {
-                                    on: window._lc.forms.group_moderator_profile.enabled,
-                                    off: window._lc.forms.group_moderator_profile.disabled
+                                    on: t("forms.group_moderator_profile.enabled"),
+                                    off: t("forms.group_moderator_profile.disabled")
                                 }
                             })}
                         </div>
@@ -323,16 +324,16 @@ export class GroupProfileModerator {
                                     <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                         ${Icons.icon("message-off", { settings: { size: 20 } })?.outerHTML ?? ""}
                                     </span>
-                                    ${window._lc.forms.group_moderator_profile.user_all_post_remove}
+                                    ${t("forms.group_moderator_profile.user_all_post_remove")}
                                 </span>
-                                <span class="text-sm text-secondary">${window._lc.forms.group_moderator_profile.user_all_post_remove_desc}</span>
+                                <span class="text-sm text-secondary">${t("forms.group_moderator_profile.user_all_post_remove_desc")}</span>
                             </div>
                             ${Toggle.switch({
                                 name: "can-clean-messages",
                                 checked: false,
                                 toggleText: {
-                                    on: window._lc.forms.group_moderator_profile.enabled,
-                                    off: window._lc.forms.group_moderator_profile.disabled
+                                    on: t("forms.group_moderator_profile.enabled"),
+                                    off: t("forms.group_moderator_profile.disabled")
                                 }
                             })}
                         </div>
@@ -343,16 +344,16 @@ export class GroupProfileModerator {
                                     <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                         ${Icons.icon("ban", { settings: { size: 20 } })?.outerHTML ?? ""}
                                     </span>
-                                    ${window._lc.forms.group_moderator_profile.block_user}
+                                    ${t("forms.group_moderator_profile.block_user")}
                                 </span>
-                                <span class="text-sm text-secondary">${window._lc.forms.group_moderator_profile.block_user_desc}</span>
+                                <span class="text-sm text-secondary">${t("forms.group_moderator_profile.block_user_desc")}</span>
                             </div>
                             ${Toggle.switch({
                                 name: "can-restrict-members",
                                 checked: false,
                                 toggleText: {
-                                    on: window._lc.forms.group_moderator_profile.enabled,
-                                    off: window._lc.forms.group_moderator_profile.disabled
+                                    on: t("forms.group_moderator_profile.enabled"),
+                                    off: t("forms.group_moderator_profile.disabled")
                                 }
                             })}
                         </div>
@@ -366,13 +367,13 @@ export class GroupProfileModerator {
                         shape: "square",
                         attributes: ["action-cancel"],
                         classes: ["w-full"],
-                        text: window._lc.forms.group_moderator_profile.close
+                        text: t("forms.group_moderator_profile.close")
                     })}
                     ${Buttons.primary({
                         shape: "square",
                         attributes: ["action-save"],
                         classes: ["w-full"],
-                        text: window._lc.forms.group_moderator_profile.save
+                        text: t("forms.group_moderator_profile.save")
                     })}
                 </div>
                 

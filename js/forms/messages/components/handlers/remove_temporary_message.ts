@@ -9,6 +9,7 @@ import { updateStateButtons } from "../../functions/update_state_buttons.js";
 
 // Импортируем типы
 import type { MessageItem } from "../message.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -33,7 +34,7 @@ export async function removeTemporaryMessageHandler(message: MessageItem): Promi
         updateStateButtons(message.form);
 
         // Toast
-        Toast.success(window._lc.forms.messages.components.messages.toasts.message_removed, { position: "bottom-center" });
+        Toast.success(t("forms.messages.components.messages.toasts.message_removed"), { position: "bottom-center" });
 
     } catch (error) {
         Logger.error(error);

@@ -39,6 +39,7 @@ import type { OverlayScrollbars } from "overlayscrollbars";
 // Импортируем типы
 import type { ChannelProfileResponse } from "./requests/get_channel_info.js";
 import type { ChannelSectionItemData, ScrollbarEntry, Unsubscribe } from "./types.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы профиля канала.
@@ -321,7 +322,7 @@ export class ChannelProfile {
             // в лог, а форма открывалась пустой: без аватара, имени и табов
             toastError(error, {
                 context: "[app][channel-profile][get-info]",
-                fallback: window._lc?.forms?.channel_profile?.toasts?.load_error
+                fallback: t("forms.channel_profile.toasts.load_error")
             });
 
             return false;
@@ -365,7 +366,7 @@ export class ChannelProfile {
             Logger.error("[app][channel-profile][before-open]::build-tabs", error);
             toastError(error, {
                 context: "[app][channel-profile][before-open]",
-                fallback: window._lc?.forms?.channel_profile?.toasts?.load_error
+                fallback: t("forms.channel_profile.toasts.load_error")
             });
 
             return false;

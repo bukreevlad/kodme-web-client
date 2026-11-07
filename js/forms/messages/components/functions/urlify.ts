@@ -27,6 +27,7 @@ import { openMessageCloudLink } from "../../../cloud/functions/open_message_clou
 
 // Импортируем типы
 import type { MessageItem } from "../message.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -178,7 +179,7 @@ export function urlify(message: MessageItem): void {
                         toastError(error, {
                             context: "[app][messages][urlify][invite]",
                             codes: ["INVITE_INVALID", "INVITE_EXPIRED", "INVITE_MAX_USES_EXHAUSTED"],
-                            text: window._lc.forms.messages.toasts.invite_not_valid
+                            text: t("forms.messages.toasts.invite_not_valid")
                         });
 
                         return false;

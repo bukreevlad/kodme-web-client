@@ -14,6 +14,7 @@ import { updateCommentRequest } from "../requests/update_comment.js";
 
 // Импортируем типы
 import type { Comments } from "../index.js";
+import { I18n, t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -56,8 +57,8 @@ export async function updateCommentHandler(form: Comments): Promise<void> {
             if (validation.code === "empty_message") textarea.classList.add("invalid");
 
             // Коды валидации — ключи локали forms.comments.toasts.*
-            const toasts: Record<string, string> = { ...window._lc?.forms?.comments?.toasts };
-            Toast.warning(toasts[validation.code ?? ""] || toasts.empty_message || "Комментарий пустой", {
+            const toasts: Record<string, string> = { ...I18n.tree.forms.comments.toasts };
+            Toast.warning(toasts[validation.code ?? ""] || toasts.empty_message || t("forms.comments.toasts.empty_message"), {
                 position: "bottom-center"
             });
 

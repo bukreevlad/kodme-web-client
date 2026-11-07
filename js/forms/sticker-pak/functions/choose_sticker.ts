@@ -8,7 +8,7 @@ import { resolveMimeType } from "../../../utils/validation/file_validator.js";
 import { uploadDerivedAssets } from "../../../utils/media/upload_derived_assets.js";
 import { getErrorCode } from "../../../utils/helpers/error_util.js";
 import { parseError } from "../../../utils/network/parse_error.js";
-import { getDeclension } from "../../../utils/string/declensions.js";
+import { t } from "../../../utils/i18n/index.js";
 
 // Импортируем components
 import { ProgressIndicator } from "../../../components/progress.js";
@@ -50,7 +50,7 @@ export async function chooseSticker(form: StickerPak): Promise<void> {
 
         // Лимит пака исчерпан — файловый диалог даже не открываем
         if (limits && form.stickers.length >= limits.stickers.max_per_pak) {
-            Toast.error(window._lc.forms.sticker_pak.toasts.limit_reached);
+            Toast.error(t("forms.sticker_pak.toasts.limit_reached"));
             return;
         }
 
@@ -95,7 +95,7 @@ export async function chooseSticker(form: StickerPak): Promise<void> {
 
                     // Лимит пака исчерпан набором — дальше не обрабатываем
                     if (limits && form.stickers.length >= limits.stickers.max_per_pak) {
-                        Toast.error(window._lc.forms.sticker_pak.toasts.limit_reached);
+                        Toast.error(t("forms.sticker_pak.toasts.limit_reached"));
                         break;
                     }
 
@@ -106,20 +106,20 @@ export async function chooseSticker(form: StickerPak): Promise<void> {
                     if (!file.name.toLowerCase().endsWith(STICKERS_ALLOWED_EXTENSION)
                         || resolveMimeType(file) !== STICKERS_ALLOWED_MIME
                     ) {
-                        Toast.error(window._lc.forms.sticker_pak.toasts.invalid_format);
+                        Toast.error(t("forms.sticker_pak.toasts.invalid_format"));
                         continue;
                     }
 
                     // Размер файла в пределах лимита
                     if (limits && file.size > limits.stickers.max_size_bytes) {
-                        Toast.error(window._lc.forms.sticker_pak.toasts.too_big);
+                        Toast.error(t("forms.sticker_pak.toasts.too_big"));
                         continue;
                     }
 
                     // Реальные размеры изображения (картинка обязана декодироваться)
                     const dimensions = await readImageDimensions(file);
                     if (!dimensions) {
-                        Toast.error(window._lc.forms.sticker_pak.toasts.invalid_format);
+                        Toast.error(t("forms.sticker_pak.toasts.invalid_format"));
                         continue;
                     }
 
@@ -127,7 +127,7 @@ export async function chooseSticker(form: StickerPak): Promise<void> {
                     if (limits && (dimensions.width > limits.stickers.max_dimension
                         || dimensions.height > limits.stickers.max_dimension)
                     ) {
-                        Toast.error(window._lc.forms.sticker_pak.toasts.too_large_image);
+                        Toast.error(t("forms.sticker_pak.toasts.too_large_image"));
                         continue;
                     }
                     // ---------- VALIDATE ----------
@@ -194,13 +194,13 @@ export async function chooseSticker(form: StickerPak): Promise<void> {
                         // Хранилище отклонило запрос (400 от S3, например
                         // пустое тело от Safari) — свой текст
                         if (info.code === "UPLOAD_REJECTED") {
-                            Toast.error(window._lc.api.errors.upload_rejected);
+                            Toast.error(t("api.errors.upload_rejected"));
                         } else if (info.name === "MEDIA_PROCESSING_DISABLED") {
                             // Обработка выключена конфигом
-                            Toast.error(window._lc.api.errors.media_processing_disabled);
+                            Toast.error(t("api.errors.media_processing_disabled"));
                         } else {
                             // Toast (коды ошибок сервера разбирает toastError)
-                            Toast.error(window._lc.forms.sticker_pak.toasts.add_error);
+                            Toast.error(t("forms.sticker_pak.toasts.add_error"));
                         }
 
                     }
@@ -209,10 +209,9 @@ export async function chooseSticker(form: StickerPak): Promise<void> {
 
                 // Итоговый тост: один файл — привычный текст, набор — со счётчиком
                 if (added === 1) {
-                    Toast.success(window._lc.forms.sticker_pak.toasts.success_add);
+                    Toast.success(t("forms.sticker_pak.toasts.success_add"));
                 } else if (added > 1) {
-                    const forms = window._lc.forms.sticker_pak.toasts.dec_stickers;
-                    Toast.success(`${window._lc.forms.sticker_pak.toasts.success_add_many}: ${added} ${getDeclension(added, forms)}`);
+                    Toast.success(`${t("forms.sticker_pak.toasts.success_add_many")}: ${added} ${t("forms.sticker_pak.toasts.dec_stickers", { count: added })}`);
                 }
 
             } finally {
@@ -233,7 +232,7 @@ export async function chooseSticker(form: StickerPak): Promise<void> {
         Logger.error("[app][sticker-pak][choose-sticker][open]:", error);
 
         // Прочая ошибка сервера
-        Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+        Toast.error(t("api.errors.server_error"));
     }
 
 }

@@ -26,6 +26,7 @@ import { getUserInfoRequest } from "./requests/get_user_info.js";
 // Импортируем типы
 import type { SessionProfile } from "../menu/types.js";
 import type { UserProfileRecord } from "./types.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы профиля пользователя.
@@ -271,7 +272,7 @@ export class UserProfile {
                     data: {
                         instance: this,
                         title: this.profile.display_name,
-                        subtitle: window._lc.forms.user_profile.subtitle
+                        subtitle: t("forms.user_profile.subtitle")
                     }
                 }
             }));
@@ -346,21 +347,21 @@ export class UserProfile {
             attributes: ["action-create-chat"],
             classes: ["flex-col", "flex-1", "p-2", "gap-2", "text-secondary", "text-sm"],
             icon: "message-circle",
-            text: window._lc.forms.user_profile.chat
+            text: t("forms.user_profile.chat")
         })}
                             ${Buttons.create({
             shape: "square",
             attributes: ["action-call"],
             classes: ["flex-col", "flex-1", "p-2", "gap-2", "text-secondary", "text-sm"],
             icon: "PhoneOutgoing",
-            text: window._lc.forms.user_profile.call
+            text: t("forms.user_profile.call")
         })}
                             ${Buttons.create({
             shape: "square",
             attributes: ["action-menu"],
             classes: ["flex-col", "flex-1", "p-2", "gap-2", "text-secondary", "text-sm"],
             icon: "dots",
-            text: window._lc.forms.user_profile.other
+            text: t("forms.user_profile.other")
         })}
                         </div>
 

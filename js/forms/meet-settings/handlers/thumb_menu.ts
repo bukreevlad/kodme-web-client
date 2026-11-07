@@ -12,6 +12,7 @@ import { removeThumb } from "../functions/remove_thumb.js";
 // Импортируем типы
 import type { PopoverMenuItem } from "../../../components/overlay/popover_menu.js";
 import type { MeetSettings } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -31,14 +32,14 @@ export async function thumbnailContextMenuHandler(event: Event, form: MeetSettin
 
         // menu item
         const upload: PopoverMenuItem = {
-            text: window._lc.forms.meet_settings.context_menu.upload,
+            text: t("forms.meet_settings.context_menu.upload"),
             iconName: "Upload",
             onClick: () => choosePhoto(form)
         };
 
         // menu item
         const remove: PopoverMenuItem = {
-            text: window._lc.forms.meet_settings.context_menu.remove,
+            text: t("forms.meet_settings.context_menu.remove"),
             iconName: "trash",
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => removeThumb(form)

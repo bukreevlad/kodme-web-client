@@ -1,6 +1,6 @@
 {
     "name": "kodme-web-client",
-    "version": "7.3.1",
+    "version": "7.3.2",
     "author": "bukreevlad",
     "main": "dist/js/main.js",
     "scripts": {
@@ -20,6 +20,7 @@
         "hls.js": "^1.7.4",
         "html5-qrcode": "^2.3.8",
         "i": "^0.3.7",
+        "i18next": "^27.0.0",
         "jsmediatags": "^3.9.7",
         "livekit-client": "^2.23.0",
         "markdown-it": "^15.0.3",

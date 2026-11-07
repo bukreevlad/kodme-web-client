@@ -14,6 +14,7 @@ import { Buttons } from "../../components/buttons.js";
 
 // Импортируем handlers
 import { openHandler } from "./handlers/open.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы приглашения в канал.
@@ -236,8 +237,8 @@ export class InviteChannel {
             // Записываем данные
             if (name) name.textContent = this.invite.display_name || "";
             if (about) about.textContent = this.invite.about || "";
-            if (totalMembers) totalMembers.textContent = `${window._lc.forms.invite_channel.members}: ${this.invite.total_members}`;
-            if (channelType) channelType.textContent = this.invite.channel_type === 3 ? window._lc.forms.invite_channel.channel : window._lc.forms.invite_channel.group;
+            if (totalMembers) totalMembers.textContent = `${t("forms.invite_channel.members")}: ${this.invite.total_members}`;
+            if (channelType) channelType.textContent = this.invite.channel_type === 3 ? t("forms.invite_channel.channel") : t("forms.invite_channel.group");
 
             // Инициализируем элементы
             if (this.content) {
@@ -282,7 +283,7 @@ export class InviteChannel {
         
             <div class="cdm-modal invite-channel flex flex-col gap-0 ${CDM_MODAL_CLASSES()}">
                  <div class="${CDM_MODAL_HEADER_CLASSES()}">
-                    <span class="font-semibold text-lg">${window._lc.forms.invite_channel.title}</span>
+                    <span class="font-semibold text-lg">${t("forms.invite_channel.title")}</span>
                 </div>
                  <div class="${CDM_MODAL_CONTENT_CLASSES()}">
 
@@ -304,8 +305,8 @@ export class InviteChannel {
 
                 </div>
                 <div class="${CDM_MODAL_FOOTER_CLASSES()}">
-                    ${Buttons.create({ attributes: ["action-close"], classes: ["w-full"], text: window._lc.forms.invite_channel.cancel })}
-                    ${Buttons.primary({ attributes: ["action-open"], classes: ["w-full"], text: window._lc.forms.invite_channel.open })}
+                    ${Buttons.create({ attributes: ["action-close"], classes: ["w-full"], text: t("forms.invite_channel.cancel") })}
+                    ${Buttons.primary({ attributes: ["action-open"], classes: ["w-full"], text: t("forms.invite_channel.open") })}
                 </div>
             </div>
 

@@ -70,6 +70,7 @@ import type { AvatarImageDocument } from "../../components/avatars.js";
 import type { SecretConnectionState } from "../../utils/secret_chats/secret_connection.js";
 import type { SecretChatRecord } from "../../types/secret_chats.js";
 import type { SecretChatFormData, SecretChatFormOptions, SecretChatMessageRecord, SecretChatDirection } from "./types.js";
+import { t } from "../../utils/i18n/index.js";
 
 // Form
 export class SecretChat {
@@ -501,7 +502,7 @@ export class SecretChat {
                     data: {
                         instance: this,
                         title: this.peerName,
-                        subtitle: window._lc.forms.secret_chat.tab_subtitle
+                        subtitle: t("forms.secret_chat.tab_subtitle")
                     }
                 }
             }));
@@ -732,14 +733,14 @@ export class SecretChat {
                             ${Buttons.danger({ shape: "circle", attributes: ["action-voice-note-send"], icon: { name: "send-2", settings: { filled: true } } })}
                         </div>
                         <div data-voice-note-cancel-hint class="hidden absolute inset-0 items-center justify-center gap-2 font-semibold text-sm text-[var(--color-red)]">
-                            ${slideToCancelIcon} ${window._lc.forms.secret_chat.voice_recorder.slide_to_cancel}
+                            ${slideToCancelIcon} ${t("forms.secret_chat.voice_recorder.slide_to_cancel")}
                         </div>
                     </div>
 
                     <div class="wrap-footer flex flex-row gap-0 p-2 w-full md:w-[var(--secret-chat-block-max-width)] md:max-w-[var(--secret-chat-block-max-width)] shadow-sm rounded-4xl max-md:rounded-none items-center m-auto ${isBlur ? "backdrop-blur-[20px] bg-[var(--form-bg)]/80" : "bg-[var(--form-bg)]"}">
                         <div class="flex flex-row gap-0 h-full w-full items-end">
                             ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-emoji"], icon: "mood-smile" })}
-                            ${Inputs.textarea({ intent: "transparent", placeholder: window._lc.forms.secret_chat.enter_message, name: "message", rows: 1 })}
+                            ${Inputs.textarea({ intent: "transparent", placeholder: t("forms.secret_chat.enter_message"), name: "message", rows: 1 })}
                             ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-attach-file"], icon: "Paperclip" })}
                             ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-video-recorder"], icon: "Video" })}
                             ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-voice-recorder"], classes: ["hidden"], icon: "microphone" })}

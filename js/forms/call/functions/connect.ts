@@ -12,6 +12,7 @@ import { updateFooter } from "./update_footer.js";
 
 // Импортируем типы
 import type { Call } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -73,7 +74,7 @@ export async function connect(form: Call): Promise<void> {
         // к комнате идёт в фоне и не должно сбивать это состояние — иначе
         // пользователь не видит, что дозванивается
         if (form.callState !== "ringing") {
-            setState(form, "starting", window._lc.forms.call.status.starting);
+            setState(form, "starting", t("forms.call.status.starting"));
         }
 
         // Подключение
@@ -103,7 +104,7 @@ export async function connect(form: Call): Promise<void> {
             Logger.warn("[app][call]: Не удалось включить микрофон", error);
 
             // Toast
-            Toast.error(window._lc.forms.call.toasts.media_error, { position: "top-center" });
+            Toast.error(t("forms.call.toasts.media_error"), { position: "top-center" });
         }
         // ---------- МИКРОФОН ----------
 
@@ -118,7 +119,7 @@ export async function connect(form: Call): Promise<void> {
         // Закрываем форму: без комнаты звонок невозможен
         form.endCall({
             reason: "connect_error",
-            toast: window._lc.forms.call.toasts.connection_failed,
+            toast: t("forms.call.toasts.connection_failed"),
             toastType: "error"
         });
 

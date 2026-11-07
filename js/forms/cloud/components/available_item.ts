@@ -15,6 +15,7 @@ import { openAvailableLinkHandler } from "../handlers/open_available_link.js";
 import { isCloudAvailableLink } from "../types.js";
 import type { CloudAvailableLink } from "../types.js";
 import type { Cloud } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * Контракт компонента доступной ссылки для его контекстного меню.
@@ -160,9 +161,9 @@ export function createCloudAvailableItem(form: Cloud, data: CloudAvailableLink):
 
         // Если доступ к записи
         if (next.access_level === "write") {
-            node.textContent = window._lc.forms.cloud.badges.write;
+            node.textContent = t("forms.cloud.badges.write");
         } else {
-            node.textContent = window._lc.forms.cloud.badges.read;
+            node.textContent = t("forms.cloud.badges.read");
         }
 
     }
@@ -254,7 +255,7 @@ function _formatMeta(data: CloudAvailableLink): string {
     // Дата истечения срока
     if (data.expires_at) {
         let date = new Date(data.expires_at);
-        parts.push(`${window._lc.forms.cloud.dates.until} ${date.toLocaleDateString()}`);
+        parts.push(`${t("forms.cloud.dates.until")} ${date.toLocaleDateString()}`);
     }
 
     // Склеиваем части

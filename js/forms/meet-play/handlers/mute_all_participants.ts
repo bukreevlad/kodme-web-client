@@ -10,6 +10,7 @@ import { muteAllParticipantsRequest } from "../requests/mute_all_participants.js
 // Импортируем типы
 import type { MeetPlay } from "../index.js";
 import type { MeetBlockFlag } from "../types.js";
+import { I18n, t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -58,8 +59,8 @@ export async function muteAllParticipantsHandler(
             // Toast: текст зависитит от источника — раньше один ключ
             // «про микрофон» показывался и для камер, и для демонстрации
             Toast.success(blocked
-                ? window._lc.forms.meet_play.toasts[`success_mute_all_${flag}`]
-                : window._lc.forms.meet_play.toasts[`success_unmute_all_${flag}`]);
+                ? I18n.tree.forms.meet_play.toasts[`success_mute_all_${flag}`]
+                : I18n.tree.forms.meet_play.toasts[`success_unmute_all_${flag}`]);
 
         }
 
@@ -74,7 +75,7 @@ export async function muteAllParticipantsHandler(
         // точечные отступления уже такие
         if (String((error as Error)?.message).includes("NOTHING_TO_CHANGE")) {
 
-            Toast.error(window._lc.forms.meet_play.toasts.nothing_to_change);
+            Toast.error(t("forms.meet_play.toasts.nothing_to_change"));
             isToastShown = true;
         }
         // ---------- УЧАСТНИКИ ----------
@@ -83,14 +84,14 @@ export async function muteAllParticipantsHandler(
         // Модерация доступна только создателю конференции
         if (String((error as Error)?.message).includes("ACCESS_DENIED")) {
 
-            Toast.error(window._lc.forms.meet_play.toasts.access_denied);
+            Toast.error(t("forms.meet_play.toasts.access_denied"));
             isToastShown = true;
         }
         // ---------- ДОСТУП ----------
 
         // Прочая ошибка сервера
         if (!isToastShown) {
-            Toast.error(window._lc.forms.meet_play.toasts.mute_all_error);
+            Toast.error(t("forms.meet_play.toasts.mute_all_error"));
         }
 
     }

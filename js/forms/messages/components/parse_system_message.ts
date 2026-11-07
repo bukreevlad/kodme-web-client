@@ -16,7 +16,7 @@ export interface SystemMessageSource {
     /** Payload системного события. */
     action_payload?: SystemActionPayload | null;
 
-    /** Отображаемое имя автора сообщения (fallback для %{user_name}%). */
+    /** Отображаемое имя автора сообщения (fallback для {{user_name}}). */
     display_name?: string;
 
     /** Прочие поля сообщения (не читаются парсером). */
@@ -27,7 +27,7 @@ export interface SystemMessageSource {
 /**
  * ***************************************************************************
  * parseSystemMessage - парсер системных сообщений: подставляет поля payload
- * в шаблон локали вида %{имя_переменной}%.
+ * в шаблон локали вида {{имя_переменной}}.
  * @param message - Объект сообщения из БД (содержит action_type и action_payload).
  * @param locale - Ветка локализации system_messages.
  * @returns Отрендеренная строка ("" при отсутствии шаблона или ошибке).
@@ -59,9 +59,9 @@ export function parseSystemMessage(message: SystemMessageSource | null | undefin
         // Если payload пустой, возвращаем шаблон как есть (или пустую строку)
         const data = action_payload || {};
 
-        // Регулярное выражение ищет конструкции вида %{имя_переменной}%
+        // Регулярное выражение ищет конструкции вида {{имя_переменной}}
         // g - искать все совпадения, а не только первое
-        return template.replace(/%\{([\w_]+)\}%/g, (match, key) => {
+        return template.replace(/\{\{([\w_]+)\}\}/g, (match, key) => {
 
             // Значение из payload; у старых сообщений payload без user_name —
             // подставляем имя автора сообщения (display_name)

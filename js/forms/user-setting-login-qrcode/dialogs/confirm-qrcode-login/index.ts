@@ -14,6 +14,7 @@ import { confirmHandler } from "./handlers/confirm.js";
 
 // Импортируем типы
 import type { ScannedQRData } from "../../requests/scanned.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * Настройки диалога подтверждения входа.
@@ -209,7 +210,7 @@ export class ConfirmQRCodeLogin {
 
             <div class="cdm-modal confirm-qrcode-login flex flex-col gap-0 ${CDM_MODAL_CLASSES()}">
                 <div class="${CDM_MODAL_HEADER_CLASSES()}">
-                    <span class="font-semibold text-lg">${window._lc.forms.user_setting_login_qrcode.dialogs.confirm_qrcode_login.confirm_enter}</span>
+                    <span class="font-semibold text-lg">${t("forms.user_setting_login_qrcode.dialogs.confirm_qrcode_login.confirm_enter")}</span>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "x" })}
                 </div>
                  <div class="content w-full flex flex-col gap-1 p-3 items-center">
@@ -218,7 +219,7 @@ export class ConfirmQRCodeLogin {
                         <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                             ${Icons.icon("phone-check", { settings: { size: 20 } })?.outerHTML ?? ""}
                         </span>
-                        ${window._lc.forms.user_setting_login_qrcode.dialogs.confirm_qrcode_login.new_device}
+                        ${t("forms.user_setting_login_qrcode.dialogs.confirm_qrcode_login.new_device")}
                     </span>
                     <div class="flex flex-col gap-1 p-3">
                         <span data-ip class="text-sm text-secondary"></span>
@@ -227,8 +228,8 @@ export class ConfirmQRCodeLogin {
 
                 </div>
                 <div class="${CDM_MODAL_FOOTER_CLASSES()}">
-                    ${Buttons.create({ attributes: ["action-decline"], classes: ["w-full"], text: window._lc.forms.user_setting_login_qrcode.dialogs.confirm_qrcode_login.decline })}
-                    ${Buttons.primary({ attributes: ["action-confirm"], classes: ["w-full"], text: window._lc.forms.user_setting_login_qrcode.dialogs.confirm_qrcode_login.confirm })}
+                    ${Buttons.create({ attributes: ["action-decline"], classes: ["w-full"], text: t("forms.user_setting_login_qrcode.dialogs.confirm_qrcode_login.decline") })}
+                    ${Buttons.primary({ attributes: ["action-confirm"], classes: ["w-full"], text: t("forms.user_setting_login_qrcode.dialogs.confirm_qrcode_login.confirm") })}
                 </div>
             </div>
 

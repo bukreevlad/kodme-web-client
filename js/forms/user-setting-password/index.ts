@@ -19,6 +19,7 @@ import { saveHandler } from "./handlers/save.js";
 
 // Импортируем forms
 import { UserProfile } from "../user-profile/index.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы смены пароля.
@@ -256,10 +257,10 @@ export class UserSettingPassword {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("lock", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_setting_password.current_password}
+                                ${t("forms.user_setting_password.current_password")}
                             </span>
                             ${Inputs.password({
-                                placeholder: window._lc.forms.user_setting_password.current_password,
+                                placeholder: t("forms.user_setting_password.current_password"),
                                 name: "current-password",
                                 attributes: ["required"],
                             })}
@@ -270,10 +271,10 @@ export class UserSettingPassword {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("lock-plus", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_setting_password.new_password}
+                                ${t("forms.user_setting_password.new_password")}
                             </span>
                             ${Inputs.password({
-                                placeholder: window._lc.forms.user_setting_password.new_password,
+                                placeholder: t("forms.user_setting_password.new_password"),
                                 name: "new-password",
                                 attributes: ["required"],
                             })}
@@ -284,10 +285,10 @@ export class UserSettingPassword {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("lock-check", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_setting_password.retry_password}
+                                ${t("forms.user_setting_password.retry_password")}
                             </span>
                             ${Inputs.password({
-                                placeholder: window._lc.forms.user_setting_password.retry_password,
+                                placeholder: t("forms.user_setting_password.retry_password"),
                                 name: "retry-password",
                                 attributes: ["required"],
                             })}
@@ -297,9 +298,9 @@ export class UserSettingPassword {
                             ${Toggle.checkbox({
                                 name: "exit-other-devices",
                                 checked: false,
-                                text: window._lc.forms.user_setting_password.exit_other_devices
+                                text: t("forms.user_setting_password.exit_other_devices")
                             })}
-                            <span class="text-sm text-secondary">${window._lc.forms.user_setting_password.exit_other_devices_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.user_setting_password.exit_other_devices_desc")}</span>
                         </div>
 
                     </div>

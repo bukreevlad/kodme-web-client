@@ -7,6 +7,7 @@ import { MESSAGES_WINDOW_SIZE } from "../../../config/constants.js";
 
 // Импортируем типы
 import type { SecretChat } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -52,7 +53,7 @@ export class MessageList {
     static templateUnreadMarker(): HTMLElement | null {
 
         // Текст маркера берём из локали (fallback - захардкоженное значение)
-        const text = window._lc?.forms?.secret_chat?.unread_messages || "Непрочитанные сообщения";
+        const text = t("forms.secret_chat.unread_messages");
 
         // Мы используем DOMParser для создания DOM без innerHTML
         return new DOMParser().parseFromString(`

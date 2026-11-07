@@ -20,6 +20,7 @@ import { Main } from "../../main/index.js";
 // Импортируем типы
 import { isRecord } from "../../main/types.js";
 import type { MainFoldersManagerFolder } from "../types.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -36,7 +37,7 @@ export async function removeFolderHandler(folder: MainFoldersManagerFolder): Pro
         if (response && response.status) {
 
             // Toast
-            Toast.success(window._lc.forms.main_folders_manager.toasts.success_remove);
+            Toast.success(t("forms.main_folders_manager.toasts.success_remove"));
 
             // Получаем актуальный массив папок из сессии без удаляемой
             // (данные пользователя в сессии хранятся как unknown —
@@ -70,7 +71,7 @@ export async function removeFolderHandler(folder: MainFoldersManagerFolder): Pro
         if (getErrorMessage(error).includes("FOLDER_NOT_FOUND") || getErrorMessage(error).includes("INVALID_FOLDER_ID") || getErrorMessage(error).includes("FOLDER_ID_REQUIRED")) {
 
             // Toast
-            Toast.error(window._lc.forms.main_folders_manager.toasts.folder_not_found);
+            Toast.error(t("forms.main_folders_manager.toasts.folder_not_found"));
             isToastShown = true;
         }
 
@@ -78,13 +79,13 @@ export async function removeFolderHandler(folder: MainFoldersManagerFolder): Pro
         if (getErrorMessage(error).includes("ACCESS_DENIED")) {
 
             // Toast
-            Toast.error(window._lc.forms.main_folders_manager.toasts.access_denied);
+            Toast.error(t("forms.main_folders_manager.toasts.access_denied"));
             isToastShown = true;
         }
 
         // Прочая ошибка сервера
         if (!isToastShown) {
-            Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+            Toast.error(t("api.errors.server_error"));
         }
 
     }

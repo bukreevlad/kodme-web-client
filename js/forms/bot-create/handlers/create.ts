@@ -10,6 +10,7 @@ import { createBotRequest } from "../requests/create.js";
 
 // Импортируем типы
 import type { BotCreate } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -44,7 +45,7 @@ export async function createBotHandler(form: BotCreate): Promise<void> {
         if (response.status) {
 
             // Toast
-            Toast.success(window._lc.forms.bot_create.toasts.success_create);
+            Toast.success(t("forms.bot_create.toasts.success_create"));
 
             // Закрываем форму
             form.modal?.close();
@@ -64,7 +65,7 @@ export async function createBotHandler(form: BotCreate): Promise<void> {
             link.focus();
 
             // Toast
-            Toast.error(window._lc.forms.bot_create.toasts.invalid_link);
+            Toast.error(t("forms.bot_create.toasts.invalid_link"));
             isToastShown = true;
         }
 
@@ -75,7 +76,7 @@ export async function createBotHandler(form: BotCreate): Promise<void> {
             bio.focus();
 
             // Toast
-            Toast.error(window._lc.forms.bot_create.toasts.invalid_bio);
+            Toast.error(t("forms.bot_create.toasts.invalid_bio"));
             isToastShown = true;
         }
 
@@ -86,13 +87,13 @@ export async function createBotHandler(form: BotCreate): Promise<void> {
             link.focus();
 
             // Toast
-            Toast.error(window._lc.forms.bot_create.toasts.link_taken);
+            Toast.error(t("forms.bot_create.toasts.link_taken"));
             isToastShown = true;
         }
 
         // Прочая ошибка сервера
         if (!isToastShown) {
-            Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+            Toast.error(t("api.errors.server_error"));
         }
 
     }

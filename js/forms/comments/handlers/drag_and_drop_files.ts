@@ -9,6 +9,7 @@ import { importAttaches } from "../functions/import_attaches.js";
 
 // Импортируем типы
 import type { Comments } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * Отписка от drag&drop (гасит обработчики на удалённом элементе списка).
@@ -155,7 +156,7 @@ function extractFiles(event: DragEvent): File[] {
         .filter((file): file is File => file !== null);
 
     if (!files.length) {
-        Toast.warning(window._lc?.forms?.comments?.toasts?.drop_files_failed || "Не удалось прочитать файлы", {
+        Toast.warning(t("forms.comments.toasts.drop_files_failed"), {
             position: "bottom-center"
         });
     }

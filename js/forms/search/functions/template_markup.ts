@@ -6,6 +6,7 @@ import { SECTION_IDS, SECTIONS } from "../config/sections.js";
 
 // Импортируем типы
 import type { SearchSection } from "../config/sections.js";
+import { I18n } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -106,7 +107,7 @@ function paneMarkup(section: SearchSection): string {
  */
 function label(section: SearchSection): string {
 
-    return window._lc?.forms?.search?.[section.id] ?? "";
+    return I18n.tree.forms.search?.[section.id] ?? "";
 
 }
 
@@ -120,7 +121,7 @@ function label(section: SearchSection): string {
 function panelButton(key: NonNullable<SearchSection["createBotKey"]>): string {
 
     return Buttons.transparent({
-        text: window._lc?.forms?.search?.[key] ?? "",
+        text: I18n.tree.forms.search?.[key] ?? "",
         attributes: ["action-create-bot"],
         classes: ["w-full"],
         icon: "robot"

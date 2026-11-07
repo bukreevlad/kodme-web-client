@@ -26,6 +26,7 @@ import { muteAllParticipantsHandler } from "./mute_all_participants.js";
 import { BLOCK_FLAGS } from "../functions/parse_room_state.js";
 import type { MeetPlay } from "../index.js";
 import type { MeetBlockFlag, MeetTriggerEvent } from "../types.js";
+import { I18n, t } from "../../../utils/i18n/index.js";
 
 /**
  * Тип ключей локализации массовых действий: каждый флаг блокировки
@@ -42,10 +43,9 @@ type MassBlockLocaleKey = "mute_all_audio" | "mute_all_video" | "mute_all_screen
  * источник действительно заблокирован — иначе меню выглядит засорённым
  * неактивными действиями.
  *
- * Здесь намеренно лежат КЛЮЧИ локализации, а не готовые строки:
- * `window._lc` выставляется в `js/main.js` внутри обработчика `load`,
- * то есть уже после выполнения всех модулей. Текст резолвится в момент
- * вызова, когда локализация точно есть.
+ * Здесь намеренно лежат КЛЮЧИ локализации, а не готовые строки: текст
+ * резолвится через `t()` в момент вызова, когда локализация уже
+ * инициализирована.
  */
 const MASS_BLOCK_ACTIONS: Record<MeetBlockFlag, {
     blockKey: MassBlockLocaleKey;
@@ -92,7 +92,7 @@ export async function menuHandler(event: MeetTriggerEvent, form: MeetPlay): Prom
 
         // menu item
         const screenSettings = {
-            text: window._lc.forms.meet_play.context_menu.screen_settings,
+            text: t("forms.meet_play.context_menu.screen_settings"),
             iconName: "heart-rate-monitor",
             onClick: () => new MeetScreenSettings({ meetId: form.meetId })
         };
@@ -101,7 +101,7 @@ export async function menuHandler(event: MeetTriggerEvent, form: MeetPlay): Prom
         // Режим сетки выбирает любой участник для себя; создатель
         // конференции дополнительно может навязать его всем
         const gridSettings = {
-            text: window._lc.forms.meet_play.context_menu.grid_settings,
+            text: t("forms.meet_play.context_menu.grid_settings"),
             iconName: "layout-grid",
             onClick: () => new MeetGridSettings({ meetId: form.meetId })
         };
@@ -111,21 +111,21 @@ export async function menuHandler(event: MeetTriggerEvent, form: MeetPlay): Prom
         // это личная настройка, и она нужна каждому, у кого в комнате
         // звук идёт не с того устройства
         const deviceSettings = {
-            text: window._lc.forms.meet_play.context_menu.device_settings,
+            text: t("forms.meet_play.context_menu.device_settings"),
             iconName: "devices",
             onClick: () => new MeetDeviceSettings({ meetId: form.meetId })
         };
 
         // menu item
         const settings = {
-            text: window._lc.forms.meet_play.context_menu.settings,
+            text: t("forms.meet_play.context_menu.settings"),
             iconName: "Settings",
             onClick: () => new MeetSettings({ meetId: form.meetId })
         };
 
         // menu item
         const addStream = {
-            text: window._lc.forms.meet_play.context_menu.add_cast,
+            text: t("forms.meet_play.context_menu.add_cast"),
             iconName: "brand-parsinta",
             onClick: () => new Broadcasts({
                 callback: (cast: { id: string } | null) => {
@@ -141,8 +141,8 @@ export async function menuHandler(event: MeetTriggerEvent, form: MeetPlay): Prom
         // открыл меню до ухода в immersive, он увидит «Показать панели»
         const immersive = {
             text: form.isImmersive
-                ? window._lc.forms.meet_play.context_menu.show_panels
-                : window._lc.forms.meet_play.context_menu.hide_panels,
+                ? t("forms.meet_play.context_menu.show_panels")
+                : t("forms.meet_play.context_menu.hide_panels"),
             iconName: form.isImmersive ? "picture-in-picture-bottom" : "picture-in-picture-top",
             onClick: () => toggleImmersive(form)
         };
@@ -155,7 +155,7 @@ export async function menuHandler(event: MeetTriggerEvent, form: MeetPlay): Prom
         // Организатора сервер исключает из списка сам.
         if (form.isCreator) {
 
-            const contextLocales = window._lc.forms.meet_play.context_menu;
+            const contextLocales = I18n.tree.forms.meet_play.context_menu;
 
             for (const flag of BLOCK_FLAGS) {
 

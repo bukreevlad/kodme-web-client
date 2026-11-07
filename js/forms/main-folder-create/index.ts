@@ -15,6 +15,7 @@ import { Inputs } from "../../components/inputs.js";
 
 // Импортируем handlers
 import { createMainFolderHandler } from "./handlers/create.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы создания папки.
@@ -219,7 +220,7 @@ export class MainFolderCreate {
             <div class="cdm-form main-folder-create flex flex-col gap-0 ${CDM_FORM_CLASSES()} w-full">
                 <div class="header flex flex-row gap-2 p-2 items-center justify-between ${CDM_FORM_HEADER_CLASSES()}">
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "ArrowLeft" })}
-                    <span class="font-semibold text-base truncate">${window._lc.forms.main_folder_create.title}</span>
+                    <span class="font-semibold text-base truncate">${t("forms.main_folder_create.title")}</span>
                     <span class="w-10"></span>
                 </div>
                  <div class="content w-full h-full flex ${CDM_FORM_CONTENT_CLASSES()}">
@@ -231,15 +232,15 @@ export class MainFolderCreate {
                                 ${Icons.icon("folder-plus", { settings: { size: 28, stroke: 1.5 } })?.outerHTML ?? ""}
                             </div>
                             <div class="flex flex-col gap-1">
-                                <span class="font-semibold">${window._lc.forms.main_folder_create.title}</span>
-                                <span class="text-sm text-muted">${window._lc.forms.main_folder_create.desc}</span>
+                                <span class="font-semibold">${t("forms.main_folder_create.title")}</span>
+                                <span class="text-sm text-muted">${t("forms.main_folder_create.desc")}</span>
                             </div>
                         </div>
 
                         <div class="flex flex-col gap-2.5 p-4 rounded-lg bg-[var(--second-bg)]">
-                            <span class="flex flex-row gap-2 items-center text-sm font-semibold">${window._lc.forms.main_folder_create.name}</span>
+                            <span class="flex flex-row gap-2 items-center text-sm font-semibold">${t("forms.main_folder_create.name")}</span>
                             ${Inputs.create({
-                                placeholder: window._lc.forms.main_folder_create.name,
+                                placeholder: t("forms.main_folder_create.name"),
                                 name: "name",
                                 attributes: ["required", "maxlength=128", "autofocus"]
                             })}
@@ -248,7 +249,7 @@ export class MainFolderCreate {
                         ${Buttons.primary({
                             classes: ["w-full"],
                             attributes: ["action-create"],
-                            text: window._lc.forms.main_folder_create.action_create,
+                            text: t("forms.main_folder_create.action_create"),
                             icon: "folder-plus"
                         })}
 

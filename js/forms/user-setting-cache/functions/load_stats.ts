@@ -9,6 +9,7 @@ import { Buttons } from "../../../components/buttons.js";
 
 // Импортируем типы
 import type { UserSettingCache } from "../index.js";
+import { I18n, t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -36,12 +37,12 @@ export async function loadStats(form: UserSettingCache): Promise<void> {
             // usage опционален в оценке браузера — без данных показываем 0
             storageQuotaEl.innerHTML = `
                 <div class="flex justify-between">
-                    <span class="text-secondary">${window._lc.forms.user_setting_cache.used}</span>
+                    <span class="text-secondary">${t("forms.user_setting_cache.used")}</span>
                     <span class="font-semibold">${formatBytes(estimate.usage ?? 0)}</span>
                 </div>
             `;
         } else {
-            storageQuotaEl.innerHTML = `<span class="">${window._lc.forms.user_setting_cache.storage_api_not_supported}</span>`;
+            storageQuotaEl.innerHTML = `<span class="">${t("forms.user_setting_cache.storage_api_not_supported")}</span>`;
         }
 
         // ============================
@@ -63,7 +64,7 @@ export async function loadStats(form: UserSettingCache): Promise<void> {
 
                 // Создаем объект для быстрого поиска локализации
                 const cacheTypesLocalization: Record<string, string> = {};
-                window._lc.forms.user_setting_cache.caches_types.forEach(item => {
+                I18n.tree.forms.user_setting_cache.caches_types.forEach(item => {
                     const entry = Object.entries(item)[0];
                     if (!entry) return;
                     const [key, value] = entry;
@@ -94,14 +95,14 @@ export async function loadStats(form: UserSettingCache): Promise<void> {
                             ${Buttons.transparent({
                     shape: "square",
                     attributes: [`action-clear-cache=${type}`, `${keys.length === 0 ? 'disabled' : ''}`],
-                    text: window._lc.forms.user_setting_cache.clear
+                    text: t("forms.user_setting_cache.clear")
                 })}
                         </div>
                     </div>
                 `;
             }
         } else {
-            cacheHtml = `<span class="opacity-70">${window._lc.forms.user_setting_cache.cache_api_not_supported}</span>`;
+            cacheHtml = `<span class="opacity-70">${t("forms.user_setting_cache.cache_api_not_supported")}</span>`;
         }
         cacheStatsEl.innerHTML = cacheHtml;
 
@@ -124,7 +125,7 @@ export async function loadStats(form: UserSettingCache): Promise<void> {
 
             // Создаем объект для быстрого поиска локализации
             const databaseNamesLocalization: Record<string, string> = {};
-            window._lc.forms.user_setting_cache.database_names.forEach(item => {
+            I18n.tree.forms.user_setting_cache.database_names.forEach(item => {
                 const entry = Object.entries(item)[0];
                 if (!entry) return;
                 const [key, value] = entry;
@@ -146,12 +147,12 @@ export async function loadStats(form: UserSettingCache): Promise<void> {
                                 <div class="flex justify-between items-center">
                                     <div class="flex flex-col">
                                         <span class="">${databaseNamesLocalization[tableName] || tableName}</span>
-                                        <span class="text-secondary text-sm font-semibold">${count} ${window._lc.forms.user_setting_cache.records_count}</span>
+                                        <span class="text-secondary text-sm font-semibold">${count} ${t("forms.user_setting_cache.records_count")}</span>
                                     </div>
                                     ${Buttons.transparent({
                                 shape: "square",
                                 attributes: [`action-clear-table=${tableName}`, `${count === 0 ? 'disabled' : ''}`],
-                                text: window._lc.forms.user_setting_cache.clear
+                                text: t("forms.user_setting_cache.clear")
                             })}
                                 </div>
                             `;
@@ -176,11 +177,11 @@ export async function loadStats(form: UserSettingCache): Promise<void> {
             const blocks: string[] = [];
 
             // Блок 1: Обычные таблицы
-            const regularBlock = await createTableBlock(regularTables, window._lc.forms.user_setting_cache.regular_channels);
+            const regularBlock = await createTableBlock(regularTables, t("forms.user_setting_cache.regular_channels"));
             if (regularBlock) blocks.push(regularBlock);
 
             // Блок 2: Ожидающие обновления
-            const pendingBlock = await createTableBlock(pendingUpdatesTables, window._lc.forms.user_setting_cache.pending_updates);
+            const pendingBlock = await createTableBlock(pendingUpdatesTables, t("forms.user_setting_cache.pending_updates"));
             if (pendingBlock) blocks.push(pendingBlock);
 
             // Объединяем все блоки
@@ -191,11 +192,11 @@ export async function loadStats(form: UserSettingCache): Promise<void> {
                     </div>
                 `;
             } else {
-                dbHtml = `<span class="">${window._lc.forms.user_setting_cache.not_database_tables}</span>`;
+                dbHtml = `<span class="">${t("forms.user_setting_cache.not_database_tables")}</span>`;
             }
 
         } else {
-            dbHtml = `<span class="">${window._lc.forms.user_setting_cache.database_not_initialized}</span>`;
+            dbHtml = `<span class="">${t("forms.user_setting_cache.database_not_initialized")}</span>`;
         }
         dbStatsEl.innerHTML = dbHtml;
 

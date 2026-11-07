@@ -11,6 +11,7 @@ import { removePhoto } from "../functions/remove_photo.js";
 
 // Импортируем типы
 import type { GroupTopicSettings } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -29,14 +30,14 @@ export function avatarContextMenuHandler(event: Event, form: GroupTopicSettings)
 
         // menu item
         const upload = {
-            text: window._lc.forms.channel_settings.context_menu.upload,
+            text: t("forms.channel_settings.context_menu.upload"),
             iconName: "Upload",
             onClick: () => choosePhoto(form)
         }
 
         // menu item
         const remove = {
-            text: window._lc.forms.channel_settings.context_menu.remove,
+            text: t("forms.channel_settings.context_menu.remove"),
             iconName: "trash",
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => removePhoto(form)

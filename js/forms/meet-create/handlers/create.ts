@@ -10,6 +10,7 @@ import { createRequest } from "../requests/create.js";
 
 // Импортируем типы
 import type { MeetCreate } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -47,7 +48,7 @@ export async function createHandler(form: MeetCreate): Promise<void> {
         if (response.status) {
 
             // Toast
-            Toast.success(window._lc.forms.meet_create.toasts.success_create);
+            Toast.success(t("forms.meet_create.toasts.success_create"));
 
             // Закрываем форму
             form.modal?.close();
@@ -65,7 +66,7 @@ export async function createHandler(form: MeetCreate): Promise<void> {
             name.classList.add("invalid");
 
             // Toast
-            Toast.error(window._lc.forms.meet_create.toasts.name_required);
+            Toast.error(t("forms.meet_create.toasts.name_required"));
             isToastShown = true;
         }
 
@@ -74,7 +75,7 @@ export async function createHandler(form: MeetCreate): Promise<void> {
             name.classList.add("invalid");
 
             // Toast
-            Toast.error(window._lc.forms.meet_create.toasts.invalid_name);
+            Toast.error(t("forms.meet_create.toasts.invalid_name"));
             isToastShown = true;
         }
 
@@ -83,13 +84,13 @@ export async function createHandler(form: MeetCreate): Promise<void> {
             about.classList.add("invalid");
 
             // Toast
-            Toast.error(window._lc.forms.meet_create.toasts.invalid_description);
+            Toast.error(t("forms.meet_create.toasts.invalid_description"));
             isToastShown = true;
         }
 
         // Прочая ошибка сервера
         if (!isToastShown) {
-            Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+            Toast.error(t("api.errors.server_error"));
         }
 
     }

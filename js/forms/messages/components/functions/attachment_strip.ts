@@ -1,6 +1,6 @@
 // Импортируем utils
 import { Logger } from "../../../../utils/logs/logger.js";
-import { getDeclension } from "../../../../utils/string/declensions.js";
+import { I18n, t } from "../../../../utils/i18n/index.js";
 import { unescapeHtml } from "../../../../utils/string/unescape_html.js";
 import { CacheManager } from "../../../../utils/cache_manager.js";
 import { forStorage } from "../../../../utils/network/storage_url.js";
@@ -57,12 +57,22 @@ export interface AttachmentStripElements {
 export interface AttachmentStripOptions {
 
     /**
-     * Корневой ключ локали в `window._lc`:
+     * Корневой ключ локали (ветка в locales/<язык>.json):
      * "reply_footer" — `forms.messages.components.reply_footer`.
      */
     localeScope?: "reply" | "reply_footer";
 
 }
+
+/**
+ * Ключи склонений вложений: футер различает типы, ответ — общие файловые
+ * слова (ветка reply в strip исторически не читалась).
+ */
+type DecKeys = {
+    audios: "forms.messages.components.reply_footer.dec_audios" | "forms.messages.components.messages.reply.dec_files";
+    videos: "forms.messages.components.reply_footer.dec_videos" | "forms.messages.components.messages.reply.dec_files";
+    files: "forms.messages.components.reply_footer.dec_files" | "forms.messages.components.messages.reply.dec_files";
+};
 
 /**
  * ***************************************************************************
@@ -100,8 +110,22 @@ export function attachmentStrip(data: AttachmentStripData | MessageData | null |
         // ключа; поведение «reply → undefined» идентично легаси.
         const localeScope = options.localeScope || "reply";
         const locale = localeScope === "reply_footer"
-            ? window._lc?.forms?.messages?.components?.reply_footer
+            ? I18n.tree.forms.messages.components.reply_footer
             : undefined;
+
+        // Ключи склонений: футер различает типы вложений, у ответа — общие
+        // файловые слова (легаси: ветка reply в strip не читалась)
+        const decKeys: DecKeys = localeScope === "reply_footer"
+            ? {
+                audios: "forms.messages.components.reply_footer.dec_audios",
+                videos: "forms.messages.components.reply_footer.dec_videos",
+                files: "forms.messages.components.reply_footer.dec_files"
+            }
+            : {
+                audios: "forms.messages.components.messages.reply.dec_files",
+                videos: "forms.messages.components.messages.reply.dec_files",
+                files: "forms.messages.components.messages.reply.dec_files"
+            };
 
         // Заполняем текст и имя
         if (elements.displayName) elements.displayName.textContent = data.display_name || "";
@@ -193,7 +217,7 @@ export function attachmentStrip(data: AttachmentStripData | MessageData | null |
             if (audios.some(au => au?.metadata?.flags?.is_audio_note === true)) {
                 _setAccentText(elements.text, locale?.voice_note);
             } else {
-                _setFileOrCount(elements.media, elements.text, audios, locale?.dec_audios);
+                _setFileOrCount(elements.media, elements.text, audios, t(decKeys.audios, { count: audios.length }));
             }
 
         } else if (videos.length > 0) {
@@ -202,13 +226,13 @@ export function attachmentStrip(data: AttachmentStripData | MessageData | null |
             if (videos.some(vid => vid?.metadata?.flags?.is_video_note === true)) {
                 _setAccentText(elements.text, locale?.video_note);
             } else {
-                _setFileOrCount(elements.media, elements.text, videos, locale?.dec_videos);
+                _setFileOrCount(elements.media, elements.text, videos, t(decKeys.videos, { count: videos.length }));
             }
 
         } else {
 
             // Документы и прочее
-            _setFileOrCount(elements.media, elements.text, all, locale?.dec_files);
+            _setFileOrCount(elements.media, elements.text, all, t(decKeys.files, { count: all.length }));
 
         }
 
@@ -247,10 +271,10 @@ function _setAccentText(element: Element | null | undefined, text?: string): voi
  * @param media - Контейнер превью вложений.
  * @param text - Элемент подписи (не используется, оставлен для единообразия вызова).
  * @param items - Массив вложений одного типа.
- * @param declensions - Формы слова: ["файл", "файла", "файлов"].
+ * @param word - Склонённое слово для количества.
  * ***************************************************************************
  */
-function _setFileOrCount(media: Element | null | undefined, text: Element | null | undefined, items: AttachmentData[], declensions?: string[]): void {
+function _setFileOrCount(media: Element | null | undefined, text: Element | null | undefined, items: AttachmentData[], word: string): void {
 
     // Один файл — имя файла
     if (items.length === 1) {
@@ -266,13 +290,9 @@ function _setFileOrCount(media: Element | null | undefined, text: Element | null
     // Несколько — «N файлов»
     if (!media) return;
 
-    const forms = Array.isArray(declensions) && declensions.length === 3
-        ? declensions
-        : ["файл", "файла", "файлов"];
-
     const count = document.createElement("span");
     count.classList.add("text-[var(--color-brand)]", "dark:text-[var(--color-brand)]", "truncate");
-    count.textContent = `${items.length} ${getDeclension(items.length, forms)}`;
+    count.textContent = `${items.length} ${word}`;
     media.innerHTML = "";
     media.appendChild(count);
 

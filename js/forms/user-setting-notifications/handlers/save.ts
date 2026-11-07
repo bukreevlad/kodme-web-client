@@ -11,6 +11,7 @@ import { saveNotifySettingsRequest } from "../requests/save.js";
 
 // Импортируем типы
 import type { UserSettingNotifications } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -59,7 +60,7 @@ export async function saveHandler(form: UserSettingNotifications): Promise<void>
             });
 
             // Toast
-            Toast.success(window._lc.forms.user_setting_notifications.toasts.success_saved);
+            Toast.success(t("forms.user_setting_notifications.toasts.success_saved"));
 
             // Закрываем форму
             form.modal?.close();
@@ -76,13 +77,13 @@ export async function saveHandler(form: UserSettingNotifications): Promise<void>
         if (getErrorMessage(error).includes("USER_ID_")) {
 
             // Toast
-            Toast.error(window._lc.forms.user_setting_notifications.toasts.save_error);
+            Toast.error(t("forms.user_setting_notifications.toasts.save_error"));
             isToastShown = true;
         }
 
         // Прочая ошибка сервера
         if (!isToastShown) {
-            Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+            Toast.error(t("api.errors.server_error"));
         }
 
     }

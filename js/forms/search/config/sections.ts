@@ -49,7 +49,7 @@ export type SectionId = (typeof SECTION_IDS)[number];
  * @property id - Имя категории, совпадает с ключом объекта SECTIONS.
  * @property event - Событие сокета вида "[search]: get <id>".
  * @property createBotKey - Ключ подписи кнопки в шапке панели в
- *               `window._lc.forms.search`. Задаётся только там, где кнопка
+ *               `I18n.tree.forms.search`. Задаётся только там, где кнопка
  *               нужна (вкладка ботов).
  ***************************************************************************
  */

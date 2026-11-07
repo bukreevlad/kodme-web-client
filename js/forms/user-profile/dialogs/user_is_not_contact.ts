@@ -11,6 +11,7 @@ import { Icons } from "../../../utils/icons.js";
 // Импортируем components
 import { Overlay } from "../../../components/overlay/index.js";
 import { Buttons } from "../../../components/buttons.js";
+import { t } from "../../../utils/i18n/index.js";
 
 // Form
 export class UserIsNotContact {
@@ -178,19 +179,19 @@ export class UserIsNotContact {
                         <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                             ${Icons.icon("lock", { settings: { size: 20 } })?.outerHTML ?? ""}
                         </span>
-                        ${window._lc.forms.user_profile.dialogs.user_is_not_contact.add_user_contact}
+                        ${t("forms.user_profile.dialogs.user_is_not_contact.add_user_contact")}
                     </span>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "x" })}
                 </div>
                  <div class="${CDM_MODAL_CONTENT_CLASSES()}">
-                    <span class="text-secondary">${window._lc.forms.user_profile.dialogs.user_is_not_contact.info}</span>
+                    <span class="text-secondary">${t("forms.user_profile.dialogs.user_is_not_contact.info")}</span>
                  </div>
                 <div class="${CDM_MODAL_FOOTER_CLASSES()}">
                     ${Buttons.create({
             shape: "square",
             attributes: ["action-close"],
             classes: ["w-full"],
-            text: window._lc.forms.user_profile.dialogs.user_is_not_contact.close
+            text: t("forms.user_profile.dialogs.user_is_not_contact.close")
         })}
                 </div>
             </div>

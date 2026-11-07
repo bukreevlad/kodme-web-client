@@ -10,6 +10,7 @@ import { BotProfile } from "../../bot-profile/index.js";
 // Импортируем типы
 import type { SearchRecord } from "../types.js";
 import type { Search } from "../index.js";
+import { I18n } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -112,7 +113,7 @@ export function createBotItem(form: Search, data: SearchRecord): HTMLElement {
             if (link) link.textContent = next.link ?? "";
 
             // Подпись: у бота нет last_action_at — только два состояния
-            const texts = window._lc?.forms?.search?._components?.bots;
+            const texts = I18n.tree.forms.search._components.bots;
             if (subtitle && texts) {
                 subtitle.textContent = next.is_online
                     ? (texts.online ?? "")

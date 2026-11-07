@@ -15,6 +15,7 @@ import { qrCodePollingHandler } from "./handlers/polling_handler.js";
 // Импортируем functions
 import { getQRCode } from "./functions/get_qrcode.js";
 import { getQRCodeStatusPolling } from "./functions/get_qr_status_polling.js";
+import { t } from "../../utils/i18n/index.js";
 
 // Form
 export class LoginWithQRCode {
@@ -166,20 +167,20 @@ export class LoginWithQRCode {
                 <div class="${CDM_MODAL_CENTERED_CONTENT_CLASSES()} items-center text-center">
 
                     <div class="flex flex-col items-center text-center gap-0.5 select-none">
-                        <span class="text-base font-bold mt-1 leading-snug">${window._lc.forms.login_with_qrcode.title}</span>
+                        <span class="text-base font-bold mt-1 leading-snug">${t("forms.login_with_qrcode.title")}</span>
                     </div>
 
                     <div class="flex items-center justify-center w-full max-w-[220px] p-4 rounded-2xl border-2 border-dashed border-[var(--border-color)] bg-[var(--second-bg)]/40 shadow-sm">
-                        <img data-qr-code src="" class="w-full h-auto object-contain rounded-xl" alt="QR код" />
+                        <img data-qr-code src="" class="w-full h-auto object-contain rounded-xl" alt="${t("forms.login_with_qrcode.qr_alt")}" />
                     </div>
 
-                    <p class="text-sm text-secondary leading-snug max-w-xs">${window._lc.forms.login_with_qrcode.scan_desc}</p>
+                    <p class="text-sm text-secondary leading-snug max-w-xs">${t("forms.login_with_qrcode.scan_desc")}</p>
 
                     <div class="flex flex-col gap-3 w-full pt-1">
                         ${Buttons.create({
                             attributes: ["action-back"],
                             classes: ["w-full"],
-                            text: window._lc.forms.login_with_qrcode.back,
+                            text: t("forms.login_with_qrcode.back"),
                             icon: "arrow-left"
                         })}
                     </div>

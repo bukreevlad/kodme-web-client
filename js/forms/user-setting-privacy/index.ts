@@ -21,6 +21,7 @@ import { UserProfile } from "../user-profile/index.js";
 
 // Импортируем requests
 import { getPrivacySettingsRequest } from "./requests/get_privacy_settings.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы конфиденциальности.
@@ -274,13 +275,13 @@ export class UserSettingPrivacy {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("phone", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_setting_privacy.calls}
+                                ${t("forms.user_setting_privacy.calls")}
                             </span>
 
                             ${Toggle.cardGroup([
-        { name: "calls", value: "all", checked: true, text: window._lc.forms.user_setting_privacy.all },
-        { name: "calls", value: "contacts", checked: false, text: window._lc.forms.user_setting_privacy.contacts },
-        { name: "calls", value: "none", checked: false, text: window._lc.forms.user_setting_privacy.none }
+        { name: "calls", value: "all", checked: true, text: t("forms.user_setting_privacy.all") },
+        { name: "calls", value: "contacts", checked: false, text: t("forms.user_setting_privacy.contacts") },
+        { name: "calls", value: "none", checked: false, text: t("forms.user_setting_privacy.none") }
     ])}
 
                         </div>
@@ -290,13 +291,13 @@ export class UserSettingPrivacy {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("message", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_setting_privacy.messages}
+                                ${t("forms.user_setting_privacy.messages")}
                             </span>
 
                             ${Toggle.cardGroup([
-        { name: "messages", value: "all", checked: true, text: window._lc.forms.user_setting_privacy.all },
-        { name: "messages", value: "contacts", checked: false, text: window._lc.forms.user_setting_privacy.contacts },
-        { name: "messages", value: "none", checked: false, text: window._lc.forms.user_setting_privacy.none }
+        { name: "messages", value: "all", checked: true, text: t("forms.user_setting_privacy.all") },
+        { name: "messages", value: "contacts", checked: false, text: t("forms.user_setting_privacy.contacts") },
+        { name: "messages", value: "none", checked: false, text: t("forms.user_setting_privacy.none") }
     ])}
 
                         </div>
@@ -306,13 +307,13 @@ export class UserSettingPrivacy {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("microphone", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_setting_privacy.messages_voice}
+                                ${t("forms.user_setting_privacy.messages_voice")}
                             </span>
 
                             ${Toggle.cardGroup([
-        { name: "messages-voice", value: "all", checked: true, text: window._lc.forms.user_setting_privacy.all },
-        { name: "messages-voice", value: "contacts", checked: false, text: window._lc.forms.user_setting_privacy.contacts },
-        { name: "messages-voice", value: "none", checked: false, text: window._lc.forms.user_setting_privacy.none }
+        { name: "messages-voice", value: "all", checked: true, text: t("forms.user_setting_privacy.all") },
+        { name: "messages-voice", value: "contacts", checked: false, text: t("forms.user_setting_privacy.contacts") },
+        { name: "messages-voice", value: "none", checked: false, text: t("forms.user_setting_privacy.none") }
     ])}
 
                         </div>
@@ -322,13 +323,13 @@ export class UserSettingPrivacy {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("search", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_setting_privacy.search_users}
+                                ${t("forms.user_setting_privacy.search_users")}
                             </span>
 
                             ${Toggle.cardGroup([
-        { name: "search-users", value: "all", checked: true, text: window._lc.forms.user_setting_privacy.all },
-        { name: "search-users", value: "contacts", checked: false, text: window._lc.forms.user_setting_privacy.contacts },
-        { name: "search-users", value: "none", checked: false, text: window._lc.forms.user_setting_privacy.none }
+        { name: "search-users", value: "all", checked: true, text: t("forms.user_setting_privacy.all") },
+        { name: "search-users", value: "contacts", checked: false, text: t("forms.user_setting_privacy.contacts") },
+        { name: "search-users", value: "none", checked: false, text: t("forms.user_setting_privacy.none") }
     ])}
 
                         </div>
@@ -338,13 +339,13 @@ export class UserSettingPrivacy {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("files", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_setting_privacy.sharing_files}
+                                ${t("forms.user_setting_privacy.sharing_files")}
                             </span>
 
                             ${Toggle.cardGroup([
-        { name: "sharing-files", value: "all", checked: true, text: window._lc.forms.user_setting_privacy.all },
-        { name: "sharing-files", value: "contacts", checked: false, text: window._lc.forms.user_setting_privacy.contacts },
-        { name: "sharing-files", value: "none", checked: false, text: window._lc.forms.user_setting_privacy.none }
+        { name: "sharing-files", value: "all", checked: true, text: t("forms.user_setting_privacy.all") },
+        { name: "sharing-files", value: "contacts", checked: false, text: t("forms.user_setting_privacy.contacts") },
+        { name: "sharing-files", value: "none", checked: false, text: t("forms.user_setting_privacy.none") }
     ])}
 
                         </div>

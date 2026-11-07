@@ -5,6 +5,7 @@ import { Icons } from "../../../utils/icons.js";
 // Импортируем типы
 import type { LocalParticipant } from "livekit-client";
 import type { Call } from "../index.js";
+import { I18n } from "../../../utils/i18n/index.js";
 
 /**
  * Описание кнопки источника звука/видео в футере звонка: иконки
@@ -69,7 +70,7 @@ export function updateFooter(form: Call): void {
         if (!form?.tpl) return;
 
         const local = form?.room?.localParticipant;
-        const labels = window._lc.forms.call.footer;
+        const labels = I18n.tree.forms.call.footer;
 
         for (const source of SOURCES) {
 

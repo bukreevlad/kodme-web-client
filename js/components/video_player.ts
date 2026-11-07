@@ -20,6 +20,7 @@ import type { Level } from "hls.js";
 import { Logger } from "../utils/logs/logger.js";
 import { getErrorMessage } from "../utils/helpers/error_util.js";
 import { Icons } from "../utils/icons.js";
+import { t } from "../utils/i18n/index.js";
 
 /**
  * Вариант интерфейса плеера (см. VideoPlayer._build).
@@ -770,7 +771,7 @@ export class VideoPlayer {
         button.id = "cdm-player-wide-trigger";
         button.className = "media-button media-cdm-player-wide";
         button.setAttribute("aria-pressed", "false");
-        button.setAttribute("aria-label", window._lc.components.video_player.wide_expand);
+        button.setAttribute("aria-label", t("components.video_player.wide_expand"));
 
         // Иконка: maximize / minimize по состоянию (см. _wideIcon)
         const icon = this._wideIcon();
@@ -787,7 +788,7 @@ export class VideoPlayer {
         tooltip.setAttribute("side", "top");
 
         const label = document.createElement("media-tooltip-label");
-        label.textContent = window._lc.components.video_player.wide_expand;
+        label.textContent = t("components.video_player.wide_expand");
         tooltip.appendChild(label);
 
         // Стили кнопки внедряются в shadow root рядом с ней: глобальный CSS
@@ -873,8 +874,8 @@ export class VideoPlayer {
 
         // Подпись описывает следующее действие и дублируется в подсказке
         const label = this._wide
-            ? window._lc.components.video_player.wide_collapse
-            : window._lc.components.video_player.wide_expand;
+            ? t("components.video_player.wide_collapse")
+            : t("components.video_player.wide_expand");
 
         this._wideButton?.setAttribute("aria-pressed", String(this._wide));
         this._wideButton?.setAttribute("aria-label", label);

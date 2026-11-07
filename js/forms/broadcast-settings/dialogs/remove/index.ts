@@ -13,6 +13,7 @@ import { Buttons } from "../../../../components/buttons.js";
 
 // Импортируем forms
 import { BroadcastSettings } from "../../../broadcast-settings/index.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * Настройки диалога подтверждения удаления трансляции.
@@ -231,17 +232,17 @@ export class RemoveCast {
         
             <div class="cdm-modal cast-remove-confirm flex flex-col p-0 gap-0 ${CDM_MODAL_CLASSES()}">
                 <div class="${CDM_MODAL_HEADER_CLASSES()}">
-                    <span class="flex flex-row gap-2 items-center font-semibold text-lg">${window._lc.forms.broadcast_settings.dialogs.remove.title}</span>
+                    <span class="flex flex-row gap-2 items-center font-semibold text-lg">${t("forms.broadcast_settings.dialogs.remove.title")}</span>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "x" })}
                 </div>
                  <div class="${CDM_MODAL_CONTENT_CLASSES()}">
 
-                        <span class="text-secondary text-sm">${window._lc.forms.broadcast_settings.dialogs.remove.description}</span>
+                        <span class="text-secondary text-sm">${t("forms.broadcast_settings.dialogs.remove.description")}</span>
 
                 </div>
                 <div class="${CDM_MODAL_FOOTER_CLASSES()}">
-                    ${Buttons.create({ attributes: ["action-close"], classes: ["w-full"], text: window._lc.forms.broadcast_settings.dialogs.remove.action_close })}
-                    ${Buttons.danger({ attributes: ["action-remove"], classes: ["w-full"], text: window._lc.forms.broadcast_settings.dialogs.remove.action_remove })}
+                    ${Buttons.create({ attributes: ["action-close"], classes: ["w-full"], text: t("forms.broadcast_settings.dialogs.remove.action_close") })}
+                    ${Buttons.danger({ attributes: ["action-remove"], classes: ["w-full"], text: t("forms.broadcast_settings.dialogs.remove.action_remove") })}
                 </div>
             </div>
 

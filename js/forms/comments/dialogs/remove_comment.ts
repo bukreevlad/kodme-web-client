@@ -7,6 +7,7 @@ import { Logger } from "../../../utils/logs/logger.js";
 // Импортируем components
 import { Overlay } from "../../../components/overlay/index.js";
 import { Buttons } from "../../../components/buttons.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * Данные диалога удаления комментария.
@@ -158,13 +159,13 @@ export class RemoveComment {
 
             <div class="cdm-modal remove-comment flex flex-col p-0 gap-0 ${CDM_MODAL_CLASSES()}">
                  <div class="${CDM_MODAL_HEADER_CLASSES()}">
-                    <span class="flex flex-row gap-2 items-center font-semibold text-lg">${window._lc.forms.comments.dialogs.remove_comment.desc}</span>
+                    <span class="flex flex-row gap-2 items-center font-semibold text-lg">${t("forms.comments.dialogs.remove_comment.desc")}</span>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "x" })}
                 </div>
                  <div class="${CDM_MODAL_CONTENT_CLASSES()}">
 
                     <div class="flex flex-col gap-2">
-                        <span class="text-secondary">${window._lc.forms.comments.dialogs.remove_comment.text}</span>
+                        <span class="text-secondary">${t("forms.comments.dialogs.remove_comment.text")}</span>
                     </div>
 
                 </div>
@@ -173,13 +174,13 @@ export class RemoveComment {
                         shape: "square",
                         attributes: ["action-close"],
                         classes: ["w-full"],
-                        text: window._lc.forms.comments.dialogs.remove_comment.action_cancel
+                        text: t("forms.comments.dialogs.remove_comment.action_cancel")
                     })}
                                 ${Buttons.danger({
                         shape: "square",
                         attributes: ["action-remove"],
                         classes: ["w-full"],
-                        text: window._lc.forms.comments.dialogs.remove_comment.action_remove
+                        text: t("forms.comments.dialogs.remove_comment.action_remove")
                     })}
                 </div>
             </div>

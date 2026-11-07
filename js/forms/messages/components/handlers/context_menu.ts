@@ -26,6 +26,7 @@ import { sendReactionHandler } from "./send_reaction.js";
 // Импортируем типы
 import type { PopoverMenuInput } from "../../../../components/overlay/popover_menu.js";
 import type { MessageItem } from "../message.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -81,7 +82,7 @@ export async function contextMenuHandler(event: Event, message: MessageItem): Pr
 
         // menu item
         let copy = {
-            text: window._lc.forms.messages.components.messages.context_menu.copy,
+            text: t("forms.messages.components.messages.context_menu.copy"),
             iconName: "Copy",
             onClick: () => copyMessageHandler(message)
         };
@@ -91,7 +92,7 @@ export async function contextMenuHandler(event: Event, message: MessageItem): Pr
 
         // menu item
         let reSend = {
-            text: window._lc.forms.messages.components.messages.context_menu.resend,
+            text: t("forms.messages.components.messages.context_menu.resend"),
             iconName: "send-2",
             onClick: () => resendMessageHandler(message)
         };
@@ -103,7 +104,7 @@ export async function contextMenuHandler(event: Event, message: MessageItem): Pr
 
         // menu item
         let reply = {
-            text: window._lc.forms.messages.components.messages.context_menu.reply,
+            text: t("forms.messages.components.messages.context_menu.reply"),
             iconName: "arrow-back-up-double",
             onClick: () => replyMessageHandler(message)
         };
@@ -118,7 +119,7 @@ export async function contextMenuHandler(event: Event, message: MessageItem): Pr
 
         // menu item
         let forward = {
-            text: window._lc.forms.messages.components.messages.context_menu.forward,
+            text: t("forms.messages.components.messages.context_menu.forward"),
             iconName: "arrow-forward-up-double",
             onClick: () => forwardMessageHandler(message)
         };
@@ -128,7 +129,7 @@ export async function contextMenuHandler(event: Event, message: MessageItem): Pr
 
         // menu item
         let edit = {
-            text: window._lc.forms.messages.components.messages.context_menu.edit,
+            text: t("forms.messages.components.messages.context_menu.edit"),
             iconName: "pencil",
             onClick: () => editMessageHandler(message)
         };
@@ -143,7 +144,7 @@ export async function contextMenuHandler(event: Event, message: MessageItem): Pr
 
         // menu item
         let remove = {
-            text: window._lc.forms.messages.components.messages.context_menu.remove,
+            text: t("forms.messages.components.messages.context_menu.remove"),
             iconName: "trash",
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => removeMessageHandler(message)
@@ -172,7 +173,7 @@ export async function contextMenuHandler(event: Event, message: MessageItem): Pr
 
         // menu item
         let removeTemporary = {
-            text: window._lc.forms.messages.components.messages.context_menu.remove,
+            text: t("forms.messages.components.messages.context_menu.remove"),
             iconName: "trash",
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => removeTemporaryMessageHandler(message)
@@ -185,7 +186,7 @@ export async function contextMenuHandler(event: Event, message: MessageItem): Pr
 
         // menu item
         let removePending = {
-            text: window._lc.forms.messages.components.messages.context_menu.remove,
+            text: t("forms.messages.components.messages.context_menu.remove"),
             iconName: "trash",
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => removePendingMessageHandler(message)

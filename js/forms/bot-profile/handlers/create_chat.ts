@@ -13,6 +13,7 @@ import { createDialogRequest } from "../requests/create_dialog.js";
 
 // Импортируем типы
 import type { BotProfile } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -35,7 +36,7 @@ export async function createChatHandler(form: BotProfile): Promise<void> {
         form.modal?.close();
 
         // Toast
-        Toast.success(window._lc.forms.bot_profile.toasts.dialog_created);
+        Toast.success(t("forms.bot_profile.toasts.dialog_created"));
 
         // Открываем форму
         new Messages({ channelId: channelId });
@@ -50,7 +51,7 @@ export async function createChatHandler(form: BotProfile): Promise<void> {
         if (getErrorMessage(error).includes("ID_CANNOT_MATCH")) {
 
             // Toast
-            Toast.error(window._lc.forms.bot_profile.toasts.id_cannot_match);
+            Toast.error(t("forms.bot_profile.toasts.id_cannot_match"));
             isToastShown = true;
         }
 
@@ -58,13 +59,13 @@ export async function createChatHandler(form: BotProfile): Promise<void> {
         if (getErrorMessage(error).includes("INVALID_BOT_ID")) {
 
             // Toast
-            Toast.error(window._lc.forms.bot_profile.toasts.invalid_bot_id);
+            Toast.error(t("forms.bot_profile.toasts.invalid_bot_id"));
             isToastShown = true;
         }
 
         // Прочая ошибка сервера
         if (!isToastShown) {
-            Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+            Toast.error(t("api.errors.server_error"));
         }
 
     }

@@ -11,6 +11,7 @@ import { confirmQrcodeLoginRequest } from "../requests/confirm.js";
 
 // Импортируем типы
 import type { ConfirmQRCodeLogin } from "../index.js";
+import { t } from "../../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -45,11 +46,11 @@ export async function confirmHandler(form: ConfirmQRCodeLogin): Promise<void> {
 
         // Если превышен лимит запросов
         if (getErrorMessage(error).includes("RATE_LIMIT_EXCEEDED") || getErrorStatus(error) === 429) {
-            Toast.error(window._lc.forms.user_setting_login_qrcode.dialogs.confirm_qrcode_login.toasts.too_many_requests);
+            Toast.error(t("forms.user_setting_login_qrcode.dialogs.confirm_qrcode_login.toasts.too_many_requests"));
         } else {
 
             // Общая ошибка при подтверждении входа
-            Toast.error(window._lc.forms.user_setting_login_qrcode.dialogs.confirm_qrcode_login.toasts.error);
+            Toast.error(t("forms.user_setting_login_qrcode.dialogs.confirm_qrcode_login.toasts.error"));
 
         }
 

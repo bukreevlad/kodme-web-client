@@ -19,6 +19,7 @@ import { getThemeInfoRequest } from "./requests/get_theme_info.js";
 
 // Импортируем типы
 import type { ThemeInfo } from "./requests/get_theme_info.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы редактирования темы.
@@ -272,15 +273,15 @@ export class ThemeEdit {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("label", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.theme_edit.name}
+                                ${t("forms.theme_edit.name")}
                             </span>
-                            ${Inputs.create({ placeholder: window._lc.forms.theme_edit.name, name: "name" })}
+                            ${Inputs.create({ placeholder: t("forms.theme_edit.name"), name: "name" })}
                             
                             ${Toggle.switch({
                                 name: "is-public", checked: false,
                                 toggleText: {
-                                    on: window._lc.forms.theme_edit.opened,
-                                    off: window._lc.forms.theme_edit.closed
+                                    on: t("forms.theme_edit.opened"),
+                                    off: t("forms.theme_edit.closed")
                                 }
                             })}
                         </div>
@@ -290,9 +291,9 @@ export class ThemeEdit {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("palette", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.theme_edit.style}
+                                ${t("forms.theme_edit.style")}
                             </span>
-                            ${Inputs.textarea({ placeholder: window._lc.forms.theme_create.style, name: "styles", rows: 4 })}
+                            ${Inputs.textarea({ placeholder: t("forms.theme_create.style"), name: "styles", rows: 4 })}
                         </div>
 
                     </div>

@@ -12,6 +12,7 @@ import { slideOutLeft } from "../../config/animations.js";
 import { Logger } from "../../utils/logs/logger.js";
 import { LocalStorage } from "../../utils/local_storage.js";
 import { Store } from "../../utils/store.js";
+import { t } from "../../utils/i18n/index.js";
 
 // Импортируем components
 import { Overlay } from "../../components/overlay/index.js";
@@ -335,19 +336,19 @@ export class Menu {
                     <div data-sessions-list class="flex flex-col gap-0 p-3 pb-0 empty:hidden"></div>
 
                     <div class="flex flex-col gap-0 p-3">
-                        ${Buttons.transparent({ attributes: ["action-profile"], classes: ["justify-start"], text: "Мой профиль", icon: "user-cog" })}
-                        ${Buttons.transparent({ attributes: ["action-create-channel"], classes: ["justify-start"], text: "Создать сообщество", icon: "FolderPlus" })}
-                        ${Buttons.transparent({ attributes: ["action-create-group"], classes: ["justify-start"], text: "Создать группу", icon: "MessageCirclePlus" })}
-                        ${Buttons.transparent({ attributes: ["action-contacts"], classes: ["justify-start"], text: "Контакты", icon: "address-book" })}
-                        ${Buttons.transparent({ attributes: ["action-casts"], classes: ["justify-start"], text: "Трансляции", icon: "player-play" })}
-                        ${Buttons.transparent({ attributes: ["action-meets"], classes: ["justify-start"], text: "Конференции", icon: "Headset" })}
-                        ${Buttons.transparent({ attributes: ["action-cloud"], classes: ["justify-start"], text: "Облако", icon: "Folder" })}
-                        ${Buttons.transparent({ attributes: ["action-themes"], classes: ["justify-start"], text: "Темы", icon: "Palette" })}
-                        ${Buttons.transparent({ attributes: ["action-stickers"], classes: ["justify-start"], text: "Стикеры", icon: "Sticker" })}
+                        ${Buttons.transparent({ attributes: ["action-profile"], classes: ["justify-start"], text: t("forms.menu.profile"), icon: "user-cog" })}
+                        ${Buttons.transparent({ attributes: ["action-create-channel"], classes: ["justify-start"], text: t("forms.menu.create_channel"), icon: "FolderPlus" })}
+                        ${Buttons.transparent({ attributes: ["action-create-group"], classes: ["justify-start"], text: t("forms.menu.create_group"), icon: "MessageCirclePlus" })}
+                        ${Buttons.transparent({ attributes: ["action-contacts"], classes: ["justify-start"], text: t("forms.menu.contacts"), icon: "address-book" })}
+                        ${Buttons.transparent({ attributes: ["action-casts"], classes: ["justify-start"], text: t("forms.menu.casts"), icon: "player-play" })}
+                        ${Buttons.transparent({ attributes: ["action-meets"], classes: ["justify-start"], text: t("forms.menu.meets"), icon: "Headset" })}
+                        ${Buttons.transparent({ attributes: ["action-cloud"], classes: ["justify-start"], text: t("forms.menu.cloud"), icon: "Folder" })}
+                        ${Buttons.transparent({ attributes: ["action-themes"], classes: ["justify-start"], text: t("forms.menu.themes"), icon: "Palette" })}
+                        ${Buttons.transparent({ attributes: ["action-stickers"], classes: ["justify-start"], text: t("forms.menu.stickers"), icon: "Sticker" })}
                     </div>
 
                     <div class="p-3">
-                        <span data-version class="text-muted text-sm">Версия сборки: __BUILD_VERSION__</span>
+                        <span data-version class="text-muted text-sm">${t("forms.menu.build_version")} __BUILD_VERSION__</span>
                     </div>
                 </div>
             </div>

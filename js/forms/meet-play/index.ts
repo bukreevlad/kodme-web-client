@@ -48,6 +48,7 @@ import { loadLocalLayout } from "../meet-grid-settings/handlers/save.js";
 
 // Импортируем типы
 import type { MeetInfo, MeetLayout, MeetRoomState, MeetBlocks, MeetBlocksMap, MeetParticipantItem, MeetVideoSettings, MeetScreenSettings } from "./types.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Данные формы конференции.
@@ -457,8 +458,8 @@ export class MeetPlay {
                     id: this.modal?.options.id,
                     data: {
                         instance: this,
-                        title: this.meet?.name || window._lc.forms.meet_play.title,
-                        subtitle: window._lc.forms.meet_play.title
+                        title: this.meet?.name || t("forms.meet_play.title"),
+                        subtitle: t("forms.meet_play.title")
                     }
                 }
             }));
@@ -467,7 +468,7 @@ export class MeetPlay {
             Logger.error("[meet-play] Ошибка открытия конференции:", error);
 
             // Toast
-            Toast.error(window._lc.forms.meet_play.toasts.open_error);
+            Toast.error(t("forms.meet_play.toasts.open_error"));
 
             // Закрываем форму: без данных конференции она всё равно не рабочая
             this.modal?.close();
@@ -560,7 +561,7 @@ export class MeetPlay {
         // «Конференция», и в шапке с вкладками все конференции
         // выглядели одинаково
         const title = this.tpl.querySelector(":scope >.header [data-title]");
-        if (title) title.textContent = this.meet?.name || window._lc.forms.meet_play.title;
+        if (title) title.textContent = this.meet?.name || t("forms.meet_play.title");
         // ---------- ЗАГОЛОВОК ----------
 
         // ---------- CHAT ----------
@@ -643,7 +644,7 @@ export class MeetPlay {
                     <!-- Слева: выход и название конференции с числом
                          участников и таймером длительности -->
                     <div class="flex flex-row gap-2 items-center min-w-0 flex-1">
-                        ${Buttons.transparent({ shape: "circle", attributes: ["action-close", "aria-label=" + window._lc.forms.meet_play.close], icon: "ArrowLeft" })}
+                        ${Buttons.transparent({ shape: "circle", attributes: ["action-close", "aria-label=" + t("forms.meet_play.close")], icon: "ArrowLeft" })}
                         <div class="flex flex-col gap-0.5 min-w-0 flex-1">
                             <span data-title class="font-semibold text-[0.95rem] leading-tight truncate"></span>
                             <div class="flex flex-row items-center gap-2 text-xs text-secondary leading-tight">
@@ -659,9 +660,9 @@ export class MeetPlay {
                             <span data-quality-icon class="flex items-center"></span>
                             <span data-quality-label class="max-lg:hidden"></span>
                         </div>
-                        ${Buttons.transparent({ shape: "circle", attributes: ["action-grid-settings", "title=" + window._lc.forms.meet_play.grid_settings_button, "aria-label=" + window._lc.forms.meet_play.grid_settings_button], icon: "layout-grid" })}
-                        ${Buttons.transparent({ shape: "circle", attributes: ["action-open-chat", "title=" + window._lc.forms.meet_play.open_chat, "aria-label=" + window._lc.forms.meet_play.open_chat], icon: "message-2" })}
-                        ${Buttons.transparent({ shape: "circle", attributes: ["action-menu", "title=" + window._lc.forms.meet_play.menu_button, "aria-label=" + window._lc.forms.meet_play.menu_button, "aria-haspopup=menu"], icon: "dots-vertical" })}
+                        ${Buttons.transparent({ shape: "circle", attributes: ["action-grid-settings", "title=" + t("forms.meet_play.grid_settings_button"), "aria-label=" + t("forms.meet_play.grid_settings_button")], icon: "layout-grid" })}
+                        ${Buttons.transparent({ shape: "circle", attributes: ["action-open-chat", "title=" + t("forms.meet_play.open_chat"), "aria-label=" + t("forms.meet_play.open_chat")], icon: "message-2" })}
+                        ${Buttons.transparent({ shape: "circle", attributes: ["action-menu", "title=" + t("forms.meet_play.menu_button"), "aria-label=" + t("forms.meet_play.menu_button"), "aria-haspopup=menu"], icon: "dots-vertical" })}
                     </div>
                 </div>
 
@@ -676,14 +677,14 @@ export class MeetPlay {
 
                          Список не нарезан по страницам: все участники
                          комнаты видны разом, лишнее убирается скроллом. -->
-                    <div data-list class="meet-layout-grid" role="list" aria-label="${window._lc.forms.meet_play.participants_list}"></div>
+                    <div data-list class="meet-layout-grid" role="list" aria-label="${t("forms.meet_play.participants_list")}"></div>
 
                     <!-- Оверлей подключения. Живой текст, а не картинка:
                          скринридер читает его, а тост об ошибке не
                          заменяет его на экране надолго -->
                     <div data-connecting class="hidden absolute inset-0 z-10 flex flex-col gap-4 items-center justify-center">
                         <span data-connecting-text class="text-sm text-secondary" role="status" aria-live="polite"></span>
-                        ${Buttons.transparent({ attributes: ["action-cancel-connecting", "title=" + window._lc.forms.meet_play.cancel_connecting], text: window._lc.forms.meet_play.cancel_connecting })}
+                        ${Buttons.transparent({ attributes: ["action-cancel-connecting", "title=" + t("forms.meet_play.cancel_connecting")], text: t("forms.meet_play.cancel_connecting") })}
                     </div>
                 </div>
 
@@ -695,10 +696,10 @@ export class MeetPlay {
                     <div class="bar flex flex-row gap-1.5 items-center rounded-full p-1.5">
                         ${Buttons.circle({ intent: "transparent", attributes: ["action-toggle-audio"], icon: "microphone-off" })}
                         ${Buttons.circle({ intent: "transparent", attributes: ["action-toggle-video"], icon: "video-off" })}
-                        ${Buttons.circle({ intent: "transparent", attributes: ["action-switch-camera", "title=" + window._lc.forms.meet_play.footer.switch_camera, "aria-label=" + window._lc.forms.meet_play.footer.switch_camera], icon: "camera-rotate" })}
+                        ${Buttons.circle({ intent: "transparent", attributes: ["action-switch-camera", "title=" + t("forms.meet_play.footer.switch_camera"), "aria-label=" + t("forms.meet_play.footer.switch_camera")], icon: "camera-rotate" })}
                         ${Buttons.circle({ intent: "transparent", attributes: ["action-toggle-screen"], icon: "device-desktop-off" })}
-                        ${Buttons.circle({ intent: "transparent", attributes: ["action-toggle-hand", "title=" + window._lc.forms.meet_play.footer.raise_hand, "aria-label=" + window._lc.forms.meet_play.footer.raise_hand], icon: "hand-finger" })}
-                        ${Buttons.danger({ shape: "circle", attributes: ["action-leave", "title=" + window._lc.forms.meet_play.footer.leave, "aria-label=" + window._lc.forms.meet_play.footer.leave], icon: "PhoneOff" })}
+                        ${Buttons.circle({ intent: "transparent", attributes: ["action-toggle-hand", "title=" + t("forms.meet_play.footer.raise_hand"), "aria-label=" + t("forms.meet_play.footer.raise_hand")], icon: "hand-finger" })}
+                        ${Buttons.danger({ shape: "circle", attributes: ["action-leave", "title=" + t("forms.meet_play.footer.leave"), "aria-label=" + t("forms.meet_play.footer.leave")], icon: "PhoneOff" })}
                     </div>
                 </div>
             </div>

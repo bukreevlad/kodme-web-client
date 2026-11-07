@@ -10,6 +10,7 @@ import { loadStats } from "./load_stats.js";
 
 // Импортируем типы
 import type { UserSettingCache } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -36,13 +37,13 @@ export async function clearDatabase(form: UserSettingCache): Promise<void> {
         await loadStats(form); // Перезагружаем интерфейс
 
         // Toast
-        Toast.success(window._lc.forms.user_setting_cache.toasts.database_cleared);
+        Toast.success(t("forms.user_setting_cache.toasts.database_cleared"));
 
     } catch (error) {
         Logger.error("[app][UserSettingCache]: Ошибка очистки таблиц IndexedDB", error);
 
         // Toast
-        Toast.error(window._lc.forms.user_setting_cache.toasts.database_clear_error);
+        Toast.error(t("forms.user_setting_cache.toasts.database_clear_error"));
     }
 
 }

@@ -10,6 +10,7 @@ import { saveThemeRequest } from "../requests/save.js";
 
 // Импортируем типы
 import type { ThemeEdit } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -46,7 +47,7 @@ export async function saveHandler(form: ThemeEdit): Promise<void> {
         if (response.status) {
 
             // Toast
-            Toast.success(window._lc.forms.theme_edit.toasts.success_save);
+            Toast.success(t("forms.theme_edit.toasts.success_save"));
 
             // Закрываем форму
             form.modal?.close();
@@ -64,7 +65,7 @@ export async function saveHandler(form: ThemeEdit): Promise<void> {
             name.classList.add("invalid");
 
             // Toast
-            Toast.error(window._lc.forms.theme_edit.toasts.name_invalid);
+            Toast.error(t("forms.theme_edit.toasts.name_invalid"));
             isToastShown = true;
         }
 
@@ -73,7 +74,7 @@ export async function saveHandler(form: ThemeEdit): Promise<void> {
             name.classList.add("invalid");
 
             // Toast
-            Toast.error(window._lc.forms.theme_edit.toasts.name_invalid);
+            Toast.error(t("forms.theme_edit.toasts.name_invalid"));
             isToastShown = true;
         }
 
@@ -81,7 +82,7 @@ export async function saveHandler(form: ThemeEdit): Promise<void> {
         if (getErrorMessage(error).includes("STYLE_REQUIRED") || getErrorMessage(error).includes("STYLE_INVALID")) {
 
             // Toast
-            Toast.error(window._lc.forms.theme_edit.toasts.error_style);
+            Toast.error(t("forms.theme_edit.toasts.error_style"));
             isToastShown = true;
 
         }
@@ -92,14 +93,14 @@ export async function saveHandler(form: ThemeEdit): Promise<void> {
         if (getErrorMessage(error).includes("undefined")) {
 
             // Toast
-            Toast.error(window._lc.forms.theme_edit.toasts.error);
+            Toast.error(t("forms.theme_edit.toasts.error"));
             isToastShown = true;
 
         }
 
         // Прочая ошибка сервера
         if (!isToastShown) {
-            Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+            Toast.error(t("api.errors.server_error"));
         }
 
     }

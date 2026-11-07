@@ -25,6 +25,7 @@ import type { SecretFileRef } from "../../../utils/secret_chats/secret_frames.js
 import type { SecretMessageType } from "../../../types/secret_chats.js";
 import type { AttachmentData } from "../../messages/components/types.js";
 import type { SecretChat } from "../index.js";
+import { I18n } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -63,7 +64,7 @@ export async function createMessageHandler(form: SecretChat): Promise<void> {
             // Подсвечиваем поле только для «пустого» текста
             if (validation.code === "empty_message") textarea.classList.add("invalid");
 
-            Toast.warning(window._lc.forms.secret_chat.toasts[validation.code], {
+            Toast.warning(I18n.tree.forms.secret_chat.toasts[validation.code], {
                 position: "bottom-center"
             });
 

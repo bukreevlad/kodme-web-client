@@ -14,6 +14,7 @@ import { UserIsNotContact } from "../dialogs/user_is_not_contact.js";
 
 // Импортируем типы
 import type { UserProfile } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -50,7 +51,7 @@ export async function startSecretCallHandler(form: UserProfile): Promise<void> {
         // (менеджер бросит ошибку — показываем её)
         const callId = await manager.startCall(form.userId);
         if (!callId) {
-            Toast.warning(window._lc.forms.secret_call.toasts.peer_offline, { position: "bottom-center" });
+            Toast.warning(t("forms.secret_call.toasts.peer_offline"), { position: "bottom-center" });
             return;
         }
 

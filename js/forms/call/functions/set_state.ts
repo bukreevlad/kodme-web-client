@@ -7,6 +7,7 @@ import { syncSelfTileVisibility } from "./self_view.js";
 // Импортируем типы
 import type { Call } from "../index.js";
 import type { CallState } from "../types.js";
+import { I18n } from "../../../utils/i18n/index.js";
 
 /**
  * Состояния звонка.
@@ -66,7 +67,7 @@ export function setState(form: Call, state: CallState, text?: string): void {
         // ---------- СТАТУС ----------
         const status = overlay?.querySelector<HTMLElement>(":scope [data-overlay-status]");
         if (status && isCallOverlay) {
-            const locale = window._lc.forms.call.status;
+            const locale = I18n.tree.forms.call.status;
             status.textContent = text ?? locale[state] ?? "";
         }
 

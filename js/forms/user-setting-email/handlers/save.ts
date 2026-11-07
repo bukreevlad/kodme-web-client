@@ -12,6 +12,7 @@ import { saveEmailRequest } from "../requests/save.js";
 
 // Импортируем типы
 import type { UserSettingEmail } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -43,7 +44,7 @@ export async function saveHandler(form: UserSettingEmail): Promise<void> {
         if (response.status) {
 
             // Toast
-            Toast.success(window._lc.forms.user_setting_email.toasts.success_save);
+            Toast.success(t("forms.user_setting_email.toasts.success_save"));
 
             // Обновляем данные в сессии (без неё обновлять нечего)
             const session = LocalStorage.session;
@@ -70,7 +71,7 @@ export async function saveHandler(form: UserSettingEmail): Promise<void> {
             Inputs.markInvalid(email, true);
 
             // Toast
-            Toast.error(window._lc.forms.user_setting_email.toasts.email_required);
+            Toast.error(t("forms.user_setting_email.toasts.email_required"));
             isToastShown = true;
         }
 
@@ -79,7 +80,7 @@ export async function saveHandler(form: UserSettingEmail): Promise<void> {
             Inputs.markInvalid(email, true);
 
             // Toast
-            Toast.error(window._lc.forms.user_setting_email.toasts.email_invalid);
+            Toast.error(t("forms.user_setting_email.toasts.email_invalid"));
             isToastShown = true;
         }
 
@@ -88,13 +89,13 @@ export async function saveHandler(form: UserSettingEmail): Promise<void> {
             Inputs.markInvalid(email, true);
 
             // Toast
-            Toast.error(window._lc.forms.user_setting_email.toasts.email_already_taken);
+            Toast.error(t("forms.user_setting_email.toasts.email_already_taken"));
             isToastShown = true;
         }
 
         // Прочая ошибка сервера
         if (!isToastShown) {
-            Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+            Toast.error(t("api.errors.server_error"));
         }
 
     }

@@ -13,6 +13,7 @@ import { updateTotpCard } from "./update_totp_card.js";
 
 // Импортируем типы
 import type { UserSettingSecurity } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -46,7 +47,7 @@ export async function refreshTotpStatus(form: UserSettingSecurity): Promise<void
         }
 
         // Прочая ошибка сервера
-        Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+        Toast.error(t("api.errors.server_error"));
     }
 
 }

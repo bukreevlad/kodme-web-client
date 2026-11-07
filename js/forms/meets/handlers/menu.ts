@@ -11,6 +11,7 @@ import { MeetCreate } from "../../meet-create/index.js";
 // Импортируем типы
 import type { PopoverMenuItem } from "../../../components/overlay/popover_menu.js";
 import type { Meets } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -29,7 +30,7 @@ export async function menuHandler(event: Event, form: Meets): Promise<void> {
 
         // menu item
         let addMeet: PopoverMenuItem = {
-            text: window._lc.forms.meets.context_menu.create_meet,
+            text: t("forms.meets.context_menu.create_meet"),
             iconName: "Plus",
             onClick: () => new MeetCreate()
         };

@@ -17,6 +17,7 @@ import { removeChatHandler } from "./remove_chat.js";
 // Импортируем типы
 import type { SecretSelfDestructValue } from "../../../types/secret_chats.js";
 import type { SecretChat } from "../index.js";
+import { I18n, t } from "../../../utils/i18n/index.js";
 
 /** Значения таймера самоуничтожения для пунктов меню (null — выключен). */
 const SELF_DESTRUCT_VALUES: Array<SecretSelfDestructValue | null> = [null, "5s", "1m", "1h", "1d", "1w"];
@@ -44,7 +45,7 @@ export async function contextMenuHandler(event: Event, form: SecretChat): Promis
         // menu item: таймер самоуничтожения (значения — вторым поповером:
         // PopoverMenuItem не поддерживает вложенные подменю)
         let selfDestruct: PopoverMenuItem = {
-            text: window._lc.forms.secret_chat.context_menu.self_destruct,
+            text: t("forms.secret_chat.context_menu.self_destruct"),
             iconName: "clock",
             onClick: () => openSelfDestructMenu(form)
         };
@@ -54,7 +55,7 @@ export async function contextMenuHandler(event: Event, form: SecretChat): Promis
 
         // menu item: удалить секретный чат (у обоих участников)
         let removeChat: PopoverMenuItem = {
-            text: window._lc.forms.secret_chat.context_menu.remove_chat,
+            text: t("forms.secret_chat.context_menu.remove_chat"),
             iconName: "trash",
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => removeChatHandler(form)
@@ -89,7 +90,7 @@ export async function contextMenuHandler(event: Event, form: SecretChat): Promis
  */
 function selfDestructLabel(value: SecretSelfDestructValue | null): string {
 
-    const locale = window._lc.forms.secret_chat.context_menu;
+    const locale = I18n.tree.forms.secret_chat.context_menu;
     switch (value) {
         case "5s": return locale.self_destruct_5s;
         case "1m": return locale.self_destruct_1m;
@@ -152,7 +153,7 @@ async function setSelfDestructHandler(form: SecretChat, value: SecretSelfDestruc
         await manager.setSelfDestruct(form.chatId, value);
 
         // Сообщение
-        Toast.success(window._lc.forms.secret_chat.toasts.self_destruct_updated, { position: "bottom-center" });
+        Toast.success(t("forms.secret_chat.toasts.self_destruct_updated"), { position: "bottom-center" });
 
     } catch (error) {
 

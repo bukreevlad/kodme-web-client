@@ -9,6 +9,7 @@ import { SecretCallsManager } from "../../../core/managers/secret_calls_manager.
 
 // Импортируем forms
 import { SecretCall } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -32,7 +33,7 @@ export async function switchCameraHandler(form: SecretCall): Promise<void> {
 
         // Форма могла закрыться — тостить уже некому
         if (SecretCall.instance !== form) return;
-        Toast.error(window._lc.forms.secret_call.toasts.camera_error);
+        Toast.error(t("forms.secret_call.toasts.camera_error"));
 
     }
 

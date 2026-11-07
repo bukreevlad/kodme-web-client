@@ -10,6 +10,7 @@ import { loadStats } from "./load_stats.js";
 
 // Импортируем типы
 import type { UserSettingCache } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -35,13 +36,13 @@ export async function clearCache(form: UserSettingCache, type: string): Promise<
         await loadStats(form);
 
         // Toast
-        Toast.success(window._lc.forms.user_setting_cache.toasts.cache_cleared);
+        Toast.success(t("forms.user_setting_cache.toasts.cache_cleared"));
 
     } catch (error) {
         Logger.error(`[app][UserSettingCache]: Ошибка очистки кеша (${type})`, error);
 
         // Toast
-        Toast.error(window._lc.forms.user_setting_cache.toasts.cache_clear_error);
+        Toast.error(t("forms.user_setting_cache.toasts.cache_clear_error"));
     }
 
 }

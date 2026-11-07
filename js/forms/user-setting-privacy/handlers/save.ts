@@ -10,6 +10,7 @@ import { savePrivacySettingsRequest } from "../requests/save.js";
 
 // Импортируем типы
 import type { UserSettingPrivacy } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -49,7 +50,7 @@ export async function saveHandler(form: UserSettingPrivacy): Promise<void> {
         if (response.status) {
 
             // Toast
-            Toast.success(window._lc.forms.user_setting_privacy.toasts.success_save);
+            Toast.success(t("forms.user_setting_privacy.toasts.success_save"));
 
             // Закрываем форму
             form.modal?.close();
@@ -63,12 +64,12 @@ export async function saveHandler(form: UserSettingPrivacy): Promise<void> {
         if (getErrorMessage(error).includes("PRIVACY_") && getErrorMessage(error).includes("_INVALID")) {
 
             // Toast
-            Toast.error(window._lc.forms.user_setting_privacy.toasts.privacy_invalid);
+            Toast.error(t("forms.user_setting_privacy.toasts.privacy_invalid"));
 
         } else {
 
             // Прочая ошибка сервера
-            Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+            Toast.error(t("api.errors.server_error"));
         }
 
     }

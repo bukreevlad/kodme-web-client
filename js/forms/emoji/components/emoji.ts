@@ -6,6 +6,7 @@ import { Logger } from "../../../utils/logs/logger.js";
 
 // Импортируем типы
 import type { Emoji } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -100,7 +101,7 @@ export class EmojiCategoryItem {
             this.list = this.element?.querySelector("[data-list]") ?? null;
 
             // Название
-            if (this.name) this.name.textContent = this.data.name;
+            if (this.name) this.name.textContent = t(`forms.emoji.categories.${this.data.id}`);
 
             // Проходим по emoji
             this.data.items.forEach((emoji: EmojiItem) => {

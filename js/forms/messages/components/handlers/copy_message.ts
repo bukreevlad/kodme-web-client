@@ -5,6 +5,7 @@ import { copyText } from "../../../../utils/helpers/clipboard.js";
 
 // Импортируем типы
 import type { MessageItem } from "../message.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -25,7 +26,7 @@ export async function copyMessageHandler(message: MessageItem): Promise<void> {
         // try/catch не срабатывал, потому что отказ приходил в промис.
         await copyText(unescapeHtml(message.data.text), {
             context: "[app][messages][copy-message]",
-            successText: window._lc.forms.messages.components.messages.toasts.message_copied
+            successText: t("forms.messages.components.messages.toasts.message_copied")
         });
 
     } catch (error) {

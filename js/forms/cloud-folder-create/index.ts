@@ -14,6 +14,7 @@ import { createHandler } from "./handlers/create.js";
 
 // Импортируем типы
 import type { Cloud } from "../cloud/index.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки диалога создания папки.
@@ -198,15 +199,15 @@ export class CreateFolder {
             <div class="cdm-form cloud-create-folder flex flex-col gap-0 ${CDM_FORM_CLASSES()} w-full">
                 <div class="header flex flex-row gap-2 p-2 items-center ${CDM_FORM_HEADER_CLASSES()}">
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "ArrowLeft" })}
-                    <span class="flex-1 font-semibold text-base truncate">${window._lc.forms.cloud.dialogs.create_folder.title}</span>
+                    <span class="flex-1 font-semibold text-base truncate">${t("forms.cloud.dialogs.create_folder.title")}</span>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-create"], icon: "device-floppy" })}
                 </div>
                  <div class="content w-full h-full flex ${CDM_FORM_CONTENT_CLASSES()}">
                     <div class="flex flex-col gap-3 p-3 max-w-[var(--form-max-content-width)] m-auto w-full h-full">
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
-                            <span class="text-secondary text-sm">${window._lc.forms.cloud.dialogs.create_folder.name}</span>
+                            <span class="text-secondary text-sm">${t("forms.cloud.dialogs.create_folder.name")}</span>
                             ${Inputs.create({
-            placeholder: window._lc.forms.cloud.dialogs.create_folder.name,
+            placeholder: t("forms.cloud.dialogs.create_folder.name"),
             name: "name",
             attributes: ["required"]
         })}

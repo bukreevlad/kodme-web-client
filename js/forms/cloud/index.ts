@@ -48,6 +48,7 @@ import type {
     CloudView
 } from "./types.js";
 import type { ShareLinks } from "./dialogs/share_links/index.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы облака.
@@ -440,7 +441,7 @@ export class Cloud {
             let minePane = this._templatePane("mine");
             this.tabs.addTab({
                 id: "mine",
-                links: this._templateTab({ id: "mine", name: window._lc.forms.cloud.tabs.mine }),
+                links: this._templateTab({ id: "mine", name: t("forms.cloud.tabs.mine") }),
                 pane: minePane,
                 onActivation: () => {
 
@@ -454,7 +455,7 @@ export class Cloud {
             // ---------- Вкладка «Доступное для меня» ----------
             this.tabs.addTab({
                 id: "available",
-                links: this._templateTab({ id: "available", name: window._lc.forms.cloud.tabs.available }),
+                links: this._templateTab({ id: "available", name: t("forms.cloud.tabs.available") }),
                 pane: this._templatePane("available"),
                 onActivation: () => {
 
@@ -637,10 +638,10 @@ export class Cloud {
 
                 // Заголовок: текущая папка или корень
                 let current = this.folderStack[this.folderStack.length - 1];
-                title.textContent = current?.name || window._lc.forms.cloud.root;
+                title.textContent = current?.name || t("forms.cloud.root");
 
                 // Строим цепочку крошек: корень → папки
-                let crumbs: HeaderCrumb[] = [{ id: null, name: window._lc.forms.cloud.root }];
+                let crumbs: HeaderCrumb[] = [{ id: null, name: t("forms.cloud.root") }];
                 this.folderStack.forEach(folder => crumbs.push({ id: folder.id, name: folder.name }));
                 crumbs.forEach((crumb, index) => {
                     let crumbEl = _createCrumb(crumb.name, index < crumbs.length - 1);
@@ -663,10 +664,10 @@ export class Cloud {
                 // Заголовок: имя элемента ссылки или автор
                 let owner = this.sharedLink?.owner;
                 let ownerName = owner ? `${owner.first_name || ""} ${owner.last_name || ""}`.trim() : "";
-                title.textContent = this.sharedLink?.item?.name || ownerName || window._lc.forms.cloud.shared.root;
+                title.textContent = this.sharedLink?.item?.name || ownerName || t("forms.cloud.shared.root");
 
                 // Строим цепочку крошек: корень ссылки → подпапки
-                let crumbs: HeaderCrumb[] = [{ id: null, name: this.sharedLink?.item?.name || window._lc.forms.cloud.shared.root }];
+                let crumbs: HeaderCrumb[] = [{ id: null, name: this.sharedLink?.item?.name || t("forms.cloud.shared.root") }];
                 this.sharedPath.forEach(folder => crumbs.push({ id: folder.id, name: folder.name }));
                 crumbs.forEach((crumb, index) => {
                     let crumbEl = _createCrumb(crumb.name, index < crumbs.length - 1);
@@ -890,7 +891,7 @@ export class Cloud {
         // Параметры панели
         let isMine = mode === "mine";
         let iconName = isMine ? "cloud" : "link";
-        let emptyText = isMine ? window._lc.forms.cloud.empty.mine : window._lc.forms.cloud.empty.available;
+        let emptyText = isMine ? t("forms.cloud.empty.mine") : t("forms.cloud.empty.available");
 
         // invariant: корневой .item входит в сам шаблон — querySelector
         // с текстовым HTML всегда находит его
@@ -951,7 +952,7 @@ export class Cloud {
                                 <div class="flex flex-col gap-1 p-3 pb-6" data-list-shared></div>
                                 <div data-empty-shared class="hidden flex flex-col gap-2 items-center text-center text-muted p-6">
                                     ${Icons.icon("cloud", { settings: { size: 40 } })?.outerHTML ?? ""}
-                                    <span>${window._lc.forms.cloud.empty.shared}</span>
+                                    <span>${t("forms.cloud.empty.shared")}</span>
                                 </div>
                             </div>
                         </div>

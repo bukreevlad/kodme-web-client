@@ -12,6 +12,7 @@ import { scaleUp } from "../config/animations.js";
  */
 import { Icons } from "../utils/icons.js";
 import { GestureController } from "../utils/gesture_controller.js";
+import { t } from "../utils/i18n/index.js";
 
 /**
  * Тип тоста: определяет иконку статуса и цвет акцента. `default` —
@@ -576,7 +577,7 @@ export class Toast {
 
         const icon = Icons.icon("x", { settings: { size: 14 } });
 
-        button.setAttribute("aria-label", window._lc?.components?.toast?.close ?? "Закрыть");
+        button.setAttribute("aria-label", t("components.toast.close"));
         if (icon) button.appendChild(icon);
 
         this.closeButton = button;

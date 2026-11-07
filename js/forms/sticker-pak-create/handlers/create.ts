@@ -18,6 +18,7 @@ import { createPakRequest } from "../requests/create.js";
 
 // Импортируем типы
 import type { StickerPakCreate } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -49,7 +50,7 @@ export async function stickerPakCreateHandler(form: StickerPakCreate): Promise<v
     const nameValue = name.value.trim();
     if (!nameValue || (limits !== null && nameValue.length > limits.stickers.pak_name_max_length)) {
         Inputs.markInvalid(name, true);
-        Toast.error(window._lc.forms.sticker_pak_create.toasts.name_invalid);
+        Toast.error(t("forms.sticker_pak_create.toasts.name_invalid"));
         return;
     }
     Inputs.clearInvalid(name);
@@ -58,7 +59,7 @@ export async function stickerPakCreateHandler(form: StickerPakCreate): Promise<v
     const aboutValue = about?.value.trim() || null;
     if (aboutValue && limits !== null && aboutValue.length > limits.stickers.pak_about_max_length) {
         if (about) Inputs.markInvalid(about, true);
-        Toast.error(window._lc.forms.sticker_pak_create.toasts.about_invalid);
+        Toast.error(t("forms.sticker_pak_create.toasts.about_invalid"));
         return;
     }
     if (about) Inputs.clearInvalid(about);
@@ -89,7 +90,7 @@ export async function stickerPakCreateHandler(form: StickerPakCreate): Promise<v
         // Показываем тост (коды ошибок разбирает сам toastError)
         toastError(error, {
             context: "[app][sticker-pak-create][create-pak]",
-            fallback: window._lc.forms.sticker_pak_create.toasts.create_error
+            fallback: t("forms.sticker_pak_create.toasts.create_error")
         });
 
     }

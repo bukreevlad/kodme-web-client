@@ -22,6 +22,7 @@ import { addModeratorHandler } from "./handlers/add.js";
 
 // Импортируем типы
 import type { AvatarImageDocument } from "../../components/avatars.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Пользователь, выбранный в поиске и переданный в диалог добавления
@@ -286,7 +287,7 @@ export class GroupAddModerator {
             <div class="cdm-form group-add-moderator flex flex-col gap-0 ${CDM_FORM_CLASSES()} w-full">
                 <div class="header flex flex-row gap-2 p-2 items-center ${CDM_FORM_HEADER_CLASSES()}">
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "ArrowLeft" })}
-                    <span class="flex-1 font-semibold text-base truncate">${window._lc.forms.group_moderator_add.title}</span>
+                    <span class="flex-1 font-semibold text-base truncate">${t("forms.group_moderator_add.title")}</span>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-add"], icon: "device-floppy" })}
                 </div>
                  <div class="content w-full h-full flex ${CDM_FORM_CONTENT_CLASSES()}">
@@ -308,16 +309,16 @@ export class GroupAddModerator {
                                     <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                         ${Icons.icon("trash", { settings: { size: 20 } })?.outerHTML ?? ""}
                                     </span>
-                                    ${window._lc.forms.group_moderator_add.remove_post}
+                                    ${t("forms.group_moderator_add.remove_post")}
                                 </span>
-                                <span class="text-sm text-secondary">${window._lc.forms.group_moderator_add.remove_post_desc}</span>
+                                <span class="text-sm text-secondary">${t("forms.group_moderator_add.remove_post_desc")}</span>
                             </div>
                             ${Toggle.switch({
                                 name: "can-deleted-message",
                                 checked: false,
                                 toggleText: {
-                                    on: window._lc.forms.group_moderator_add.enabled,
-                                    off: window._lc.forms.group_moderator_add.disabled
+                                    on: t("forms.group_moderator_add.enabled"),
+                                    off: t("forms.group_moderator_add.disabled")
                                 }
                             })}
                         </div>
@@ -328,16 +329,16 @@ export class GroupAddModerator {
                                     <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                         ${Icons.icon("message-off", { settings: { size: 20 } })?.outerHTML ?? ""}
                                     </span>
-                                    ${window._lc.forms.group_moderator_add.user_all_post_remove}
+                                    ${t("forms.group_moderator_add.user_all_post_remove")}
                                 </span>
-                                <span class="text-sm text-secondary">${window._lc.forms.group_moderator_add.user_all_post_remove_desc}</span>
+                                <span class="text-sm text-secondary">${t("forms.group_moderator_add.user_all_post_remove_desc")}</span>
                             </div>
                             ${Toggle.switch({
                                 name: "can-clean-messages",
                                 checked: false,
                                 toggleText: {
-                                    on: window._lc.forms.group_moderator_add.enabled,
-                                    off: window._lc.forms.group_moderator_add.disabled
+                                    on: t("forms.group_moderator_add.enabled"),
+                                    off: t("forms.group_moderator_add.disabled")
                                 }
                             })}
                         </div>
@@ -348,16 +349,16 @@ export class GroupAddModerator {
                                     <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                         ${Icons.icon("ban", { settings: { size: 20 } })?.outerHTML ?? ""}
                                     </span>
-                                    ${window._lc.forms.group_moderator_add.block_user}
+                                    ${t("forms.group_moderator_add.block_user")}
                                 </span>
-                                <span class="text-sm text-secondary">${window._lc.forms.group_moderator_add.block_user_desc}</span>
+                                <span class="text-sm text-secondary">${t("forms.group_moderator_add.block_user_desc")}</span>
                             </div>
                             ${Toggle.switch({
                                 name: "can-restrict-members",
                                 checked: false,
                                 toggleText: {
-                                    on: window._lc.forms.group_moderator_add.enabled,
-                                    off: window._lc.forms.group_moderator_add.disabled
+                                    on: t("forms.group_moderator_add.enabled"),
+                                    off: t("forms.group_moderator_add.disabled")
                                 }
                             })}
                         </div>

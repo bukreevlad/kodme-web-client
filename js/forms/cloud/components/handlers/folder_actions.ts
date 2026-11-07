@@ -17,6 +17,7 @@ import { ShareLinks } from "../../dialogs/share_links/index.js";
 // Импортируем типы
 import type { PopoverMenuInput } from "../../../../components/overlay/popover_menu.js";
 import type { CloudFolderItemHandle } from "../folder_item.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -45,7 +46,7 @@ export async function openFolderActions(event: MouseEvent, item: CloudFolderItem
         // ================================
         // Открыть папку
         menuItems.push({
-            text: window._lc.forms.cloud.actions.open,
+            text: t("forms.cloud.actions.open"),
             iconName: "folder-open",
             onClick: () => shared
                 ? openSharedFolderHandler(item.form, item.data)
@@ -56,7 +57,7 @@ export async function openFolderActions(event: MouseEvent, item: CloudFolderItem
         // Поделиться (создать ссылку)
         if (!shared) {
             menuItems.push({
-                text: window._lc.forms.cloud.actions.share,
+                text: t("forms.cloud.actions.share"),
                 iconName: "share",
                 onClick: () => new CreateShareLink({ form: item.form, item: item.data })
             });
@@ -64,7 +65,7 @@ export async function openFolderActions(event: MouseEvent, item: CloudFolderItem
             // ================================
             // Ссылки (список ссылок элемента)
             menuItems.push({
-                text: window._lc.forms.cloud.actions.links,
+                text: t("forms.cloud.actions.links"),
                 iconName: "link",
                 onClick: () => new ShareLinks({ form: item.form, item: item.data })
             });
@@ -74,7 +75,7 @@ export async function openFolderActions(event: MouseEvent, item: CloudFolderItem
         // Удалить папку (по ссылке сервер проверит право записи)
         menuItems.push({ text: "", isSeparator: true }); // text обязателен типом пункта, при isSeparator не читается
         menuItems.push({
-            text: window._lc.forms.cloud.actions.remove,
+            text: t("forms.cloud.actions.remove"),
             iconName: "trash",
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => removeFolderHandler(item.form, item.data)

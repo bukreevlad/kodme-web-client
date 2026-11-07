@@ -12,6 +12,7 @@ import { removeAvailableLinkHandler } from "../../handlers/remove_available_link
 // Импортируем типы
 import type { PopoverMenuInput } from "../../../../components/overlay/popover_menu.js";
 import type { CloudAvailableItemHandle } from "../available_item.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -35,7 +36,7 @@ export async function openAvailableActions(event: MouseEvent, item: CloudAvailab
         // ================================
         // Открыть ссылку
         menuItems.push({
-            text: window._lc.forms.cloud.actions.open,
+            text: t("forms.cloud.actions.open"),
             iconName: "link",
             onClick: () => openAvailableLinkHandler(item.form, item.data)
         });
@@ -44,7 +45,7 @@ export async function openAvailableActions(event: MouseEvent, item: CloudAvailab
         // Удалить из «Доступное для меня»
         menuItems.push({ text: "", isSeparator: true }); // text обязателен типом пункта, при isSeparator не читается
         menuItems.push({
-            text: window._lc.forms.cloud.actions.remove,
+            text: t("forms.cloud.actions.remove"),
             iconName: "trash",
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => removeAvailableLinkHandler(item.form, item.data)

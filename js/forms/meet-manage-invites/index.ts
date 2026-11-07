@@ -31,6 +31,7 @@ import { onInvitesScrollHandler } from "./handlers/on_invites_scroll.js";
 
 // Импортируем типы
 import type { MeetInviteRecord } from "./types.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы управления приглашениями конференции.
@@ -317,8 +318,8 @@ export class MeetManageInvites {
                     <div data-list class="flex flex-col gap-0 p-2 w-full max-w-[var(--form-max-content-width)] m-auto"></div>
 
                     ${EmptyState.create({
-                        title: window._lc.forms.meet_manage_invites.empty.title,
-                        description: window._lc.forms.meet_manage_invites.empty.desc,
+                        title: t("forms.meet_manage_invites.empty.title"),
+                        description: t("forms.meet_manage_invites.empty.desc"),
                         icon: "link",
                         compact: true,
                         attributes: ["data-empty"],

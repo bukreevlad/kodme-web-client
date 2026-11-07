@@ -18,6 +18,7 @@ import type { MeetPlay } from "../../index.js";
 import type { MeetBlockFlag, MeetTriggerEvent } from "../../types.js";
 import type { PopoverMenuItem } from "../../../../components/overlay/popover_menu.js";
 import type { Participant, RemoteParticipant } from "livekit-client";
+import { I18n, t } from "../../../../utils/i18n/index.js";
 
 /**
  * Иконки пунктов меню по флагам блокировки.
@@ -96,8 +97,8 @@ export async function participantMenuHandler(
 
                     moderationItems.push({
                         text: willBlock
-                            ? window._lc.forms.meet_play.context_menu.block[flag]
-                            : window._lc.forms.meet_play.context_menu.unblock[flag],
+                            ? I18n.tree.forms.meet_play.context_menu.block[flag]
+                            : I18n.tree.forms.meet_play.context_menu.unblock[flag],
                         iconName: willBlock ? FLAG_ICONS[flag].block : FLAG_ICONS[flag].unblock,
                         onClick: () => muteParticipantHandler(form, participant, flag)
                     });
@@ -110,8 +111,8 @@ export async function participantMenuHandler(
             if (!isLocal) {
                 moderationItems.push({
                     text: isCast
-                        ? window._lc.forms.meet_play.context_menu.remove_cast
-                        : window._lc.forms.meet_play.context_menu.remove_participant,
+                        ? t("forms.meet_play.context_menu.remove_cast")
+                        : t("forms.meet_play.context_menu.remove_participant"),
                     iconName: "user-x",
                     onClick: () => removeParticipantHandler(form, participant)
                 });
@@ -127,8 +128,8 @@ export async function participantMenuHandler(
         const isPinned = form?.pinnedIdentity === identity;
         menuItems.push({
             text: isPinned
-                ? window._lc.forms.meet_play.context_menu.unpin
-                : window._lc.forms.meet_play.context_menu.make_main,
+                ? t("forms.meet_play.context_menu.unpin")
+                : t("forms.meet_play.context_menu.make_main"),
             iconName: isPinned ? "pinned-off" : "pinned",
             onClick: () => pinParticipantHandler(form, identity)
         });

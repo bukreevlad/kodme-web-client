@@ -12,6 +12,7 @@ import type { CloudPaginationDirection } from "../types.js";
 import type { CloudFolderContent, GetFolderData } from "../requests/get_folder.js";
 import type { OpenShareLinkResult } from "../requests/open_share_link.js";
 import type { Cloud } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * Минимальный интервал между одинаковыми тостами ошибки при догрузке по
@@ -224,8 +225,8 @@ function _toastError(form: Cloud, error: unknown, options: { shared: boolean, fr
     toastError(error, {
         context: `[app][cloud][get-folder]${options.shared ? "[shared]" : ""}`,
         codes: LOAD_ERROR_CODES,
-        text: window._lc?.forms?.cloud?.toasts?.load_error,
-        fallback: window._lc?.forms?.cloud?.toasts?.load_error
+        text: t("forms.cloud.toasts.load_error"),
+        fallback: t("forms.cloud.toasts.load_error")
     });
 
 }

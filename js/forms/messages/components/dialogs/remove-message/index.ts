@@ -17,6 +17,7 @@ import { Messages } from "../../../../messages/index.js";
 
 // Импортируем handlers
 import { removeHandler } from "./handlers/remove.js";
+import { t } from "../../../../../utils/i18n/index.js";
 
 /**
  * Ответ диалога удаления сообщения вызывающему коду.
@@ -255,7 +256,7 @@ export class RemoveMessage {
         
             <div class="cdm-modal remove-message flex flex-col p-0 gap-0 ${CDM_MODAL_CLASSES()}">
                  <div class="${CDM_MODAL_HEADER_CLASSES()}">
-                    <span class="flex flex-row gap-2 items-center font-semibold text-lg">${window._lc.forms.messages.components.messages.dialogs.remove_message_confirm.desc}</span>
+                    <span class="flex flex-row gap-2 items-center font-semibold text-lg">${t("forms.messages.components.messages.dialogs.remove_message_confirm.desc")}</span>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "x" })}
                 </div>
                  <div class="${CDM_MODAL_CONTENT_CLASSES()}">
@@ -264,7 +265,7 @@ export class RemoveMessage {
                         ${Toggle.checkbox({
                             name: "for-all",
                             checked: false,
-                            text: window._lc.forms.messages.components.messages.dialogs.remove_message_confirm.for_all
+                            text: t("forms.messages.components.messages.dialogs.remove_message_confirm.for_all")
                         })}
                     </div>
 
@@ -274,13 +275,13 @@ export class RemoveMessage {
                         shape: "square",
                         attributes: ["action-close"],
                         classes: ["w-full"],
-                        text: window._lc.forms.messages.components.messages.dialogs.remove_message_confirm.action_cancel
+                        text: t("forms.messages.components.messages.dialogs.remove_message_confirm.action_cancel")
                     })}
                                 ${Buttons.danger({
                         shape: "square",
                         attributes: ["action-remove"],
                         classes: ["w-full"],
-                        text: window._lc.forms.messages.components.messages.dialogs.remove_message_confirm.action_remove
+                        text: t("forms.messages.components.messages.dialogs.remove_message_confirm.action_remove")
                     })}
                 </div>
             </div>

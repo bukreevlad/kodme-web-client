@@ -14,6 +14,7 @@ import { PasskeyRenameDialog } from "../../user-passkey-rename/index.js";
 // Импортируем типы
 import type { UserSettingSecurity } from "../index.js";
 import type { PasskeyListItem } from "../types.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -38,7 +39,7 @@ export function renamePasskeyHandler(form: UserSettingSecurity, data: PasskeyLis
 
                     // Пустое имя — сохранять нечего
                     if (!name) {
-                        Toast.error(window._lc.forms.user_setting_security.toasts.name_required);
+                        Toast.error(t("forms.user_setting_security.toasts.name_required"));
                         return;
                     }
 
@@ -59,7 +60,7 @@ export function renamePasskeyHandler(form: UserSettingSecurity, data: PasskeyLis
                         element.querySelector<HTMLElement>(".name")?.replaceChildren(document.createTextNode(name));
 
                         // Toast: ключ переименован
-                        Toast.success(window._lc.forms.user_setting_security.toasts.passkey_renamed);
+                        Toast.success(t("forms.user_setting_security.toasts.passkey_renamed"));
 
                     }
 
@@ -71,25 +72,25 @@ export function renamePasskeyHandler(form: UserSettingSecurity, data: PasskeyLis
 
                     // Если ключ не найден
                     if (getErrorMessage(error).includes("NOT_FOUND")) {
-                        Toast.error(window._lc.forms.user_setting_security.toasts.passkey_not_found);
+                        Toast.error(t("forms.user_setting_security.toasts.passkey_not_found"));
                         isToastShown = true;
                     }
 
                     // Если имя пустое или слишком длинное
                     if (getErrorMessage(error).includes("NAME_REQUIRED") || getErrorMessage(error).includes("INVALID_NAME")) {
-                        Toast.error(window._lc.forms.user_setting_security.toasts.invalid_name);
+                        Toast.error(t("forms.user_setting_security.toasts.invalid_name"));
                         isToastShown = true;
                     }
 
                     // Если превышен лимит запросов
                     if (getErrorMessage(error).includes("RATE_LIMIT_EXCEEDED") || getErrorStatus(error) === 429) {
-                        Toast.warning(window._lc.forms.user_setting_security.toasts.too_many_requests);
+                        Toast.warning(t("forms.user_setting_security.toasts.too_many_requests"));
                         isToastShown = true;
                     }
 
                     // Если ошибка не распознана — показываем общую
                     if (!isToastShown) {
-                        Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+                        Toast.error(t("api.errors.server_error"));
                     }
 
                 }

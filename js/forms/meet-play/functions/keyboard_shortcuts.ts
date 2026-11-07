@@ -19,6 +19,7 @@ import { canHandleShortcut, SHORTCUTS } from "./shortcuts.js";
 // Импортируем типы
 import type { MeetPlay } from "../index.js";
 import type { MeetBlockFlag } from "../types.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * Проверяет, не запрещён ли источник локальному участнику.
@@ -88,7 +89,7 @@ export function bindKeyboardShortcuts(form: MeetPlay): () => void {
 
             // Меню блокировкой не бывает — оно нужно всегда
             if (shortcut.flag && isSourceBlocked(form, shortcut.flag)) {
-                Toast.warning(window._lc.forms.meet_play.blocked_by_organizer);
+                Toast.warning(t("forms.meet_play.blocked_by_organizer"));
                 return;
             }
 

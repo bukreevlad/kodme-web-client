@@ -17,6 +17,7 @@ import { updatePasskeysEmptyState } from "./update_empty_state.js";
 // Импортируем типы
 import type { UserSettingSecurity } from "../index.js";
 import type { PasskeyListItem } from "../types.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -67,7 +68,7 @@ export async function getPasskeys(form: UserSettingSecurity): Promise<void> {
         }
 
         // Прочая ошибка сервера
-        Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+        Toast.error(t("api.errors.server_error"));
     }
 
 }

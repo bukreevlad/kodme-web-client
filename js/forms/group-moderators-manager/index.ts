@@ -31,6 +31,7 @@ import { ChannelProfile } from "../channel-profile/index.js";
 
 // Импортируем типы
 import type { GroupModeratorRecord } from "./types.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы менеджера модераторов группы.
@@ -308,7 +309,7 @@ export class GroupModeratorsManager {
             attributes: ["action-close"],
             icon: "ArrowLeft"
         })}
-                        <span data-title class="flex flex-row gap-2 items-center font-semibold text-lg">${window._lc.forms.group_moderators_manager.title}</span>
+                        <span data-title class="flex flex-row gap-2 items-center font-semibold text-lg">${t("forms.group_moderators_manager.title")}</span>
                     </div>
                     ${Buttons.create({
             intent: "transparent",
@@ -321,8 +322,8 @@ export class GroupModeratorsManager {
                     <div data-list class="flex flex-col gap-0 p-2 w-full"></div>
 
                     ${EmptyState.create({
-                        title: window._lc.forms.group_moderators_manager.empty.title,
-                        description: window._lc.forms.group_moderators_manager.empty.desc,
+                        title: t("forms.group_moderators_manager.empty.title"),
+                        description: t("forms.group_moderators_manager.empty.desc"),
                         icon: "shield-check",
                         compact: true,
                         attributes: ["data-empty"],

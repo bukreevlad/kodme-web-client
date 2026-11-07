@@ -10,6 +10,7 @@ import { Buttons } from "../../../../components/buttons.js";
 
 // Импортируем типы
 import type { AppPermission } from "../../../../bot-app-sdk.js";
+import { I18n, t } from "../../../../utils/i18n/index.js";
 
 /** Маппинг типа доступа к ключу локали. */
 const PERMISSION_LOCALE_KEYS: Record<AppPermission, "camera" | "microphone" | "geolocation" | "clipboard_write"> = {
@@ -165,10 +166,11 @@ export class PermissionDialog {
         const desc = this.tpl?.querySelector<HTMLElement>("[data-desc]");
         if (!desc) return;
 
-        const permissionName = window._lc.forms.bot_app.permission[PERMISSION_LOCALE_KEYS[this.options.permission]];
-        const text = window._lc.forms.bot_app.permission.desc
-            .replace("{app}", () => this.options.app_name)
-            .replace("{permission}", () => permissionName);
+        const permissionName = I18n.tree.forms.bot_app.permission[PERMISSION_LOCALE_KEYS[this.options.permission]];
+        const text = t("forms.bot_app.permission.desc", {
+            app: this.options.app_name,
+            permission: permissionName
+        });
 
         desc.textContent = text;
 
@@ -198,15 +200,15 @@ export class PermissionDialog {
 
             <div class="cdm-modal bot-app-permission flex flex-col p-0 gap-0 ${CDM_MODAL_CLASSES()}">
                 <div class="${CDM_MODAL_HEADER_CLASSES()}">
-                    <span class="flex flex-row gap-2 items-center font-semibold text-base">${window._lc.forms.bot_app.permission.title}</span>
+                    <span class="flex flex-row gap-2 items-center font-semibold text-base">${t("forms.bot_app.permission.title")}</span>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "x" })}
                 </div>
                 <div class="${CDM_MODAL_CONTENT_CLASSES()}">
                     <span data-desc class="text-secondary text-sm"></span>
                 </div>
                 <div class="${CDM_MODAL_FOOTER_CLASSES()}">
-                    ${Buttons.create({ attributes: ["action-deny"], classes: ["w-full", "h-11"], text: window._lc.forms.bot_app.permission.deny })}
-                    ${Buttons.primary({ attributes: ["action-allow"], classes: ["w-full", "h-11"], text: window._lc.forms.bot_app.permission.allow })}
+                    ${Buttons.create({ attributes: ["action-deny"], classes: ["w-full", "h-11"], text: t("forms.bot_app.permission.deny") })}
+                    ${Buttons.primary({ attributes: ["action-allow"], classes: ["w-full", "h-11"], text: t("forms.bot_app.permission.allow") })}
                 </div>
             </div>
 

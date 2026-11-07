@@ -1,6 +1,6 @@
 // Импортируем utils
 import { Logger } from "../../../utils/logs/logger.js";
-import { getDeclension } from "../../../utils/string/declensions.js";
+import { I18n } from "../../../utils/i18n/index.js";
 
 // Импортируем типы
 import type { Call } from "../index.js";
@@ -30,7 +30,7 @@ export function updateParticipantsCount(form: Call): void {
         // ---------- ЗАГОЛОВОК ----------
         const name = form?.tpl?.querySelector<HTMLElement>(":scope >[data-header] [data-name]");
         if (name) {
-            const locale = window._lc.forms.call;
+            const locale = I18n.tree.forms.call;
             name.textContent = total >= 3
                 ? locale.group_title
                 : (form.displayName || locale.title);
@@ -45,9 +45,8 @@ export function updateParticipantsCount(form: Call): void {
             return;
         }
 
-        const locale = window._lc.forms.call.participants;
         element.classList.remove("hidden");
-        element.textContent = `${total} ${getDeclension(total, locale.count)}`;
+        I18n.setCount(element, "forms.call.participants.count", total);
         // ---------- ФОРМАТ ----------
 
     } catch (error) {

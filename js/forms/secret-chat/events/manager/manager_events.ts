@@ -15,6 +15,7 @@ import { renderHeader } from "../../functions/render_header.js";
 // Импортируем типы
 import type { SecretChatStoreAddOptions } from "../../types.js";
 import type { SecretChat } from "../../index.js";
+import { I18n, t } from "../../../../utils/i18n/index.js";
 
 /** Время показа статуса активности собеседника («печатает…»), мс. */
 const TYPING_TIMEOUT_MS = 3000;
@@ -28,7 +29,7 @@ const TYPING_TIMEOUT_MS = 3000;
  */
 function typingLabel(status: string): string {
 
-    const locale = window._lc.forms.secret_chat.typing;
+    const locale = I18n.tree.forms.secret_chat.typing;
     switch (status) {
         case "recording_audio": return locale.recording_audio;
         case "recording_video": return locale.recording_video;
@@ -195,8 +196,8 @@ export function subscribeManagerEvents(form: SecretChat): () => void {
         manager.on("chat::invite-ended", ({ chatId, reason }) => {
             if (chatId !== form.chatId || reason === "taken" || reason === "cancelled") return;
             Toast.warning(reason === "declined"
-                ? window._lc.forms.secret_chat.toasts.invite_declined
-                : window._lc.forms.secret_chat.toasts.invite_timeout, { position: "bottom-center" });
+                ? t("forms.secret_chat.toasts.invite_declined")
+                : t("forms.secret_chat.toasts.invite_timeout"), { position: "bottom-center" });
         })
 
     ];

@@ -21,6 +21,7 @@ import { addHandler } from "./handlers/add.js";
 
 // Импортируем типы
 import type { BotCategoryDraft } from "../bot-settings/types.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки диалога добавления папки.
@@ -239,7 +240,7 @@ export class AddBotCategory {
             <div class="cdm-form bot-add-category flex flex-col gap-0 ${CDM_FORM_CLASSES()} w-full">
                 <div class="header flex flex-row gap-2 p-2 items-center ${CDM_FORM_HEADER_CLASSES()}">
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "ArrowLeft" })}
-                    <span class="flex-1 font-semibold text-base truncate">${window._lc.forms.bot_settings.dialogs.add_category.title}</span>
+                    <span class="flex-1 font-semibold text-base truncate">${t("forms.bot_settings.dialogs.add_category.title")}</span>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-add"], icon: "device-floppy" })}
                 </div>
                  <div class="content w-full h-full flex ${CDM_FORM_CONTENT_CLASSES()}">
@@ -250,9 +251,9 @@ export class AddBotCategory {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("label", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.bot_settings.dialogs.add_category.name}
+                                ${t("forms.bot_settings.dialogs.add_category.name")}
                             </span>
-                            ${Inputs.create({ placeholder: window._lc.forms.bot_settings.dialogs.add_category.name, name: "name" })}
+                            ${Inputs.create({ placeholder: t("forms.bot_settings.dialogs.add_category.name"), name: "name" })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -260,9 +261,9 @@ export class AddBotCategory {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("message-circle", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.bot_settings.dialogs.add_category.about}
+                                ${t("forms.bot_settings.dialogs.add_category.about")}
                             </span>
-                            ${Inputs.textarea({ placeholder: window._lc.forms.bot_settings.dialogs.add_category.about, name: "about" })}
+                            ${Inputs.textarea({ placeholder: t("forms.bot_settings.dialogs.add_category.about"), name: "about" })}
                         </div>
 
                     </div>

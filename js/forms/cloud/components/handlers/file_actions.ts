@@ -16,6 +16,7 @@ import { ShareLinks } from "../../dialogs/share_links/index.js";
 // Импортируем типы
 import type { PopoverMenuInput } from "../../../../components/overlay/popover_menu.js";
 import type { CloudFileItemHandle } from "../file_item.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -44,7 +45,7 @@ export async function openFileActions(event: MouseEvent, item: CloudFileItemHand
         // ================================
         // Скачать файл
         menuItems.push({
-            text: window._lc.forms.cloud.actions.download,
+            text: t("forms.cloud.actions.download"),
             iconName: "download",
             onClick: () => downloadFileHandler(item.data)
         });
@@ -53,7 +54,7 @@ export async function openFileActions(event: MouseEvent, item: CloudFileItemHand
         // Поделиться (создать ссылку)
         if (!shared) {
             menuItems.push({
-                text: window._lc.forms.cloud.actions.share,
+                text: t("forms.cloud.actions.share"),
                 iconName: "share",
                 onClick: () => new CreateShareLink({ form: item.form, item: item.data })
             });
@@ -61,7 +62,7 @@ export async function openFileActions(event: MouseEvent, item: CloudFileItemHand
             // ================================
             // Ссылки (список ссылок элемента)
             menuItems.push({
-                text: window._lc.forms.cloud.actions.links,
+                text: t("forms.cloud.actions.links"),
                 iconName: "link",
                 onClick: () => new ShareLinks({ form: item.form, item: item.data })
             });
@@ -71,7 +72,7 @@ export async function openFileActions(event: MouseEvent, item: CloudFileItemHand
         // Удалить файл (по ссылке сервер проверит право записи)
         menuItems.push({ text: "", isSeparator: true }); // text обязателен типом пункта, при isSeparator не читается
         menuItems.push({
-            text: window._lc.forms.cloud.actions.remove,
+            text: t("forms.cloud.actions.remove"),
             iconName: "trash",
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => removeFileHandler(item.form, item.data)

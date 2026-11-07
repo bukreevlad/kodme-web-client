@@ -16,6 +16,7 @@ import { readEventPoint } from "../../../utils/dom/read_event_point.js";
 // Импортируем типы
 import type { ChannelSectionItemData, ChannelProfile } from "../types.js";
 import type { AudioPlayerCallback, AudioPlayerTrack } from "../../../utils/audio/audio_player.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -317,8 +318,8 @@ export class VoiceItem {
                 .filter(at => at.metadata?.flags?.is_audio_note === true || isKind("audio", at.mime_type))
                 .map(at => ({
                     ...at,
-                    author: at.author || this.data.display_name || window._lc.forms.messages.components.messages.voice_item.voice_message,
-                    title: at.title || window._lc.forms.messages.components.messages.voice_item.voice_note
+                    author: at.author || this.data.display_name || t("forms.messages.components.messages.voice_item.voice_message"),
+                    title: at.title || t("forms.messages.components.messages.voice_item.voice_note")
                 }));
 
             // Текущий индекс трека

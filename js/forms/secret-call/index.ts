@@ -30,6 +30,7 @@ import { hangupHandler } from "./handlers/hangup.js";
 // Импортируем типы
 import type { GestureController } from "../../utils/gesture_controller.js";
 import type { SecretCallState } from "../../core/managers/secret_calls_manager.js";
+import { I18n } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы секретного звонка.
@@ -331,7 +332,7 @@ export class SecretCall {
     _template(): HTMLElement | null {
 
         // Локализация
-        const locale = window._lc.forms.secret_call;
+        const locale = I18n.tree.forms.secret_call;
         const footer = locale.footer;
 
         return new DOMParser().parseFromString(`

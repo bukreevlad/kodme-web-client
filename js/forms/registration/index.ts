@@ -18,6 +18,7 @@ import { registrationHandler } from "./handlers/registration.js";
 import { closeHandler } from "./handlers/close.js";
 import { backEmailHandler } from "./handlers/back_email.js";
 import { backNamesHandler } from "./handlers/back_names.js";
+import { t } from "../../utils/i18n/index.js";
 
 // Form
 export class Registration {
@@ -205,9 +206,7 @@ export class Registration {
             if (stepsRoot) {
                 AuthSteps.update(stepsRoot, {
                     current: index,
-                    label: window._lc.forms.registration.step
-                        .replace("{current}", String(index + 1))
-                        .replace("{total}", String(order.length))
+                    label: t("forms.registration.step", { current: index + 1, total: order.length })
                 });
             }
 
@@ -223,9 +222,7 @@ export class Registration {
     _template(): HTMLElement | null {
 
         // Подпись стартового шага
-        const stepLabel = window._lc.forms.registration.step
-            .replace("{current}", String(1))
-            .replace("{total}", String(3));
+        const stepLabel = t("forms.registration.step", { current: 1, total: 3 });
 
         return new DOMParser().parseFromString(`
 
@@ -233,8 +230,8 @@ export class Registration {
                 <div class="${CDM_MODAL_CENTERED_CONTENT_CLASSES()}">
 
                     <div class="flex flex-col items-center text-center gap-0.5 select-none">
-                        <span class="text-base font-bold mt-1 leading-snug">${window._lc.forms.registration.title}</span>
-                        <span class="text-sm text-secondary font-normal leading-snug">${window._lc.forms.registration.subtitle}</span>
+                        <span class="text-base font-bold mt-1 leading-snug">${t("forms.registration.title")}</span>
+                        <span class="text-sm text-secondary font-normal leading-snug">${t("forms.registration.subtitle")}</span>
                     </div>
 
                     ${AuthSteps.html({
@@ -244,9 +241,9 @@ export class Registration {
                     })}
 
                     <ul class="cdm-tabs flex flex-row hidden" id="reg-tabs">
-                        <li data-target="email" class="item"><span>${window._lc.forms.registration.email}</span></li>
-                        <li data-target="names" class="item"><span>${window._lc.forms.registration.you_name}</span></li>
-                        <li data-target="password" class="item"><span>${window._lc.forms.registration.password}</span></li>
+                        <li data-target="email" class="item"><span>${t("forms.registration.email")}</span></li>
+                        <li data-target="names" class="item"><span>${t("forms.registration.you_name")}</span></li>
+                        <li data-target="password" class="item"><span>${t("forms.registration.password")}</span></li>
                     </ul>
 
                     <div class="cdm-tabs-content">
@@ -254,9 +251,9 @@ export class Registration {
                         <!-- Шаг 1: Email -->
                         <div class="item active flex flex-col gap-5" data-target="email">
                             <div class="flex flex-col gap-2 w-full">
-                                <span class="text-sm font-semibold">${window._lc.forms.registration.email}</span>
+                                <span class="text-sm font-semibold">${t("forms.registration.email")}</span>
                                 ${Inputs.email({
-                                    placeholder: window._lc.forms.registration.email,
+                                    placeholder: t("forms.registration.email"),
                                     name: "email",
                                     icon: "mail",
                                     attributes: ["required"]
@@ -266,13 +263,13 @@ export class Registration {
                                 ${Buttons.create({
                                     attributes: ["action-back"],
                                     classes: ["flex-1"],
-                                    text: window._lc.forms.registration.back,
+                                    text: t("forms.registration.back"),
                                     icon: "arrow-left"
                                 })}
                                 ${Buttons.primary({
                                     attributes: ["action-set-name"],
                                     classes: ["flex-1"],
-                                    text: window._lc.forms.registration.next
+                                    text: t("forms.registration.next")
                                 })}
                             </div>
                         </div>
@@ -280,18 +277,18 @@ export class Registration {
                         <!-- Шаг 2: Имя и фамилия -->
                         <div class="item flex flex-col gap-5" data-target="names">
                             <div class="flex flex-col gap-2 w-full">
-                                <span class="text-sm font-semibold">${window._lc.forms.registration.first_name}</span>
+                                <span class="text-sm font-semibold">${t("forms.registration.first_name")}</span>
                                 ${Inputs.create({
-                                    placeholder: window._lc.forms.registration.first_name,
+                                    placeholder: t("forms.registration.first_name"),
                                     name: "first-name",
                                     icon: "user",
                                     attributes: ["required"]
                                 })}
                             </div>
                             <div class="flex flex-col gap-2 w-full">
-                                <span class="text-sm font-semibold">${window._lc.forms.registration.last_name}</span>
+                                <span class="text-sm font-semibold">${t("forms.registration.last_name")}</span>
                                 ${Inputs.create({
-                                    placeholder: window._lc.forms.registration.last_name,
+                                    placeholder: t("forms.registration.last_name"),
                                     name: "last-name",
                                     icon: "user-circle",
                                     attributes: ["required"]
@@ -301,13 +298,13 @@ export class Registration {
                                 ${Buttons.create({
                                     attributes: ["action-back-email"],
                                     classes: ["flex-1"],
-                                    text: window._lc.forms.registration.back,
+                                    text: t("forms.registration.back"),
                                     icon: "arrow-left"
                                 })}
                                 ${Buttons.primary({
                                     attributes: ["action-set-password"],
                                     classes: ["flex-1"],
-                                    text: window._lc.forms.registration.next
+                                    text: t("forms.registration.next")
                                 })}
                             </div>
                         </div>
@@ -315,18 +312,18 @@ export class Registration {
                         <!-- Шаг 3: Пароль -->
                         <div class="item flex flex-col gap-5" data-target="password">
                             <div class="flex flex-col gap-2 w-full">
-                                <span class="text-sm font-semibold">${window._lc.forms.registration.password}</span>
+                                <span class="text-sm font-semibold">${t("forms.registration.password")}</span>
                                 ${Inputs.password({
-                                    placeholder: window._lc.forms.registration.password,
+                                    placeholder: t("forms.registration.password"),
                                     name: "password",
                                     icon: "lock",
                                     attributes: ["required"]
                                 })}
                             </div>
                             <div class="flex flex-col gap-2 w-full">
-                                <span class="text-sm font-semibold">${window._lc.forms.registration.retry_password}</span>
+                                <span class="text-sm font-semibold">${t("forms.registration.retry_password")}</span>
                                 ${Inputs.password({
-                                    placeholder: window._lc.forms.registration.retry_password,
+                                    placeholder: t("forms.registration.retry_password"),
                                     name: "retry-password",
                                     icon: "lock-check",
                                     attributes: ["required"]
@@ -336,13 +333,13 @@ export class Registration {
                                 ${Buttons.create({
                                     attributes: ["action-back-names"],
                                     classes: ["flex-1"],
-                                    text: window._lc.forms.registration.back,
+                                    text: t("forms.registration.back"),
                                     icon: "arrow-left"
                                 })}
                                 ${Buttons.primary({
                                     attributes: ["action-registration"],
                                     classes: ["flex-1"],
-                                    text: window._lc.forms.registration.registration,
+                                    text: t("forms.registration.registration"),
                                     icon: "user-plus"
                                 })}
                             </div>
@@ -354,9 +351,9 @@ export class Registration {
 
                 <div class="${CDM_MODAL_FOOTER_CLASSES()}">
                     <div class="flex flex-1 flex-row items-center justify-center gap-1.5">
-                    <span class="text-sm text-secondary">${window._lc.forms.auth.have_account}</span>
+                    <span class="text-sm text-secondary">${t("forms.auth.have_account")}</span>
                     ${Buttons.link({
-                        text: window._lc.forms.login.login,
+                        text: t("forms.login.login"),
                         attributes: ["action-to-login"],
                         classes: ["text-sm"]
                     })}

@@ -11,6 +11,7 @@ import { updateParticipantsCount } from "./update_participants_count.js";
 
 // Импортируем типы
 import type { Call } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -85,7 +86,7 @@ export async function syncStore(form: Call): Promise<void> {
         Logger.error("🚨 [app][call]: Ошибка SyncStore:", error);
 
         // Toast
-        Toast.error(window._lc.forms.call.toasts.sync_error);
+        Toast.error(t("forms.call.toasts.sync_error"));
 
     }
 

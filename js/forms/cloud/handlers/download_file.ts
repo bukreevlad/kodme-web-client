@@ -4,6 +4,7 @@ import { FileDownloader } from "../../../utils/network/file_downloader.js";
 
 // Импортируем components
 import { Toast } from "../../../components/toast.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * Данные файла для скачивания через storage API.
@@ -61,7 +62,7 @@ export async function downloadFileHandler(data: DownloadFileData): Promise<void>
             Logger.error(error);
 
             // Toast
-            Toast.error(window._lc.forms.cloud.toasts.download_error);
+            Toast.error(t("forms.cloud.toasts.download_error"));
         }
 
     }

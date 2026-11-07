@@ -5,6 +5,7 @@ import { PlatformBridge } from "./platform.bridge.js";
 
 // Импортируем forms
 import { BotApp } from "../forms/bot-app/index.js";
+import { t } from "./i18n/index.js";
 
 /**
  * Параметры применения темы приложения (setAppTheme).
@@ -42,7 +43,7 @@ export class Themes {
 
             // Получаем сессию из LocalStorage
             let session = LocalStorage.getLastActionSession();
-            if (!session && data.update_session) throw { text: "Не можем сохранить тему", class: "error" };
+            if (!session && data.update_session) throw { text: t("forms.themes.toasts.save_error"), class: "error" };
 
             // Если передан color_scheme
             if (data.color_scheme != undefined) {

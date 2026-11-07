@@ -16,6 +16,7 @@ import { Toggle } from "../../components/toggle.js";
 
 // Импортируем handlers
 import { createHandler } from "./handlers/create.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы создания канала.
@@ -224,10 +225,10 @@ export class ChannelCreate {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("label", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.channel_create.name}
+                                ${t("forms.channel_create.name")}
                             </span>
                             ${Inputs.create({
-                                placeholder: window._lc.forms.channel_create.name,
+                                placeholder: t("forms.channel_create.name"),
                                 name: "name",
                                 attributes: ["required"],
                             })}
@@ -238,10 +239,10 @@ export class ChannelCreate {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("message-circle", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.channel_create.about}
+                                ${t("forms.channel_create.about")}
                             </span>
                             ${Inputs.textarea({
-                                placeholder: window._lc.forms.channel_create.about,
+                                placeholder: t("forms.channel_create.about"),
                                 name: "about",
                                 rows: 4
                             })}
@@ -252,15 +253,15 @@ export class ChannelCreate {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("world", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.channel_create.type}
+                                ${t("forms.channel_create.type")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.channel_create.type_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.channel_create.type_desc")}</span>
                             ${Toggle.switch({
                                 name: "is-public",
                                 checked: true,
                                 toggleText: {
-                                    on: window._lc.forms.channel_create.opened,
-                                    off: window._lc.forms.channel_create.closed
+                                    on: t("forms.channel_create.opened"),
+                                    off: t("forms.channel_create.closed")
                                 }
                             })}
                         </div>
@@ -270,15 +271,15 @@ export class ChannelCreate {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("pencil", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.channel_create.can_posting}
+                                ${t("forms.channel_create.can_posting")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.channel_create.can_posting_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.channel_create.can_posting_desc")}</span>
                             ${Toggle.switch({
                                 name: "is-posting",
                                 checked: false,
                                 toggleText: {
-                                    on: window._lc.forms.channel_create.all_posting,
-                                    off: window._lc.forms.channel_create.admin_posting
+                                    on: t("forms.channel_create.all_posting"),
+                                    off: t("forms.channel_create.admin_posting")
                                 }
                             })}
                         </div>
@@ -288,15 +289,15 @@ export class ChannelCreate {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("message", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.channel_create.commenting}
+                                ${t("forms.channel_create.commenting")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.channel_create.commenting_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.channel_create.commenting_desc")}</span>
                             ${Toggle.switch({
                                 name: "is-commenting",
                                 checked: true,
                                 toggleText: {
-                                    on: window._lc.forms.channel_create.enabled,
-                                    off: window._lc.forms.channel_create.disabled
+                                    on: t("forms.channel_create.enabled"),
+                                    off: t("forms.channel_create.disabled")
                                 }
                             })}
                         </div>

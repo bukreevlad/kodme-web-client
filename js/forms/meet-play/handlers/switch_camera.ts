@@ -14,6 +14,7 @@ import { resolveStateBlocks } from "../functions/parse_room_state.js";
 // Импортируем типы
 import type { MeetPlay } from "../index.js";
 import type { MeetTriggerEvent } from "../types.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -39,7 +40,7 @@ export async function switchCameraHandler(event: MeetTriggerEvent, form: MeetPla
         // запрета организатора.
         if (resolveStateBlocks(form.roomState, participant.identity).video === true) {
 
-            Toast.warning(window._lc.forms.meet_play.blocked_by_organizer);
+            Toast.warning(t("forms.meet_play.blocked_by_organizer"));
 
             return;
 
@@ -107,7 +108,7 @@ export async function switchCameraHandler(event: MeetTriggerEvent, form: MeetPla
 
         Logger.error("❌ [LiveKit]: Ошибка ручной замены камеры:", error);
 
-        Toast.error(window._lc.forms.meet_play.toasts.camera_error);
+        Toast.error(t("forms.meet_play.toasts.camera_error"));
 
     }
 

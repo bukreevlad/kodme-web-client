@@ -11,6 +11,7 @@ import { removeAvatarRequest } from "../requests/remove_avatar.js";
 
 // Импортируем типы
 import type { GroupSettings } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -45,7 +46,7 @@ export async function removePhoto(form: GroupSettings): Promise<void> {
         }
 
         // Toast
-        Toast.success(window._lc.forms.group_settings.toasts.success_remove_avatar);
+        Toast.success(t("forms.group_settings.toasts.success_remove_avatar"));
 
     } catch (error) {
         Logger.error(error);
@@ -55,9 +56,9 @@ export async function removePhoto(form: GroupSettings): Promise<void> {
 
         // Отказ в доступе — свой текст, остальное — общий фолбэк
         if (info.isAccessDenied) {
-            Toast.error(window._lc.forms.group_settings.toasts.access_denied);
+            Toast.error(t("forms.group_settings.toasts.access_denied"));
         } else {
-            Toast.error(window._lc.forms.group_settings.toasts.remove_avatar_error);
+            Toast.error(t("forms.group_settings.toasts.remove_avatar_error"));
         }
     }
 

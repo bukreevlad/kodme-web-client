@@ -14,6 +14,7 @@ import { ChannelSettings } from "../channel-settings/index.js";
 
 // Импортируем handlers
 import { saveHandler } from "./handlers/save.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Данные формы установки ссылки канала.
@@ -224,14 +225,14 @@ export class ChannelSettingLink {
 
                     <div class="flex flex-col gap-3 p-3 max-w-[var(--form-max-content-width)] m-auto w-full h-full">
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
-                            <span class="flex flex-row gap-2 items-center font-semibold">${window._lc.forms.channel_setting_link.link}</span>
+                            <span class="flex flex-row gap-2 items-center font-semibold">${t("forms.channel_setting_link.link")}</span>
                             ${Inputs.create({
-            placeholder: window._lc.forms.channel_setting_link.link,
+            placeholder: t("forms.channel_setting_link.link"),
             name: "link",
             attributes: ["required"],
             classes: ["font-mono"]
         })}
-                            <span class="text-sm text-secondary">${window._lc.forms.channel_setting_link.set_link_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.channel_setting_link.set_link_desc")}</span>
                         </div>
                     </div>
 

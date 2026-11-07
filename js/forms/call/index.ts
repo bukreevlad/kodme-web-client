@@ -46,6 +46,7 @@ import { leaveRequest } from "./requests/leave.js";
 
 // Импортируем типы
 import type { CallAvatar, CallCloseReason, CallParticipantData, CallQualityLevel, CallState, CallTileFraction, CallViewMode } from "./types.js";
+import { I18n, t } from "../../utils/i18n/index.js";
 
 /**
  * Данные формы звонка (constructor).
@@ -489,7 +490,7 @@ export class Call {
             Logger.error("[app][call]: Ошибка при подготовке звонка", error);
 
             // Toast
-            Toast.error(window._lc.forms.call.toasts.start_error, {
+            Toast.error(t("forms.call.toasts.start_error"), {
                 position: "top-center"
             });
 
@@ -517,7 +518,7 @@ export class Call {
                 id: this.modal?.options.id,
                 data: {
                     instance: this,
-                    title: this.displayName || window._lc.forms.call.title
+                    title: this.displayName || t("forms.call.title")
                 }
             }
         }));
@@ -553,7 +554,7 @@ export class Call {
             Logger.warn("[app][call]: Не получен токен LiveKit, подключение не выполняется");
 
             // Toast
-            Toast.error(window._lc.forms.call.toasts.connection_failed, {
+            Toast.error(t("forms.call.toasts.connection_failed"), {
                 position: "top-center"
             });
 
@@ -611,7 +612,7 @@ export class Call {
     _update(): void {
 
         // Локализация
-        const locale = window._lc.forms.call;
+        const locale = I18n.tree.forms.call;
         const name = this.displayName || locale.title;
 
         // Имя собеседника в шапке (его же перезаписывает счётчик
@@ -750,7 +751,7 @@ export class Call {
     _template(): HTMLElement | null {
 
         // Локализация
-        const locale = window._lc.forms.call;
+        const locale = I18n.tree.forms.call;
         const footer = locale.footer;
 
         return new DOMParser().parseFromString(`

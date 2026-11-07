@@ -28,6 +28,7 @@ import { getMeetSettingsRequest } from "./requests/get_meet_settings.js";
 // Импортируем forms
 import { MeetManageInvites } from "../meet-manage-invites/index.js";
 import { MeetPlay } from "../meet-play/index.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы настроек конференции.
@@ -327,7 +328,7 @@ export class MeetSettings {
                             <div data-thumb-wrap class="relative flex flex-col items-center w-full h-full aspect-16/9 overflow-hidden rounded-md">
                                 <img data-thumbnail class="w-full h-full aspect-16/9 absolute bg-[var(--second-bg)] object-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
                             </div>
-                            ${Buttons.primary({ attributes: ["action-choose-thumb"], text: window._lc.forms.meet_settings.choose_thumb })}
+                            ${Buttons.primary({ attributes: ["action-choose-thumb"], text: t("forms.meet_settings.choose_thumb") })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -335,9 +336,9 @@ export class MeetSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("label", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.meet_settings.name}
+                                ${t("forms.meet_settings.name")}
                             </span>
-                            ${Inputs.create({ placeholder: window._lc.forms.meet_settings.name, name: "name", attributes: ["required"] })}
+                            ${Inputs.create({ placeholder: t("forms.meet_settings.name"), name: "name", attributes: ["required"] })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -345,9 +346,9 @@ export class MeetSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("message-circle", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.meet_settings.about}
+                                ${t("forms.meet_settings.about")}
                             </span>
-                            ${Inputs.textarea({ placeholder: window._lc.forms.meet_settings.about, name: "about", rows: 4 })}
+                            ${Inputs.textarea({ placeholder: t("forms.meet_settings.about"), name: "about", rows: 4 })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -355,15 +356,15 @@ export class MeetSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("world", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.meet_settings.is_public_cast}
+                                ${t("forms.meet_settings.is_public_cast")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.meet_settings.is_public_cast_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.meet_settings.is_public_cast_desc")}</span>
                             ${Toggle.switch({
             name: "is-public",
             checked: false,
             toggleText: {
-                on: window._lc.forms.meet_settings.opened,
-                off: window._lc.forms.meet_settings.closed
+                on: t("forms.meet_settings.opened"),
+                off: t("forms.meet_settings.closed")
             }
         })}
                         </div>
@@ -373,10 +374,10 @@ export class MeetSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("user-plus", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.meet_settings.invites}
+                                ${t("forms.meet_settings.invites")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.meet_settings.invites_desc}</span>
-                            ${Buttons.create({ attributes: ["action-manage-invites"], text: window._lc.forms.meet_settings.invites })}
+                            <span class="text-sm text-secondary">${t("forms.meet_settings.invites_desc")}</span>
+                            ${Buttons.create({ attributes: ["action-manage-invites"], text: t("forms.meet_settings.invites") })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -384,15 +385,15 @@ export class MeetSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("messages", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.meet_settings.is_chat_cast}
+                                ${t("forms.meet_settings.is_chat_cast")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.meet_settings.is_chat_cast_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.meet_settings.is_chat_cast_desc")}</span>
                             ${Toggle.switch({
             name: "is-chat",
             checked: false,
             toggleText: {
-                on: window._lc.forms.meet_settings.enabled,
-                off: window._lc.forms.meet_settings.disabled
+                on: t("forms.meet_settings.enabled"),
+                off: t("forms.meet_settings.disabled")
             }
         })}
                         </div>
@@ -402,10 +403,10 @@ export class MeetSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("trash", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.meet_settings.remove}
+                                ${t("forms.meet_settings.remove")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.meet_settings.remove_desc}</span>
-                            ${Buttons.danger({ attributes: ["action-remove"], text: window._lc.forms.meet_settings.remove })}
+                            <span class="text-sm text-secondary">${t("forms.meet_settings.remove_desc")}</span>
+                            ${Buttons.danger({ attributes: ["action-remove"], text: t("forms.meet_settings.remove") })}
                         </div>
 
                     </div>

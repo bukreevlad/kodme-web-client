@@ -7,6 +7,7 @@ import { Logger } from "../../../../../utils/logs/logger.js";
 // Импортируем components
 import { Overlay } from "../../../../../components/overlay/index.js";
 import { Buttons } from "../../../../../components/buttons.js";
+import { t } from "../../../../../utils/i18n/index.js";
 
 /**
  * Данные формы подтверждения перехода по внешней ссылке.
@@ -193,7 +194,7 @@ export class MessageUrlClickConfirm {
         
             <div class="cdm-modal message-url-click-confirm flex flex-col gap-0 ${CDM_MODAL_CLASSES()}">
                  <div class="${CDM_MODAL_HEADER_CLASSES()}">
-                    <span class="font-semibold text-lg">${window._lc.forms.messages.components.messages.dialogs.message_url_click_confirm.desc}</span>
+                    <span class="font-semibold text-lg">${t("forms.messages.components.messages.dialogs.message_url_click_confirm.desc")}</span>
                 </div>
                  <div class="${CDM_MODAL_CONTENT_CLASSES()} items-center">
 
@@ -205,13 +206,13 @@ export class MessageUrlClickConfirm {
                         shape: "square",
                         attributes: ["action-close"],
                         classes: ["w-full"],
-                        text: window._lc.forms.messages.components.messages.dialogs.message_url_click_confirm.cancel
+                        text: t("forms.messages.components.messages.dialogs.message_url_click_confirm.cancel")
                     })}
                     ${Buttons.primary({
                         shape: "square",
                         attributes: ["action-open"],
                         classes: ["w-full"],
-                        text: window._lc.forms.messages.components.messages.dialogs.message_url_click_confirm.open
+                        text: t("forms.messages.components.messages.dialogs.message_url_click_confirm.open")
                     })}
                 </div>
             </div>

@@ -13,6 +13,7 @@ import { createDialogRequest } from "../requests/create_dialog.js";
 
 // Импортируем типы
 import type { UserProfile } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -35,7 +36,7 @@ export async function createChatHandler(form: UserProfile): Promise<void> {
         form.modal?.close();
 
         // Toast
-        Toast.success(window._lc.forms.user_profile.toasts.dialog_created);
+        Toast.success(t("forms.user_profile.toasts.dialog_created"));
 
         // Открываем форму
         let instance = Messages.instances.get(channelId);
@@ -55,7 +56,7 @@ export async function createChatHandler(form: UserProfile): Promise<void> {
         if (getErrorMessage(error).includes("IDS_CANNOT_MATCH")) {
 
             // Toast
-            Toast.error(window._lc.forms.user_profile.toasts.ids_cannot_match);
+            Toast.error(t("forms.user_profile.toasts.ids_cannot_match"));
             isToastShown = true;
         }
 
@@ -63,7 +64,7 @@ export async function createChatHandler(form: UserProfile): Promise<void> {
         if (getErrorMessage(error).includes("USER_NOT_FOUND")) {
 
             // Toast
-            Toast.error(window._lc.forms.user_profile.toasts.user_not_found);
+            Toast.error(t("forms.user_profile.toasts.user_not_found"));
             isToastShown = true;
         }
 
@@ -71,13 +72,13 @@ export async function createChatHandler(form: UserProfile): Promise<void> {
         if (getErrorMessage(error).includes("ACCESS_DENIED")) {
 
             // Toast
-            Toast.error(window._lc.forms.user_profile.toasts.access_denied);
+            Toast.error(t("forms.user_profile.toasts.access_denied"));
             isToastShown = true;
         }
 
         // Прочая ошибка сервера
         if (!isToastShown) {
-            Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+            Toast.error(t("api.errors.server_error"));
         }
 
     }

@@ -13,6 +13,7 @@ import { CloudFileInfo } from "../dialogs/file_info/index.js";
 
 // Импортируем типы
 import type { Cloud } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * Коды ошибок «ссылка недействительна»: отозвана, истекла, на удалённый
@@ -39,7 +40,7 @@ export async function openShareLinkHandler(form: Cloud, link: string): Promise<b
 
         // Если ссылка недействительна
         if (!response.status || !response.data) {
-            Toast.error(window._lc.forms.cloud.toasts.link_not_valid);
+            Toast.error(t("forms.cloud.toasts.link_not_valid"));
             return false;
         }
 
@@ -121,13 +122,13 @@ export async function openShareLinkHandler(form: Cloud, link: string): Promise<b
 
         if (LINK_ERROR_CODES.some(code => message.includes(code))) {
             Logger.error("[app][cloud][open-share-link]:", error);
-            Toast.error(window._lc.forms.cloud.toasts.link_not_valid);
+            Toast.error(t("forms.cloud.toasts.link_not_valid"));
         } else {
             toastError(error, {
                 context: "[app][cloud][open-share-link]",
                 codes: ["CURSOR_ID_INVALID", "DIRECTION_INVALID", "OFFSET_INVALID", "USER_ID_INVALID", "USER_ID_REQUIRED"],
-                text: window._lc?.forms?.cloud?.toasts?.load_error,
-                fallback: window._lc?.forms?.cloud?.toasts?.load_error
+                text: t("forms.cloud.toasts.load_error"),
+                fallback: t("forms.cloud.toasts.load_error")
             });
         }
 

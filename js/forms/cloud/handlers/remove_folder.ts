@@ -10,6 +10,7 @@ import { removeFolderRequest } from "../requests/remove_folder.js";
 // Импортируем типы
 import type { CloudItem } from "../types.js";
 import type { Cloud } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -40,7 +41,7 @@ export async function removeFolderHandler(form: Cloud, data: CloudItem): Promise
             store.remove(data.id);
 
             // Показываем уведомление
-            Toast.success(window._lc.forms.cloud.toasts.folder_removed);
+            Toast.success(t("forms.cloud.toasts.folder_removed"));
 
         } else {
 
@@ -70,9 +71,9 @@ function _showRemoveError(response: unknown): void {
 
     // Папка не найдена
     if (code === "128102") {
-        Toast.error(window._lc.forms.cloud.toasts.folder_not_found);
+        Toast.error(t("forms.cloud.toasts.folder_not_found"));
     } else {
-        Toast.error(window._lc.forms.cloud.toasts.access_denied);
+        Toast.error(t("forms.cloud.toasts.access_denied"));
     }
 
 }

@@ -16,6 +16,7 @@ import { acceptCallRequest } from "../requests/accept.js";
 
 // Импортируем типы
 import type { CallIncoming } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -67,20 +68,20 @@ export async function acceptCallHandler(form: CallIncoming): Promise<void> {
         // ---------- ЗВОНОК ----------
         // Звонок отменили или он уже завершён: входящий просто закрывается
         if (message.includes("NOT_INVITED")) {
-            Toast.warning(window._lc.forms.call.toasts.ended, { position: "top-center" });
+            Toast.warning(t("forms.call.toasts.ended"), { position: "top-center" });
             isToastShown = true;
         }
 
         // Я не числится в этом звонке (например, уже вышел)
         if (message.includes("USER_ID_REQUIRED") || message.includes("CALL_ID_REQUIRED")) {
-            Toast.warning(window._lc.forms.call.toasts.ended, { position: "top-center" });
+            Toast.warning(t("forms.call.toasts.ended"), { position: "top-center" });
             isToastShown = true;
         }
         // ---------- ЗВОНОК ----------
 
         // Прочая ошибка сервера
         if (!isToastShown) {
-            Toast.error(window._lc.forms.call_incoming.toasts.accept_error, { position: "top-center" });
+            Toast.error(t("forms.call_incoming.toasts.accept_error"), { position: "top-center" });
         }
 
         // Форма входящего в любом случае закрывается

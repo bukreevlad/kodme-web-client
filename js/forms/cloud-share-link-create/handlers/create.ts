@@ -10,6 +10,7 @@ import { createShareLinkHandler } from "../../cloud/handlers/create_share_link.j
 // Импортируем типы
 import type { CloudAccessLevel } from "../../cloud/types.js";
 import type { CreateShareLink } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -54,7 +55,7 @@ export async function createHandler(dialog: CreateShareLink): Promise<void> {
             dialog._showResult(response.data);
 
             // Показываем уведомление
-            Toast.success(window._lc.forms.cloud.toasts.link_created);
+            Toast.success(t("forms.cloud.toasts.link_created"));
 
         }
 

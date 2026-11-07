@@ -9,6 +9,7 @@ import { SecretChatsManager } from "../../../../../core/managers/secret_chats_ma
 
 // Импортируем типы
 import type { VerifyChat } from "../index.js";
+import { t } from "../../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -33,8 +34,8 @@ export async function verifyHandler(form: VerifyChat, verified: boolean): Promis
         // Сообщение
         Toast.success(
             verified
-                ? window._lc.forms.secret_chat_verify.toasts.verified
-                : window._lc.forms.secret_chat_verify.toasts.unverified,
+                ? t("forms.secret_chat_verify.toasts.verified")
+                : t("forms.secret_chat_verify.toasts.unverified"),
             { position: "bottom-center" }
         );
 

@@ -14,6 +14,7 @@ import { setSectionState } from "../functions/set_section_state.js";
 // Импортируем типы
 import type { SectionId } from "../config/sections.js";
 import type { Search } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -122,7 +123,7 @@ export async function searchSectionHandler(form: Search, id: SectionId, search?:
         toastError(error, {
             context: `[app][search][search-section][${id}]`,
             codes: ["INVALID_OFFSET", "INVALID_USER_ID", "USER_ID_REQUIRED"],
-            fallback: window._lc?.forms?.search?.toasts?.search_error
+            fallback: t("forms.search.toasts.search_error")
         });
 
         return false;

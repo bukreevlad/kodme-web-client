@@ -20,6 +20,7 @@ import { Broadcasts } from "../broadcasts/index.js";
 // Импортируем handlers
 import { typePlayChangeHandler } from "./handlers/type_play_change.js";
 import { typeGlobalMediaEventChangeHandler } from "./handlers/type_global_media_event_change.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки диалога настроек трансляций.
@@ -229,7 +230,7 @@ export class BroadcastsSettings {
             <div class="cdm-form broadcasts-settings flex flex-col gap-0 ${CDM_FORM_CLASSES()} w-full">
                 <div class="header flex flex-row gap-2 p-2 items-center ${CDM_FORM_HEADER_CLASSES()}">
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "ArrowLeft" })}
-                    <span class="flex-1 font-semibold text-base truncate">${window._lc.forms.broadcasts.context_menu.settings}</span>
+                    <span class="flex-1 font-semibold text-base truncate">${t("forms.broadcasts.context_menu.settings")}</span>
                 </div>
                  <div class="content w-full h-full flex ${CDM_FORM_CONTENT_CLASSES()}">
 
@@ -240,12 +241,12 @@ export class BroadcastsSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("broadcast", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.broadcasts_settings.type_play}
+                                ${t("forms.broadcasts_settings.type_play")}
                             </span>
                             ${Toggle.cardGroup([
-        { name: "type-play", value: "flv", checked: true, text: window._lc.forms.broadcasts_settings.flv, description: window._lc.forms.broadcasts_settings.flv_play_desc },
-        { name: "type-play", value: "hls", checked: true, text: window._lc.forms.broadcasts_settings.hls, description: window._lc.forms.broadcasts_settings.hls_play_desc },
-        { name: "type-play", value: "rtc", checked: true, text: window._lc.forms.broadcasts_settings.rtc, description: window._lc.forms.broadcasts_settings.rtc_play_desc }
+        { name: "type-play", value: "flv", checked: true, text: t("forms.broadcasts_settings.flv"), description: t("forms.broadcasts_settings.flv_play_desc") },
+        { name: "type-play", value: "hls", checked: true, text: t("forms.broadcasts_settings.hls"), description: t("forms.broadcasts_settings.hls_play_desc") },
+        { name: "type-play", value: "rtc", checked: true, text: t("forms.broadcasts_settings.rtc"), description: t("forms.broadcasts_settings.rtc_play_desc") }
     ])}
                         </div>
 
@@ -254,13 +255,13 @@ export class BroadcastsSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("refresh", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.broadcasts_settings.type_blobal_media_event}
+                                ${t("forms.broadcasts_settings.type_blobal_media_event")}
                             </span>
                             <div class="flex flex-col gap-2.5">
-                                <span class="text-sm text-secondary">${window._lc.forms.broadcasts_settings.type_blobal_media_event_desc}</span>
+                                <span class="text-sm text-secondary">${t("forms.broadcasts_settings.type_blobal_media_event_desc")}</span>
                                 ${Toggle.cardGroup([
-        { name: "type-blobal-media-event", value: "paused", checked: false, text: window._lc.forms.broadcasts_settings.paused },
-        { name: "type-blobal-media-event", value: "muted", checked: true, text: window._lc.forms.broadcasts_settings.muted }
+        { name: "type-blobal-media-event", value: "paused", checked: false, text: t("forms.broadcasts_settings.paused") },
+        { name: "type-blobal-media-event", value: "muted", checked: true, text: t("forms.broadcasts_settings.muted") }
     ])}
                             </div>
                         </div>

@@ -14,6 +14,7 @@ import { addParticipantRequest } from "../requests/add_participant.js";
 // Импортируем типы
 import type { SearchRecord } from "../../search/types.js";
 import type { Call } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -77,7 +78,7 @@ async function invite(form: Call, user: SearchRecord): Promise<void> {
 
         // Уже в комнате — говорим об этом сразу, не тратя запрос на сервер
         if (form.store?.get(user.id)) {
-            Toast.warning(window._lc.forms.call.toasts.already_in_call, { position: "top-right" });
+            Toast.warning(t("forms.call.toasts.already_in_call"), { position: "top-right" });
             return;
         }
 
@@ -88,7 +89,7 @@ async function invite(form: Call, user: SearchRecord): Promise<void> {
         });
 
         // Toast
-        Toast.success(window._lc.forms.call.toasts.invited);
+        Toast.success(t("forms.call.toasts.invited"));
 
     } catch (error) {
 
@@ -102,32 +103,32 @@ async function invite(form: Call, user: SearchRecord): Promise<void> {
         // Звонок уже завершён или я в нём больше не числится —
         // приглашать больше некого
         if (message.includes("CALL_NOT_ACTIVE") || message.includes("NOT_A_MEMBER")) {
-            Toast.error(window._lc.forms.call.toasts.call_not_active, { position: "top-right" });
+            Toast.error(t("forms.call.toasts.call_not_active"), { position: "top-right" });
             isToastShown = true;
         }
 
         // Пригласить себя нельзя
         if (message.includes("IDS_CANNOT_MATCH")) {
-            Toast.error(window._lc.forms.call.toasts.invite_self, { position: "top-right" });
+            Toast.error(t("forms.call.toasts.invite_self"), { position: "top-right" });
             isToastShown = true;
         }
 
         // Уже числится в звонке: приглашён ранее и ещё не вышел
         if (message.includes("ALREADY_PARTICIPANT")) {
-            Toast.warning(window._lc.forms.call.toasts.already_in_call, { position: "top-right" });
+            Toast.warning(t("forms.call.toasts.already_in_call"), { position: "top-right" });
             isToastShown = true;
         }
 
         // Звонок запрещён настройками приватности
         if (message.includes("ACCESS_DENIED")) {
-            Toast.error(window._lc.forms.call.toasts.calls_restricted, { position: "top-right" });
+            Toast.error(t("forms.call.toasts.calls_restricted"), { position: "top-right" });
             isToastShown = true;
         }
         // ---------- ЗВОНОК ----------
 
         // Прочая ошибка сервера
         if (!isToastShown) {
-            Toast.error(window._lc.forms.call.toasts.invite_error, { position: "top-right" });
+            Toast.error(t("forms.call.toasts.invite_error"), { position: "top-right" });
         }
 
     }

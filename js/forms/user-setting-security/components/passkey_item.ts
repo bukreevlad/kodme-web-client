@@ -13,6 +13,7 @@ import { removePasskeyHandler } from "../handlers/remove_passkey.js";
 // Импортируем типы
 import type { UserSettingSecurity } from "../index.js";
 import type { PasskeyListItem } from "../types.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -113,12 +114,12 @@ export function createPasskeyItem(form: UserSettingSecurity, data: PasskeyListIt
 
                 // Время регистрации
                 let createdAt = new TimeAgoFormatter(next.created_at, "short");
-                let parts = [`${window._lc.forms.user_setting_security.passkey_created}: ${createdAt.formattedTime || "-"}`];
+                let parts = [`${t("forms.user_setting_security.passkey_created")}: ${createdAt.formattedTime || "-"}`];
 
                 // Последнее использование (если ключ уже применялся)
                 if (next.last_used_at) {
                     let lastUsedAt = new TimeAgoFormatter(next.last_used_at, "short");
-                    parts.push(`${window._lc.forms.user_setting_security.passkey_last_used}: ${lastUsedAt.formattedTime || "-"}`);
+                    parts.push(`${t("forms.user_setting_security.passkey_last_used")}: ${lastUsedAt.formattedTime || "-"}`);
                 }
 
                 meta.textContent = parts.join(" · ");

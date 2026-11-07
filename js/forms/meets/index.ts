@@ -28,6 +28,7 @@ import { onMeetsScrollHandler } from "./handlers/on_meets_scroll.js";
 
 // Импортируем типы
 import type { MeetRecord } from "./types.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы конференций.
@@ -253,7 +254,7 @@ export class Meets {
                     id: this.modal?.options.id,
                     data: {
                         instance: this,
-                        title: window._lc.forms.meets.title
+                        title: t("forms.meets.title")
                     }
                 }
             }));
@@ -309,7 +310,7 @@ export class Meets {
                 <div class="header flex flex-row gap-2 p-2 items-center justify-between ${CDM_FORM_HEADER_CLASSES()}">
                     <div class="flex flex-row gap-2 items-center">
                         ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "ArrowLeft" })}
-                        <span data-title class="font-semibold text-lg">${window._lc.forms.meets.title}</span>
+                        <span data-title class="font-semibold text-lg">${t("forms.meets.title")}</span>
                     </div>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-menu"], icon: "dots-vertical" })}
                 </div>
@@ -317,8 +318,8 @@ export class Meets {
                     <div data-list class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 p-2 w-full"></div>
 
                     ${EmptyState.create({
-                        title: window._lc.forms.meets.empty.title,
-                        description: window._lc.forms.meets.empty.desc,
+                        title: t("forms.meets.empty.title"),
+                        description: t("forms.meets.empty.desc"),
                         icon: "video",
                         compact: true,
                         attributes: ["data-empty"],

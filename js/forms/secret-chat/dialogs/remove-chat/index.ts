@@ -17,6 +17,7 @@ import { SecretChat } from "../../index.js";
 
 // Импортируем handlers
 import { removeHandler } from "./handlers/remove.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * Настройки диалога удаления.
@@ -237,7 +238,7 @@ export class RemoveChat {
                         <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                             ${Icons.icon("trash", { settings: { size: 20 } })?.outerHTML ?? ""}
                         </span>
-                        ${window._lc.forms.secret_chat.dialogs.remove_chat_confirm.desc}
+                        ${t("forms.secret_chat.dialogs.remove_chat_confirm.desc")}
                     </span>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "x" })}
                 </div>
@@ -247,13 +248,13 @@ export class RemoveChat {
             shape: "square",
             attributes: ["action-close"],
             classes: ["w-full"],
-            text: window._lc.forms.secret_chat.dialogs.remove_chat_confirm.action_cancel
+            text: t("forms.secret_chat.dialogs.remove_chat_confirm.action_cancel")
         })}
                     ${Buttons.danger({
             shape: "square",
             attributes: ["action-remove"],
             classes: ["w-full"],
-            text: window._lc.forms.secret_chat.dialogs.remove_chat_confirm.action_remove
+            text: t("forms.secret_chat.dialogs.remove_chat_confirm.action_remove")
         })}
                 </div>
             </div>

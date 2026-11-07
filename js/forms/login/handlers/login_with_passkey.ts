@@ -17,6 +17,7 @@ import { passkeyLoginFinishRequest } from "../requests/passkey_login_finish.js";
 
 // Импортируем типы
 import type { Login } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -31,7 +32,7 @@ export async function loginWithPasskeyHandler(form: Login): Promise<void> {
 
         // Если WebAuthn недоступен (старый браузер/обёртка)
         if (!isWebauthnSupported()) {
-            Toast.error(window._lc.forms.login.toasts.passkey_unsupported);
+            Toast.error(t("forms.login.toasts.passkey_unsupported"));
             return;
         }
 
@@ -91,7 +92,7 @@ export async function loginWithPasskeyHandler(form: Login): Promise<void> {
             });
 
             // Toast успеха: вход по ключу доступа выполнен
-            Toast.success(window._lc.forms.login.toasts.success_passkey_login);
+            Toast.success(t("forms.login.toasts.success_passkey_login"));
 
             // Открываем форму Sessions (как после confirm)
             new Sessions();
@@ -110,49 +111,49 @@ export async function loginWithPasskeyHandler(form: Login): Promise<void> {
 
         // Если для аккаунта нет зарегистрированных ключей
         if (getErrorMessage(error).includes("NO_CREDENTIALS")) {
-            Toast.error(window._lc.forms.login.toasts.passkey_no_credentials);
+            Toast.error(t("forms.login.toasts.passkey_no_credentials"));
             isToastShown = true;
         }
 
         // Если ceremony истекла или неверна
         if (getErrorMessage(error).includes("CEREMONY_INVALID")) {
-            Toast.error(window._lc.forms.login.toasts.passkey_expired);
+            Toast.error(t("forms.login.toasts.passkey_expired"));
             isToastShown = true;
         }
 
         // Если credential не найден
         if (getErrorMessage(error).includes("CREDENTIAL_NOT_FOUND")) {
-            Toast.error(window._lc.forms.login.toasts.passkey_credential_not_found);
+            Toast.error(t("forms.login.toasts.passkey_credential_not_found"));
             isToastShown = true;
         }
 
         // Если ответ аутентификатора не прошёл проверку
         if (getErrorMessage(error).includes("RESPONSE_INVALID")) {
-            Toast.error(window._lc.forms.login.toasts.passkey_invalid);
+            Toast.error(t("forms.login.toasts.passkey_invalid"));
             isToastShown = true;
         }
 
         // Если счётчик подписей указывает на клон аутентификатора
         if (getErrorMessage(error).includes("SIGN_COUNT_REJECTED")) {
-            Toast.error(window._lc.forms.login.toasts.passkey_sign_count);
+            Toast.error(t("forms.login.toasts.passkey_sign_count"));
             isToastShown = true;
         }
 
         // Если аккаунт заблокирован
         if (getErrorMessage(error).includes("USER_BLOCKED")) {
-            Toast.error(window._lc.forms.login.toasts.user_blocked);
+            Toast.error(t("forms.login.toasts.user_blocked"));
             isToastShown = true;
         }
 
         // Если превышен лимит запросов
         if (getErrorMessage(error).includes("RATE_LIMIT_EXCEEDED") || getErrorStatus(error) === 429) {
-            Toast.warning(window._lc.forms.login.toasts.too_many_requests);
+            Toast.warning(t("forms.login.toasts.too_many_requests"));
             isToastShown = true;
         }
 
         // Если ошибка не распознана — показываем общую
         if (!isToastShown) {
-            Toast.error(window._lc.api.errors.server_error);
+            Toast.error(t("api.errors.server_error"));
         }
 
     }

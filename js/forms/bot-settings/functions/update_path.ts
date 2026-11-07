@@ -11,6 +11,7 @@ import { createPathItem } from "../components/path.js";
 // Импортируем типы
 import type { BotMenuNode, BotPathCrumb } from "../types.js";
 import type { BotSettings } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -36,7 +37,7 @@ export function updatePath(form: BotSettings, path: BotMenuNode[] | null = null)
         if (path && path.length > 0) {
 
             // Создаем корневой элемент и отображаем
-            let root: BotPathCrumb = { name: `./${window._lc.forms.bot_settings.menu}` };
+            let root: BotPathCrumb = { name: `./${t("forms.bot_settings.menu")}` };
             let item = createPathItem(root);
             list?.append(item);
 

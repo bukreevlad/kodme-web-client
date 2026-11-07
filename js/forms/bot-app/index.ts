@@ -23,6 +23,7 @@ import { minimizeHandler } from "./handlers/minimize.js";
 // Импортируем типы
 import type { BotAppInitData } from "./requests/generate_init_data.js";
 import type { BotAppData } from "./types.js";
+import { t } from "../../utils/i18n/index.js";
 
 // Form
 export class BotApp {
@@ -170,9 +171,9 @@ export class BotApp {
 
             // Показываем ошибку открытия пользователю
             if (getErrorMessage(error).includes("RATE_LIMIT_EXCEEDED")) {
-                Toast.error(window._lc.api.errors.rate_limit_exceeded);
+                Toast.error(t("api.errors.rate_limit_exceeded"));
             } else {
-                Toast.error(window._lc.forms.bot_app.toasts.load_error);
+                Toast.error(t("forms.bot_app.toasts.load_error"));
             }
 
             // Закрываем форму, если она успела смонтироваться в DOM

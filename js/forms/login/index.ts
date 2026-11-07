@@ -17,6 +17,7 @@ import { loginWithQRCodeHandler } from "./handlers/login_with_qrcode.js";
 import { loginWithPasskeyHandler } from "./handlers/login_with_passkey.js";
 import { registrationHandler } from "./handlers/registration.js";
 import { forgotPasswordHandler } from "./handlers/forgot_password.js";
+import { t } from "../../utils/i18n/index.js";
 
 // Form
 export class Login {
@@ -148,14 +149,14 @@ export class Login {
                 <div class="${CDM_MODAL_CENTERED_CONTENT_CLASSES()}">
 
                     <div class="flex flex-col items-center text-center gap-0.5 select-none">
-                        <span class="text-base font-bold mt-1 leading-snug">${window._lc.forms.login.title}</span>
-                        <span class="text-sm text-secondary font-normal leading-snug">${window._lc.forms.login.subtitle}</span>
+                        <span class="text-base font-bold mt-1 leading-snug">${t("forms.login.title")}</span>
+                        <span class="text-sm text-secondary font-normal leading-snug">${t("forms.login.subtitle")}</span>
                     </div>
 
                     <div class="flex flex-col gap-2">
-                        <span class="text-sm font-semibold">${window._lc.forms.login.email}</span>
+                        <span class="text-sm font-semibold">${t("forms.login.email")}</span>
                         ${Inputs.email({
-                            placeholder: window._lc.forms.login.email,
+                            placeholder: t("forms.login.email"),
                             name: "email",
                             icon: "mail",
                             attributes: ["required"]
@@ -164,15 +165,15 @@ export class Login {
 
                     <div class="flex flex-col gap-2">
                         <div class="flex flex-row items-center justify-between gap-2">
-                            <span class="text-sm font-semibold">${window._lc.forms.login.password}</span>
+                            <span class="text-sm font-semibold">${t("forms.login.password")}</span>
                             ${Buttons.link({
-                                text: window._lc.forms.login.forgot_password,
+                                text: t("forms.login.forgot_password"),
                                 attributes: ["action-forgot-password"],
                                 classes: ["text-sm"]
                             })}
                         </div>
                         ${Inputs.password({
-                            placeholder: window._lc.forms.login.password,
+                            placeholder: t("forms.login.password"),
                             name: "password",
                             icon: "lock",
                             attributes: ["required"]
@@ -180,7 +181,7 @@ export class Login {
                     </div>
 
                     <label class="flex flex-row items-center justify-between gap-3 cursor-pointer select-none pt-0.5">
-                        <span class="text-sm font-medium">${window._lc.forms.login.save_me}</span>
+                        <span class="text-sm font-medium">${t("forms.login.save_me")}</span>
                         ${Toggle.switch({ name: "save-session", checked: true })}
                     </label>
 
@@ -188,27 +189,27 @@ export class Login {
                         ${Buttons.primary({
                             attributes: ["action-login"],
                             classes: ["w-full", "h-11"],
-                            text: window._lc.forms.login.login,
+                            text: t("forms.login.login"),
                             icon: "login-2"
                         })}
 
                         <div class="flex flex-row items-center gap-3">
                             <span class="h-px flex-1 bg-[var(--border-color)]"></span>
-                            <span class="text-[11px] font-semibold uppercase tracking-wider text-muted">${window._lc.forms.auth.or}</span>
+                            <span class="text-[11px] font-semibold uppercase tracking-wider text-muted">${t("forms.auth.or")}</span>
                             <span class="h-px flex-1 bg-[var(--border-color)]"></span>
                         </div>
 
                         ${Buttons.create({
                             attributes: ["action-login-with-qrcode"],
                             classes: ["w-full"],
-                            text: window._lc.forms.login.qr_login,
+                            text: t("forms.login.qr_login"),
                             icon: "qrcode"
                         })}
 
                         ${Buttons.create({
                             attributes: ["action-login-with-passkey"],
                             classes: ["w-full"],
-                            text: window._lc.forms.login.passkey_login,
+                            text: t("forms.login.passkey_login"),
                             icon: "fingerprint"
                         })}
                     </div>
@@ -217,9 +218,9 @@ export class Login {
 
                 <div class="${CDM_MODAL_FOOTER_CLASSES()}">
                     <div class="flex flex-1 flex-row items-center justify-center gap-1.5">
-                    <span class="text-sm text-secondary">${window._lc.forms.auth.no_account}</span>
+                    <span class="text-sm text-secondary">${t("forms.auth.no_account")}</span>
                     ${Buttons.link({
-                        text: window._lc.forms.login.registration,
+                        text: t("forms.login.registration"),
                         attributes: ["action-registration"],
                         classes: ["text-sm"]
                     })}

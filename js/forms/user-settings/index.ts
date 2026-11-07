@@ -25,6 +25,7 @@ import { logoutSessionHandler } from "./handlers/logout_session.js";
 import { UserProfile } from "../user-profile/index.js";
 import { UserSettingEmail } from "../user-setting-email/index.js";
 import { UserSettingLink } from "../user-setting-link/index.js";
+import { UserSettingLanguage } from "../user-setting-language/index.js";
 import { UserSettingDecorations } from "../user-setting-decoration/index.js";
 import { UserSettingNotifications } from "../user-setting-notifications/index.js";
 import { UserSettingPrivacy } from "../user-setting-privacy/index.js";
@@ -35,6 +36,7 @@ import { UserSettingSecurity } from "../user-setting-security/index.js";
 
 // Импортируем типы
 import type { SessionUserFields } from "./types.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы настроек пользователя.
@@ -221,6 +223,10 @@ export class UserSettings {
             const privacy = this.tpl.querySelector(":scope >.content [action-set-privacy]");
             privacy?.addEventListener("click", () => new UserSettingPrivacy({ userId: this.userId }));
 
+            // Язык интерфейса
+            const language = this.tpl.querySelector(":scope >.content [action-set-language]");
+            language?.addEventListener("click", () => new UserSettingLanguage({ userId: this.userId }));
+
             // Security (2FA TOTP и ключи доступа)
             const security = this.tpl.querySelector(":scope >.content [action-set-security]");
             security?.addEventListener("click", () => new UserSettingSecurity({ userId: this.userId }));
@@ -295,7 +301,7 @@ export class UserSettings {
             email.textContent = user.email;
             firtName.value = user.first_name;
             lastName.value = user.last_name;
-            link.textContent = user.link || window._lc.forms.user_settings.not_select;
+            link.textContent = user.link || t("forms.user_settings.not_select");
             bio.value = user.bio;
 
             // Инициализируем скроллбар
@@ -350,9 +356,9 @@ export class UserSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("at", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_settings.email}
+                                ${t("forms.user_settings.email")}
                             </span>
-                            ${Buttons.create({ attributes: ["action-set-email"], classes: ["font-mono"], text: window._lc.forms.user_settings.email })}
+                            ${Buttons.create({ attributes: ["action-set-email"], classes: ["font-mono"], text: t("forms.user_settings.email") })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -360,9 +366,9 @@ export class UserSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("label", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_settings.first_name}
+                                ${t("forms.user_settings.first_name")}
                             </span>
-                            ${Inputs.create({ placeholder: window._lc.forms.user_settings.first_name, name: "first-name", attributes: ["required"] })}
+                            ${Inputs.create({ placeholder: t("forms.user_settings.first_name"), name: "first-name", attributes: ["required"] })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -370,9 +376,9 @@ export class UserSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("label", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_settings.last_name}
+                                ${t("forms.user_settings.last_name")}
                             </span>
-                            ${Inputs.create({ placeholder: window._lc.forms.user_settings.last_name, name: "last-name", attributes: ["required"] })}
+                            ${Inputs.create({ placeholder: t("forms.user_settings.last_name"), name: "last-name", attributes: ["required"] })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -380,9 +386,9 @@ export class UserSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("link", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_settings.link}
+                                ${t("forms.user_settings.link")}
                             </span>
-                            ${Buttons.create({ attributes: ["action-set-link"], classes: ["font-mono"], text: window._lc.forms.user_settings.not_select })}
+                            ${Buttons.create({ attributes: ["action-set-link"], classes: ["font-mono"], text: t("forms.user_settings.not_select") })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -390,9 +396,9 @@ export class UserSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("message-circle", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_settings.bio}
+                                ${t("forms.user_settings.bio")}
                             </span>
-                            ${Inputs.textarea({ placeholder: window._lc.forms.user_settings.bio, name: "bio", rows: 4 })}
+                            ${Inputs.textarea({ placeholder: t("forms.user_settings.bio"), name: "bio", rows: 4 })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -400,10 +406,10 @@ export class UserSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("brush", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_settings.decoration}
+                                ${t("forms.user_settings.decoration")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.user_settings.decoration_desc}</span>
-                            ${Buttons.create({ attributes: ["action-set-decoration"], text: window._lc.forms.user_settings.decoration })}
+                            <span class="text-sm text-secondary">${t("forms.user_settings.decoration_desc")}</span>
+                            ${Buttons.create({ attributes: ["action-set-decoration"], text: t("forms.user_settings.decoration") })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -411,10 +417,10 @@ export class UserSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("bell", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_settings.notifications}
+                                ${t("forms.user_settings.notifications")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.user_settings.notifications_desc}</span>
-                            ${Buttons.create({ attributes: ["action-set-notifications"], text: window._lc.forms.user_settings.notifications })}
+                            <span class="text-sm text-secondary">${t("forms.user_settings.notifications_desc")}</span>
+                            ${Buttons.create({ attributes: ["action-set-notifications"], text: t("forms.user_settings.notifications") })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -422,10 +428,10 @@ export class UserSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("alphabet-cyrillic", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_settings.language}
+                                ${t("forms.user_settings.language")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.user_settings.language_desc}</span>
-                            ${Buttons.create({ attributes: ["action-set-language"], text: window._lc.forms.user_settings.language })}
+                            <span class="text-sm text-secondary">${t("forms.user_settings.language_desc")}</span>
+                            ${Buttons.create({ attributes: ["action-set-language"], text: t("forms.user_settings.language") })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -433,10 +439,10 @@ export class UserSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("shield-check", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_settings.security}
+                                ${t("forms.user_settings.security")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.user_settings.security_desc}</span>
-                            ${Buttons.create({ attributes: ["action-set-security"], text: window._lc.forms.user_settings.security })}
+                            <span class="text-sm text-secondary">${t("forms.user_settings.security_desc")}</span>
+                            ${Buttons.create({ attributes: ["action-set-security"], text: t("forms.user_settings.security") })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -444,10 +450,10 @@ export class UserSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("shield-lock", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_settings.privacy}
+                                ${t("forms.user_settings.privacy")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.user_settings.privacy_desc}</span>
-                            ${Buttons.create({ attributes: ["action-set-privacy"], text: window._lc.forms.user_settings.privacy })}
+                            <span class="text-sm text-secondary">${t("forms.user_settings.privacy_desc")}</span>
+                            ${Buttons.create({ attributes: ["action-set-privacy"], text: t("forms.user_settings.privacy") })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -455,13 +461,13 @@ export class UserSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("user-exclamation", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_settings.account_actions}
+                                ${t("forms.user_settings.account_actions")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.user_settings.account_actions_desc}</span>
-                            ${Buttons.create({ attributes: ["action-devices"], text: window._lc.forms.user_settings.devices })}
-                            ${Buttons.create({ attributes: ["action-set-password"], text: window._lc.forms.user_settings.set_password })}
-                            ${Buttons.create({ attributes: ["action-exit-account"], text: window._lc.forms.user_settings.set_account })}
-                            ${Buttons.create({ intent: "danger", attributes: ["action-logout"], text: window._lc.forms.user_settings.logout })}
+                            <span class="text-sm text-secondary">${t("forms.user_settings.account_actions_desc")}</span>
+                            ${Buttons.create({ attributes: ["action-devices"], text: t("forms.user_settings.devices") })}
+                            ${Buttons.create({ attributes: ["action-set-password"], text: t("forms.user_settings.set_password") })}
+                            ${Buttons.create({ attributes: ["action-exit-account"], text: t("forms.user_settings.set_account") })}
+                            ${Buttons.create({ intent: "danger", attributes: ["action-logout"], text: t("forms.user_settings.logout") })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -469,13 +475,13 @@ export class UserSettings {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("info-circle", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_settings.about}
+                                ${t("forms.user_settings.about")}
                             </span>
                             <div class="flex flex-col gap-0">
-                                <span class="text-sm text-secondary">${window._lc.forms.user_settings.app_build_version} __BUILD_VERSION__</span>
-                                <span class="text-sm text-secondary">${window._lc.forms.user_settings.app_build_at} __BUILD_AT__</span>
+                                <span class="text-sm text-secondary">${t("forms.user_settings.app_build_version")} __BUILD_VERSION__</span>
+                                <span class="text-sm text-secondary">${t("forms.user_settings.app_build_at")} __BUILD_AT__</span>
                             </div>
-                            ${Buttons.create({ attributes: ["action-manage-cache"], text: window._lc.forms.user_settings.manage_cache })}
+                            ${Buttons.create({ attributes: ["action-manage-cache"], text: t("forms.user_settings.manage_cache") })}
                         </div>
 
                     </div>

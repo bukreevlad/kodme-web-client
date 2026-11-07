@@ -36,6 +36,7 @@ import { renderAuthor } from "./functions/render_author.js";
 // Импортируем типы
 import type { VideoPlayer } from "../../components/video_player.js";
 import type { StreamEngine, BroadcastCast } from "./types.js";
+import { I18n, t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы просмотра трансляции.
@@ -441,7 +442,7 @@ export class BroadcastPlay {
                     data: {
                         instance: this,
                         title: this.cast.name,
-                        subtitle: "Трансляция"
+                        subtitle: t("forms.broadcast_play.title")
                     }
                 }
             }));
@@ -564,7 +565,7 @@ export class BroadcastPlay {
 
         // Локализованные подписи. aria-подписи тоже держим в локализации:
         // их читает скринридер, по-русски они осмысленны
-        const locale = window._lc.forms.broadcast_play;
+        const locale = I18n.tree.forms.broadcast_play;
 
         const tpl = new DOMParser().parseFromString(`
         
@@ -572,7 +573,7 @@ export class BroadcastPlay {
                 <div class="header flex flex-row gap-2 p-2 items-center justify-between ${CDM_FORM_HEADER_CLASSES()}">
                     <div class="flex flex-row gap-2 items-center">
                         ${Buttons.circle({ intent: "transparent", attributes: ["action-close", { name: "aria-label", value: locale.aria.back }], icon: "ArrowLeft" })}
-                        <span data-title class="flex flex-row gap-2 items-center font-semibold text-lg">${window._lc.forms.broadcast_play.title}</span>
+                        <span data-title class="flex flex-row gap-2 items-center font-semibold text-lg">${t("forms.broadcast_play.title")}</span>
                         <span class="cdm-loader hidden"></span>
                     </div>
                     <div class="flex flex-row gap-2 items-center">

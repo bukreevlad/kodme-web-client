@@ -3,6 +3,7 @@ import { Toast } from "../../../../../components/toast.js";
 
 // Импортируем типы
 import type { ExportBotCommands } from "../index.js";
+import { t } from "../../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -18,7 +19,7 @@ export async function copyHandler(form: ExportBotCommands): Promise<void> {
         // Копируем в буфер
         navigator.clipboard.writeText(form.commands)
             .then(() => {
-                Toast.success("Текст скопирован", { position: "bottom-center" });
+                Toast.success(t("forms.bot_settings.toasts.copied"), { position: "bottom-center" });
             })
             .catch(err => {
                 console.error("Ошибка копирования", err);

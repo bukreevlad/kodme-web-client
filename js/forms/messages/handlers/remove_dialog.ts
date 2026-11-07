@@ -16,6 +16,7 @@ import { removeDialogRequest } from "../requests/remove_dialog.js";
 
 // Импортируем типы
 import type { Messages } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -72,7 +73,7 @@ export async function removeDialogHandler(form: Messages): Promise<void> {
                 });
 
                 // Уведомление
-                Toast.success(window._lc.forms.messages.context_menu.toasts.success_remove_dialog, { position: "bottom-center" });
+                Toast.success(t("forms.messages.context_menu.toasts.success_remove_dialog"), { position: "bottom-center" });
             }
         });
 

@@ -7,6 +7,7 @@ import { parseError } from "../network/parse_error.js";
 
 // Импортируем типы
 import type { ParsedError } from "../network/parse_error.js";
+import { I18n, t } from "../i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -34,7 +35,7 @@ interface ToastErrorOptions {
     text?: string;
     /** Текст-запасной, если код неизвестен. */
     fallback?: string;
-    /** Подстановки для `%{name}%`-плейсхолдеров. */
+    /** Подстановки для `{{name}}`-плейсхолдеров. */
     params?: Record<string, string | number>;
     /** Позиция тоста. */
     position?: string;
@@ -104,14 +105,14 @@ export function toastError(error: unknown, options: ToastErrorOptions = {}): Toa
     }
 
     // Совсем ничего не известно — универсальный fallback
-    text = text || options.fallback || window._lc?.api?.errors?.server_error || "Ошибка сервера. Попробуйте позже";
+    text = text || options.fallback || t("api.errors.server_error");
 
     // ==========================
     // Подстановки
     // ==========================
     const params = options.params || {};
     for (const [key, value] of Object.entries(params)) {
-        text = text.replaceAll(`%{${key}}%`, String(value));
+        text = text.replaceAll(`{{${key}}}`, String(value));
     }
 
     // Показываем тост. duration больше для сетевых/таймаут ошибок,
@@ -178,7 +179,7 @@ function _localeForReason(info: ParsedError): string | null {
  */
 function _localeError(key: string): string | null {
 
-    const errors: unknown = window._lc?.api?.errors;
+    const errors: unknown = I18n.tree.api.errors;
     if (!errors || typeof errors !== "object") return null;
 
     const value: unknown = Reflect.get(errors, key);

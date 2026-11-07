@@ -24,6 +24,7 @@ import { subscribeStoreEvents } from "./events/store-apps/index.js";
 
 // Импортируем типы
 import { BotAppItem } from "../../../bot-profile/requests/get_bot_info.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * Настройки диалога приложений бота.
@@ -244,7 +245,7 @@ export class BotAppsList {
                         <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                             ${Icons.icon("apps", { settings: { size: 20 } })?.outerHTML ?? ""}
                         </span>
-                        ${window._lc.forms.bot_profile.dialogs.apps_list.title}
+                        ${t("forms.bot_profile.dialogs.apps_list.title")}
                     </span>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "x" })}
                 </div>

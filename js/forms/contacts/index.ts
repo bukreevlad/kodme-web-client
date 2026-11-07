@@ -27,6 +27,7 @@ import { onContactsScrollHandler } from "./handlers/on_contacts_scroll.js";
 
 // Импортируем типы
 import type { ContactRecord } from "./types.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы контактов.
@@ -261,15 +262,15 @@ export class Contacts {
                 <div class="header flex flex-row gap-2 p-2 items-center justify-between ${CDM_FORM_HEADER_CLASSES()}">
                     <div class="flex flex-row gap-2 items-center">
                         ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "ArrowLeft" })}
-                        <span data-title class="flex flex-row gap-2 items-center font-semibold text-lg">${window._lc.forms.contacts.title}</span>
+                        <span data-title class="flex flex-row gap-2 items-center font-semibold text-lg">${t("forms.contacts.title")}</span>
                     </div>
                 </div>
                  <div class="content w-full h-full flex flex-row gap-0 ${CDM_FORM_CONTENT_CLASSES()}">
                     <div data-list class="flex flex-col gap-0 p-2 w-full"></div>
 
                     ${EmptyState.create({
-                        title: window._lc.forms.contacts.empty.title,
-                        description: window._lc.forms.contacts.empty.desc,
+                        title: t("forms.contacts.empty.title"),
+                        description: t("forms.contacts.empty.desc"),
                         icon: "users",
                         compact: true,
                         attributes: ["data-empty"],

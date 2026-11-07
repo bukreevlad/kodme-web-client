@@ -1,6 +1,7 @@
 // Импортируем типы
 import type { UserSettingSecurity } from "../index.js";
 import type { TotpStatusData } from "../types.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -20,11 +21,11 @@ export function updateTotpCard(form: UserSettingSecurity, status: TotpStatusData
     // Текст состояния: включён / незавершённая настройка / выключен
     if (form.totpStatusEl) {
         if (status.enabled) {
-            form.totpStatusEl.textContent = window._lc.forms.user_setting_security.totp_desc_on;
+            form.totpStatusEl.textContent = t("forms.user_setting_security.totp_desc_on");
         } else if (status.setup_pending) {
-            form.totpStatusEl.textContent = window._lc.forms.user_setting_security.totp_desc_pending;
+            form.totpStatusEl.textContent = t("forms.user_setting_security.totp_desc_pending");
         } else {
-            form.totpStatusEl.textContent = window._lc.forms.user_setting_security.totp_desc_off;
+            form.totpStatusEl.textContent = t("forms.user_setting_security.totp_desc_off");
         }
     }
 

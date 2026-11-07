@@ -20,6 +20,7 @@ import { ContextMenuHandler } from "./handlers/context_menu.js";
 import type { ChannelSectionItemData, ChannelProfile } from "../types.js";
 import type { AudioPlayerCallback, AudioPlayerTrack } from "../../../utils/audio/audio_player.js";
 import { getErrorName } from "../../../utils/helpers/error_util.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -380,7 +381,7 @@ export class AudioItem {
 
             toastError(error, {
                 context: "[app][channel-profile][audio]::download",
-                fallback: window._lc?.forms?.channel_profile?.toasts?.download_error
+                fallback: t("forms.channel_profile.toasts.download_error")
             });
 
         } finally {

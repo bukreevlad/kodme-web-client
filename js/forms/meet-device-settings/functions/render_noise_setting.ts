@@ -10,6 +10,7 @@ import { loadNoiseSuppression } from "../../meet-play/functions/noise_suppressio
 
 // Импортируем типы
 import type { MeetDeviceSettings } from "../index.js";
+import { I18n } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -37,7 +38,7 @@ export function renderNoiseSetting(dialog: MeetDeviceSettings): void {
         const slot = dialog?.tpl?.querySelector<HTMLElement>(":scope [data-noise]");
         if (!slot) return;
 
-        const locales = window._lc.forms.meet_play.dialogs.device_settings;
+        const locales = I18n.tree.forms.meet_play.dialogs.device_settings;
 
         const supported = NoiseGateProcessor.isSupported();
 

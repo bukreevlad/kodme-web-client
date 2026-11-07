@@ -38,6 +38,7 @@ import { onTextKeydownHandler } from "./handlers/on_text_keydown.js";
 // Импортируем типы
 import type { SectionId } from "./config/sections.js";
 import type { SectionPagination, SearchRecord } from "./types.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы поиска.
@@ -359,7 +360,7 @@ export class Search {
 
             toastError(error, {
                 context: "[app][search][_handlers]",
-                fallback: window._lc?.forms?.search?.toasts?.load_error
+                fallback: t("forms.search.toasts.load_error")
             });
 
         }
@@ -469,7 +470,7 @@ export class Search {
 
             toastError(error, {
                 context: "[app][search][on-before-open]",
-                fallback: window._lc?.forms?.search?.toasts?.open_error
+                fallback: t("forms.search.toasts.open_error")
             });
 
             // Открывать форму, которая не собралась, бессмысленно: пользователь
@@ -526,7 +527,7 @@ export class Search {
                     <div class="flex flex-row gap-2 w-full items-center justify-between">
                         <div class="flex flex-row gap-2 w-full items-center">
                             ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "ArrowLeft" })}
-                            ${Inputs.transparent({ placeholder: window._lc.forms.search.search, name: "text", classes: ["w-full"] })}
+                            ${Inputs.transparent({ placeholder: t("forms.search.search"), name: "text", classes: ["w-full"] })}
                         </div>
                         ${Buttons.transparent({ shape: "circle", attributes: ["action-search"], icon: "Search" })}
                     </div>

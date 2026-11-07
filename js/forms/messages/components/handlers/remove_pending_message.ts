@@ -8,6 +8,7 @@ import { Toast } from "../../../../components/toast.js";
 // Импортируем типы
 import type { MessageRecord } from "../../types.js";
 import type { MessageItem } from "../message.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -27,7 +28,7 @@ export async function removePendingMessageHandler(message: MessageItem): Promise
         message.form.store.remove(message.data.id);
 
         // Toast
-        Toast.success(window._lc.forms.messages.components.messages.toasts.message_removed, { position: "bottom-center" });
+        Toast.success(t("forms.messages.components.messages.toasts.message_removed"), { position: "bottom-center" });
 
     } catch (error) {
         Logger.error(error);

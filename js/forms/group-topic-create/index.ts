@@ -19,6 +19,7 @@ import { createHandler } from "./handlers/create.js";
 
 // Импортируем forms
 import { ChannelProfile } from "../channel-profile/index.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Данные формы создания темы группы.
@@ -244,9 +245,9 @@ export class GroupTopicCreate {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("label", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.group_topic_create.name}
+                                ${t("forms.group_topic_create.name")}
                             </span>
-                            ${Inputs.create({ placeholder: window._lc.forms.group_topic_create.name, name: "name", attributes: ["required"] })}
+                            ${Inputs.create({ placeholder: t("forms.group_topic_create.name"), name: "name", attributes: ["required"] })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -254,9 +255,9 @@ export class GroupTopicCreate {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("message-circle", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.group_topic_create.about}
+                                ${t("forms.group_topic_create.about")}
                             </span>
-                            ${Inputs.textarea({ placeholder: window._lc.forms.group_topic_create.about, name: "about", attributes: ["required"] })}
+                            ${Inputs.textarea({ placeholder: t("forms.group_topic_create.about"), name: "about", attributes: ["required"] })}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
@@ -264,15 +265,15 @@ export class GroupTopicCreate {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("world", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.group_topic_create.type}
+                                ${t("forms.group_topic_create.type")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.group_topic_create.type_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.group_topic_create.type_desc")}</span>
                             ${Toggle.switch({
             name: "is-public",
             checked: true,
             toggleText: {
-                on: window._lc.forms.group_topic_create.opened,
-                off: window._lc.forms.group_topic_create.closed
+                on: t("forms.group_topic_create.opened"),
+                off: t("forms.group_topic_create.closed")
             }
         })}
                         </div>
@@ -282,15 +283,15 @@ export class GroupTopicCreate {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("pencil", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.group_topic_create.can_posting}
+                                ${t("forms.group_topic_create.can_posting")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.group_topic_create.can_posting_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.group_topic_create.can_posting_desc")}</span>
                             ${Toggle.switch({
             name: "is-posting",
             checked: true,
             toggleText: {
-                on: window._lc.forms.group_topic_create.all_posting,
-                off: window._lc.forms.group_topic_create.admin_posting
+                on: t("forms.group_topic_create.all_posting"),
+                off: t("forms.group_topic_create.admin_posting")
             }
         })}
                         </div>

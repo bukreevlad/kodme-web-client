@@ -34,6 +34,7 @@ import { UserProfile } from "../user-profile/index.js";
 
 // Импортируем типы
 import type { PasskeyListItem, TotpStatusData } from "./types.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы безопасности.
@@ -292,7 +293,7 @@ export class UserSettingSecurity {
             attributes: ["action-close"],
             icon: "ArrowLeft"
         })}
-                    <span class="font-semibold text-base truncate flex-1">${window._lc.forms.user_settings.security}</span>
+                    <span class="font-semibold text-base truncate flex-1">${t("forms.user_settings.security")}</span>
                 </div>
                 <div class="content w-full h-full flex ${CDM_FORM_CONTENT_CLASSES()}">
 
@@ -303,7 +304,7 @@ export class UserSettingSecurity {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("shield-lock", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_setting_security.totp_title}
+                                ${t("forms.user_setting_security.totp_title")}
                             </span>
                             <span data-totp-status class="text-sm text-secondary"></span>
                             <div class="flex flex-row gap-2">
@@ -312,14 +313,14 @@ export class UserSettingSecurity {
             classes: ["flex-1"],
             attributes: ["action-totp-enable"],
             icon: "shield-lock",
-            text: window._lc.forms.user_setting_security.totp_enable
+            text: t("forms.user_setting_security.totp_enable")
         })}
                                 ${Buttons.danger({
             shape: "square",
             classes: ["flex-1", "hidden"],
             attributes: ["action-totp-disable"],
             icon: "logout-2",
-            text: window._lc.forms.user_setting_security.totp_disable
+            text: t("forms.user_setting_security.totp_disable")
         })}
                             </div>
                         </div>
@@ -329,17 +330,17 @@ export class UserSettingSecurity {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("fingerprint", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_setting_security.passkeys_title}
+                                ${t("forms.user_setting_security.passkeys_title")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.user_setting_security.passkeys_desc}</span>
-                            <span data-passkeys-empty class="hidden text-sm text-muted text-center">${window._lc.forms.user_setting_security.passkeys_empty}</span>
+                            <span class="text-sm text-secondary">${t("forms.user_setting_security.passkeys_desc")}</span>
+                            <span data-passkeys-empty class="hidden text-sm text-muted text-center">${t("forms.user_setting_security.passkeys_empty")}</span>
                             <div data-passkeys-list class="flex flex-col gap-2"></div>
                             ${Buttons.create({
             shape: "square",
             classes: ["w-full"],
             attributes: ["action-passkey-add"],
             icon: "plus",
-            text: window._lc.forms.user_setting_security.passkey_add
+            text: t("forms.user_setting_security.passkey_add")
         })}
                         </div>
 

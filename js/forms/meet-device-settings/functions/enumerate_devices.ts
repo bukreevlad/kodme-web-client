@@ -1,5 +1,6 @@
 // Импортируем utils
 import { Logger } from "../../../utils/logs/logger.js";
+import { I18n } from "../../../utils/i18n/index.js";
 
 /**
  * Устройство одного класса для показа в списке.
@@ -112,7 +113,7 @@ export async function enumerateDevices(): Promise<DeviceLists> {
  */
 function getFallbackLabel(kind: "videoinput" | "audioinput", index: number): string {
 
-    const locales = window._lc?.forms?.meet_play?.dialogs?.device_settings;
+    const locales = I18n.tree.forms.meet_play.dialogs.device_settings;
 
     const template = kind === "videoinput"
         ? locales?.device_fallback_camera

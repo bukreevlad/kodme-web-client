@@ -9,6 +9,7 @@ import { createPopoverMenu } from "../../../../components/overlay/popover_menu.j
 // Импортируем типы
 import type { PopoverMenuItem } from "../../../../components/overlay/popover_menu.js";
 import type { AttachContextMenuHost } from "../types.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -35,7 +36,7 @@ export async function documentContextMenuHandler(event: Event, host: AttachConte
 
         // menu item
         const download = {
-            text: window._lc.forms.secret_chat.components.document_item.context_menu.download,
+            text: t("forms.secret_chat.components.document_item.context_menu.download"),
             iconName: "Download",
             onClick: async () => await host.initDownload?.()
         };

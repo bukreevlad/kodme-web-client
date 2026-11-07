@@ -4,7 +4,7 @@ import { isKind } from "../../../config/file_types.js";
 // Импортируем utils
 import { Logger } from "../../../utils/logs/logger.js";
 import { Icons } from "../../../utils/icons.js";
-import { getDeclension } from "../../../utils/string/declensions.js";
+import { I18n, t } from "../../../utils/i18n/index.js";
 
 // Импортируем components
 import { Badges } from "../../../components/badges.js";
@@ -117,7 +117,7 @@ function renderMessageContent(channel: TopicItem, data: ChannelRecord): HTMLElem
         // (на проводе это значение вида "USER_JOINED_GROUP"), поэтому
         // собираем источник с приведением через String(): поведение
         // идентично легаси — обращение к объекту локали само приводило ключ
-        let messagesLocale = window._lc.forms.messages.components.messages.system_messages;
+        let messagesLocale = I18n.tree.forms.messages.components.messages.system_messages;
         let systemSource = { ...data.last_message, action_type: String(data.last_message.action_type) };
         text.textContent = parseSystemMessage(systemSource, messagesLocale);
 
@@ -127,7 +127,7 @@ function renderMessageContent(channel: TopicItem, data: ChannelRecord): HTMLElem
 
     // Если сообщение от текущего пользователя
     let itsYou = tpl.querySelector("[data-its-you]");
-    let itsMe = data?.last_message?.created_user_id === getSessionUserId() ? window._lc.forms.main.components.channels.last_message.you : "";
+    let itsMe = data?.last_message?.created_user_id === getSessionUserId() ? t("forms.main.components.channels.last_message.you") : "";
     const type = data.type;
     if (itsMe && type != null && [1, 2, 4].includes(type)) itsYou && (itsYou.innerHTML = `<span class="text-[var(--color-green)]">${itsMe}</span>`);
     if (!itsMe && type != null && [2, 4].includes(type) && userName) {
@@ -208,7 +208,7 @@ function renderMessageContent(channel: TopicItem, data: ChannelRecord): HTMLElem
 
             // Если нет текста и одна картинка
             if (!data?.last_message.text && images.length === 1) {
-                text.innerHTML = `<span class="text-[var(--color-brand)] dark:text-[var(--color-brand)]">${window._lc.forms.main.components.channels.last_message.image}</span>`;
+                text.innerHTML = `<span class="text-[var(--color-brand)] dark:text-[var(--color-brand)]">${t("forms.main.components.channels.last_message.image")}</span>`;
             }
 
             // Если аудио найдено
@@ -219,7 +219,7 @@ function renderMessageContent(channel: TopicItem, data: ChannelRecord): HTMLElem
 
             // Если это голосовое сообщение
             if (isVoice) {
-                let audio = `<span class="text-[var(--color-brand)] dark:text-[var(--color-brand)]">${window._lc.forms.main.components.channels.last_message.voice_note}</span>`;
+                let audio = `<span class="text-[var(--color-brand)] dark:text-[var(--color-brand)]">${t("forms.main.components.channels.last_message.voice_note")}</span>`;
                 text.innerHTML = audio;
             } else {
                 if (audios.length === 1) {
@@ -231,7 +231,7 @@ function renderMessageContent(channel: TopicItem, data: ChannelRecord): HTMLElem
                 } else if (audios.length > 1) {
                     // Отображаем количество
                     let counts = `<span class="text-[var(--color-brand)] dark:text-[var(--color-brand)] truncate">
-                    ${audios.length} ${getDeclension(audios.length, window._lc.forms.messages.components.reply_footer.dec_audios)}</span>`;
+                    ${audios.length} ${t("forms.messages.components.reply_footer.dec_audios", { count: audios.length })}</span>`;
                     media.innerHTML = counts;
                 }
             }
@@ -244,7 +244,7 @@ function renderMessageContent(channel: TopicItem, data: ChannelRecord): HTMLElem
 
             // Если это видео сообщение
             if (isVideoNote) {
-                let video = `<span class="text-[var(--color-brand)] dark:text-[var(--color-brand)]">${window._lc.forms.main.components.channels.last_message.video_note}</span>`;
+                let video = `<span class="text-[var(--color-brand)] dark:text-[var(--color-brand)]">${t("forms.main.components.channels.last_message.video_note")}</span>`;
                 text.innerHTML = video;
             } else {
                 if (videos.length === 1) {
@@ -256,7 +256,7 @@ function renderMessageContent(channel: TopicItem, data: ChannelRecord): HTMLElem
                 } else if (videos.length > 1) {
                     // Отображаем количество
                     let counts = `<span class="text-[var(--color-brand)] dark:text-[var(--color-brand)] truncate">
-                                ${videos.length} ${getDeclension(videos.length, window._lc.forms.messages.components.reply_footer.dec_videos)}</span>`;
+                                ${videos.length} ${t("forms.messages.components.reply_footer.dec_videos", { count: videos.length })}</span>`;
                     media.innerHTML = counts;
                 }
             }
@@ -275,7 +275,7 @@ function renderMessageContent(channel: TopicItem, data: ChannelRecord): HTMLElem
                 } else if (documents.length > 1) {
                     // Отображаем количество
                     let files = `<span class="text-[var(--color-brand)] dark:text-[var(--color-brand)] truncate">
-                    ${documents.length} ${getDeclension(documents.length, window._lc.forms.main.components.channels.last_message.dec_files)}
+                    ${documents.length} ${t("forms.main.components.channels.last_message.dec_files", { count: documents.length })}
                 </span>`;
                     media.innerHTML = files;
                 }

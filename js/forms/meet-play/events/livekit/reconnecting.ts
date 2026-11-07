@@ -9,6 +9,7 @@ import { Toast } from "../../../../components/toast.js";
 
 // Импортируем типы
 import type { MeetPlay } from "../../index.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -29,7 +30,7 @@ export function subscribeReconnecting(form: MeetPlay): void {
             if (form.isClosing) return;
 
             // Toast
-            Toast.warning(window._lc.forms.meet_play.toasts.reconnecting);
+            Toast.warning(t("forms.meet_play.toasts.reconnecting"));
 
         });
 

@@ -18,6 +18,7 @@ import { updatePakRequest } from "../requests/update.js";
 
 // Импортируем типы
 import type { StickerPakEdit } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -50,7 +51,7 @@ export async function stickerPakSaveHandler(form: StickerPakEdit): Promise<void>
     const nameValue = name.value.trim();
     if (!nameValue || (limits !== null && nameValue.length > limits.stickers.pak_name_max_length)) {
         Inputs.markInvalid(name, true);
-        Toast.error(window._lc.forms.sticker_pak_edit.toasts.name_invalid);
+        Toast.error(t("forms.sticker_pak_edit.toasts.name_invalid"));
         return;
     }
     Inputs.clearInvalid(name);
@@ -59,7 +60,7 @@ export async function stickerPakSaveHandler(form: StickerPakEdit): Promise<void>
     const aboutValue = about?.value.trim() || null;
     if (aboutValue && limits !== null && aboutValue.length > limits.stickers.pak_about_max_length) {
         if (about) Inputs.markInvalid(about, true);
-        Toast.error(window._lc.forms.sticker_pak_edit.toasts.about_invalid);
+        Toast.error(t("forms.sticker_pak_edit.toasts.about_invalid"));
         return;
     }
     if (about) Inputs.clearInvalid(about);
@@ -80,7 +81,7 @@ export async function stickerPakSaveHandler(form: StickerPakEdit): Promise<void>
         form.modal?.close();
 
         // Toast
-        Toast.success(window._lc.forms.sticker_pak_edit.toasts.success);
+        Toast.success(t("forms.sticker_pak_edit.toasts.success"));
 
         // Обновляем плашку пака в списке (если открыт) — перерисуется по событию
         const listForm = StickerPaks.instance;
@@ -111,7 +112,7 @@ export async function stickerPakSaveHandler(form: StickerPakEdit): Promise<void>
         // Показываем тост (коды ошибок разбирает сам toastError)
         toastError(error, {
             context: "[app][sticker-pak-edit][save-pak]",
-            fallback: window._lc.forms.sticker_pak_edit.toasts.save_error
+            fallback: t("forms.sticker_pak_edit.toasts.save_error")
         });
 
     }

@@ -16,6 +16,7 @@ import { loaderHide, loaderShow } from "./loader_control.js";
 
 // Импортируем типы
 import type { BroadcastPlay } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -47,9 +48,7 @@ export async function startFLVPlayer(form: BroadcastPlay): Promise<void> {
         if (!Mpegts.getFeatureList().mseLivePlayback) {
 
             // Пользователю нужен тост, а не alert: он не блокирует интерфейс
-            Toast.error(window._lc?.forms?.broadcast_play?.toasts?.unsupported_format
-                    || window._lc?.api?.errors?.server_error
-                    || "Ошибка сервера");
+            Toast.error(t("forms.broadcast_play.toasts.unsupported_format"));
 
             return;
 

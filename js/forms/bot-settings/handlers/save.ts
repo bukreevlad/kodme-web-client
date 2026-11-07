@@ -10,6 +10,7 @@ import { saveRequest } from "../requests/save.js";
 
 // Импортируем типы
 import type { BotSettings } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -37,7 +38,7 @@ export async function saveHandler(form: BotSettings): Promise<void> {
         if (response.status) {
 
             // Toast
-            Toast.success(window._lc.forms.bot_settings.toasts.success_save);
+            Toast.success(t("forms.bot_settings.toasts.success_save"));
 
             // Закрываем форму
             form.modal?.close();
@@ -55,7 +56,7 @@ export async function saveHandler(form: BotSettings): Promise<void> {
             bio?.classList.add("invalid");
 
             // Toast
-            Toast.error(window._lc.forms.bot_settings.toasts.bio_invalid);
+            Toast.error(t("forms.bot_settings.toasts.bio_invalid"));
             isToastShown = true;
         }
 
@@ -63,13 +64,13 @@ export async function saveHandler(form: BotSettings): Promise<void> {
         if (getErrorMessage(error).includes("INVALID_BUTTON_URL")) {
 
             // Toast
-            Toast.error(window._lc.forms.bot_settings.toasts.button_url_invalid);
+            Toast.error(t("forms.bot_settings.toasts.button_url_invalid"));
             isToastShown = true;
         }
 
         // Прочая ошибка сервера
         if (!isToastShown) {
-            Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+            Toast.error(t("api.errors.server_error"));
         }
 
     }

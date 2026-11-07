@@ -22,6 +22,7 @@ import { sendReactionHandler } from "./send_reaction.js";
 import type { PopoverMenuInput } from "../../../../components/overlay/popover_menu.js";
 import type { Comments } from "../../index.js";
 import type { CommentRecord } from "../../types.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -93,7 +94,7 @@ export async function contextMenuHandler(event: Event, form: Comments, data: Com
 
         // menu item
         const reply = {
-            text: window._lc.forms.comments.context_menu.reply,
+            text: t("forms.comments.context_menu.reply"),
             iconName: "arrow-back-up-double",
             onClick: () => {
                 if (item) replyCommentHandler(form, data);
@@ -107,7 +108,7 @@ export async function contextMenuHandler(event: Event, form: Comments, data: Com
 
         // menu item
         const edit = {
-            text: window._lc.forms.comments.context_menu.edit,
+            text: t("forms.comments.context_menu.edit"),
             iconName: "pencil",
             onClick: () => {
                 if (item) editCommentHandler(form, data);
@@ -121,7 +122,7 @@ export async function contextMenuHandler(event: Event, form: Comments, data: Com
 
         // menu item
         const remove = {
-            text: window._lc.forms.comments.context_menu.remove,
+            text: t("forms.comments.context_menu.remove"),
             iconName: "trash",
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => removeCommentHandler(form, data)

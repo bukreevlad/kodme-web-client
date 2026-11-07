@@ -1,6 +1,5 @@
 // Импортируем utils
 import { Logger } from "../../../utils/logs/logger.js";
-import { TimeAgoFormatter } from "../../../utils/date/time_ago_formatter.js";
 
 // Импортируем components
 import { Avatars } from "../../../components/avatars.js";
@@ -15,6 +14,7 @@ import { createLastMessage } from "./channel_last_message.js";
 import { isChannelRecord } from "../../main/types.js";
 import type { GroupTopics } from "../index.js";
 import type { ChannelRecord } from "../../main/types.js";
+import { I18n, t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -141,12 +141,11 @@ export class TopicItem {
                 // Отображаем сообщение
                 lastMessage?.appendChild(createLastMessage(this, this.data));
 
-                // Парсим created_at
-                let timeAgo = new TimeAgoFormatter(data.last_message.created_at, "telegram");
-                if (lastMessagecreatedAt) lastMessagecreatedAt.textContent = timeAgo.formattedTime;
+                // Дата пересобирается при смене языка (Intl на новой локали)
+                if (lastMessagecreatedAt) I18n.setTime(lastMessagecreatedAt, data.last_message.created_at, "telegram");
 
             } else {
-                if (lastMessage) lastMessage.textContent = window._lc.forms.main.components.channels.last_message.empty_messages;
+                if (lastMessage) lastMessage.textContent = t("forms.main.components.channels.last_message.empty_messages");
             }
 
         } catch (error) {

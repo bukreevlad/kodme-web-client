@@ -9,6 +9,8 @@
  *  - telegram-time  → только время в стиле Telegram ("09:40");
  *  - telegram-list  → формат списка чатов Telegram ("09:40" / "вчера" / "14.02").
  */
+import { t } from "../i18n/index.js";
+
 export type DisplayType =
     | "short"
     | "long"
@@ -71,7 +73,7 @@ export class TimeAgoFormatter {
     constructor(
         date: Date | string | number | null | undefined,
         displayType: DisplayType = "telegram",
-        locale: string = window._lc?.locale || "ru-RU"
+        locale: string = t("locale")
     ) {
 
         this.locale = locale;

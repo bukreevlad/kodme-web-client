@@ -9,6 +9,7 @@ import { updateParticipant } from "../functions/update_participant.js";
 
 // Импортируем типы
 import type { Call } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -48,7 +49,7 @@ export async function toggleVideoHandler(event: Event, form?: Call): Promise<voi
         Logger.error("❌ [app][call]: Ошибка переключения видео:", error);
 
         // Toast
-        Toast.error(window._lc.forms.call.toasts.camera_error);
+        Toast.error(t("forms.call.toasts.camera_error"));
 
     }
 

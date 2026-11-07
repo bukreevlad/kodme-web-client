@@ -10,6 +10,7 @@ import { createRequest } from "../requests/create.js";
 
 // Импортируем типы
 import type { GroupCreate } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -46,7 +47,7 @@ export async function createHandler(form: GroupCreate): Promise<void> {
         if (response.status) {
 
             // Toast
-            Toast.success(window._lc.forms.group_create.toasts.success_create);
+            Toast.success(t("forms.group_create.toasts.success_create"));
 
             // Закрываем форму
             form.modal?.close();
@@ -64,7 +65,7 @@ export async function createHandler(form: GroupCreate): Promise<void> {
             name.classList.add("invalid");
 
             // Toast
-            Toast.error(window._lc.forms.group_create.toasts.name_required);
+            Toast.error(t("forms.group_create.toasts.name_required"));
             isToastShown = true;
         }
 
@@ -73,7 +74,7 @@ export async function createHandler(form: GroupCreate): Promise<void> {
             name.classList.add("invalid");
 
             // Toast
-            Toast.error(window._lc.forms.group_create.toasts.invalid_name);
+            Toast.error(t("forms.group_create.toasts.invalid_name"));
             isToastShown = true;
         }
 
@@ -81,7 +82,7 @@ export async function createHandler(form: GroupCreate): Promise<void> {
         if (getErrorMessage(error).includes("LINK_ALREADY_TAKEN")) {
 
             // Toast
-            Toast.error(window._lc.forms.group_create.toasts.link_already_taken);
+            Toast.error(t("forms.group_create.toasts.link_already_taken"));
             isToastShown = true;
         }
 
@@ -89,7 +90,7 @@ export async function createHandler(form: GroupCreate): Promise<void> {
         if (getErrorMessage(error).includes("INVALID_LINK")) {
 
             // Toast
-            Toast.error(window._lc.forms.group_create.toasts.invalid_link);
+            Toast.error(t("forms.group_create.toasts.invalid_link"));
             isToastShown = true;
         }
 
@@ -98,13 +99,13 @@ export async function createHandler(form: GroupCreate): Promise<void> {
             about.classList.add("invalid");
 
             // Toast
-            Toast.error(window._lc.forms.group_create.toasts.invalid_description);
+            Toast.error(t("forms.group_create.toasts.invalid_description"));
             isToastShown = true;
         }
 
         // Прочая ошибка сервера
         if (!isToastShown) {
-            Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+            Toast.error(t("api.errors.server_error"));
         }
 
     }

@@ -18,6 +18,7 @@ import { Messages } from "../../index.js";
 
 // Импортируем handlers
 import { removeHandler } from "./handlers/remove.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * Настройки диалога удаления.
@@ -257,7 +258,7 @@ export class RemoveDialog {
                         <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                             ${Icons.icon("trash", { settings: { size: 20 } })?.outerHTML ?? ""}
                         </span>
-                        ${window._lc.forms.messages.dialogs.remove_dialog_confirm.desc}
+                        ${t("forms.messages.dialogs.remove_dialog_confirm.desc")}
                     </span>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "x" })}
                 </div>
@@ -267,7 +268,7 @@ export class RemoveDialog {
                         ${Toggle.checkbox({
             name: "for-all",
             checked: false,
-            text: window._lc.forms.messages.dialogs.remove_dialog_confirm.for_all
+            text: t("forms.messages.dialogs.remove_dialog_confirm.for_all")
         })}
                     </div>
 
@@ -277,13 +278,13 @@ export class RemoveDialog {
             shape: "square",
             attributes: ["action-close"],
             classes: ["w-full"],
-            text: window._lc.forms.messages.dialogs.remove_dialog_confirm.action_cancel
+            text: t("forms.messages.dialogs.remove_dialog_confirm.action_cancel")
         })}
                     ${Buttons.danger({
             shape: "square",
             attributes: ["action-remove"],
             classes: ["w-full"],
-            text: window._lc.forms.messages.dialogs.remove_dialog_confirm.action_remove
+            text: t("forms.messages.dialogs.remove_dialog_confirm.action_remove")
         })}
                 </div>
             </div>

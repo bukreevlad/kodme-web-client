@@ -10,6 +10,7 @@ import { disablePushRequest } from "../requests/disable.js";
 
 // Импортируем типы
 import type { UserSettingNotifications } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -29,7 +30,7 @@ export async function disableAndroid(form: UserSettingNotifications): Promise<vo
         if (response.status) {
 
             // Toast
-            Toast.success(window._lc.forms.user_setting_notifications.toasts.success_disable);
+            Toast.success(t("forms.user_setting_notifications.toasts.success_disable"));
 
             // Закрываем форму
             form.modal?.close();

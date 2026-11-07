@@ -7,6 +7,7 @@ import { Inputs } from "../../../components/inputs.js";
 
 // Импортируем типы
 import type { Registration } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -36,28 +37,28 @@ export function stepPasswordHandler(form: Registration): void {
         // Если имя пустое
         if (!form.firstName) {
             Inputs.markInvalid(firstName, true);
-            Toast.error(window._lc.forms.registration.toasts.not_first_name);
+            Toast.error(t("forms.registration.toasts.not_first_name"));
             return;
         }
 
         // Если имя некорректное (2-64 символа, только буквы) — предупреждение
         if (!/^[а-яёa-z]{2,64}$/i.test(form.firstName)) {
             Inputs.markInvalid(firstName, true);
-            Toast.warning(window._lc.forms.registration.toasts.invalid_first_name);
+            Toast.warning(t("forms.registration.toasts.invalid_first_name"));
             return;
         }
 
         // Если фамилия пустая
         if (!form.lastName) {
             Inputs.markInvalid(lastName, true);
-            Toast.error(window._lc.forms.registration.toasts.not_last_name);
+            Toast.error(t("forms.registration.toasts.not_last_name"));
             return;
         }
 
         // Если фамилия некорректная (2-64 символа, только буквы) — предупреждение
         if (!/^[а-яёa-z]{2,64}$/i.test(form.lastName)) {
             Inputs.markInvalid(lastName, true);
-            Toast.warning(window._lc.forms.registration.toasts.invalid_last_name);
+            Toast.warning(t("forms.registration.toasts.invalid_last_name"));
             return;
         }
 

@@ -6,6 +6,7 @@ import { Toast } from "../../../components/toast.js";
 
 // Импортируем типы
 import type { EditBotCategory } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -28,7 +29,7 @@ export async function saveHandler(form: EditBotCategory): Promise<void> {
         // Проверяем название (нет поля ввода — то же, что пустое значение)
         const nameValue = name?.value;
         if (!nameValue || !Validator.matches(nameValue, pregName)) {
-            throw "Наберите название";
+            throw t("forms.bot_editor.name_short");
         }
 
         // Отправляем ответ

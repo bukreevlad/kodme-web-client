@@ -9,6 +9,7 @@ import { saveModeratorRequest } from "../requests/save.js";
 
 // Импортируем типы
 import type { GroupProfileModerator } from "../index.js";
+import { t } from "../../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -53,7 +54,7 @@ export async function saveModeratorHandler(form: GroupProfileModerator): Promise
             form.modal?.close();
 
             // Отображаем сообщение
-            Toast.success(window._lc.forms.group_moderator_profile.toasts.success_save);
+            Toast.success(t("forms.group_moderator_profile.toasts.success_save"));
 
         }
 
@@ -64,7 +65,7 @@ export async function saveModeratorHandler(form: GroupProfileModerator): Promise
 
         // Прочая ошибка сервера: без тоста пользователь не узнал бы,
         // что настройки не сохранились
-        Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+        Toast.error(t("api.errors.server_error"));
     }
 
 }

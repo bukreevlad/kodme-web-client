@@ -10,6 +10,7 @@ import { Login } from "../../login/index.js";
 
 // Импортируем типы
 import type { UserSessionItem } from "../components/session.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -32,7 +33,7 @@ export async function removeHandler(event: Event, element: UserSessionItem): Pro
         element.form.store.remove(element.getData().id);
 
         // Toast успеха: сессия удалена
-        Toast.success(window._lc.forms.sessions.toasts.success_remove);
+        Toast.success(t("forms.sessions.toasts.success_remove"));
 
         // Получаем все сессии
         const allSessions = LocalStorage.getAllSessions();
@@ -49,7 +50,7 @@ export async function removeHandler(event: Event, element: UserSessionItem): Pro
         Logger.error(error);
 
         // Toast: общая ошибка
-        Toast.error(window._lc.api.errors.server_error);
+        Toast.error(t("api.errors.server_error"));
 
     }
 

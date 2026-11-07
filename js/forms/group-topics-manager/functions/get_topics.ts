@@ -14,6 +14,7 @@ import { getTopicsRequest } from "../requests/get_topics.js";
 // Импортируем типы
 import type { GroupTopicsManager } from "../index.js";
 import type { GroupTopicAddOptions } from "../types.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * Минимальный интервал между одинаковыми тостами ошибки списка (мс).
@@ -177,7 +178,7 @@ function toastErrorWithThrottle(form: GroupTopicsManager, error: unknown): void 
         // Показываем тост (коды ошибок разбирает сам toastError)
         toastError(error, {
             context: "[app][group-topics-manager][get-topics]",
-            fallback: window._lc?.forms?.group_topics_manager?.toasts?.load_error
+            fallback: t("forms.group_topics_manager.toasts.load_error")
         });
 
     } catch (toastError_) {

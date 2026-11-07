@@ -10,6 +10,7 @@ import { removeAvailableLinkRequest } from "../requests/remove_available_link.js
 // Импортируем типы
 import type { CloudAvailableLink } from "../types.js";
 import type { Cloud } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -32,7 +33,7 @@ export async function removeAvailableLinkHandler(form: Cloud, linkData: CloudAva
             form.availableStore.remove(linkData.id);
 
             // Показываем уведомление
-            Toast.success(window._lc.forms.cloud.toasts.link_removed);
+            Toast.success(t("forms.cloud.toasts.link_removed"));
 
         }
 

@@ -36,6 +36,7 @@ import { UserProfile } from "../user-profile/index.js";
 
 // Импортируем events
 import { subscribeStoreEvents } from "./events/store/store_events.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы оформления.
@@ -285,7 +286,7 @@ export class UserSettingDecorations {
                 // invariant: имя темы приходит с сервера строкой
                 currentThemeName.textContent = session.settings.user.themes?.current?.name as string;
             } else {
-                currentThemeName.textContent = window._lc.forms.user_setting_decoration.not_selected;
+                currentThemeName.textContent = t("forms.user_setting_decoration.not_selected");
             }
 
             // Если фоны включены
@@ -434,22 +435,22 @@ export class UserSettingDecorations {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("text-size", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_setting_decoration.interface_size}
+                                ${t("forms.user_setting_decoration.interface_size")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.user_setting_decoration.interface_size_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.user_setting_decoration.interface_size_desc")}</span>
 
                             <!-- Живое превью масштаба интерфейса -->
                             <div class="flex flex-col gap-1 p-3 rounded-lg bg-[var(--form-bg)] border border-[var(--border-color)]" data-interface-preview>
-                                <span data-preview-title class="font-semibold text-lg">${window._lc.forms.user_setting_decoration.preview_title}</span>
-                                <span data-preview-text class="text-secondary">${window._lc.forms.user_setting_decoration.preview_text}</span>
+                                <span data-preview-title class="font-semibold text-lg">${t("forms.user_setting_decoration.preview_title")}</span>
+                                <span data-preview-text class="text-secondary">${t("forms.user_setting_decoration.preview_text")}</span>
                             </div>
 
                             ${Toggle.cardGroup([
-        { name: "interface-size", value: "0.75", checked: false, text: window._lc.forms.user_setting_decoration.size_label_very_small },
-        { name: "interface-size", value: "0.8125", checked: false, text: window._lc.forms.user_setting_decoration.size_label_small },
-        { name: "interface-size", value: "0.875", checked: true, text: window._lc.forms.user_setting_decoration.size_label_normal },
-        { name: "interface-size", value: "0.9375", checked: false, text: window._lc.forms.user_setting_decoration.size_label_large },
-        { name: "interface-size", value: "1", checked: false, text: window._lc.forms.user_setting_decoration.size_label_very_large }
+        { name: "interface-size", value: "0.75", checked: false, text: t("forms.user_setting_decoration.size_label_very_small") },
+        { name: "interface-size", value: "0.8125", checked: false, text: t("forms.user_setting_decoration.size_label_small") },
+        { name: "interface-size", value: "0.875", checked: true, text: t("forms.user_setting_decoration.size_label_normal") },
+        { name: "interface-size", value: "0.9375", checked: false, text: t("forms.user_setting_decoration.size_label_large") },
+        { name: "interface-size", value: "1", checked: false, text: t("forms.user_setting_decoration.size_label_very_large") }
     ])}
                         </div>
 
@@ -459,22 +460,22 @@ export class UserSettingDecorations {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("typography", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_setting_decoration.message_text_size}
+                                ${t("forms.user_setting_decoration.message_text_size")}
                             </span>
-                            <span class="text-sm text-secondary">${window._lc.forms.user_setting_decoration.message_text_size_desc}</span>
+                            <span class="text-sm text-secondary">${t("forms.user_setting_decoration.message_text_size_desc")}</span>
 
                             <!-- Живое превью размера текста сообщений -->
                             <div data-message-text-preview class="flex flex-col gap-0.5 p-3 rounded-lg bg-[var(--form-bg)] border border-[var(--border-color)]">
-                                <span class="text-sm text-secondary">${window._lc.forms.user_setting_decoration.message_name}</span>
-                                <span>${window._lc.forms.user_setting_decoration.message_text}</span>
+                                <span class="text-sm text-secondary">${t("forms.user_setting_decoration.message_name")}</span>
+                                <span>${t("forms.user_setting_decoration.message_text")}</span>
                             </div>
 
                             ${Toggle.cardGroup([
-        { name: "message-text-size", value: "0.875", checked: false, text: window._lc.forms.user_setting_decoration.size_label_very_small },
-        { name: "message-text-size", value: "0.9375", checked: false, text: window._lc.forms.user_setting_decoration.size_label_small },
-        { name: "message-text-size", value: "1", checked: true, text: window._lc.forms.user_setting_decoration.size_label_normal },
-        { name: "message-text-size", value: "1.0625", checked: false, text: window._lc.forms.user_setting_decoration.size_label_large },
-        { name: "message-text-size", value: "1.125", checked: false, text: window._lc.forms.user_setting_decoration.size_label_very_large }
+        { name: "message-text-size", value: "0.875", checked: false, text: t("forms.user_setting_decoration.size_label_very_small") },
+        { name: "message-text-size", value: "0.9375", checked: false, text: t("forms.user_setting_decoration.size_label_small") },
+        { name: "message-text-size", value: "1", checked: true, text: t("forms.user_setting_decoration.size_label_normal") },
+        { name: "message-text-size", value: "1.0625", checked: false, text: t("forms.user_setting_decoration.size_label_large") },
+        { name: "message-text-size", value: "1.125", checked: false, text: t("forms.user_setting_decoration.size_label_very_large") }
     ])}
                         </div>
 
@@ -485,15 +486,15 @@ export class UserSettingDecorations {
                                     <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                         ${Icons.icon("contrast", { settings: { size: 20 } })?.outerHTML ?? ""}
                                     </span>
-                                    ${window._lc.forms.user_setting_decoration.color_scheme}
+                                    ${t("forms.user_setting_decoration.color_scheme")}
                                 </span>
-                                <span class="text-sm text-secondary">${window._lc.forms.user_setting_decoration.color_scheme_desc}</span>
+                                <span class="text-sm text-secondary">${t("forms.user_setting_decoration.color_scheme_desc")}</span>
                             </div>
 
                             ${Toggle.cardGroup([
-        { name: "color-scheme", value: "system", checked: true, text: window._lc.forms.user_setting_decoration.system, description: window._lc.forms.user_setting_decoration.system_desc },
-        { name: "color-scheme", value: "light", checked: false, text: window._lc.forms.user_setting_decoration.white, description: window._lc.forms.user_setting_decoration.white_desc },
-        { name: "color-scheme", value: "dark", checked: false, text: window._lc.forms.user_setting_decoration.dark, description: window._lc.forms.user_setting_decoration.dark_desc }
+        { name: "color-scheme", value: "system", checked: true, text: t("forms.user_setting_decoration.system"), description: t("forms.user_setting_decoration.system_desc") },
+        { name: "color-scheme", value: "light", checked: false, text: t("forms.user_setting_decoration.white"), description: t("forms.user_setting_decoration.white_desc") },
+        { name: "color-scheme", value: "dark", checked: false, text: t("forms.user_setting_decoration.dark"), description: t("forms.user_setting_decoration.dark_desc") }
     ])}
 
                         </div>
@@ -505,14 +506,14 @@ export class UserSettingDecorations {
                                     <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                         ${Icons.icon("palette", { settings: { size: 20 } })?.outerHTML ?? ""}
                                     </span>
-                                    ${window._lc.forms.user_setting_decoration.brand_color}
+                                    ${t("forms.user_setting_decoration.brand_color")}
                                 </span>
-                                <span class="text-sm text-secondary">${window._lc.forms.user_setting_decoration.brand_color_desc}</span>
+                                <span class="text-sm text-secondary">${t("forms.user_setting_decoration.brand_color_desc")}</span>
                             </div>
                             <div data-list-brand-colors class="grid grid-cols-[repeat(auto-fill,minmax(36px,1fr))] gap-2 p-0 w-full"></div>
                             <div class="flex flex-row items-center gap-2 p-2 rounded-lg bg-[var(--form-bg)]">
                                 <input type="color" name="brand-color-custom" class="w-8 h-8 rounded-lg cursor-pointer" value="">
-                                <span class="text-sm text-secondary">${window._lc.forms.user_setting_decoration.custom_color}</span>
+                                <span class="text-sm text-secondary">${t("forms.user_setting_decoration.custom_color")}</span>
                             </div>
                         </div>
 
@@ -523,14 +524,14 @@ export class UserSettingDecorations {
                                     <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                         ${Icons.icon("border-radius", { settings: { size: 20 } })?.outerHTML ?? ""}
                                     </span>
-                                    ${window._lc.forms.user_setting_decoration.ui_radius}
+                                    ${t("forms.user_setting_decoration.ui_radius")}
                                 </span>
-                                <span class="text-sm text-secondary">${window._lc.forms.user_setting_decoration.ui_radius_desc}</span>
+                                <span class="text-sm text-secondary">${t("forms.user_setting_decoration.ui_radius_desc")}</span>
                             </div>
                             ${Toggle.cardGroup([
-        { name: "ui-radius", value: "compact", checked: false, text: window._lc.forms.user_setting_decoration.ui_radius_compact, description: window._lc.forms.user_setting_decoration.ui_radius_compact_desc },
-        { name: "ui-radius", value: "default", checked: true, text: window._lc.forms.user_setting_decoration.ui_radius_default, description: window._lc.forms.user_setting_decoration.ui_radius_default_desc },
-        { name: "ui-radius", value: "round", checked: false, text: window._lc.forms.user_setting_decoration.ui_radius_round, description: window._lc.forms.user_setting_decoration.ui_radius_round_desc }
+        { name: "ui-radius", value: "compact", checked: false, text: t("forms.user_setting_decoration.ui_radius_compact"), description: t("forms.user_setting_decoration.ui_radius_compact_desc") },
+        { name: "ui-radius", value: "default", checked: true, text: t("forms.user_setting_decoration.ui_radius_default"), description: t("forms.user_setting_decoration.ui_radius_default_desc") },
+        { name: "ui-radius", value: "round", checked: false, text: t("forms.user_setting_decoration.ui_radius_round"), description: t("forms.user_setting_decoration.ui_radius_round_desc") }
     ])}
                         </div>
 
@@ -541,7 +542,7 @@ export class UserSettingDecorations {
                                     <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                         ${Icons.icon("brush", { settings: { size: 20 } })?.outerHTML ?? ""}
                                     </span>
-                                    ${window._lc.forms.user_setting_decoration.current_theme}
+                                    ${t("forms.user_setting_decoration.current_theme")}
                                 </span>
                                 <span data-current-theme class="text-sm text-[var(--color-brand)] dark:text-[var(--color-brand)]"></span>
                             </div>
@@ -554,9 +555,9 @@ export class UserSettingDecorations {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("wallpaper", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.user_setting_decoration.chat_backgrounds}
+                                ${t("forms.user_setting_decoration.chat_backgrounds")}
                             </span>
-                            ${Toggle.switch({ name: "is-chat-background-enabled", checked: false, classes: ["row-reverse", "justify-between"], toggleText: { on: window._lc.forms.user_setting_decoration.enabled, off: window._lc.forms.user_setting_decoration.disabled } })}
+                            ${Toggle.switch({ name: "is-chat-background-enabled", checked: false, classes: ["row-reverse", "justify-between"], toggleText: { on: t("forms.user_setting_decoration.enabled"), off: t("forms.user_setting_decoration.disabled") } })}
                             <div data-list-chat-backgrounds class="grid grid-cols-3 gap-2 p-0 w-full"></div>
                         </div>
 
@@ -567,15 +568,15 @@ export class UserSettingDecorations {
                                     <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                         ${Icons.icon("blur", { settings: { size: 20 } })?.outerHTML ?? ""}
                                     </span>
-                                    ${window._lc.forms.user_setting_decoration.blur_elements}
+                                    ${t("forms.user_setting_decoration.blur_elements")}
                                 </span>
-                                <span class="text-sm text-secondary">${window._lc.forms.user_setting_decoration.blur_elements_desc}</span>
+                                <span class="text-sm text-secondary">${t("forms.user_setting_decoration.blur_elements_desc")}</span>
                                 ${Toggle.switch({
             name: "is-blur-enabled",
             checked: false,
             toggleText: {
-                on: window._lc.forms.user_setting_decoration.enabled,
-                off: window._lc.forms.user_setting_decoration.disabled
+                on: t("forms.user_setting_decoration.enabled"),
+                off: t("forms.user_setting_decoration.disabled")
             }
         })}
                             </div>

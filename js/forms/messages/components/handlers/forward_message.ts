@@ -12,6 +12,7 @@ import { forwardMessageRequest } from "../requests/forward_message.js";
 
 // Импортируем типы
 import type { MessageItem } from "../message.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -39,7 +40,7 @@ export async function forwardMessageHandler(message: MessageItem): Promise<void>
                 });
 
                 // Сообщение
-                Toast.success(window._lc.forms.messages.components.messages.toasts.message_forwarded, { position: "bottom-center" });
+                Toast.success(t("forms.messages.components.messages.toasts.message_forwarded"), { position: "bottom-center" });
             }
         });
 

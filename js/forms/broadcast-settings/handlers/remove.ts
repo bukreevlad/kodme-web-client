@@ -17,6 +17,7 @@ import { Broadcasts } from "../../broadcasts/index.js";
 
 // Импортируем типы
 import type { BroadcastSettings } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -48,12 +49,12 @@ export async function removeHandler(form: BroadcastSettings): Promise<void> {
                         if (getErrorMessage(error).includes("ACCESS_DENIED")) {
 
                             // Toast
-                            Toast.error(window._lc.forms.broadcast_settings.toasts.access_denied);
+                            Toast.error(t("forms.broadcast_settings.toasts.access_denied"));
 
                         } else {
 
                             // Прочая ошибка сервера
-                            Toast.error(window._lc.api.errors.server_error ?? "Ошибка сервера");
+                            Toast.error(t("api.errors.server_error"));
 
                         }
 
@@ -61,7 +62,7 @@ export async function removeHandler(form: BroadcastSettings): Promise<void> {
                     }
 
                     // Toast
-                    Toast.success(window._lc.forms.broadcast_settings.toasts.success_remove);
+                    Toast.success(t("forms.broadcast_settings.toasts.success_remove"));
 
                     // Закрываем модальное окно
                     dialogConfirm?.modal?.close();

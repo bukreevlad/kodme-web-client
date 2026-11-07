@@ -89,6 +89,9 @@ const buildResult = await Bun.build({
     outdir: './dist.new/assets', // Хешированные артефакты сборки (кэшируются жёстко)
     target: 'browser',
     minify: true,
+    // Ленивые import() (локали en) идут отдельными чанками, а не в main:
+    // чанки кэширует SW (манифест собирается find'ом по каталогу)
+    splitting: true,
     naming: '[name].[hash].js' // Генерирует уникальный хеш для кэш-бастинга
 });
 
@@ -97,12 +100,19 @@ if (!buildResult.success) {
     process.exit(1);
 }
 
-const hashedJsFile = buildResult.outputs[0].path;
+// Среди артефактов есть чанки (splitting) — точка входа помечена kind'ом
+const mainArtifact = buildResult.outputs.find(o => o.kind === "entry-point");
+if (!mainArtifact) {
+    console.error('   ❌ Не найден артефакт точки входа main.js!');
+    process.exit(1);
+}
+
+const hashedJsFile = mainArtifact.path;
 const hashedJsFileName = path.basename(hashedJsFile);
 
 // Читаем собранный файл для последующих инъекций
 let mainJsContent = await Bun.file(hashedJsFile).text();
-mainJsContent = mainJsContent.replace(/__BUILD_VERSION__/g, buildResult.outputs[0].hash || "prod");
+mainJsContent = mainJsContent.replace(/__BUILD_VERSION__/g, mainArtifact.hash || "prod");
 mainJsContent = mainJsContent.replace(/__BUILD_AT__/g, new Date().toISOString());
 
 console.log(`   ✅ JS собран: ${hashedJsFileName}`);

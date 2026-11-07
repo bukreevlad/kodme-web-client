@@ -4,6 +4,7 @@ import { Logger } from "../../../utils/logs/logger.js";
 
 // Импортируем типы
 import type { UserSettingDecorations } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -22,7 +23,7 @@ export async function resetThemeHandler(form: UserSettingDecorations): Promise<v
         Themes.resetCurrentTheme();
 
         // Устанавливаем текст
-        if (currentThemeName) currentThemeName.textContent = window._lc.forms.user_setting_decoration.not_selected;
+        if (currentThemeName) currentThemeName.textContent = t("forms.user_setting_decoration.not_selected");
 
     } catch (error) {
         Logger.error(error);

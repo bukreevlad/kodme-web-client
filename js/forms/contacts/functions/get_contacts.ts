@@ -14,6 +14,7 @@ import { getContactsRequest } from "../requests/get_contacts.js";
 // Импортируем типы
 import type { ContactStoreAddOptions } from "../types.js";
 import type { Contacts } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -182,7 +183,7 @@ function toastErrorOnce(form: Contacts, error: unknown): void {
         // Показываем тост (коды ошибок разбирает сам toastError)
         toastError(error, {
             context: "[app][contacts][get-contacts]",
-            fallback: window._lc?.forms?.contacts?.toasts?.load_error
+            fallback: t("forms.contacts.toasts.load_error")
         });
 
     } catch (toastError) {

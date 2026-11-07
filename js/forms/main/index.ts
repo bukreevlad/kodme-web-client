@@ -7,6 +7,7 @@ import { Socket } from "../../config/socket.js";
 
 // Импортируем utils
 import { Logger } from "../../utils/logs/logger.js";
+import { t } from "../../utils/i18n/index.js";
 import { Store } from "../../utils/store.js";
 import { GestureController } from "../../utils/gesture_controller.js";
 import { AppStatus } from "../../utils/app_status.js";
@@ -162,7 +163,7 @@ export class Main {
             // fallback'ом, если обновить токен не удалось (см. auth/expired.ts)
 
             // Устанавливаем статус
-            this.appStatus?.setStatus({ text: "Соединение..." });
+            this.appStatus?.setStatus({ text: t("forms.main.connecting") });
 
         });
 
@@ -330,7 +331,7 @@ export class Main {
     async _getUpdates(): Promise<void> {
 
         // Устанавливаем статус
-        this.appStatus?.setStatus({ text: "Обновление..." });
+        this.appStatus?.setStatus({ text: t("forms.main.updating") });
 
         // Делаем запрос на сервер getUserConverstion
         await getConversations(this);

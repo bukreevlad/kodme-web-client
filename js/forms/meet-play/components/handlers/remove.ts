@@ -13,6 +13,7 @@ import { isCastIdentity } from "../../functions/parse_room_state.js";
 // Импортируем типы
 import type { MeetPlay } from "../../index.js";
 import type { Participant, RemoteParticipant } from "livekit-client";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -55,8 +56,8 @@ export async function removeParticipantHandler(
 
             // Toast
             Toast.success(isCast
-                ? window._lc.forms.meet_play.toasts.success_remove_ingress
-                : window._lc.forms.meet_play.toasts.success_remove);
+                ? t("forms.meet_play.toasts.success_remove_ingress")
+                : t("forms.meet_play.toasts.success_remove"));
 
         }
 
@@ -70,14 +71,14 @@ export async function removeParticipantHandler(
         // Участника нет в комнате: он вышел сам, пока организатор нажимал кнопку
         if (String((error as Error)?.message).includes("PARTICIPANT_NOT_FOUND")) {
 
-            Toast.error(window._lc.forms.meet_play.toasts.participant_not_found);
+            Toast.error(t("forms.meet_play.toasts.participant_not_found"));
             isToastShown = true;
         }
 
         // Организатора исключить нельзя
         if (String((error as Error)?.message).includes("CANNOT_REMOVE_OWNER")) {
 
-            Toast.error(window._lc.forms.meet_play.toasts.cannot_remove_owner);
+            Toast.error(t("forms.meet_play.toasts.cannot_remove_owner"));
             isToastShown = true;
         }
         // ---------- УЧАСТНИК ----------
@@ -86,7 +87,7 @@ export async function removeParticipantHandler(
         // Модерация доступна только создателю конференции
         if (String((error as Error)?.message).includes("ACCESS_DENIED")) {
 
-            Toast.error(window._lc.forms.meet_play.toasts.access_denied);
+            Toast.error(t("forms.meet_play.toasts.access_denied"));
             isToastShown = true;
         }
         // ---------- ДОСТУП ----------
@@ -94,8 +95,8 @@ export async function removeParticipantHandler(
         // Прочая ошибка сервера
         if (!isToastShown) {
             Toast.error(isCast
-                ? window._lc.forms.meet_play.toasts.remove_ingress_error
-                : window._lc.forms.meet_play.toasts.remove_error);
+                ? t("forms.meet_play.toasts.remove_ingress_error")
+                : t("forms.meet_play.toasts.remove_error"));
         }
 
     }

@@ -11,6 +11,7 @@ import { GroupProfileModerator } from "../dialogs/profile-moderator/index.js";
 import { isGroupModeratorRecord } from "../types.js";
 import type { GroupModeratorsManager } from "../index.js";
 import type { GroupModeratorRecord } from "../types.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -87,17 +88,17 @@ export class ModeratorItem {
                             <div class="flex flex-row gap-2">
                                 <div data-can-deleted-message 
                                     class="flex p-1 text-xs rounded-md bg-[var(--color-black)]/5 text-secondary dark:bg-[var(--color-white)]/10 dark:text-secondary data-[active=true]:bg-[var(--color-brand)] data-[active=true]:text-white data-[active=true]:dark:bg-[var(--color-brand)]">
-                                    ${window._lc.forms.group_moderators_manager.components.user.can_deleted_message}
+                                    ${t("forms.group_moderators_manager.components.user.can_deleted_message")}
                                 </div>
 
                                 <div data-can-clean-messages 
                                     class="flex p-1 text-xs rounded-md bg-[var(--color-black)]/5 text-secondary dark:bg-[var(--color-white)]/10 dark:text-secondary data-[active=true]:bg-[var(--color-brand)] data-[active=true]:text-white data-[active=true]:dark:bg-[var(--color-brand)]">
-                                    ${window._lc.forms.group_moderators_manager.components.user.can_clean_messages}
+                                    ${t("forms.group_moderators_manager.components.user.can_clean_messages")}
                                 </div>
 
                                 <div data-can-restrict-members 
                                     class="flex p-1 text-xs rounded-md bg-[var(--color-black)]/5 text-secondary dark:bg-[var(--color-white)]/10 dark:text-secondary data-[active=true]:bg-[var(--color-brand)] data-[active=true]:text-white data-[active=true]:dark:bg-[var(--color-brand)]">
-                                    ${window._lc.forms.group_moderators_manager.components.user.can_restrict_members}
+                                    ${t("forms.group_moderators_manager.components.user.can_restrict_members")}
                                 </div>
                             </div>
                         </div>

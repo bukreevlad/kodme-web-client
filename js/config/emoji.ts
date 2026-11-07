@@ -14,10 +14,22 @@ export type EmojiItem = {
 /**
  * Категория панели эмодзи: заголовок, иконка и список эмодзи.
  */
+/** Идентификатор категории эмодзи — ключ заголовка в локали. */
+export type EmojiCategoryId =
+    | "smileys"
+    | "gestures"
+    | "animals"
+    | "food"
+    | "travel"
+    | "activities"
+    | "objects"
+    | "symbols"
+    | "flags";
+
 export type EmojiCategory = {
 
-    /** Заголовок категории на русском. */
-    name: string;
+    /** Идентификатор категории — ключ заголовка в локали. */
+    id: EmojiCategoryId;
 
     /** Иконка категории в панели. */
     emoji: string;
@@ -38,15 +50,15 @@ export type EmojiCategory = {
  * - это данные интерфейса, а не параметры приложения: место им в `config`,
  *   но в отдельном файле, который можно править независимо.
  *
- * Структура: массив категорий, у каждой `name` (заголовок на русском), `emoji`
- * (иконка категории) и `items` (список эмодзи с техническим именем).
+ * Структура: массив категорий, у каждой `id` (ключ заголовка в локали),
+ * `emoji` (иконка категории) и `items` (список эмодзи с техническим именем).
  *
  * Использование: `import { EMOJI } from "../../config/emoji.js";`
  * ***************************************************************************
  */
 export const EMOJI: EmojiCategory[] = [
     {
-        "name": "Смайлики и эмоции",
+        "id": "smileys",
         "emoji": "😀",
         "items": [
             { "name": "grinning_face", "emoji": "😀" },
@@ -154,7 +166,7 @@ export const EMOJI: EmojiCategory[] = [
         ]
     },
     {
-        "name": "Жесты и люди",
+        "id": "gestures",
         "emoji": "👋",
         "items": [
             { "name": "waving_hand", "emoji": "👋" },
@@ -201,7 +213,7 @@ export const EMOJI: EmojiCategory[] = [
         ]
     },
     {
-        "name": "Животные и природа",
+        "id": "animals",
         "emoji": "🐶",
         "items": [
             { "name": "monkey_face", "emoji": "🐵" },
@@ -332,7 +344,7 @@ export const EMOJI: EmojiCategory[] = [
         ]
     },
     {
-        "name": "Еда и напитки",
+        "id": "food",
         "emoji": "🍔",
         "items": [
             { "name": "grapes", "emoji": "🍇" },
@@ -455,7 +467,7 @@ export const EMOJI: EmojiCategory[] = [
         ]
     },
     {
-        "name": "Путешествия и места",
+        "id": "travel",
         "emoji": "🚗",
         "items": [
             { "name": "locomotive", "emoji": "🚂" },
@@ -534,7 +546,7 @@ export const EMOJI: EmojiCategory[] = [
         ]
     },
     {
-        "name": "Активности и спорт",
+        "id": "activities",
         "emoji": "⚽",
         "items": [
             { "name": "soccer_ball", "emoji": "⚽" },
@@ -596,7 +608,7 @@ export const EMOJI: EmojiCategory[] = [
         ]
     },
     {
-        "name": "Предметы",
+        "id": "objects",
         "emoji": "💡",
         "items": [
             { "name": "battery", "emoji": "🔋" },
@@ -750,7 +762,7 @@ export const EMOJI: EmojiCategory[] = [
         ]
     },
     {
-        "name": "Символы",
+        "id": "symbols",
         "emoji": "❤️",
         "items": [
             { "name": "heart", "emoji": "❤️" },
@@ -850,7 +862,7 @@ export const EMOJI: EmojiCategory[] = [
         ]
     },
     {
-        "name": "Флаги",
+        "id": "flags",
         "emoji": "🏁",
         "items": [
             { "name": "checkered_flag", "emoji": "🏁" },

@@ -6,6 +6,7 @@ import { Logger } from "../../../../utils/logs/logger.js";
 
 // Импортируем типы
 import type { Call } from "../../index.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -41,7 +42,7 @@ export function subscribeDisconnected(form: Call): void {
 
                 form.endCall({
                     reason: "remote_hangup",
-                    toast: window._lc.forms.call.toasts.ended,
+                    toast: t("forms.call.toasts.ended"),
                     toastType: "default"
                 });
                 return;
@@ -56,7 +57,7 @@ export function subscribeDisconnected(form: Call): void {
 
             form.endCall({
                 reason: "connect_error",
-                toast: window._lc.forms.call.toasts.connection_failed,
+                toast: t("forms.call.toasts.connection_failed"),
                 toastType: "error"
             });
             // ---------- NETWORK ----------

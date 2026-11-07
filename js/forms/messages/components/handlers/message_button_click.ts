@@ -6,6 +6,7 @@ import { messageButtonClickRequest } from "../requests/message_button_click.js";
 
 // Импортируем типы
 import type { MessageButton, MessageData } from "../types.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -43,7 +44,7 @@ export async function messageButtonClickHandler(element: Element, button: Messag
         toastError(error, {
             context: "[app][messages][button-click]",
             codes: ["BOT_NOT_IN_NETWORK"],
-            text: window._lc.forms.messages.toasts.bot_not_online
+            text: t("forms.messages.toasts.bot_not_online")
         });
 
     } finally {

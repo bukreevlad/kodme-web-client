@@ -19,6 +19,7 @@ import { updateFooter } from "./update_footer.js";
 // Импортируем типы
 import type { MeetPlay } from "../index.js";
 import type { MeetBlockFlag, MeetRoomState } from "../types.js";
+import { I18n } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -177,7 +178,7 @@ export function notifySelfBlocked(form: MeetPlay, previousState?: MeetRoomState 
  */
 export function buildSelfBlockedText(newlyBlocked: readonly MeetBlockFlag[]): string {
 
-    const locales = window._lc.forms.meet_play;
+    const locales = I18n.tree.forms.meet_play;
 
     if (!Array.isArray(newlyBlocked) || newlyBlocked.length === 0) {
         return locales.toasts.you_were_blocked;

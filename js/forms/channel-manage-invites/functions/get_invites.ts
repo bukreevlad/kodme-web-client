@@ -15,6 +15,7 @@ import { getInvitesRequest } from "../requests/get_invites.js";
 import type { StoreId } from "../../../utils/store.js";
 import type { InviteDirection, ChannelInviteStoreAddOptions } from "../types.js";
 import type { ChannelManageInvites } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -186,7 +187,7 @@ function toastErrorOnce(form: ChannelManageInvites, error: unknown): void {
         // Показываем тост (коды ошибок разбирает сам toastError)
         toastError(error, {
             context: "[app][channel-manage-invites][get-invites]",
-            fallback: window._lc?.forms?.channel_manage_invites?.toasts?.load_error
+            fallback: t("forms.channel_manage_invites.toasts.load_error")
         });
 
     } catch (toastError) {

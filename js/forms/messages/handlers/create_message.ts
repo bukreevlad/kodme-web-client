@@ -24,6 +24,7 @@ import { firstLoadMessages } from "../functions/first_load_messages.js";
 import type { MessageRecord, MessageStoreAddOptions } from "../types.js";
 import type { Messages } from "../index.js";
 import type { SessionProfile } from "../../menu/types.js";
+import { I18n } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -65,7 +66,7 @@ export async function createMessageHandler(form: Messages): Promise<void> {
             // Подсвечиваем поле только для «пустого» текста
             if (validation.code === "empty_message") textarea.classList.add("invalid");
 
-            Toast.warning(window._lc.forms.messages.toasts[validation.code], {
+            Toast.warning(I18n.tree.forms.messages.toasts[validation.code], {
                 position: "bottom-center"
             });
 

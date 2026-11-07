@@ -8,8 +8,7 @@ import { CDM_FORM_CLASSES, CDM_FORM_HEADER_CLASSES, CDM_FORM_CONTENT_CLASSES } f
 import { Logger } from "../../utils/logs/logger.js";
 import { Icons } from "../../utils/icons.js";
 import { Store } from "../../utils/store.js";
-import { getDeclension } from "../../utils/string/declensions.js";
-import { TimeAgoFormatter } from "../../utils/date/time_ago_formatter.js";
+import { I18n, t } from "../../utils/i18n/index.js";
 import { LocalStorage } from "../../utils/local_storage.js";
 import { IndexedDB } from "../../utils/indexed_db.js";
 import { SvgMaskManager } from "../../core/managers/svg_mask_manager.js";
@@ -580,8 +579,8 @@ export class Messages {
                     id: this.modal.options.id,
                     data: {
                         instance: this,
-                        title: this.channel?.type === 5 ? window._lc.forms.messages.favorite : this.channel?.display_name ?? "",
-                        subtitle: "Сообщения"
+                        title: this.channel?.type === 5 ? t("forms.messages.favorite") : this.channel?.display_name ?? "",
+                        subtitle: t("forms.messages.title")
                     }
                 }
             }));
@@ -663,7 +662,7 @@ export class Messages {
         // Отображаем данные
         this.name.textContent = data.display_name;
         if (this.channel?.type === 5) {
-            this.name.textContent = window._lc.forms.messages.favorite;
+            this.name.textContent = t("forms.messages.favorite");
         }
 
         // Если уведомления выключены (канал загружается вместе с формой —
@@ -702,12 +701,12 @@ export class Messages {
         // Если это диалог c пользователем
         if (data.type === 1) {
             if (data.display_user_is_online) {
-                this.subtitle.textContent = window._lc.forms.messages.online;
+                I18n.setPlain(this.subtitle, t("forms.messages.online"));
             } else {
                 if (data.display_last_action_at) {
-                    this.subtitle.textContent = `${window._lc.forms.messages.was} ${new TimeAgoFormatter(data.display_last_action_at).formattedTime}`;
+                    I18n.setTime(this.subtitle, data.display_last_action_at, undefined, "forms.messages.was");
                 } else {
-                    this.subtitle.textContent = `${window._lc.forms.messages.offline}`;
+                    I18n.setPlain(this.subtitle, t("forms.messages.offline"));
                 }
             }
         }
@@ -727,16 +726,16 @@ export class Messages {
             // Если нет статуса
             if (!this.botStatus) {
                 if (data.display_user_is_online) {
-                    this.subtitle.textContent = window._lc.forms.messages.online
+                    I18n.setPlain(this.subtitle, t("forms.messages.online"));
                 } else {
                     if (data.display_last_action_at) {
-                        this.subtitle.textContent = `${window._lc.forms.messages.was} ${new TimeAgoFormatter(data.display_last_action_at).formattedTime}`;
+                        I18n.setTime(this.subtitle, data.display_last_action_at, undefined, "forms.messages.was");
                     } else {
-                        this.subtitle.textContent = `${window._lc.forms.messages.offline}`;
+                        I18n.setPlain(this.subtitle, t("forms.messages.offline"));
                     }
                 }
             } else {
-                this.subtitle.textContent = this.botStatus;
+                I18n.setPlain(this.subtitle, this.botStatus);
             }
 
         }
@@ -748,26 +747,21 @@ export class Messages {
             // `?? 0` лишь защищает тип, не меняя отображение
             const totalMembers = data.total_members ?? 0;
 
-            this.subtitle.textContent =
-                `${totalMembers} ${getDeclension(totalMembers, [
-                    window._lc.forms.messages.dec_one_subscriber,
-                    window._lc.forms.messages.dec_two_subscribers,
-                    window._lc.forms.messages.dec_five_subscribers
-                ])}`;
+            I18n.setCount(this.subtitle, "forms.messages.subscribers", totalMembers);
 
         }
 
         // Если это тема группы
-        if (data.type === 4) this.subtitle.textContent = window._lc.forms.messages.group_topic;
+        if (data.type === 4) I18n.setPlain(this.subtitle, t("forms.messages.group_topic"));
 
         // Если это избранное
         data.type === 5 && this.subtitle.classList.add("none");
 
         // Если это чат конференции
-        if (data.type === 6) this.subtitle.textContent = window._lc.forms.messages.conference_chat;
+        if (data.type === 6) I18n.setPlain(this.subtitle, t("forms.messages.conference_chat"));
 
         // Если это чат трансляции
-        if (data.type === 7) this.subtitle.textContent = window._lc.forms.messages.broadcast_chat;
+        if (data.type === 7) I18n.setPlain(this.subtitle, t("forms.messages.broadcast_chat"));
 
         // Обновляем состояние кнопок
         updateStateButtons(this);
@@ -934,7 +928,7 @@ export class Messages {
                             ${Buttons.danger({ shape: "circle", attributes: ["action-voice-note-send"], icon: { name: "send-2", settings: { filled: true } } })}
                         </div>
                         <div data-voice-note-cancel-hint class="hidden absolute inset-0 items-center justify-center gap-2 font-semibold text-sm text-[var(--color-red)]">
-                            ${slideToCancelIcon} ${window._lc.forms.messages.voice_recorder.slide_to_cancel}
+                            ${slideToCancelIcon} ${t("forms.messages.voice_recorder.slide_to_cancel")}
                         </div>
                     </div>
 
@@ -942,7 +936,7 @@ export class Messages {
                         <div class="flex flex-row gap-0 h-full w-full items-end">
                             ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-bot-menu"], classes: ["hidden"], icon: "Menu" })}
                             ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-emoji"], icon: "mood-smile" })}
-                            ${Inputs.textarea({ intent: "transparent", placeholder: window._lc.forms.messages.enter_message, name: "message", rows: 1 })}
+                            ${Inputs.textarea({ intent: "transparent", placeholder: t("forms.messages.enter_message"), name: "message", rows: 1 })}
                             ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-attach-file"], icon: "Paperclip" })}
                             ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-video-recorder"], icon: "Video" })}
                             ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-voice-recorder"], classes: ["hidden"], icon: "microphone" })}

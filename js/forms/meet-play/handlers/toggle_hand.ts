@@ -10,6 +10,7 @@ import { isHandRaised, withHandRaised } from "../functions/parse_participant.js"
 
 // Импортируем типы
 import type { MeetPlay } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -54,7 +55,7 @@ export async function toggleHandHandler(form: MeetPlay): Promise<void> {
 
         Logger.error("Ошибка поднятия руки:", error);
 
-        Toast.error(window._lc.forms.meet_play.toasts.hand_error);
+        Toast.error(t("forms.meet_play.toasts.hand_error"));
 
     }
 

@@ -9,6 +9,7 @@ import { BroadcastPlay } from "../../broadcast-play/index.js";
 
 // Импортируем типы
 import type { MessageData, SystemMessagesLocale } from "./types.js";
+import { I18n } from "../../../utils/i18n/index.js";
 
 /**
  * Конфигурация рендера одного типа системного события.
@@ -178,7 +179,7 @@ function parseTemplateMessage(data: MessageData): Element | null {
     if (!action || !payload) return null;
 
     // Быстрый доступ к локализации
-    const locales: SystemMessagesLocale = window._lc.forms.messages.components.messages.system_messages;
+    const locales: SystemMessagesLocale = I18n.tree.forms.messages.components.messages.system_messages;
     const messageLocale = locales[action]?.array;
 
     // Если локализация не найдена

@@ -10,6 +10,7 @@ import { SecretChatsManager } from "../../../core/managers/secret_chats_manager.
 // Импортируем forms
 import { SecretChat } from "../../secret-chat/index.js";
 import { SecretChatIncoming } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -40,7 +41,7 @@ export async function acceptChatHandler(form: SecretChatIncoming): Promise<void>
         // Модалка могла закрыться (приняли на другом устройстве) — тостить
         // имеет смысл только пока она открыта
         if (!SecretChatIncoming.instances.has(form.chatId)) return;
-        Toast.error(window._lc.forms.secret_chat.toasts.invite_error);
+        Toast.error(t("forms.secret_chat.toasts.invite_error"));
         form.modal?.close();
 
     }

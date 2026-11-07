@@ -6,6 +6,7 @@ import { Toast } from "../../../../components/toast.js";
 
 // Импортируем типы
 import type { MeetInviteRecord } from "../../types.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -21,7 +22,7 @@ export async function copyInviteHandler(item: MeetInviteRecord): Promise<void> {
         // Копируем ссылку
         navigator.clipboard.writeText(`${window.location.protocol}//${window.location.hostname}/+${item.link}`)
             .then(() => {
-                Toast.success(window._lc.forms.meet_manage_invites.components.toasts.success_copy, { position: "bottom-center" });
+                Toast.success(t("forms.meet_manage_invites.components.toasts.success_copy"), { position: "bottom-center" });
             });
 
     } catch (error) {

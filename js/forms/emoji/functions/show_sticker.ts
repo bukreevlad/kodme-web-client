@@ -8,6 +8,7 @@ import { openStickerPak } from "./open_sticker_pak.js";
 import type { EmojiFocusSticker } from "../types.js";
 import type { StickerPakData } from "../../sticker-pak/types.js";
 import type { Emoji } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -49,7 +50,7 @@ export async function showSticker(form: Emoji, focus: EmojiFocusSticker, data?: 
         // Показываем тост (коды ошибок разбирает сам toastError)
         toastError(error, {
             context: "[app][emoji][show-sticker]",
-            fallback: window._lc.forms.emoji.stickers.pak_load_error
+            fallback: t("forms.emoji.stickers.pak_load_error")
         });
 
     }

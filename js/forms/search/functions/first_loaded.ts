@@ -14,6 +14,7 @@ import { setSectionState } from "./set_section_state.js";
 // Импортируем типы
 import type { SectionId } from "../config/sections.js";
 import type { Search } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -144,7 +145,7 @@ async function loadFirstPage(form: Search, id: SectionId): Promise<void> {
         toastError(error, {
             context: `[app][search][first-loaded][${id}]`,
             codes: ERROR_CODES,
-            fallback: window._lc?.forms?.search?.toasts?.load_error
+            fallback: t("forms.search.toasts.load_error")
         });
 
     }

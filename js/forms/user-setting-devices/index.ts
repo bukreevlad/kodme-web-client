@@ -32,6 +32,7 @@ import { UserSettingLoginWithQRCode } from "../user-setting-login-qrcode/index.j
 
 // Импортируем типы
 import type { SessionListItem } from "./types.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы устройств.
@@ -305,10 +306,10 @@ export class UserSettingDevices {
             attributes: ["action-close"],
             icon: "ArrowLeft"
         })}
-                    <span class="font-semibold text-base truncate">${window._lc.forms.user_settings.devices}</span>
+                    <span class="font-semibold text-base truncate">${t("forms.user_settings.devices")}</span>
                     ${Buttons.create({
             attributes: ["action-login-with-qrcode"],
-            text: window._lc.forms.user_setting_devices.login_qr_code,
+            text: t("forms.user_setting_devices.login_qr_code"),
             icon: "qrcode"
         })}
                 </div>
@@ -321,7 +322,7 @@ export class UserSettingDevices {
                                 <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("device-desktop", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </div>
-                                <span class="font-semibold">${window._lc.forms.user_setting_devices.current_device}</span>
+                                <span class="font-semibold">${t("forms.user_setting_devices.current_device")}</span>
                             </div>
                             <div data-current-device class="flex flex-col gap-2"></div>
                         </div>
@@ -331,16 +332,16 @@ export class UserSettingDevices {
                                 <div class="flex items-center justify-center w-8 h-8">
                                     ${Icons.icon("devices", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </div>
-                                <span class="font-semibold">${window._lc.forms.user_setting_devices.active_sessions}</span>
+                                <span class="font-semibold">${t("forms.user_setting_devices.active_sessions")}</span>
                             </div>
-                            <span data-devices-empty class="hidden text-sm text-muted text-center">${window._lc.forms.user_setting_devices.no_sessions}</span>
+                            <span data-devices-empty class="hidden text-sm text-muted text-center">${t("forms.user_setting_devices.no_sessions")}</span>
                             <div data-devices class="flex flex-col gap-2"></div>
                             ${Buttons.danger({
             shape: "square",
             classes: ["w-full"],
             attributes: ["action-remove-all-other-devices"],
             icon: "logout-2",
-            text: window._lc.forms.user_setting_devices.remove_all_other_devices
+            text: t("forms.user_setting_devices.remove_all_other_devices")
         })}
                         </div>
 

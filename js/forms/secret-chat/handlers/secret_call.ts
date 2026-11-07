@@ -13,6 +13,7 @@ import { SecretCall } from "../../secret-call/index.js";
 
 // Импортируем типы
 import type { SecretChat } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -38,7 +39,7 @@ export async function startSecretCallHandler(form: SecretChat): Promise<void> {
         // Вызов уходит всем онлайн-устройствам собеседника
         const callId = await manager.startCall(form.chat.peer_user_id);
         if (!callId) {
-            Toast.warning(window._lc.forms.secret_call.toasts.peer_offline, { position: "bottom-center" });
+            Toast.warning(t("forms.secret_call.toasts.peer_offline"), { position: "bottom-center" });
             return;
         }
 

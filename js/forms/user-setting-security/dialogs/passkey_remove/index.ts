@@ -7,6 +7,7 @@ import { Logger } from "../../../../utils/logs/logger.js";
 // Импортируем components
 import { Overlay } from "../../../../components/overlay/index.js";
 import { Buttons } from "../../../../components/buttons.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * Настройки диалога удаления ключа доступа.
@@ -154,24 +155,23 @@ export class PasskeyRemoveDialog {
     _template(): HTMLElement {
 
         // Подставляем имя ключа в описание
-        let description = window._lc.forms.user_setting_security.passkey_remove_desc || "";
-        if (description.includes("{name}") && this.options.name) {
-            description = description.replace("{name}", this.options.name);
-        }
+        const description = this.options.name
+            ? t("forms.user_setting_security.passkey_remove_desc", { name: this.options.name })
+            : t("forms.user_setting_security.passkey_remove_desc");
 
         return new DOMParser().parseFromString(`
 
             <div class="cdm-modal security-passkey-remove flex flex-col p-0 gap-0 ${CDM_MODAL_CLASSES()}">
                 <div class="${CDM_MODAL_HEADER_CLASSES()}">
-                    <span class="flex flex-row gap-2 items-center font-semibold text-base">${window._lc.forms.user_setting_security.passkey_remove_title}</span>
+                    <span class="flex flex-row gap-2 items-center font-semibold text-base">${t("forms.user_setting_security.passkey_remove_title")}</span>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "x" })}
                 </div>
                 <div class="${CDM_MODAL_CONTENT_CLASSES()}">
                     <span class="text-secondary text-sm">${description}</span>
                 </div>
                 <div class="${CDM_MODAL_FOOTER_CLASSES()}">
-                    ${Buttons.create({ attributes: ["action-close"], classes: ["w-full"], text: window._lc.forms.user_setting_security.action_cancel })}
-                    ${Buttons.danger({ attributes: ["action-remove"], classes: ["w-full"], text: window._lc.forms.user_setting_security.passkey_remove })}
+                    ${Buttons.create({ attributes: ["action-close"], classes: ["w-full"], text: t("forms.user_setting_security.action_cancel") })}
+                    ${Buttons.danger({ attributes: ["action-remove"], classes: ["w-full"], text: t("forms.user_setting_security.passkey_remove") })}
                 </div>
             </div>
 

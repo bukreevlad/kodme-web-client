@@ -17,6 +17,7 @@ import { isMeetLayout } from "../../meet-play/types.js";
 import type { MeetLayout } from "../../meet-play/types.js";
 import type { MeetPlay } from "../../meet-play/index.js";
 import type { MeetGridSettings } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * Ключ в sessionStorage для личного режима сетки.
@@ -186,7 +187,7 @@ export async function saveGridSettingsHandler(dialog: MeetGridSettings): Promise
 
             dialog.currentSettings.force = false;
 
-            Toast.error(window._lc.forms.meet_play.toasts.access_denied);
+            Toast.error(t("forms.meet_play.toasts.access_denied"));
 
             dialog.modal?.close();
             return;
@@ -204,8 +205,8 @@ export async function saveGridSettingsHandler(dialog: MeetGridSettings): Promise
 
         // Toast: режим применится у всех, когда придёт RoomMetadataChanged
         Toast.success(request.cleared
-            ? window._lc.forms.meet_play.toasts.success_layout_cleared
-            : window._lc.forms.meet_play.toasts.success_layout);
+            ? t("forms.meet_play.toasts.success_layout_cleared")
+            : t("forms.meet_play.toasts.success_layout"));
 
         dialog.modal?.close();
         // ---------- FORCE ----------
@@ -216,7 +217,7 @@ export async function saveGridSettingsHandler(dialog: MeetGridSettings): Promise
         // ---------- ДОСТУП ----------
         if (String((error as Error)?.message).includes("ACCESS_DENIED")) {
 
-            Toast.error(window._lc.forms.meet_play.toasts.access_denied);
+            Toast.error(t("forms.meet_play.toasts.access_denied"));
             return;
         }
         // ---------- ДОСТУП ----------
@@ -225,13 +226,13 @@ export async function saveGridSettingsHandler(dialog: MeetGridSettings): Promise
         // Сервер не узнал режим: клиент и сервер разошлись в белом списке
         if (String((error as Error)?.message).includes("INVALID_LAYOUT")) {
 
-            Toast.error(window._lc.forms.meet_play.toasts.layout_error);
+            Toast.error(t("forms.meet_play.toasts.layout_error"));
             return;
         }
         // ---------- ВАЛИДАЦИЯ ----------
 
         // Прочая ошибка сервера
-        Toast.error(window._lc.forms.meet_play.toasts.layout_error);
+        Toast.error(t("forms.meet_play.toasts.layout_error"));
 
     }
 
@@ -362,8 +363,8 @@ async function applyFocus(
         // Правило разлетелось по metadata комнаты само, отдельный push
         // не нужен
         Toast.success(request.cleared
-            ? window._lc.forms.meet_play.toasts.success_focus_cleared
-            : window._lc.forms.meet_play.toasts.success_focus);
+            ? t("forms.meet_play.toasts.success_focus_cleared")
+            : t("forms.meet_play.toasts.success_focus"));
 
     } catch (error) {
 
@@ -376,12 +377,12 @@ async function applyFocus(
         // ---------- ДОСТУП ----------
         if (String((error as Error)?.message).includes("ACCESS_DENIED")) {
 
-            Toast.error(window._lc.forms.meet_play.toasts.access_denied);
+            Toast.error(t("forms.meet_play.toasts.access_denied"));
             return;
         }
         // ---------- ДОСТУП ----------
 
-        Toast.error(window._lc.forms.meet_play.toasts.focus_error);
+        Toast.error(t("forms.meet_play.toasts.focus_error"));
 
     }
 

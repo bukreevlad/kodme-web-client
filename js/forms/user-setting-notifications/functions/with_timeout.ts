@@ -10,12 +10,14 @@
  * @returns Результат промиса, либо ошибка при истечении таймаута.
  ***************************************************************************
  */
+import { t } from "../../../utils/i18n/index.js";
+
 export async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 
     let timeoutId: ReturnType<typeof setTimeout>;
     const timeout = new Promise<never>((_, reject) => {
         timeoutId = setTimeout(() => {
-            reject(new Error(window._lc.forms.user_setting_notifications.toasts.timeout));
+            reject(new Error(t("forms.user_setting_notifications.toasts.timeout")));
         }, ms);
     });
 

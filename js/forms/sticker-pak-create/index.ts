@@ -13,6 +13,7 @@ import { Toggle } from "../../components/toggle.js";
 
 // Импортируем handlers
 import { stickerPakCreateHandler } from "./handlers/create.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Настройки формы создания пака стикеров.
@@ -199,15 +200,15 @@ export class StickerPakCreate {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("label", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.sticker_pak_create.name}
+                                ${t("forms.sticker_pak_create.name")}
                             </span>
-                            ${Inputs.create({ placeholder: window._lc.forms.sticker_pak_create.name, name: "name" })}
+                            ${Inputs.create({ placeholder: t("forms.sticker_pak_create.name"), name: "name" })}
 
                             ${Toggle.switch({
                                 name: "is-public", checked: false,
                                 toggleText: {
-                                    on: window._lc.forms.sticker_pak_create.public_on,
-                                    off: window._lc.forms.sticker_pak_create.public_off
+                                    on: t("forms.sticker_pak_create.public_on"),
+                                    off: t("forms.sticker_pak_create.public_off")
                                 }
                             })}
                         </div>
@@ -217,9 +218,9 @@ export class StickerPakCreate {
                                 <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
                                     ${Icons.icon("info-square-rounded", { settings: { size: 20 } })?.outerHTML ?? ""}
                                 </span>
-                                ${window._lc.forms.sticker_pak_create.about}
+                                ${t("forms.sticker_pak_create.about")}
                             </span>
-                            ${Inputs.textarea({ placeholder: window._lc.forms.sticker_pak_create.about, name: "about", rows: 4 })}
+                            ${Inputs.textarea({ placeholder: t("forms.sticker_pak_create.about"), name: "about", rows: 4 })}
                         </div>
 
                     </div>

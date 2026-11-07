@@ -19,6 +19,7 @@ import { getUserInfoRequest } from "../user-profile/requests/get_user_info.js";
 // Импортируем handlers
 import { acceptChatHandler } from "./handlers/accept.js";
 import { declineChatHandler } from "./handlers/decline.js";
+import { I18n } from "../../utils/i18n/index.js";
 
 /**
  * Данные конструктора модалки входящего секретного чата.
@@ -237,7 +238,7 @@ export class SecretChatIncoming {
     _template(): HTMLElement | null {
 
         // Локализация
-        const locale = window._lc.forms.secret_chat.dialogs.invite;
+        const locale = I18n.tree.forms.secret_chat.dialogs.invite;
 
         return new DOMParser().parseFromString(`
 

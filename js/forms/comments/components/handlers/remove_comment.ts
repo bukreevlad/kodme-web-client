@@ -17,6 +17,7 @@ import { markCommentRemoved } from "../../functions/push_state.js";
 // Импортируем типы
 import type { Comments } from "../../index.js";
 import type { CommentRecord } from "../../types.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -63,7 +64,7 @@ export async function removeCommentHandler(form: Comments, data: CommentRecord):
                     markCommentRemoved(form, data.id);
 
                     // Сообщение
-                    Toast.success(window._lc.forms.comments.toasts.comment_removed, { position: "bottom-center" });
+                    Toast.success(t("forms.comments.toasts.comment_removed"), { position: "bottom-center" });
 
                 } catch (error) {
 

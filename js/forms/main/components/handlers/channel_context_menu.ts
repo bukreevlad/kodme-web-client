@@ -21,6 +21,7 @@ import { moveToFolderHandler } from "./move_to_folder.js";
 // Импортируем типы
 import type { PopoverMenuItem } from "../../../../components/overlay/popover_menu.js";
 import type { ChannelItem } from "../channel.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -49,7 +50,7 @@ export async function channelContextMenuHandler(event: MouseEvent, channel: Chan
 
         // menu item
         const enableNotify: PopoverMenuItem = {
-            text: window._lc.forms.main.components.channels.context_menu.enable_notify,
+            text: t("forms.main.components.channels.context_menu.enable_notify"),
             iconName: "Bell",
             onClick: () => enableNotifyHandler(channel)
         };
@@ -63,7 +64,7 @@ export async function channelContextMenuHandler(event: MouseEvent, channel: Chan
 
         // menu item
         const disableNotify: PopoverMenuItem = {
-            text: window._lc.forms.main.components.channels.context_menu.disable_notify,
+            text: t("forms.main.components.channels.context_menu.disable_notify"),
             iconName: "BellOff",
             onClick: () => disableNotifyHandler(channel)
         };
@@ -77,7 +78,7 @@ export async function channelContextMenuHandler(event: MouseEvent, channel: Chan
 
         // menu item
         const profile: PopoverMenuItem = {
-            text: window._lc.forms.main.components.channels.context_menu.profile,
+            text: t("forms.main.components.channels.context_menu.profile"),
             iconName: "info-square-rounded",
             onClick: () => new ChannelProfile({ channelId: channel.data.id })
         };
@@ -87,7 +88,7 @@ export async function channelContextMenuHandler(event: MouseEvent, channel: Chan
 
         // menu item
         const userProfile: PopoverMenuItem = {
-            text: window._lc.forms.main.components.channels.context_menu.user_profile,
+            text: t("forms.main.components.channels.context_menu.user_profile"),
             iconName: "User",
             onClick: () => {
                 // Ссылки в замыкании читаются в момент клика
@@ -104,7 +105,7 @@ export async function channelContextMenuHandler(event: MouseEvent, channel: Chan
 
         // menu item
         const call: PopoverMenuItem = {
-            text: window._lc.forms.main.components.channels.context_menu.call,
+            text: t("forms.main.components.channels.context_menu.call"),
             iconName: "PhoneOutgoing",
             onClick: () => new Call({
                 userId: channel.data.display_user_id,
@@ -121,7 +122,7 @@ export async function channelContextMenuHandler(event: MouseEvent, channel: Chan
 
         // menu item
         const moveToFolder: PopoverMenuItem = {
-            text: window._lc.forms.main.components.channels.context_menu.add_to_folder,
+            text: t("forms.main.components.channels.context_menu.add_to_folder"),
             iconName: "folder-open",
             onClick: () => moveToFolderHandler(channel)
         };
@@ -133,7 +134,7 @@ export async function channelContextMenuHandler(event: MouseEvent, channel: Chan
 
         // menu item
         const unsubscribeChannel: PopoverMenuItem = {
-            text: window._lc.forms.main.components.channels.context_menu.unsubscribe_channel,
+            text: t("forms.main.components.channels.context_menu.unsubscribe_channel"),
             iconName: "user-minus",
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => unsubscribeChannelHandler(channel)
@@ -146,7 +147,7 @@ export async function channelContextMenuHandler(event: MouseEvent, channel: Chan
 
         // menu item
         const unsubscribeGroup: PopoverMenuItem = {
-            text: window._lc.forms.main.components.channels.context_menu.unsubscribe_group,
+            text: t("forms.main.components.channels.context_menu.unsubscribe_group"),
             iconName: "user-minus",
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => unsubscribeChannelHandler(channel)
@@ -159,7 +160,7 @@ export async function channelContextMenuHandler(event: MouseEvent, channel: Chan
 
         // menu item
         const clearHistory: PopoverMenuItem = {
-            text: window._lc.forms.main.components.channels.context_menu.clear_history,
+            text: t("forms.main.components.channels.context_menu.clear_history"),
             iconName: "history",
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => clearHistoryHandler(channel)
@@ -172,7 +173,7 @@ export async function channelContextMenuHandler(event: MouseEvent, channel: Chan
 
         // menu item
         const removeDialog: PopoverMenuItem = {
-            text: window._lc.forms.main.components.channels.context_menu.remove_dialog,
+            text: t("forms.main.components.channels.context_menu.remove_dialog"),
             iconName: "trash",
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => removeDialogHandler(channel)

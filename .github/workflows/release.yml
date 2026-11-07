@@ -55,7 +55,16 @@ jobs:
           if gh release view "v$VERSION" > /dev/null 2>&1; then
             echo "ℹ️  Релиз v$VERSION уже существует — ассет не перезаписывается."
           else
+            # Описание: выжимка изменений из RELEASE_NOTES.md + служебная строка сборки
+            {
+              if [ -s RELEASE_NOTES.md ]; then
+                cat RELEASE_NOTES.md
+                echo ""
+                echo "---"
+              fi
+              echo "Сборка web-client $VERSION (обычная, bun run build). Источники — коммит $(git rev-parse --short HEAD)."
+            } > release_body.md
             gh release create "v$VERSION" "$ASSET" \
               --title "Веб-клиент $VERSION" \
-              --notes "Сборка web-client $VERSION (обычная, bun run build). Источники — коммит $(git rev-parse --short HEAD)."
+              --notes-file release_body.md
           fi

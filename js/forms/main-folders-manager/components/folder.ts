@@ -1,7 +1,7 @@
 // Импортируем utils
 import { Logger } from "../../../utils/logs/logger.js";
 import { Icons } from "../../../utils/icons.js";
-import { getDeclension } from "../../../utils/string/declensions.js";
+import { t } from "../../../utils/i18n/index.js";
 
 // Импортируем components
 import { Buttons } from "../../../components/buttons.js";
@@ -144,7 +144,7 @@ function setupFolderItem(element: HTMLElement, data: MainFoldersManagerFolder): 
         // Отображаем количество чатов в папке (если сервер вернул)
         if (typeof data.chats_count === "number" && count) {
             count.classList.remove("hidden");
-            count.textContent = `${data.chats_count} ${getDeclension(data.chats_count, window._lc.forms.main_folders_manager.chats_count)}`;
+            count.textContent = `${data.chats_count} ${t("forms.main_folders_manager.chats_count", { count: data.chats_count })}`;
         } else if (count) {
             count.classList.add("hidden");
         }
@@ -219,7 +219,7 @@ function openFolderContextMenu(anchor: HTMLElement, data: MainFoldersManagerFold
     // Элементы меню
     const menuItems = [
         {
-            text: window._lc.forms.main_folders_manager.components.folder.context_menu.remove,
+            text: t("forms.main_folders_manager.components.folder.context_menu.remove"),
             iconName: "trash",
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => {

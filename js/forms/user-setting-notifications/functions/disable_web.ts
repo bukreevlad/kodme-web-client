@@ -13,6 +13,7 @@ import { disablePushRequest } from "../requests/disable.js";
 
 // Импортируем типы
 import type { UserSettingNotifications } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -39,7 +40,7 @@ export async function disableWeb(form: UserSettingNotifications): Promise<void> 
         if (response.status) {
 
             // Toast
-            Toast.success(window._lc.forms.user_setting_notifications.toasts.success_disable);
+            Toast.success(t("forms.user_setting_notifications.toasts.success_disable"));
 
             // Закрываем форму
             form.modal?.close();
@@ -67,7 +68,7 @@ async function _access(): Promise<boolean> {
 
         // Проверяем serviceWorker
         if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
-            Logger.warn(window._lc.forms.user_setting_notifications.toasts.not_device);
+            Logger.warn(t("forms.user_setting_notifications.toasts.not_device"));
             return false;
         }
 
@@ -112,11 +113,11 @@ async function _unsubscribe(): Promise<boolean> {
                 if (successful) {
                     return true;
                 } else {
-                    throw new Error(window._lc.forms.user_setting_notifications.toasts.browser_not_unsubscribe);
+                    throw new Error(t("forms.user_setting_notifications.toasts.browser_not_unsubscribe"));
                 }
 
             } catch (e) {
-                throw new Error(window._lc.forms.user_setting_notifications.toasts.browser_not_unsubscribe);
+                throw new Error(t("forms.user_setting_notifications.toasts.browser_not_unsubscribe"));
             }
 
         } else {

@@ -5,6 +5,7 @@ import { Logger } from "../../../utils/logs/logger.js";
 // Импортируем типы
 import type { Call } from "../index.js";
 import type { CallQualityLevel } from "../types.js";
+import { I18n, t } from "../../../utils/i18n/index.js";
 
 /**
  * Оформление уровней качества связи. Ключи совпадают со значениями
@@ -82,7 +83,7 @@ export function updateConnectionQuality(form: Call, quality?: string | null): vo
         // ---------- СМЫСЛ УРОВНЯ ----------
         // Текстовой подписи нет — только цветная иконка, но смысл уровня
         // всё же нужен скринридеру и подсказке при наведении
-        const levelName = window._lc.forms.call.quality[level] ?? window._lc.forms.call.quality.unknown;
+        const levelName = I18n.tree.forms.call.quality[level] ?? t("forms.call.quality.unknown");
         element.title = levelName;
         element.setAttribute("aria-label", levelName);
 
