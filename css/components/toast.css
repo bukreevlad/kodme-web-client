@@ -1,0 +1,175 @@
+/* ===================================================================== */
+/* Toast — карточка уведомления (js/components/toast.js)                 */
+/*                                                                         */
+/* Здесь только то, что Tailwind-классами выразить неудобно: полупрозрач-*/
+/* ный фон со стеклом, цветовой акцент из CSS-переменной и keyframes     */
+/* въезда/выезда, зависящие от позиции тоста.                              */
+/* ===================================================================== */
+
+/* ------------------------------------------------------------------------- */
+/* Светлая тема                                                              */
+/* ------------------------------------------------------------------------- */
+:root {
+    --toast-bg: color-mix(in srgb, var(--bg-color) 94%, transparent);
+    --toast-border: color-mix(in srgb, var(--text-color) 10%, transparent);
+    --toast-shadow: color-mix(in srgb, var(--color-black) 16%, transparent);
+
+    /* Мягкое «экспоненциальное» затухание: быстрый старт, долгий «хвост» */
+    --toast-ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --toast-time: 0.32s;
+
+    /* Смещение, с которого тост въезжает/выезжает */
+    --toast-shift: 1.25rem;
+}
+
+/* ------------------------------------------------------------------------- */
+/* Тёмная тема                                                               */
+/* ------------------------------------------------------------------------- */
+:root[data-theme="dark"] {
+    --toast-bg: color-mix(in srgb, var(--bg-color) 90%, transparent);
+    --toast-border: color-mix(in srgb, var(--color-white) 14%, transparent);
+    --toast-shadow: color-mix(in srgb, var(--color-black) 60%, transparent);
+}
+
+/* ========================================================================= */
+/* Карточка                                                                   */
+/* ========================================================================= */
+.cdm-toast {
+    background-color: var(--toast-bg);
+    border-color: var(--toast-border);
+    color: var(--text-color);
+    box-shadow: 0 10px 30px -10px var(--toast-shadow);
+
+    /* Тост не должен «держать» фокус при появлении, но быть виден всегда */
+    opacity: 0;
+}
+
+/* Иконка статуса в мягкой подложке акцентного цвета */
+.cdm-toast-icon {
+    color: var(--toast-accent);
+    background-color: color-mix(in srgb, var(--toast-accent) 16%, transparent);
+}
+
+/* ========================================================================= */
+/* Крестик                                                                    */
+/* ========================================================================= */
+.cdm-toast-close {
+    color: var(--text-muted);
+}
+
+.cdm-toast-close:hover {
+    color: var(--text-color);
+    background-color: color-mix(in srgb, var(--text-color) 8%, transparent);
+}
+
+/* Крестик — единственный элемент тоста, доступный с клавиатуры,
+   поэтому кольцо фокуса здесь обязательно */
+.cdm-toast-close:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 1px;
+}
+
+/* ========================================================================= */
+/* Прогресс-бар времени                                                      */
+/* ========================================================================= */
+.cdm-toast-progress {
+    background-color: var(--toast-accent);
+    transform-origin: left center;
+    animation: cdm-toast-progress var(--toast-duration) linear forwards;
+}
+
+/* Пауза по наведению/фокусу: анимацию останавливаем, а не перезапускаем —
+   иначе полоса дёргается назад на всю оставшуюся длительность */
+.cdm-toast[data-paused="true"] .cdm-toast-progress {
+    animation-play-state: paused;
+}
+
+@keyframes cdm-toast-progress {
+    from { transform: scaleX(1); }
+    to { transform: scaleX(0); }
+}
+
+/* ========================================================================= */
+/* Анимации: въезд                                                           */
+/*                                                                         */
+/* Направление зависит от позиции — раньше все позиции ехали вбок, и тосты  */
+/* на левом краю выезжали из-за правого.                                    */
+/* ========================================================================= */
+@keyframes cdm-toast-in-right {
+    from { opacity: 0; transform: translateX(var(--toast-shift)) scale(0.96); }
+    to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes cdm-toast-out-right {
+    from { opacity: 1; transform: translateX(0) scale(1); }
+    to { opacity: 0; transform: translateX(var(--toast-shift)) scale(0.96); }
+}
+
+@keyframes cdm-toast-in-left {
+    from { opacity: 0; transform: translateX(calc(var(--toast-shift) * -1)) scale(0.96); }
+    to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes cdm-toast-out-left {
+    from { opacity: 1; transform: translateX(0) scale(1); }
+    to { opacity: 0; transform: translateX(calc(var(--toast-shift) * -1)) scale(0.96); }
+}
+
+@keyframes cdm-toast-in-up {
+    from { opacity: 0; transform: translateY(calc(var(--toast-shift) * -0.6)) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes cdm-toast-out-up {
+    from { opacity: 1; transform: translateY(0) scale(1); }
+    to { opacity: 0; transform: translateY(calc(var(--toast-shift) * -0.6)) scale(0.96); }
+}
+
+@keyframes cdm-toast-in-down {
+    from { opacity: 0; transform: translateY(calc(var(--toast-shift) * 0.6)) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes cdm-toast-out-down {
+    from { opacity: 1; transform: translateY(0) scale(1); }
+    to { opacity: 0; transform: translateY(calc(var(--toast-shift) * 0.6)) scale(0.96); }
+}
+
+/* Въезд: data-state="enter" ставится сразу при вставке, дальше
+   переключается в "open" — тогда keyframes не перезапускаются */
+.cdm-toast[data-state="enter"][data-side="right"] { animation: cdm-toast-in-right var(--toast-time) var(--toast-ease) both; }
+.cdm-toast[data-state="enter"][data-side="left"] { animation: cdm-toast-in-left var(--toast-time) var(--toast-ease) both; }
+.cdm-toast[data-state="enter"][data-side="center"][data-vertical="top"] { animation: cdm-toast-in-up var(--toast-time) var(--toast-ease) both; }
+.cdm-toast[data-state="enter"][data-side="center"][data-vertical="bottom"] { animation: cdm-toast-in-down var(--toast-time) var(--toast-ease) both; }
+
+.cdm-toast[data-state="open"] { opacity: 1; }
+
+/* Выезд: элемент удаляется по событию animationend */
+.cdm-toast[data-state="closing"][data-side="right"] { animation: cdm-toast-out-right var(--toast-time) var(--toast-ease) both; }
+.cdm-toast[data-state="closing"][data-side="left"] { animation: cdm-toast-out-left var(--toast-time) var(--toast-ease) both; }
+.cdm-toast[data-state="closing"][data-side="center"][data-vertical="top"] { animation: cdm-toast-out-up var(--toast-time) var(--toast-ease) both; }
+.cdm-toast[data-state="closing"][data-side="center"][data-vertical="bottom"] { animation: cdm-toast-out-down var(--toast-time) var(--toast-ease) both; }
+
+/* ========================================================================= */
+/* Свайп                                                                      */
+/*                                                                         */
+/* Пока тост «едет» за пальцем, анимация не должна мешать — на это время   */
+/* снимаем transition, иначе он будет догонять палец с задержкой.           */
+/* ========================================================================= */
+.cdm-toast[data-swiping="true"] {
+    transition: none;
+}
+
+/* ========================================================================= */
+/* Уменьшенное движение                                                      */
+/*                                                                         */
+/* Глобальное правило в main.css обнуляет длительность анимаций, поэтому     */
+/* событие animationend всё равно приходит и JS-страховка не нужна. А вот   */
+/* полоса остаточного времени становится бессмысленной: за 0.01ms она схлопы-*/
+/* вается в ноль, и пользователь видит просто плашку без индикатора.         */
+/* ========================================================================= */
+@media (prefers-reduced-motion: reduce) {
+    .cdm-toast-progress {
+        display: none;
+    }
+}

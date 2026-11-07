@@ -1,0 +1,2576 @@
+{
+  "locale": "ru-RU",
+  "locale_name": "Русский",
+  "api": {
+    "errors": {
+      "server_not_responde": "Сервер не отвечает",
+      "invalid_token_signature": "Токен не прошёл проверку. Подпись недействительна",
+      "server_error": "Ошибка сервера. Попробуйте позже",
+      "timeout": "Сервер не ответил вовремя. Проверьте соединение",
+      "network_error": "Нет связи с сервером",
+      "access_denied": "Нет доступа к этому действию",
+      "rate_limit_exceeded": "Слишком много запросов. Попробуйте позже",
+      "text_or_attachments_required": "Наберите сообщение или прикрепите файл",
+      "text_too_long": "Сообщение слишком длинное",
+      "invalid_extension": "Этот тип файла нельзя прикреплять",
+      "max_files_exceeded": "Превышено количество файлов",
+      "file_too_large": "Файл слишком большой",
+      "invalid_mime": "Неверный тип файла",
+      "message_not_found": "Сообщение не найдено",
+      "invalid_name": "Некорректное название",
+      "unauthorized": "Требуется повторный вход",
+      "attachments_max_count_exceeded": "Превышено количество файлов в сообщении",
+      "document_id_invalid": "Файл не найден или не загружен. Попробуйте прикрепить его заново",
+      "invalid_file_size": "Файл слишком большой",
+      "invalid_mime_type": "Неверный тип файла",
+      "mime_type_required": "Не удалось определить тип файла",
+      "mime_extension_mismatch": "Тип файла не соответствует его расширению",
+      "invalid_metadata": "Некорректные данные файла",
+      "file_name_required": "Не указано имя файла",
+      "file_name_too_long": "Имя файла слишком длинное",
+      "buttons_invalid": "Некорректные кнопки в сообщении",
+      "invalid_buttons": "Некорректные кнопки в сообщении",
+      "buttons_max_rows_exceeded": "Слишком много строк кнопок в сообщении",
+      "buttons_max_per_row_exceeded": "Слишком много кнопок в одной строке",
+      "button_text_invalid": "Некорректный текст кнопки",
+      "button_classes_invalid": "Недопустимые стили кнопки",
+      "invalid_button_url": "Недопустимая ссылка в кнопке",
+      "subscription_required": "Нужна подписка на канал",
+      "commenting_disabled_in_channel": "Комментирование отключено в канале",
+      "commenting_disabled_in_post": "Комментирование отключено в этой публикации",
+      "entity_not_found": "Публикация не найдена или удалена",
+      "post_not_found": "Публикация не найдена или удалена",
+      "comment_not_found": "Комментарий не найден или уже удалён",
+      "comment_mismatch": "Комментарий уже изменён или удалён",
+      "edit_not_allowed": "Нет прав редактировать этот комментарий",
+      "remove_not_allowed": "Нет прав удалять этот комментарий",
+      "reply_to_comment_not_found": "Комментарий, на который вы отвечаете, удалён",
+      "reply_to_comment_mismatch": "Нельзя ответить на этот комментарий",
+      "invalid_attachments": "Некорректные вложения",
+      "text_required": "Комментарий пустой",
+      "invalid_text": "Некорректный текст комментария",
+      "reaction_required": "Реакция не указана",
+      "reaction_unavailable": "Эта реакция недоступна",
+      "media_processing_failed": "Не удалось обработать файл",
+      "document_not_found": "Файл не найден или удалён",
+      "object_not_uploaded": "Файл не был загружен до конца",
+      "upload_size_mismatch": "Размер загруженного файла не совпадает",
+      "document_not_processed": "Файл ещё обрабатывается, попробуйте отправить позже",
+      "media_processing_disabled": "Обработка файлов временно недоступна",
+      "upload_rejected": "Хранилище отклонило файл (400). Попробуйте позже"
+    }
+  },
+  "components": {
+    "toast": {
+      "close": "Закрыть уведомление"
+    },
+    "clipboard": {
+      "success": "Скопировано",
+      "error": "Не удалось скопировать. Скопируйте текст вручную"
+    },
+    "tabs": {
+      "close": "Закрыть вкладку"
+    },
+    "video_player": {
+      "wide_expand": "Растянуть видео на всю ширину",
+      "wide_collapse": "Вернуть видео к обычной ширине"
+    }
+  },
+  "utils": {
+    "format_bites": {
+      "sizes": [
+        "б",
+        "кб",
+        "мб",
+        "гб",
+        "тб",
+        "пр",
+        "еб",
+        "зб",
+        "yb"
+      ]
+    },
+    "duration_formatter": {
+      "days": [
+        "день",
+        "дня",
+        "дней"
+      ]
+    }
+  },
+  "forms": {
+    "app_new_version_available": {
+      "update_desc": "Загружена новая версия приложения. Обновить сейчас ?",
+      "update_last_desc": "Это можно сделать если перезайти в приложение. Либо из меню настроек кеша.",
+      "update": "Обновить",
+      "cancel": "Отмена",
+      "toasts": {
+        "update_ready": "Обновление загружено, перезагрузите приложение"
+      }
+    },
+    "audio_player": {
+      "playlist_title": "Очередь воспроизведения",
+      "playlist_empty": "Очередь пуста",
+      "tracks_count": "Треков: {count}",
+      "unknown_track": "Неизвестный трек",
+      "unknown_author": "Неизвестный автор",
+      "untitled": "Без названия",
+      "unknown": "Неизвестно"
+    },
+    "auth": {
+      "or": "или",
+      "have_account": "Уже есть аккаунт?",
+      "no_account": "Нет аккаунта?",
+      "back_to_login": "Вернуться ко входу"
+    },
+    "login": {
+      "title": "Добро пожаловать!",
+      "subtitle": "Войдите, чтобы продолжить",
+      "email": "Email",
+      "password": "Пароль",
+      "save_me": "Запомнить меня",
+      "login": "Войти",
+      "qr_login": "Войти по QR-коду",
+      "passkey_login": "Войти по ключу доступа",
+      "forgot_password": "Забыли пароль?",
+      "registration": "Создать аккаунт",
+      "toasts": {
+        "user_not_found": "Пользователь не найден",
+        "not_password": "Введите пароль",
+        "password_not_math": "Пароль не совпадает",
+        "not_email": "Введите email",
+        "invalid_email": "Введите корректный email",
+        "user_blocked": "Аккаунт заблокирован",
+        "too_many_requests": "Слишком много запросов. Попробуйте позже",
+        "success_code_sent": "Код подтверждения отправлен на почту",
+        "success_totp_required": "Введите код из приложения-генератора",
+        "success_passkey_login": "Вход по ключу доступа выполнен",
+        "passkey_unsupported": "Браузер не поддерживает ключи доступа",
+        "passkey_no_credentials": "Для этого аккаунта нет зарегистрированных ключей доступа",
+        "passkey_expired": "Сессия подтверждения истекла. Повторите вход",
+        "passkey_credential_not_found": "Ключ доступа не найден. Войдите по паролю",
+        "passkey_invalid": "Не удалось подтвердить ключ доступа",
+        "passkey_sign_count": "Ключ доступа отклонён. Войдите по паролю и удалите ключ"
+      }
+    },
+    "login_with_qrcode": {
+      "title": "Вход по QR-коду",
+      "scan_desc": "Отсканируйте QR код в приложении",
+      "back": "Назад",
+      "toasts": {
+        "qr_not_found": "QR код не найден. Попробуйте ещё раз",
+        "qr_expired": "QR код истёк. Отсканируйте новый",
+        "success_login": "Авторизация успешна"
+      }
+    },
+    "registration": {
+      "title": "Создание аккаунта",
+      "subtitle": "Создайте аккаунт, чтобы начать общение",
+      "step": "Шаг {current} из {total}",
+      "email": "Email",
+      "you_name": "Ваше имя",
+      "first_name": "Имя",
+      "last_name": "Фамилия",
+      "password": "Пароль",
+      "retry_password": "Повторите пароль",
+      "desc_code": "Введите код из письма",
+      "back": "Назад",
+      "next": "Дальше",
+      "registration": "Создать",
+      "toasts": {
+        "not_email": "Введите email",
+        "invalid_email": "Введите корректный email",
+        "not_first_name": "Введите имя",
+        "not_last_name": "Введите фамилию",
+        "invalid_first_name": "Имя: от 2 до 64 символов, только буквы",
+        "invalid_last_name": "Фамилия: от 2 до 64 символов, только буквы",
+        "not_password": "Введите пароль",
+        "not_retry_password": "Повторите пароль",
+        "passwords_not_match": "Пароли не совпадают",
+        "password_too_short": "Пароль должен содержать минимум 8 символов",
+        "email_already_taken": "Этот email уже зарегистрирован",
+        "user_blocked": "Аккаунт заблокирован",
+        "module_disabled": "Регистрация временно недоступна",
+        "too_many_requests": "Слишком много запросов. Попробуйте позже",
+        "success_registration": "Вы успешно зарегистрировались"
+      }
+    },
+    "confirm": {
+      "title": "Проверьте почту",
+      "title_totp": "Подтверждение входа",
+      "desc": "Код подтверждения отправлен на {email}",
+      "code": "Код",
+      "desc_code": "Введите код из письма",
+      "desc_totp": "Введите код из приложения-генератора",
+      "totp_code": "Код из приложения",
+      "desc_totp_code": "Откройте приложение-генератор (Google Authenticator, Yandex Key и т.п.) и введите актуальный код",
+      "check": "Проверить",
+      "toasts": {
+        "code_invalid": "Неверный код",
+        "code_expired": "Код истёк. Попробуйте войти ещё раз",
+        "code_required": "Введите код",
+        "too_many_attempts": "Слишком много попыток. Попробуйте позже",
+        "session_not_found": "Сессия не найдена",
+        "user_blocked": "Аккаунт заблокирован",
+        "user_not_found": "Пользователь не найден",
+        "too_many_requests": "Слишком много запросов. Попробуйте позже",
+        "success_login": "Вы вошли в аккаунт"
+      }
+    },
+    "forgot_password": {
+      "title": "Не помните пароль?",
+      "subtitle": "Отправим код на почту и восстановим доступ",
+      "step": "Шаг {current} из {total}",
+      "email": "Email",
+      "code": "Код",
+      "password": "Пароль",
+      "retry_password": "Повторите пароль",
+      "desc_send": "На указанный email будет отправлен код подтверждения",
+      "desc_code": "Введите код из письма",
+      "send": "Отправить",
+      "confirm": "Подтвердить",
+      "set_password": "Сохранить",
+      "back": "Назад",
+      "toasts": {
+        "invalid_email": "Введите корректный email",
+        "not_email": "Введите email",
+        "code_invalid": "Неверный или истёкший код",
+        "code_required": "Введите код",
+        "too_many_attempts": "Слишком много попыток. Попробуйте позже",
+        "passwords_not_match": "Пароли не совпадают",
+        "password_too_short": "Пароль должен содержать минимум 8 символов",
+        "not_password": "Введите пароль",
+        "not_retry_password": "Повторите пароль",
+        "too_many_requests": "Слишком много запросов. Попробуйте позже",
+        "success_code_sent": "Код отправлен на указанный email",
+        "success_code_confirmed": "Код подтверждён",
+        "success_password_changed": "Пароль изменён. Войдите заново"
+      }
+    },
+    "sessions": {
+      "title": "С возвращением!",
+      "subtitle": "Выберите аккаунт, чтобы продолжить",
+      "login": "Войти",
+      "registration": "Регистрация",
+      "toasts": {
+        "session_not_exist": "Сессия не найдена",
+        "session_expired": "Сессия истекла",
+        "success_remove": "Сессия удалена",
+        "too_many_requests": "Слишком много запросов. Попробуйте позже"
+      }
+    },
+    "main": {
+      "components": {
+        "channels": {
+          "favorite": "Избранное",
+          "secret_chat": "Секретный",
+          "last_message": {
+            "you": "Вы:",
+            "empty_messages": "Нет сообщений",
+            "image": "Изображение",
+            "sticker": "Стикер",
+            "voice_note": "Голосовое сообщение",
+            "video_note": "Видеосообщение",
+            "dec_files": [
+              "файл",
+              "файла",
+              "файлов"
+            ],
+            "status_activity": {
+              "several_actions": "Несколько человек совершают действия...",
+              "and_or": "и еще",
+              "recording_audio": [
+                "записывают голосовые...",
+                "записывает голосовое..."
+              ],
+              "recording_video": [
+                "записывают видео...",
+                "записывает видео-сообщение..."
+              ],
+              "uploading_document": [
+                "загружают файлы...",
+                "загружает файл..."
+              ],
+              "typing": [
+                "печатают...",
+                "печатает..."
+              ]
+            }
+          },
+          "context_menu": {
+            "profile": "Профиль",
+            "user_profile": "Профиль пользователя",
+            "call": "Позвонить",
+            "enable_notify": "Включить звук",
+            "disable_notify": "Выключить звук",
+            "unsubscribe_channel": "Покинуть сообщество",
+            "unsubscribe_group": "Покинуть группу",
+            "clear_history": "Очистить историю",
+            "remove_dialog": "Удалить диалог",
+            "add_to_folder": "Добавить в папку",
+            "toasts": {
+              "success_enable_notify": "Уведомления включены",
+              "success_disable_notify": "Уведомления выключены",
+              "success_unsubscribe": "Отписались",
+              "success_clear_history": "История сообщений очищена",
+              "success_remove_dialog": "Диалог удалён",
+              "success_move_to_folder": "Успешно добавлено в папку",
+              "success_unmove_from_folder": "Успешно убрали из папки"
+            }
+          }
+        }
+      },
+      "events": {
+        "socket": {
+          "messages": {
+            "message_deleted": "Сообщение удалено"
+          }
+        }
+      },
+      "toasts": {
+        "storage_overflow": "Локальное хранилище переполнено",
+        "storage_overflow_or_unavailable": "Локальное хранилище переполнено или недоступно",
+        "storage_write_failed": "Мы не смогли записать данные в локальное хранилище..."
+      }
+    },
+    "main_folders_manager": {
+      "title": "Папки",
+      "subtitle": "Создавайте папки и раскладывайте по ним чаты, чтобы навести порядок в общении.",
+      "empty_title": "Пока нет ни одной папки",
+      "empty_desc": "Создайте первую папку, чтобы группировать чаты по темам или проектам.",
+      "create_folder": "Создать папку",
+      "chats_count": [
+        "чат",
+        "чата",
+        "чатов"
+      ],
+      "toasts": {
+        "success_remove": "Папка удалена",
+        "folder_not_found": "Папка не найдена",
+        "access_denied": "Нет доступа",
+        "load_error": "Не удалось загрузить папки"
+      },
+      "dialogs": {
+        "remove_folder": {
+          "desc": "Удалить папку?",
+          "text": "Чаты останутся в списке — удалится только сама папка.",
+          "action_cancel": "Отмена",
+          "action_remove": "Удалить"
+        }
+      },
+      "components": {
+        "folder": {
+          "context_menu": {
+            "settings": "Настроить папку",
+            "remove": "Удалить папку"
+          }
+        }
+      }
+    },
+    "main_folder_create": {
+      "name": "Название",
+      "title": "Новая папка",
+      "desc": "Придумайте короткое и понятное название для папки.",
+      "action_create": "Создать",
+      "toasts": {
+        "success_create": "Папка создана",
+        "invalid_name": "Название должно быть от 2 до 128 символов и состоять только из букв"
+      }
+    },
+    "admin": {
+      "title": "Администрирование",
+      "users": "Пользователи",
+      "online_sessions": "Сессий активно",
+      "online_users": "В сети",
+      "bots": "Боты",
+      "online_bots": "В сети",
+      "channels": "Сообщества",
+      "groups": "Группы",
+      "broadcasts": "Трансляции",
+      "conferences": "Конференции",
+      "storage": "Хранилище",
+      "database": "База данных",
+      "total": "Всего",
+      "blocked": "Блокировано",
+      "forms": {
+        "meets": {
+          "title": "Сервер конференций"
+        },
+        "broadcasts": {
+          "title": "Сервер трансляций"
+        },
+        "database": {
+          "title": "База данных",
+          "sql_console": "SQL Консоль",
+          "execute": "Выполнить",
+          "last_backups": "Последние бэкапы",
+          "create": "Создать",
+          "backups_not_found": "Бэкапы не найдены"
+        }
+      }
+    },
+    "user_profile": {
+      "subtitle": "Профиль",
+      "chat": "Чат",
+      "call": "Звонок",
+      "other": "Ещё",
+      "feed": "Публикации",
+      "albums": "Альбомы",
+      "context_menu": {
+        "secret_chat": "Секретный чат",
+        "add_contact": "Добавить в контакты",
+        "remove_contact": "Удалить из контактов",
+        "toasts": {
+          "contact_added": "Контакт добавлен",
+          "contact_removed": "Контакт удалён",
+          "contact_add_error": "Не удалось добавить контакт",
+          "contact_remove_error": "Не удалось удалить контакт"
+        },
+        "secret_call": "Секретный звонок"
+      },
+      "dialogs": {
+        "user_is_not_contact": {
+          "add_user_contact": "Добавьте пользователя в контакты",
+          "info": "Для создания секретного чата - добавьте пользователя в контакты. Это позволит автоматически соединять устройства при входе собеседника в сеть",
+          "close": "Понятно"
+        }
+      },
+      "toasts": {
+        "dialog_created": "Диалог создан",
+        "ids_cannot_match": "Нельзя создать диалог с самим собой",
+        "user_not_found": "Пользователь не найден",
+        "access_denied": "Нет доступа"
+      }
+    },
+    "user_settings": {
+      "email": "Email",
+      "first_name": "Имя",
+      "last_name": "Фамилия",
+      "link": "Публичное имя",
+      "bio": "О себе",
+      "not_select": "Не выбрано",
+      "decoration": "Оформление",
+      "decoration_desc": "Настройте приложение по своему вкусу, выберите фоны для чатов, размер текста...",
+      "notifications": "Уведомления",
+      "notifications_desc": "Подключите и настройте уведомления которые помогают узнавать о новых сообщениях, действиях с аккаунтом и т.д.",
+      "language": "Язык",
+      "language_desc": "Выберите язык (локализацию) приложения.",
+      "privacy": "Конфиденциальность",
+      "privacy_desc": "Настройте параметры конфиденциальности. Они затрагивают все Ваши сесии. Например - кто может писать, звонить, приглашать в группы и т.д.",
+      "security": "Безопасность",
+      "security_desc": "Двухфакторная авторизация (TOTP) и ключи доступа (Passkey) для входа в аккаунт",
+      "account_actions": "Действия с аккаунтом",
+      "account_actions_desc": "Сменить пароль, выйти из аккаунта и др.",
+      "devices": "Устройства",
+      "set_password": "Сменить пароль",
+      "set_account": "Сменить аккаунт",
+      "logout": "Выйти",
+      "about": "О приложении",
+      "app_build_version": "Версия сборки:",
+      "app_build_at": "Дата сборки:",
+      "manage_cache": "Управление памятью",
+      "toasts": {
+        "success_save": "Настройки сохранены",
+        "first_name_required": "Введите имя",
+        "first_name_invalid": "Имя указано не верно",
+        "last_name_invalid": "Фамилия указана не верно",
+        "bio_invalid": "Описание указано не верно",
+        "success_avatar": "Аватар сохранён",
+        "avatar_error": "Не удалось сохранить аватар",
+        "success_remove_avatar": "Аватар удалён",
+        "remove_avatar_error": "Не удалось удалить аватар"
+      },
+      "context_menu": {
+        "upload": "Загрузить фотографию",
+        "remove": "Удалить фотографию",
+        "toasts": {
+          "contact_added": "Фотография загружена",
+          "contact_removed": "Фотография удалена"
+        }
+      }
+    },
+    "user_setting_email": {
+      "email": "Email",
+      "set_email_desc": "Укажите свою электронную почту. На этот адрес будут приходить коды подтверждения и другая информация.",
+      "save": "Сохранить",
+      "close": "Закрыть",
+      "toasts": {
+        "success_save": "Email сохранён",
+        "email_required": "Введите email",
+        "email_invalid": "Введите корректный email",
+        "email_already_taken": "Этот email уже занят"
+      }
+    },
+    "user_setting_link": {
+      "link": "Публичное имя",
+      "set_link_desc": "Вы можете выбрать себе публичное имя пользователя. В этом случае другие люди смогут найти Вас по этому имени и связаться.",
+      "save": "Сохранить",
+      "close": "Закрыть",
+      "toasts": {
+        "success_save": "Публичное имя сохранено",
+        "link_already_taken": "Это публичное имя уже занято",
+        "link_invalid": "Публичное имя указано не верно"
+      }
+    },
+    "user_setting_decoration": {
+      "brand_color": "Акцентный цвет",
+      "brand_color_desc": "Используется для выделения активных элементов: кнопок, ссылок, индикаторов. Можно выбрать один из готовых цветов или задать свой.",
+      "brand_color_theme": "Цвет темы",
+      "brand_color_theme_desc": "Использовать акцентный цвет текущей темы.",
+      "brand_color_custom": "Свой цвет",
+      "brand_color_custom_desc": "Выбрать произвольный цвет из палитры.",
+      "custom_color": "Свой цвет",
+      "custom_color_desc": "Выбрать произвольный цвет из палитры.",
+      "ui_radius": "Скругление интерфейса",
+      "ui_radius_desc": "Насколько сильно скруглять углы элементов интерфейса.",
+      "ui_radius_compact": "Компактное",
+      "ui_radius_compact_desc": "Минимальное скругление углов.",
+      "ui_radius_default": "Стандартное",
+      "ui_radius_default_desc": "Скругление по умолчанию.",
+      "ui_radius_round": "Сильное",
+      "ui_radius_round_desc": "Максимальное скругление углов.",
+      "message_text_size": "Размер текста сообщений",
+      "message_text_size_desc": "Выберите удобный для Вас размер текста сообщений.",
+      "interface_size": "Размер интерфейса",
+      "interface_size_desc": "Выберите удобный для Вас размер интерфейса. Все элементы масштабируются.",
+      "color_scheme": "Цветовая схема",
+      "color_scheme_desc": "Выберите цветовую схему приложения. Если Вы выбрали другую тему, она должна поддерживать оба цветовых решения.",
+      "current_theme": "Текущая тема",
+      "not_selected": "Не установлена",
+      "chat_backgrounds": "Фоны для чатов",
+      "blur_elements": "Blur эффект в элементах",
+      "blur_elements_desc": "Включает размытие фона под некоторыми элементами - модальные окна, контекстное меню, заголовки чатов и т.д.",
+      "enabled": "Включено",
+      "disabled": "Выключено",
+      "system": "Системная",
+      "system_desc": "Следовать настройкам устройства",
+      "white": "Светлая",
+      "white_desc": "Всегда светлая схема",
+      "dark": "Темная",
+      "dark_desc": "Всегда тёмная схема",
+      "size_small": "Меньше",
+      "size_big": "Больше",
+      "size_label_very_small": "Очень маленький",
+      "size_label_small": "Маленький",
+      "size_label_normal": "Нормальный",
+      "size_label_large": "Крупный",
+      "size_label_very_large": "Очень крупный",
+      "preview_title": "Заголовок",
+      "preview_text": "Текст интерфейса масштабируется вместе с элементами управления.",
+      "message_name": "Иван: ",
+      "message_text": "Пример текста сообщения в чате."
+    },
+    "user_setting_notifications": {
+      "enabled": "Включено",
+      "disabled": "Выключено",
+      "notify_enabled": "Общая настройка",
+      "notify_enabled_desc": "Включить или выключить все уведомления.",
+      "notify_desc_web": "Если уведомления не приходят - проверьте настройки в браузере, при необходимости установите разрешение. Или ещё раз выключить и включить уведомления.",
+      "notify_desc_android": "Если уведомления не приходят - откройте в настройках 'Приложения' -> Kodme -> разрешения. Или ещё раз выключить и включить уведомления.",
+      "enable": "Включить",
+      "disable": "Выключить",
+      "account_action": "Действия с аккаунтом",
+      "account_action_desc": "Смена пароля, вход на новом устройстве и другие.",
+      "calls": "Входящие вонки",
+      "calls_desc": "Уведомления о входящих звонках.",
+      "messages": "Новые сообщения",
+      "messages_desc": "Уведомления о новых сообщениях.",
+      "comments": "Новые комментарии",
+      "comments_desc": "Новые комментарии к Вашим записям.",
+      "reply_message": "Ответы на сообщения",
+      "reply_message_desc": "Если ответили на Ваше сообщение в группе или теме группы.",
+      "toasts": {
+        "success_saved": "Настройки сохранены",
+        "success_enable": "Вы успешно подписались",
+        "success_disable": "Вы успешно отписались",
+        "electron_enabled": "Уведомления включены",
+        "electron_disabled": "Уведомления выключены",
+        "not_access": "Нет разрешения",
+        "not_access_push": "Не удалось получить доступ к уведомлениям",
+        "not_device": "Не поддерживается устройством",
+        "timeout": "Ошибка: тайм-аут",
+        "browser_not_unsubscribe": "Браузер не смог отписаться",
+        "save_error": "Не удалось сохранить настройки уведомлений"
+      }
+    },
+    "user_setting_privacy": {
+      "all": "Все",
+      "none": "Никто",
+      "contacts": "Мои контакты",
+      "calls": "Кто может звонить мне ?",
+      "messages": "Кто может написать мне ?",
+      "messages_voice": "Кто может отправлять голосовые ?",
+      "search_users": "Кто может видеть меня в поиске ?",
+      "sharing_files": "Кто может передавать файлы ?",
+      "toasts": {
+        "success_save": "Настройки приватности сохранены",
+        "privacy_invalid": "Настройка приватности указана не верно"
+      }
+    },
+    "user_setting_devices": {
+      "login_qr_code": "Вход по QR коду",
+      "current_device": "Это устройство",
+      "remove_all_other_devices": "Удалить все другие сеансы",
+      "active_sessions": "Активные сессии",
+      "not_in_online": "Был(-а) не в сети",
+      "no_sessions": "Других активных сессий нет",
+      "dialogs": {
+        "remove": {
+          "title": "Удалить сессию?",
+          "description": "Устройство будет разлогинено, и доступ с него будет закрыт.",
+          "action_close": "Отмена",
+          "action_remove": "Удалить"
+        },
+        "remove_all": {
+          "title": "Удалить все другие сеансы?",
+          "description": "Все устройства, кроме текущего, будут разлогинены.",
+          "action_close": "Отмена",
+          "action_remove": "Удалить все"
+        }
+      },
+      "toasts": {
+        "success_remove_all_other_devices": "Все другие сеансы удалены",
+        "success_remove": "Сессия удалена",
+        "remove_error": "Не удалось удалить сессию",
+        "load_error": "Не удалось загрузить устройства"
+      }
+    },
+    "user_setting_cache": {
+      "title": "Управление памятью",
+      "calculate_quota": "Вычисление квоты...",
+      "update_app": "Обновить приложение",
+      "used": "Использовано:",
+      "clearing": "Очистка...",
+      "media_cache": "Медиакеш",
+      "clear_all": "Очистить всё",
+      "clear_cache": "Очистить кеш",
+      "clear_db": "Очистить БД",
+      "files": "Файлов:",
+      "clear": "Очистить",
+      "local_db": "Локальная БД",
+      "analize_tables": "Анализ таблиц...",
+      "not_database_tables": "Нет доступных таблиц",
+      "pending_updates": "Ожидающие обновления",
+      "regular_channels": "Основные чаты",
+      "total_records": "Всего записей:",
+      "app_storage": "Общее место приложения",
+      "analize_cache_files": "Анализ файлов кеша...",
+      "storage_api_not_supported": "Storage API не поддерживается",
+      "cache_api_not_supported": "Cache API не поддерживается",
+      "records_count": "зап.",
+      "database_not_initialized": "База данных не инициализирована",
+      "caches_types": [
+        {
+          "image": "Картинки"
+        },
+        {
+          "voice": "Голосовые"
+        },
+        {
+          "audio": "Аудио"
+        },
+        {
+          "video": "Видео"
+        },
+        {
+          "file": "Файлы"
+        },
+        {
+          "media": "Медиа"
+        }
+      ],
+      "database_names": [
+        {
+          "channels": "Каналы"
+        },
+        {
+          "messages": "Сообщения"
+        },
+        {
+          "pending_messages": "Неотправленные"
+        },
+        {
+          "pending_updates": "Обновления"
+        }
+      ],
+      "toasts": {
+        "cache_cleared": "Кэш очищен",
+        "database_cleared": "База данных очищена",
+        "table_cleared": "Таблица очищена",
+        "cache_clear_error": "Не удалось очистить кэш",
+        "database_clear_error": "Не удалось очистить базу данных",
+        "table_clear_error": "Не удалось очистить таблицу"
+      }
+    },
+    "user_setting_security": {
+      "totp_title": "Двухфакторная авторизация (TOTP)",
+      "totp_desc_on": "Вход защищён кодом из приложения-генератора",
+      "totp_desc_off": "При входе дополнительно потребуется код из приложения-генератора",
+      "totp_desc_pending": "Есть незавершённое включение — повторите настройку",
+      "totp_enable": "Включить",
+      "totp_disable": "Отключить",
+      "totp_setup_title": "Включение TOTP",
+      "totp_setup_desc": "Отсканируйте QR-код приложением-генератором (Google Authenticator, Yandex Key и т.п.) или введите секрет вручную",
+      "totp_secret": "Секрет",
+      "totp_secret_copied": "Секрет скопирован",
+      "totp_code": "Код из приложения",
+      "totp_confirm": "Подтвердить включение",
+      "totp_disable_title": "Отключение TOTP",
+      "totp_disable_desc": "Введите действующий код из приложения-генератора, чтобы отключить двухфакторную авторизацию",
+      "action_cancel": "Отмена",
+      "passkeys_title": "Ключи доступа (Passkey)",
+      "passkeys_desc": "Вход по отпечатку, Face ID или ключу безопасности — без пароля и кода из почты",
+      "passkeys_empty": "Ключи доступа не зарегистрированы",
+      "passkey_add": "Добавить ключ",
+      "passkey_created": "Создан",
+      "passkey_last_used": "Использован",
+      "passkey_name_placeholder": "Название ключа",
+      "passkey_rename": "Переименовать",
+      "passkey_rename_title": "Переименование ключа",
+      "passkey_rename_save": "Сохранить",
+      "passkey_remove": "Удалить",
+      "passkey_remove_title": "Удаление ключа",
+      "passkey_remove_desc": "Ключ «{name}» будет удалён. Войти с этого устройства можно будет только по паролю",
+      "toasts": {
+        "totp_enabled": "Двухфакторная авторизация включена",
+        "totp_disabled": "Двухфакторная авторизация отключена",
+        "totp_already_enabled": "Двухфакторная авторизация уже включена",
+        "totp_not_enabled": "Двухфакторная авторизация уже отключена",
+        "totp_invalid_code": "Неверный код из приложения",
+        "totp_setup_expired": "Настройка не активна. Запустите включение заново",
+        "code_required": "Введите код",
+        "too_many_attempts": "Слишком много попыток. Попробуйте позже",
+        "security_disabled": "Функция временно недоступна",
+        "name_required": "Введите название ключа",
+        "invalid_name": "Название: до 64 символов",
+        "passkey_added": "Ключ доступа добавлен",
+        "passkey_removed": "Ключ доступа удалён",
+        "passkey_renamed": "Ключ доступа переименован",
+        "passkey_not_found": "Ключ доступа не найден",
+        "passkey_not_supported": "Браузер не поддерживает ключи доступа",
+        "passkey_limit": "Достигнут лимит ключей доступа",
+        "passkey_duplicate": "Этот ключ уже зарегистрирован",
+        "passkey_ceremony_expired": "Сессия настройки истекла. Попробуйте ещё раз",
+        "passkey_invalid": "Не удалось подтвердить ключ доступа",
+        "too_many_requests": "Слишком много запросов. Попробуйте позже"
+      }
+    },
+    "user_setting_login_qrcode": {
+      "scan_desc": "Наведите камеру на QR код",
+      "dialogs": {
+        "confirm_qrcode_login": {
+          "confirm_enter": "Подтвердите вход",
+          "new_device": "Новое устройство",
+          "confirm": "Подтвердить",
+          "decline": "Отклонить",
+          "toasts": {
+            "too_many_requests": "Слишком много запросов. Попробуйте позже",
+            "error": "Не удалось подтвердить вход"
+          }
+        }
+      }
+    },
+    "user_setting_password": {
+      "current_password": "Текущий пароль",
+      "new_password": "Новый пароль",
+      "retry_password": "Повторите пароль",
+      "exit_other_devices": "Выйти на других устройствах",
+      "exit_other_devices_desc": "Если Вы выйдете на других устройствах, Вам необходимо авторизоваться на них еще раз.",
+      "toasts": {
+        "success_set_password": "Пароль успешно изменён",
+        "old_password_not_match": "Текущий пароль указан не верно",
+        "new_password_required": "Введите новый пароль",
+        "new_password_too_short": "Новый пароль слишком короткий",
+        "retry_password_required": "Повторите новый пароль",
+        "passwords_not_match": "Пароли не совпадают"
+      }
+    },
+    "channel_create": {
+      "name": "Название",
+      "about": "Описание",
+      "type": "Тип сообщества",
+      "type_desc": "Открытое сообщество можно найти в поиске, в закрытое вступить только по пригласительной ссылке.",
+      "can_posting": "Кто может написть ?",
+      "can_posting_desc": "Смогут ли написать в сообществе все участники или только администратор.",
+      "commenting": "Комментирование",
+      "commenting_desc": "Возможность комментирования записей сообщества.",
+      "all_posting": "Все участники",
+      "admin_posting": "Только администратор",
+      "enabled": "Включено",
+      "disabled": "Выключено",
+      "opened": "Открытое",
+      "closed": "Закрытое",
+      "toasts": {
+        "success_create": "Сообщество успешно создано",
+        "name_required": "Введите название сообщества",
+        "name_invalid": "Название указано не верно",
+        "link_already_taken": "Такая ссылка уже занята",
+        "link_invalid": "Ссылка указана не верно",
+        "about_invalid": "Описание указано не верно"
+      }
+    },
+    "channel_settings": {
+      "name": "Название",
+      "about": "Описание",
+      "link": "Публичное имя",
+      "not_select": "Не выбрано",
+      "type": "Тип сообщества",
+      "type_desc": "Открытое сообщество можно найти в поиске, в закрытое вступить только по пригласительной ссылке.",
+      "invites": "Приглашения",
+      "invites_desc": "Управление приглашениями на вступление в сообщество.",
+      "can_posting": "Кто может написть ?",
+      "can_posting_desc": "Смогут ли написать в сообществе все участники или только администратор.",
+      "commenting": "Комментирование",
+      "commenting_desc": "Возможность комментирования записей сообщества.",
+      "all_posting": "Все участники",
+      "admin_posting": "Только администратор",
+      "enabled": "Включено",
+      "disabled": "Выключено",
+      "opened": "Открытое",
+      "closed": "Закрытое",
+      "remove": " Удалить",
+      "remove_desc": "Полное удаление сообщества.",
+      "toasts": {
+        "success_save": "Настройки сохранены",
+        "success_remove": "Сообщество удалено",
+        "access_denied": "Нет доступа",
+        "success_avatar": "Аватар сохранён",
+        "avatar_error": "Не удалось сохранить аватар",
+        "success_remove_avatar": "Аватар удалён",
+        "remove_avatar_error": "Не удалось удалить аватар",
+        "invalid_name": "Название должно быть от 2 до 128 символов",
+        "invalid_about": "Описание может содержать не более 255 символов"
+      },
+      "context_menu": {
+        "upload": "Загрузить фотографию",
+        "remove": "Удалить фотографию",
+        "toasts": {
+          "avatar_added": "Фотография загружена",
+          "avatar_removed": "Фотография удалена"
+        }
+      },
+      "dialogs": {
+        "remove": {
+          "title": "Удаление сообщества",
+          "description": "Вы действительно хотите удалить сообщество и все его данные?",
+          "action_remove": "Удалить",
+          "action_close": "Закрыть"
+        }
+      }
+    },
+    "channel_setting_link": {
+      "link": "Публичное имя",
+      "set_link_desc": "Вы можете выбрать публичное имя сообщества. В этом случае другие люди смогут найти его по этому имени.",
+      "save": "Сохранить",
+      "close": "Закрыть",
+      "toasts": {
+        "success_save": "Публичное имя сохранено",
+        "link_already_taken": "Это публичное имя уже занято",
+        "link_invalid": "Публичное имя указано не верно"
+      }
+    },
+    "channel_manage_invites": {
+      "components": {
+        "toasts": {
+          "success_copy": "Ссылка скопирована"
+        }
+      },
+      "empty": {
+        "title": "Приглашений пока нет",
+        "desc": "Создайте приглашение — оно появится здесь"
+      },
+      "toasts": {
+        "load_error": "Не удалось загрузить приглашения"
+      }
+    },
+    "channel_invite_create": {
+      "name": "Название",
+      "number_users": "Число пользователей",
+      "number_users_desc": "Вы можете выбрать сколько пользователей смогут присоединиться по этой ссылке.",
+      "infifnity": "Неограничено",
+      "limited": "Ограничено",
+      "toasts": {
+        "success_create": "Приглашение создано",
+        "max_users_range_invalid": "Количество участников указано не верно",
+        "name_invalid": "Название указано не верно"
+      }
+    },
+    "channel_profile": {
+      "photos": "Фото",
+      "videos": "Видео",
+      "files": "Файлы",
+      "audios": "Аудио",
+      "urls": "Ссылки",
+      "voices": "Голосовые",
+      "empty": {
+        "photos": "Фото пока нет",
+        "videos": "Видео пока нет",
+        "files": "Файлов пока нет",
+        "audios": "Аудио пока нет",
+        "urls": "Ссылок пока нет",
+        "voices": "Голосовых пока нет"
+      },
+      "context_menu": {
+        "go_to_message": "Перейти к сообщению"
+      },
+      "toasts": {
+        "load_error": "Не удалось загрузить профиль канала",
+        "download_error": "Не удалось скачать файл",
+        "load_media_error": "Не удалось загрузить медиа",
+        "message_not_found": "Сообщение недоступно"
+      }
+    },
+    "group_create": {
+      "name": "Название",
+      "about": "Описание",
+      "type": "Тип группы",
+      "type_desc": "Открытую группу можно найти в поиске, в закрытую вступить только по пригласительной ссылке.",
+      "opened": "Открытая",
+      "closed": "Закрытая",
+      "can_posting": "Кто может написать ?",
+      "can_posting_desc": "Смогут ли написать в группе все участники или только администратор.",
+      "all_posting": "Все участники",
+      "admin_posting": "Только администратор",
+      "toasts": {
+        "success_create": "Группа успешно создана",
+        "name_required": "Введите название группы",
+        "link_already_taken": "Такая ссылка уже занята",
+        "invalid_link": "Ссылка указана не верно",
+        "invalid_name": "Название указано не верно",
+        "invalid_description": "Описание указано не верно"
+      }
+    },
+    "group_settings": {
+      "name": "Название",
+      "about": "Описание",
+      "link": "Публичное имя",
+      "not_select": "Не выбрано",
+      "type": "Тип группы",
+      "type_desc": "Открытую группу можно найти в поиске, в закрытую вступить только по пригласительной ссылке.",
+      "topic_manager": "Управление темами",
+      "moderators_manager": "Модерирование",
+      "moderators_manager_desc": "Управление модераторами группы",
+      "invites": "Приглашения",
+      "invites_desc": "Управление приглашениями на вступление в группу.",
+      "opened": "Открытое",
+      "closed": "Закрытое",
+      "can_posting": "Кто может написать ?",
+      "can_posting_desc": "Смогут ли написать в группе все участники или только администратор.",
+      "all_posting": "Все участники",
+      "admin_posting": "Только администратор",
+      "remove": " Удалить",
+      "remove_desc": "Полное удаление группы.",
+      "toasts": {
+        "success_save": "Настройки сохранены",
+        "success_remove": "Группа удалена",
+        "access_denied": "Нет доступа",
+        "success_avatar": "Аватар сохранён",
+        "avatar_error": "Не удалось сохранить аватар",
+        "success_remove_avatar": "Аватар удалён",
+        "remove_avatar_error": "Не удалось удалить аватар",
+        "invalid_name": "Название должно быть от 2 до 128 символов",
+        "invalid_about": "Описание может содержать не более 255 символов"
+      },
+      "dialogs": {
+        "remove": {
+          "title": "Удаление группы",
+          "description": "Вы действительно хотите удалить группу и все её данные?",
+          "action_remove": "Удалить",
+          "action_close": "Закрыть"
+        }
+      }
+    },
+    "group_setting_link": {
+      "link": "Публичное имя",
+      "set_link_desc": "Вы можете выбрать публичное имя группы. В этом случае другие люди смогут найти её по этому имени.",
+      "save": "Сохранить",
+      "close": "Закрыть",
+      "toasts": {
+        "success_save": "Публичное имя сохранено",
+        "link_already_taken": "Это публичное имя уже занято",
+        "link_invalid": "Публичное имя указано не верно"
+      }
+    },
+    "group_topics": {
+      "subtitle": "Группа",
+      "components": {
+        "channels": {
+          "last_message": {
+            "you": "Вы",
+            "empty_messages": "Нет сообщений",
+            "image": "Изображение",
+            "voice": "Голосовое сообщение"
+          }
+        }
+      }
+    },
+    "group_topics_manager": {
+      "title": "Управление темами группы",
+      "empty": {
+        "title": "Тем пока нет",
+        "desc": "Создайте тему — она появится здесь"
+      },
+      "toasts": {
+        "load_error": "Не удалось загрузить темы"
+      }
+    },
+    "group_topic_create": {
+      "name": "Название",
+      "about": "Описание",
+      "type": "Тип темы",
+      "type_desc": "Открытая тема доступна всем участникам группы, закрытая доступна только по пригласительной ссылке.",
+      "opened": "Открытая",
+      "closed": "Закрытая",
+      "can_posting": "Кто может написать ?",
+      "can_posting_desc": "Смогут ли написать в теме все участники или только администратор.",
+      "all_posting": "Все участники",
+      "admin_posting": "Только администратор",
+      "toasts": {
+        "success_create": "Тема группы успешно создана",
+        "name_required": "Введите название темы",
+        "invalid_name": "Название указано не верно",
+        "invalid_about": "Описание указано не верно"
+      }
+    },
+    "group_topic_settings": {
+      "name": "Название",
+      "about": "Описание",
+      "type": "Тип темы",
+      "type_desc": "Открытую тему можно найти в поиске, в закрытую вступить только по пригласительной ссылке.",
+      "invites": "Приглашения",
+      "invites_desc": "Управление приглашениями на вступление в тему.",
+      "opened": "Открытая",
+      "closed": "Закрытая",
+      "can_posting": "Кто может написать ?",
+      "can_posting_desc": "Смогут ли написать в теме все участники или только администратор.",
+      "all_posting": "Все участники",
+      "admin_posting": "Только администратор",
+      "toasts": {
+        "success_save": "Настройки сохранены",
+        "success_avatar": "Аватар сохранён",
+        "avatar_error": "Не удалось сохранить аватар",
+        "access_denied": "Нет доступа",
+        "success_remove_avatar": "Аватар удалён",
+        "remove_avatar_error": "Не удалось удалить аватар",
+        "invalid_name": "Название должно быть от 2 до 128 символов",
+        "invalid_about": "Описание может содержать не более 255 символов",
+        "success_remove": "Тема удалена"
+      },
+      "remove": " Удалить тему",
+      "remove_desc": "Полное удаление темы.",
+      "dialogs": {
+        "remove": {
+          "title": "Удаление темы",
+          "description": "Вы действительно хотите удалить тему и все её данные?",
+          "action_remove": "Удалить",
+          "action_close": "Закрыть"
+        }
+      }
+    },
+    "group_moderators_manager": {
+      "title": "Модерирование",
+      "components": {
+        "user": {
+          "can_deleted_message": "удаление",
+          "can_clean_messages": "очистка",
+          "can_restrict_members": "блокировка"
+        }
+      },
+      "empty": {
+        "title": "Модераторов пока нет",
+        "desc": "Назначьте модераторов — они появятся здесь"
+      },
+      "toasts": {
+        "load_error": "Не удалось загрузить модераторов"
+      }
+    },
+    "group_moderator_add": {
+      "title": "Добавить модератора",
+      "remove_post": "Удаление сообщений",
+      "remove_post_desc": "Позволяет модератору удалять выбранное сообщение пользователя",
+      "user_all_post_remove": "Удаление всех сообщений",
+      "user_all_post_remove_desc": "Позволяет модератору удалять все сообщения выбранного пользователя",
+      "block_user": "Блокировка пользователя",
+      "block_user_desc": "Модератор может заблокировать пользователя в группе",
+      "add": "Добавить",
+      "close": "Отмена",
+      "enabled": "Включено",
+      "disabled": "Отключено",
+      "toasts": {
+        "success_add": "Модератор добавлен в группу"
+      }
+    },
+    "group_moderator_profile": {
+      "title": "Профиль модератора",
+      "remove_post": "Удаление сообщений",
+      "remove_post_desc": "Позволяет модератору удалять выбранное сообщение пользователя",
+      "user_all_post_remove": "Удаление всех сообщений",
+      "user_all_post_remove_desc": "Позволяет модератору удалять все сообщения выбранного пользователя",
+      "block_user": "Блокировка пользователя",
+      "block_user_desc": "Модератор может заблокировать пользователя в группе",
+      "add": "Добавить",
+      "close": "Отмена",
+      "save": "Сохранить",
+      "enabled": "Включено",
+      "disabled": "Отключено",
+      "toasts": {
+        "success_save": "Настройки обновлены"
+      }
+    },
+    "contacts": {
+      "title": "Контакты",
+      "empty": {
+        "title": "Контактов пока нет",
+        "desc": "Добавьте пользователей — они появятся здесь"
+      },
+      "toasts": {
+        "load_error": "Не удалось загрузить контакты"
+      }
+    },
+    "broadcasts": {
+      "title": "Трансляции",
+      "context_menu": {
+        "create_cast": "Новая трансляция",
+        "settings": "Настройки"
+      },
+      "empty": {
+        "title": "Трансляций пока нет",
+        "desc": "Создайте первую трансляцию — она появится здесь",
+        "create": "Создать трансляцию"
+      },
+      "toasts": {
+        "load_error": "Не удалось загрузить трансляции"
+      }
+    },
+    "broadcasts_settings": {
+      "type_play": "Тип проигрывания",
+      "flv": "FLV проигрыватель",
+      "hls": "HLS проигрыватель",
+      "rtc": "RTC проигрыватель",
+      "flv_play_desc": "Менее требователен к сети - задерка 1-5 секунд.",
+      "hls_play_desc": "Менее требователен к сети - задерка 3-10 секунд.",
+      "rtc_play_desc": "Более требователен к сети - задержка 1-2 секунды.",
+      "type_blobal_media_event": "Глобальные медиа действия",
+      "type_blobal_media_event_desc": "При включении аудио плеера, входящем звонке или другом действии, что нужно выполнить с трансляцией ?",
+      "paused": "Поставить на паузу",
+      "muted": "Выключить звук",
+      "close": "Закрыть"
+    },
+    "broadcast_create": {
+      "name": "Название",
+      "about": "Описание",
+      "is_public_cast": "Тип трансляции",
+      "is_public_cast_desc": "Открытую трансляцию можно найти в поиске, в закрытую вступить только по пригласительной ссылке.",
+      "opened": "Открытая",
+      "closed": "Закрытая",
+      "is_chat_cast": "Чат трансляции",
+      "is_chat_cast_desc": "Пользователи смогут общаться во время трансляции",
+      "enabled": "Включен",
+      "disabled": "Отключен",
+      "close": "Закрыть",
+      "create": "Создать",
+      "toasts": {
+        "success_create": "Трансляция успешно создана",
+        "name_required": "Введите название трансляции",
+        "name_invalid": "Название указано не верно",
+        "about_invalid": "Описание указано не верно"
+      }
+    },
+    "broadcast_play": {
+      "title": "Трансляция",
+      "context_menu": {
+        "play_rtc": "Играть WebRTC",
+        "play_flv": "Играть FLV",
+        "play_hls": "Играть HLS",
+        "settings": "Настройки",
+        "source": "Источник видео"
+      },
+      "source_label": "Источник",
+      "offline": "Эфир не запущен",
+      "aria": {
+        "back": "Назад",
+        "chat": "Открыть чат трансляции",
+        "menu": "Меню трансляции"
+      },
+      "toasts": {
+        "unsupported_format": "Ваш браузер не поддерживает проигрывание",
+        "source_error": "Не удалось открыть выбор источника"
+      }
+    },
+    "broadcast_settings": {
+      "choose_thumb": "Выбрать обложку",
+      "name": "Название",
+      "about": "Описание",
+      "rtmp_url": "Адрес RTMP трансляции",
+      "rtmp_key": "Ключ трансляции",
+      "create_rtmp_key_ingress": "Получить ключ трансляции",
+      "create_whip_key_ingress": "Получить ключ трансляции",
+      "whip_url": "Адрес WHIP трансляции",
+      "whip_key": "Ключ трансляции",
+      "chat_url": "Адрес чата трансляции",
+      "is_public_cast": "Тип трансляции",
+      "is_public_cast_desc": "Открытую трансляцию можно найти в поиске, в закрытую вступить только по пригласительной ссылке.",
+      "opened": "Открытая",
+      "closed": "Закрытая",
+      "is_chat_cast": "Чат трансляции",
+      "is_chat_cast_desc": "Пользователи смогут общаться во время трансляции",
+      "invites": "Приглашения",
+      "invites_desc": "Управление приглашениями на вступление в трансляцию.",
+      "enabled": "Включен",
+      "disabled": "Отключен",
+      "remove": " Удалить",
+      "remove_desc": "Полное удаление трансляции вместе с её чатом.",
+      "toasts": {
+        "success_save": "Настройки сохранены",
+        "success_remove": "Трансляция удалена",
+        "access_denied": "Нет доступа",
+        "success_thumb": "Обложка сохранена",
+        "thumb_error": "Не удалось сохранить обложку",
+        "success_remove_thumb": "Обложка удалена",
+        "remove_thumb_error": "Не удалось удалить обложку",
+        "invalid_name": "Название должно быть от 2 до 128 символов",
+        "invalid_about": "Описание может содержать не более 255 символов"
+      },
+      "context_menu": {
+        "upload": "Загрузить обложку",
+        "remove": "Удалить обложку",
+        "toasts": {
+          "thumb_added": "Обложка загружена",
+          "thumb_removed": "Обложка удалена"
+        }
+      },
+      "dialogs": {
+        "remove": {
+          "title": "Удаление трансляции",
+          "description": "Вы действительно хотите удалить трансляцию и все её данные включая все сообщения из чата?",
+          "action_remove": "Удалить",
+          "action_close": "Закрыть"
+        }
+      }
+    },
+    "broadcast_invite_create": {
+      "name": "Название",
+      "number_users": "Число пользователей",
+      "number_users_desc": "Вы можете выбрать сколько пользователей смогут присоединиться по этой ссылке.",
+      "infifnity": "Неограничено",
+      "limited": "Ограничено",
+      "toasts": {
+        "success_create": "Приглашение создано",
+        "max_users_range_invalid": "Количество участников указано не верно",
+        "name_invalid": "Название указано не верно"
+      }
+    },
+    "broadcast_manage_invites": {
+      "components": {
+        "toasts": {
+          "success_copy": "Ссылка скопирована"
+        }
+      },
+      "empty": {
+        "title": "Приглашений пока нет",
+        "desc": "Создайте приглашение — оно появится здесь"
+      },
+      "toasts": {
+        "load_error": "Не удалось загрузить приглашения"
+      }
+    },
+    "meets": {
+      "title": "Конференции",
+      "context_menu": {
+        "create_meet": "Новая конференция",
+        "settings": "Настройки"
+      },
+      "empty": {
+        "title": "Конференций пока нет",
+        "desc": "Новые конференции появятся здесь"
+      },
+      "toasts": {
+        "load_error": "Не удалось загрузить конференции"
+      }
+    },
+    "meet_create": {
+      "name": "Название",
+      "about": "Описание",
+      "is_public_cast": "Тип конференции",
+      "is_public_cast_desc": "Открытую конференцию можно найти в поиске, в закрытую вступить только по пригласительной ссылке.",
+      "opened": "Открытая",
+      "closed": "Закрытая",
+      "is_chat_cast": "Чат конференции",
+      "is_chat_cast_desc": "Пользователи смогут общаться во время конференции",
+      "enabled": "Включен",
+      "disabled": "Отключен",
+      "close": "Закрыть",
+      "create": "Создать",
+      "toasts": {
+        "success_create": "Конференция успешно создана",
+        "name_required": "Введите название конференции",
+        "invalid_name": "Название указано не верно",
+        "invalid_description": "Описание указано не верно"
+      }
+    },
+    "meet_play": {
+      "title": "Конференция",
+      "camera_disabled": "Камера выключена",
+      "you_suffix": "(Вы)",
+      "connecting": "Подключение к конференции…",
+      "cancel_connecting": "Отменить",
+      "grid_settings_button": "Настройки сетки",
+      "close": "Покинуть конференцию",
+      "open_chat": "Открыть чат",
+      "menu_button": "Меню конференции",
+      "participants_list": "Участники конференции",
+      "immersive_hint": "Панели скрыты. Нажмите Esc, чтобы вернуть их.",
+      "participants": {
+        "alone": "Вы один в конференции",
+        "count": [
+          "участник",
+          "участника",
+          "участников"
+        ]
+      },
+      "quality": {
+        "unknown": "Нет данных",
+        "lost": "Нет связи",
+        "poor": "Слабое",
+        "good": "Хорошее",
+        "excellent": "Отличное"
+      },
+      "footer": {
+        "toggle_audio": "Микрофон",
+        "toggle_video": "Камера",
+        "switch_camera": "Сменить камеру",
+        "toggle_screen": "Демонстрация экрана",
+        "raise_hand": "Поднять руку",
+        "leave": "Покинуть конференцию"
+      },
+      "hand_raised": "Поднял руку",
+      "blocked_by_organizer": "Запрещено организатором",
+      "block_sources": {
+        "audio": "микрофон",
+        "video": "камера",
+        "screen": "демонстрация экрана"
+      },
+      "toasts": {
+        "success_save": "Настройки экрана применены",
+        "save_error": "Не удалось применить настройки экрана",
+        "success_remove": "Участник удалён",
+        "success_remove_ingress": "Трансляция удалена",
+        "remove_error": "Не удалось удалить участника",
+        "remove_ingress_error": "Не удалось удалить трансляцию",
+        "participant_not_found": "Участник уже покинул конференцию",
+        "cannot_remove_owner": "Нельзя исключить организатора",
+        "access_denied": "Недостаточно прав для этого действия",
+        "open_error": "Не удалось открыть конференцию",
+        "connect_error": "Не удалось подключиться к конференции",
+        "sync_error": "Не удалось обновить список участников",
+        "mic_error": "Не удалось переключить микрофон",
+        "camera_error": "Не удалось переключить камеру",
+        "device_error": "Не удалось переключить устройство",
+        "noise_error": "Не удалось переключить шумоподавление",
+        "screen_error": "Не удалось включить демонстрацию экрана",
+        "hand_error": "Не удалось поднять руку",
+        "add_cast_success": "Трансляция добавлена в конференцию",
+        "add_cast_error": "Не удалось добавить трансляцию",
+        "reconnecting": "Соединение потеряно, восстанавливаем…",
+        "reconnected": "Соединение восстановлено",
+        "disconnected": "Соединение с конференцией потеряно",
+        "you_were_removed": "Вас исключил организатор",
+        "success_block": "Источник запрещён",
+        "success_unblock": "Источник разрешён",
+        "success_mute_all_audio": "Микрофоны запрещены всем, включая тех, кто зайдёт позже",
+        "success_unmute_all_audio": "Микрофоны разрешены всем, включая тех, кто зайдёт позже",
+        "success_mute_all_video": "Камеры запрещены всем, включая тех, кто зайдёт позже",
+        "success_unmute_all_video": "Камеры разрешены всем, включая тех, кто зайдёт позже",
+        "success_mute_all_screen": "Демонстрация экрана запрещена всем, включая тех, кто зайдёт позже",
+        "success_unmute_all_screen": "Демонстрация экрана разрешена всем, включая тех, кто зайдёт позже",
+        "mute_error": "Не удалось изменить доступ к источнику",
+        "mute_all_error": "Не удалось изменить доступ для всех участников",
+        "cannot_block_self": "Нельзя запретить источник самому себе",
+        "nothing_to_change": "Состояние уже такое же",
+        "you_were_blocked": "Организатор запретил вам",
+        "success_layout": "Режим сетки применён для всех",
+        "success_layout_cleared": "Принудительный режим снят — участники выбирают сами",
+        "layout_error": "Не удалось применить режим сетки",
+        "success_focus": "Вы крупно у всех участников",
+        "success_focus_cleared": "Крупная плитка больше не закреплена за вами",
+        "focus_error": "Не удалось закрепить вас крупно"
+      },
+      "context_menu": {
+        "grid_settings": "Настройки сетки",
+        "screen_settings": "Настройки демонстрации",
+        "device_settings": "Камера и микрофон",
+        "settings": "Общие настройки",
+        "add_cast": "Добавить трансляцию",
+        "make_main": "Сделать главным",
+        "unpin": "Отменить главного",
+        "remove": "Удалить",
+        "remove_participant": "Исключить из конференции",
+        "remove_cast": "Отключить трансляцию",
+        "block": {
+          "audio": "Запретить микрофон",
+          "video": "Запретить камеру",
+          "screen": "Запретить демонстрацию экрана"
+        },
+        "unblock": {
+          "audio": "Разрешить микрофон",
+          "video": "Разрешить камеру",
+          "screen": "Разрешить демонстрацию экрана"
+        },
+        "mute_all_audio": "Запретить микрофон всем",
+        "mute_all_video": "Запретить камеру всем",
+        "mute_all_screen": "Запретить демонстрацию всем",
+        "unmute_all_audio": "Разрешить микрофон всем",
+        "unmute_all_video": "Разрешить камеру всем",
+        "unmute_all_screen": "Разрешить демонстрацию всем",
+        "hide_panels": "Скрыть панели",
+        "show_panels": "Показать панели"
+      },
+      "dialogs": {
+        "grid_settings": {
+          "title": "Настройки сетки",
+          "layouts": {
+            "grid": "Сетка",
+            "spotlight": "Фокус",
+            "sidebar": "Боковая панель",
+            "presentation": "Презентация"
+          },
+          "layout_description": {
+            "grid": "Все участники одинаковыми плитками.",
+            "spotlight": "Кто-то один крупно, остальные — рядами внизу.",
+            "sidebar": "Видео участников колонкой сбоку, экран — в центре.",
+            "presentation": "Крупно то, что демонстрируется с экрана."
+          },
+          "force": "Применить для всех",
+          "force_description": "Режим сетки принудительно применится у всех участников конференции.",
+          "focus": "Показать меня крупно всем",
+          "focus_description": "Ваша плитка станет крупной у всех участников конференции, даже если кто-то закрепил другого.",
+          "hotkeys": "Горячие клавиши",
+          "hotkeys_map": {
+            "space": "микрофон",
+            "video": "камера",
+            "screen": "демонстрация экрана",
+            "hand": "поднять руку",
+            "menu": "меню"
+          },
+          "save": "Применить"
+        },
+        "screen_settings": {
+          "title": "Настройки демонстрации",
+          "resolution": "Разрешение",
+          "fps": "Частота кадров (FPS)",
+          "fps_desc": "Низкий FPS подходит для презентаций, высокий — для видео и анимаций.",
+          "original": "Оригинальное (Как на мониторе)",
+          "h1080": "1080p (Full HD)",
+          "h720": "720p (HD)",
+          "h360": "360p (Экономия)",
+          "fps_5": "5 FPS (Для текста)",
+          "fps_15": "15 FPS (Оптимально)",
+          "fps_30": "30 FPS (Плавно)",
+          "fps_60": "60 FPS (Максимум)",
+          "audio": "Демонстрировать звук",
+          "audio_desc": "Отключите, если не хотите, чтобы слушатели слышали звук из вкладки. Окно и экран браузер всё равно отдаёт без звука.",
+          "applying": "Применяем…",
+          "save": "Сохранить настройки"
+        },
+        "device_settings": {
+          "title": "Камера и микрофон",
+          "cameras": "Камеры",
+          "microphones": "Микрофоны",
+          "empty_camera": "Камера не найдена",
+          "empty_microphone": "Микрофон не найден",
+          "access_denied": "Браузер запретил доступ. Разрешите камеру и микрофон в настройках сайта",
+          "unsupported": "Браузер не дал доступ. Камера и микрофон работают только по HTTPS",
+          "hint": "Выбор применяется сразу. Если устройство выключено, оно включится с выбранным — состояние источника при этом не меняется.",
+          "device_fallback_camera": "Камера",
+          "device_fallback_microphone": "Микрофон",
+          "noise": "Шумоподавление",
+          "noise_desc": "Дополнительно убирает фоновый шум: гул, вентилятор, шорох. Базовая фильтрация браузера продолжает работать всегда.",
+          "noise_unsupported": "Браузер не поддерживает обработку звука — опция недоступна",
+          "enabled": "Включен",
+          "disabled": "Отключен"
+        }
+      }
+    },
+    "meet_settings": {
+      "choose_thumb": "Выбрать обложку",
+      "name": "Название",
+      "about": "Описание",
+      "is_public_cast": "Тип конференции",
+      "is_public_cast_desc": "Открытую конференцию можно найти в поиске, в закрытую вступить только по пригласительной ссылке.",
+      "opened": "Открытая",
+      "closed": "Закрытая",
+      "is_chat_cast": "Чат конференции",
+      "is_chat_cast_desc": "Пользователи смогут общаться во время конференции",
+      "invites": "Приглашения",
+      "invites_desc": "Управление приглашениями на вступление в конференцию.",
+      "enabled": "Включен",
+      "disabled": "Отключен",
+      "remove": " Удалить",
+      "remove_desc": "Полное удаление конференции вместе с её чатом.",
+      "toasts": {
+        "success_save": "Настройки сохранены",
+        "success_remove": "Конференция удалена",
+        "access_denied": "Нет доступа",
+        "success_thumb": "Обложка сохранена",
+        "thumb_error": "Не удалось сохранить обложку",
+        "success_remove_thumb": "Обложка удалена",
+        "remove_thumb_error": "Не удалось удалить обложку",
+        "invalid_name": "Название должно быть от 2 до 128 символов",
+        "invalid_about": "Описание может содержать не более 255 символов"
+      },
+      "context_menu": {
+        "upload": "Загрузить обложку",
+        "remove": "Удалить обложку",
+        "toasts": {
+          "thumb_added": "Обложка загружена",
+          "thumb_removed": "Обложка удалена"
+        }
+      },
+      "dialogs": {
+        "remove": {
+          "title": "Удаление конференции",
+          "description": "Вы действительно хотите удалить конференцию и все её данные включая все сообщения из чата?",
+          "action_remove": "Удалить",
+          "action_close": "Закрыть"
+        }
+      }
+    },
+    "meet_invite_create": {
+      "name": "Название",
+      "number_users": "Число пользователей",
+      "number_users_desc": "Вы можете выбрать сколько пользователей смогут присоединиться по этой ссылке.",
+      "infifnity": "Неограничено",
+      "limited": "Ограничено",
+      "toasts": {
+        "success_create": "Приглашение создано",
+        "invalid_max_users": "Количество участников указано не верно",
+        "invalid_name": "Название указано не верно"
+      }
+    },
+    "meet_manage_invites": {
+      "components": {
+        "toasts": {
+          "success_copy": "Ссылка скопирована"
+        }
+      },
+      "empty": {
+        "title": "Приглашений пока нет",
+        "desc": "Создайте приглашение — оно появится здесь"
+      },
+      "toasts": {
+        "load_error": "Не удалось загрузить приглашения"
+      }
+    },
+    "themes": {
+      "title": "Темы оформления",
+      "empty": {
+        "title": "Тем пока нет",
+        "desc": "Создайте тему — она появится здесь"
+      },
+      "toasts": {
+        "load_error": "Не удалось загрузить темы"
+      }
+    },
+    "theme_create": {
+      "name": "Название",
+      "opened": "Открытая",
+      "closed": "Закрытая",
+      "style": "CSS стили",
+      "toasts": {
+        "success_create": "Тема успешно создана",
+        "error_style": "Проверьте css стили темы",
+        "name_invalid": "Название указано не верно",
+        "error": "Не удалось создать тему"
+      }
+    },
+    "theme_edit": {
+      "name": "Название",
+      "opened": "Открытая",
+      "closed": "Закрытая",
+      "style": "CSS стили",
+      "toasts": {
+        "success_save": "Тема успешно сохранена",
+        "error_style": "Проверьте css стили темы",
+        "name_invalid": "Название указано не верно",
+        "error": "Не удалось сохранить тему"
+      }
+    },
+    "emoji": {
+      "tabs": {
+        "emoji": "Эмодзи",
+        "stickers": "Стикеры"
+      },
+      "stickers": {
+        "back": "Назад",
+        "empty_title": "Паков пока нет",
+        "empty_desc": "Добавьте пак к себе или создайте свой",
+        "pak_empty_title": "В паке пока нет стикеров",
+        "pak_empty_desc": "Автор пака ещё не добавил стикеры",
+        "load_error": "Не удалось загрузить паки",
+        "pak_load_error": "Не удалось загрузить пак"
+      }
+    },
+    "sticker_paks": {
+      "title": "Стикеры",
+      "empty": {
+        "title": "Паков пока нет",
+        "desc": "Создайте пак стикеров или добавьте публичный к себе"
+      },
+      "labels": {
+        "stickers": [
+          "стикер",
+          "стикера",
+          "стикеров"
+        ],
+        "author_pack": "Ваш",
+        "private": "Приватный",
+        "added": "Добавлен"
+      },
+      "menu": {
+        "edit": "Редактировать",
+        "delete": "Удалить",
+        "add": "Добавить к себе",
+        "remove": "Убрать из своих"
+      },
+      "confirm": {
+        "title": "Удалить пак?",
+        "description": "Пак и его стикеры будут удалены навсегда. Это действие нельзя отменить",
+        "cancel": "Отмена",
+        "confirm": "Удалить"
+      },
+      "toasts": {
+        "load_error": "Не удалось загрузить паки",
+        "delete_error": "Не удалось удалить пак",
+        "subscribe_error": "Не удалось добавить пак",
+        "unsubscribe_error": "Не удалось убрать пак"
+      }
+    },
+    "sticker_pak": {
+      "empty": {
+        "title": "В паке пока нет стикеров",
+        "desc": "Нажмите «+», чтобы загрузить первый стикер"
+      },
+      "subscribe": {
+        "add": "Добавить к себе",
+        "added": "Добавлен"
+      },
+      "menu": {
+        "delete": "Удалить стикер"
+      },
+      "confirm": {
+        "title": "Удалить стикер?",
+        "description": "Стикер будет удалён из пака. Это действие нельзя отменить",
+        "cancel": "Отмена",
+        "confirm": "Удалить"
+      },
+      "toasts": {
+        "load_error": "Не удалось загрузить пак",
+        "delete_error": "Не удалось удалить стикер",
+        "add_error": "Не удалось загрузить стикер",
+        "subscribe_error": "Не удалось добавить пак",
+        "success_add": "Стикер добавлен в пак",
+        "success_add_many": "Добавлено в пак",
+        "dec_stickers": [
+          "стикер",
+          "стикера",
+          "стикеров"
+        ],
+        "limit_reached": "В паке уже 100 стикеров — предел",
+        "invalid_format": "Стикер должен быть файлом WEBP",
+        "too_big": "Файл стикера больше 512 КБ",
+        "too_large_image": "Сторона стикера больше 512 px"
+      }
+    },
+    "sticker_pak_create": {
+      "name": "Название",
+      "about": "Описание",
+      "public_on": "Публичный",
+      "public_off": "Приватный",
+      "toasts": {
+        "name_invalid": "Название указано не верно",
+        "about_invalid": "Описание слишком длинное",
+        "create_error": "Не удалось создать пак"
+      }
+    },
+    "sticker_pak_edit": {
+      "name": "Название",
+      "about": "Описание",
+      "public_on": "Публичный",
+      "public_off": "Приватный",
+      "toasts": {
+        "load_error": "Не удалось загрузить пак",
+        "name_invalid": "Название указано не верно",
+        "about_invalid": "Описание слишком длинное",
+        "success": "Пак успешно сохранён",
+        "save_error": "Не удалось сохранить пак"
+      }
+    },
+    "messages": {
+      "favorite": "Избранное",
+      "online": "В сети",
+      "was": "Был(а)",
+      "offline": "Не в сети",
+      "dec_one_subscriber": "участник",
+      "dec_two_subscribers": "участника",
+      "dec_five_subscribers": "участников",
+      "group_topic": "Тема группы",
+      "conference_chat": "Чат конференции",
+      "broadcast_chat": "Чат трансляции",
+      "enter_message": "Сообщение",
+      "unread_messages": "Непрочитанные сообщения",
+      "toasts": {
+        "empty_message": "Сообщение пустое",
+        "bot_not_online": "Бот не в сети",
+        "invite_not_valid": "Приглашение недействительно",
+        "cloud_link_not_valid": "Ссылка недействительна",
+        "maximum_files": "Не более %{count}% файлов",
+        "file_too_large": "Файл %{name}% больше %{size}%",
+        "invalid_extension": "Файл %{name}% нельзя прикреплять",
+        "invalid_mime": "Тип файла %{name}% не совпадает с расширением",
+        "message_too_long": "Максимум %{count}% символов",
+        "uploading_failed": "Не удалось загрузить файл",
+        "send_failed": "Сообщение не отправлено",
+        "sticker_send_error": "Не удалось отправить стикер",
+        "sticker_pak_unavailable": "Набор стикера недоступен",
+        "rate_limit": "Слишком много запросов. Попробуйте позже",
+        "drop_files_failed": "Не удалось прочитать перетащенные файлы",
+        "invalid_characters": "Сообщение содержит недопустимые символы",
+        "attachments_upload_failed": "Не все файлы загрузились. Попробуйте отправить сообщение ещё раз",
+        "sent_without_preview": "Файл отправлен без превью"
+      },
+      "voice_recorder": {
+        "slide_to_cancel": "Отменить"
+      },
+      "components": {
+        "messages": {
+          "document_item": {
+            "context_menu": {
+              "download": "Скачать"
+            }
+          },
+          "audio_item": {
+            "context_menu": {
+              "download": "Скачать"
+            }
+          },
+          "audio_note_item": {
+            "context_menu": {
+              "download": "Скачать"
+            }
+          },
+          "voice_item": {
+            "voice_message": "Голосовое сообщение",
+            "voice_note": "голосовое сообщение"
+          },
+          "reply": {
+            "image": "Изображение",
+            "voice_note": "Голосовое сообщение",
+            "video_note": "Видеосообщение",
+            "dec_files": [
+              "файл",
+              "файла",
+              "файлов"
+            ],
+            "dec_audios": [
+              "аудиозапись",
+              "аудиозаписи",
+              "аудиозаписей"
+            ],
+            "dec_videos": [
+              "видеозапись",
+              "видеозаписи",
+              "видеозаписей"
+            ]
+          },
+          "forward": {
+            "forwarded_from": "Переслано от",
+            "unknown": "Неизвестно"
+          },
+          "dialogs": {
+            "message_url_click_confirm": {
+              "desc": "Перейти по внешней ссылке ?",
+              "cancel": "Отмена",
+              "open": "Открыть"
+            },
+            "remove_message_confirm": {
+              "desc": "Удалить сообщение ?",
+              "for_all": "Удалить для всех",
+              "action_cancel": "Отмена",
+              "action_remove": "Удалить"
+            }
+          },
+          "context_menu": {
+            "copy": "Скопировать",
+            "resend": "Отправить",
+            "reply": "Ответить",
+            "forward": "Переслать",
+            "edit": "Изменить",
+            "remove": "Удалить"
+          },
+          "toasts": {
+            "message_removed": "Сообщение удалено",
+            "message_copied": "Сообщение скопировано",
+            "message_forwarded": "Сообщение переслано"
+          },
+          "system_messages": {
+            "USER_JOINED_GROUP": {
+              "string": "%{user_name}% теперь в группе",
+              "array": "теперь в группе"
+            },
+            "USER_LEFT_GROUP": {
+              "string": "%{user_name}% покинул группу",
+              "array": "покинул группу"
+            },
+            "USER_ROLE_CHANGED_TO_MODERATOR_IN_GROUP": {
+              "string": "%{user_name}% стал модератором",
+              "array": "стал модератором"
+            },
+            "USER_RENAMED_GROUP": {
+              "string": "%{user_name}% сменил название группы на - %{group_name}% ",
+              "array": "сменил название группы на - "
+            },
+            "BROADCAST_STARTED": {
+              "string": "Трансляция запущена",
+              "array": [
+                "Трансляция",
+                "запущена"
+              ]
+            },
+            "BROADCAST_ENDED": {
+              "string": "Трансляция остановлена",
+              "array": [
+                "Трансляция",
+                "остановлена"
+              ]
+            },
+            "CALL_INCOMING": {
+              "string": "Входящий звонок",
+              "array": "входящий звонок"
+            },
+            "CALL_ENDED": {
+              "string": "Звонок завершён",
+              "array": "завершён"
+            },
+            "CALL_MISSED": {
+              "string": "Пропущенный звонок",
+              "array": "пропущенный звонок"
+            }
+          },
+          "comments": {
+            "dec_comments": [
+              "комментарий",
+              "комментария",
+              "комментариев"
+            ]
+          }
+        },
+        "reply_footer": {
+          "image": "Изображение",
+          "sticker": "Стикер",
+          "voice_note": "Голосовое сообщение",
+          "video_note": "Видеосообщение",
+          "dec_files": [
+            "файл",
+            "файла",
+            "файлов"
+          ],
+          "dec_audios": [
+            "аудиозапись",
+            "аудиозаписи",
+            "аудиозаписей"
+          ],
+          "dec_videos": [
+            "видеозапись",
+            "видеозаписи",
+            "видеозаписей"
+          ]
+        }
+      },
+      "context_menu": {
+        "profile": "Профиль",
+        "user_profile": "Профиль пользователя",
+        "call": "Позвонить",
+        "enable_notify": "Включить звук",
+        "disable_notify": "Выключить звук",
+        "subscribe_channel": "Вступить в сообщество",
+        "unsubscribe_channel": "Покинуть сообщество",
+        "subscribe_group": "Вступить в группу",
+        "unsubscribe_group": "Покинуть группу",
+        "clear_history": "Очистить историю",
+        "remove_dialog": "Удалить диалог",
+        "add_to_folder": "Добавить в папку",
+        "toasts": {
+          "success_enable_notify": "Уведомления включены",
+          "success_disable_notify": "Уведомления выключены",
+          "success_subscribe": "Подписались",
+          "success_unsubscribe": "Отписались",
+          "success_clear_history": "История сообщений очищена",
+          "success_remove_dialog": "Диалог удалён"
+        }
+      },
+      "dialogs": {
+        "clear_history_confirm": {
+          "desc": "Очистить историю сообщений ?",
+          "for_all": "Очистить для всех",
+          "action_cancel": "Отмена",
+          "action_clear": "Очистить"
+        },
+        "remove_dialog_confirm": {
+          "desc": "Удалить диалог ?",
+          "for_all": "Удалить для всех",
+          "action_cancel": "Отмена",
+          "action_remove": "Удалить"
+        }
+      }
+    },
+    "secret_chat": {
+      "title": "Секретный чат",
+      "tab_subtitle": "Секретный чат",
+      "enter_message": "Сообщение",
+      "unread_messages": "Непрочитанные сообщения",
+      "reply_message_missing": "Сообщение",
+      "voice_recorder": {
+        "slide_to_cancel": "Отменить"
+      },
+      "components": {
+        "reply": {
+          "image": "Фото",
+          "voice_note": "Голосовое сообщение",
+          "video_note": "Видеосообщение",
+          "dec_audios": [
+            "аудио",
+            "аудио",
+            "аудио"
+          ],
+          "dec_videos": [
+            "видео",
+            "видео",
+            "видео"
+          ],
+          "dec_files": [
+            "вложение",
+            "вложения",
+            "вложений"
+          ]
+        },
+        "document_item": {
+          "context_menu": {
+            "download": "Скачать"
+          }
+        },
+        "audio_item": {
+          "context_menu": {
+            "download": "Скачать"
+          }
+        },
+        "voice_item": {
+          "voice_message": "Голосовое сообщение",
+          "voice_note": "голосовое сообщение"
+        }
+      },
+      "states": {
+        "pending": "Ожидает собеседника…",
+        "connecting": "Подключение…",
+        "connected": "Секретное соединение",
+        "reconnecting": "Переподключение…",
+        "failed": "Соединение потеряно"
+      },
+      "typing": {
+        "typing": "печатает…",
+        "recording_audio": "записывает голосовое…",
+        "recording_video": "записывает видео…",
+        "uploading_document": "отправляет файл…"
+      },
+      "context_menu": {
+        "copy": "Скопировать",
+        "reply": "Ответить",
+        "edit": "Изменить",
+        "remove": "Удалить",
+        "self_destruct": "Таймер сообщений",
+        "self_destruct_off": "Выключен",
+        "self_destruct_5s": "5 секунд",
+        "self_destruct_1m": "1 минута",
+        "self_destruct_1h": "1 час",
+        "self_destruct_1d": "1 день",
+        "self_destruct_1w": "1 неделя",
+        "remove_chat": "Удалить секретный чат"
+      },
+      "self_destruct_badge": "Самоуничтожение",
+      "toasts": {
+        "empty_message": "Сообщение пустое",
+        "message_too_long": "Максимум %{count}% символов",
+        "invalid_characters": "Сообщение содержит недопустимые символы",
+        "maximum_files": "Не более %{count}% файлов",
+        "file_too_large": "Файл %{name}% больше %{size}%",
+        "invalid_extension": "Файл %{name}% нельзя прикреплять",
+        "invalid_mime": "Тип файла %{name}% не совпадает с расширением",
+        "drop_files_failed": "Не удалось прочитать перетаскиваемые файлы",
+        "uploading_failed": "Не удалось передать файл",
+        "message_removed": "Сообщение удалено",
+        "message_copied": "Сообщение скопировано",
+        "send_failed": "Сообщение не отправлено",
+        "peer_offline": "Собеседник не в сети. Попробуйте позже",
+        "sticker_send_error": "Не удалось отправить стикер",
+        "chat_removed": "Секретный чат удалён",
+        "self_destruct_updated": "Таймер самоуничтожения обновлён",
+        "invite_declined": "Приглашение отклонено",
+        "invite_timeout": "Приглашение не принято",
+        "invite_error": "Не удалось принять приглашение"
+      },
+      "dialogs": {
+        "remove_chat_confirm": {
+          "desc": "Удалить секретный чат? История будет удалена на обоих устройствах.",
+          "action_cancel": "Отмена",
+          "action_remove": "Удалить"
+        },
+        "remove_message_confirm": {
+          "desc": "Удалить сообщение?",
+          "action_cancel": "Отмена",
+          "action_remove": "Удалить"
+        },
+        "invite": {
+          "title": "Входящий секретный чат",
+          "desc": "Собеседник приглашает вас в секретный чат. Примите на этом устройстве, чтобы общаться с него.",
+          "action_accept": "Принять",
+          "action_decline": "Отклонить"
+        }
+      }
+    },
+    "secret_chat_verify": {
+      "title": "Сверка ключей",
+      "desc": "Сравните эмодзи и код на экранах обоих устройств. Совпадение подтверждает, что переписку никто не подменяет.",
+      "fingerprint_title": "Отпечаток ключей",
+      "verified": "Ключи проверены",
+      "not_verified": "Ключи не проверены",
+      "not_ready": "Ключи ещё не сформированы: подождите соединения с собеседником",
+      "action_match": "Совпало",
+      "action_mismatch": "Не совпало",
+      "action_unverify": "Отметить непроверенным",
+      "toasts": {
+        "verified": "Ключи проверены",
+        "unverified": "Отметка о проверке снята"
+      }
+    },
+    "secret_call": {
+      "title": "Секретный звонок",
+      "incoming_title": "Входящий секретный звонок",
+      "status_calling": "Вызов…",
+      "status_connecting": "Соединение…",
+      "status_reconnecting": "Соединение потеряно…",
+      "status_ended": "Вызов завершён",
+      "status_declined": "Вызов отклонён",
+      "status_no_answer": "Нет ответа",
+      "status_taken": "Принято на другом устройстве",
+      "status_busy": "Занято",
+      "incoming_accept": "Принять",
+      "incoming_decline": "Отклонить",
+      "footer": {
+        "toggle_audio": "Микрофон",
+        "toggle_video": "Камера",
+        "switch_camera": "Сменить камеру",
+        "hangup": "Завершить",
+        "cancel": "Отменить"
+      },
+      "toasts": {
+        "peer_offline": "Собеседник офлайн: звонок возможен, когда он в сети",
+        "busy": "Уже идёт звонок",
+        "media_error": "Не удалось получить доступ к камере или микрофону",
+        "mic_error": "Не удалось переключить микрофон",
+        "camera_error": "Не удалось переключить камеру"
+      }
+    },
+    "search": {
+      "search": "Поиск",
+      "channels": "Сообщества",
+      "groups": "Группы",
+      "users": "Люди",
+      "bots": "Боты",
+      "create_bot": "Создать бота",
+      "states": {
+        "loading": "Загрузка...",
+        "not_found": "Ничего не найдено",
+        "error": "Не удалось загрузить"
+      },
+      "empty": {
+        "channels": {
+          "title": "Сообщества не найдены",
+          "desc": "Попробуйте изменить запрос или проверьте написание"
+        },
+        "groups": {
+          "title": "Группы не найдены",
+          "desc": "Попробуйте изменить запрос или проверьте написание"
+        },
+        "users": {
+          "title": "Люди не найдены",
+          "desc": "Проверьте имя или ссылку на профиль"
+        },
+        "bots": {
+          "title": "Боты не найдены",
+          "desc": "Попробуйте изменить запрос — или создайте своего бота"
+        }
+      },
+      "toasts": {
+        "load_error": "Не удалось загрузить результаты поиска",
+        "open_error": "Не удалось открыть поиск",
+        "search_error": "Не удалось выполнить поиск",
+        "create_bot_error": "Не удалось открыть создание бота"
+      },
+      "_components": {
+        "channels": {
+          "dec_one_subscriber": "участник",
+          "dec_two_subscribers": "участника",
+          "dec_five_subscribers": "участников"
+        },
+        "groups": {
+          "dec_one_subscriber": "участник",
+          "dec_two_subscribers": "участника",
+          "dec_five_subscribers": "участников"
+        },
+        "users": {
+          "online": "В сети",
+          "not_online": "Не в сети",
+          "was": "Был(а)"
+        },
+        "bots": {
+          "online": "В сети",
+          "not_online": "Не в сети"
+        }
+      }
+    },
+    "bot_app": {
+      "webapp_subtitle": "WebApp приложение",
+      "toasts": {
+        "load_error": "Не удалось открыть приложение",
+        "data_too_long": "Слишком много данных — не удалось отправить",
+        "bot_offline": "Бот не в сети — данные не отправлены"
+      },
+      "permission": {
+        "title": "Доступ к устройству",
+        "desc": "Приложение «{app}» запрашивает доступ к {permission}.",
+        "camera": "камере",
+        "microphone": "микрофону",
+        "geolocation": "геолокации",
+        "clipboard_write": "буферу обмена",
+        "allow": "Разрешить",
+        "deny": "Запретить"
+      }
+    },
+    "bot_create": {
+      "title": "Создание бота",
+      "link": "Публичное имя",
+      "bio": "Описание",
+      "private_type": "Настройка приватности",
+      "private_type_desc": "Закрытый бот будет доступен только Вам, открытый всем пользователям.",
+      "opened": "Открытый",
+      "closed": "Закрытый",
+      "close": "Закрыть",
+      "create": "Создать",
+      "toasts": {
+        "success_create": "Бот успешно создан",
+        "invalid_link": "Ссылка должна содержать от 3 до 28 символов латиницей, цифрами или «_» и заканчиваться на «_bot»",
+        "invalid_bio": "Описание может содержать не более 255 символов",
+        "link_taken": "Это имя уже занято"
+      }
+    },
+    "bot_profile": {
+      "chat": "Чат",
+      "apps": "Приложения",
+      "dialogs": {
+        "apps_list": {
+          "title": "Приложения бота"
+        }
+      },
+      "toasts": {
+        "dialog_created": "Диалог создан",
+        "id_cannot_match": "Нельзя создать чат с самим собой",
+        "invalid_bot_id": "Бот не найден"
+      }
+    },
+    "bot_settings": {
+      "link": "Публичное имя",
+      "bio": "Описание",
+      "not_select": "Не выбрано",
+      "id": "ID",
+      "token": "Token",
+      "menu": "Меню",
+      "bot_menu": "Меню бота",
+      "apps": "Приложения бота",
+      "toasts": {
+        "success_save": "Настройки бота сохранены",
+        "bio_invalid": "Описание указано не верно",
+        "button_url_invalid": "Ссылка кнопки указана не верно",
+        "success_avatar": "Аватар бота сохранён",
+        "avatar_error": "Не удалось сохранить аватар",
+        "success_remove_avatar": "Аватар бота удалён",
+        "remove_avatar_error": "Не удалось удалить аватар"
+      },
+      "context_menu": {
+        "add_command": "Новая команда",
+        "add_category": "Новая папка",
+        "export_to_json": "Экспорт в JSON",
+        "import_from_json": "Импорт из JSON",
+        "remove_menu": "Удалить меню",
+        "upload_avatar": "Загрузить фотографию",
+        "remove_avatar": "Удалить фотографию"
+      },
+      "dialogs": {
+        "add_command": {
+          "title": "Новая команда",
+          "command": "Команда",
+          "name": "Название",
+          "about": "Описание",
+          "action_add": "Добавить",
+          "action_close": "Отмена"
+        },
+        "edit_command": {
+          "title": "Изменить команду",
+          "command": "Команда",
+          "name": "Название",
+          "about": "Описание",
+          "action_save": "Сохранить",
+          "action_remove": "Удалить",
+          "action_close": "Отмена"
+        },
+        "add_category": {
+          "title": "Новая папка",
+          "name": "Название",
+          "about": "Описание",
+          "action_add": "Добавить",
+          "action_close": "Отмена"
+        },
+        "edit_category": {
+          "title": "Изменить папку",
+          "name": "Название",
+          "about": "Описание",
+          "action_save": "Сохранить",
+          "action_remove": "Удалить",
+          "action_close": "Отмена"
+        },
+        "export_json": {
+          "title": "Экcпорт в JSON",
+          "json_menu": "Json меню",
+          "action_copy": "Копировать",
+          "action_close": "Отмена"
+        },
+        "import_json": {
+          "title": "Импорт комманд из JSON",
+          "json_menu": "Json меню",
+          "action_save": "Сохранить",
+          "action_close": "Отмена"
+        },
+        "add_app": {
+          "title": "Новое приложение",
+          "name": "Название",
+          "link": "Короткая ссылка",
+          "about": "Описание",
+          "url": "URL адрес приложения",
+          "action_add": "Добавить",
+          "action_close": "Отмена"
+        },
+        "edit_app": {
+          "title": "Изменить приложение",
+          "name": "Название",
+          "link": "Короткая ссылка",
+          "about": "Описание",
+          "url": "URL адрес приложения",
+          "action_save": "Сохранить",
+          "action_close": "Отмена"
+        }
+      }
+    },
+    "bot_setting_link": {
+      "link": "Публичное имя",
+      "set_link_desc": "Вы можете выбрать публичное имя бота. В этом случае другие люди смогут найти его по этому имени.",
+      "save": "Сохранить",
+      "close": "Закрыть",
+      "toasts": {
+        "success_save": "Публичное имя сохранено",
+        "link_already_taken": "Это публичное имя уже занято",
+        "link_invalid": "Публичное имя указано не верно"
+      }
+    },
+    "bot_menu": {
+      "title": "Меню бота",
+      "menu": "Меню",
+      "toasts": {
+        "success_save": "Публичное имя сохранено",
+        "link_already_taken": "Это публичное имя уже занято",
+        "link_invalid": "Публичное имя указано не верно",
+        "bot_not_menu": "У бота нет меню"
+      }
+    },
+    "comments": {
+      "title": "Комментарии",
+      "enter_comment": "Комментарий",
+      "new_comments": "Новые комментарии",
+      "removed_comment": "Комментарий удалён",
+      "dec_comments": [
+        "комментарий",
+        "комментария",
+        "комментариев"
+      ],
+      "dec_files": [
+        "вложение",
+        "вложения",
+        "вложений"
+      ],
+      "toasts": {
+        "empty_message": "Комментарий пустой",
+        "maximum_files": "Не более %{count}% файлов",
+        "file_too_large": "Файл %{name}% больше %{size}%",
+        "invalid_extension": "Файл %{name}% нельзя прикреплять",
+        "invalid_mime": "Тип файла %{name}% не совпадает с расширением",
+        "message_too_long": "Максимум %{count}% символов",
+        "invalid_characters": "Комментарий содержит недопустимые символы",
+        "uploading_failed": "Не удалось загрузить файл",
+        "send_failed": "Комментарий не отправлен",
+        "drop_files_failed": "Не удалось прочитать перетащенные файлы",
+        "commenting_disabled": "Комментирование отключено",
+        "comment_removed": "Комментарий удалён",
+        "sent_without_preview": "Файл отправлен без превью"
+      },
+      "voice_recorder": {
+        "slide_to_cancel": "Отменить"
+      },
+      "components": {
+        "reply": {
+          "image": "Фото",
+          "sticker": "Стикер",
+          "voice_note": "Голосовое сообщение",
+          "video_note": "Видеосообщение",
+          "dec_audios": [
+            "аудио",
+            "аудио",
+            "аудио"
+          ],
+          "dec_videos": [
+            "видео",
+            "видео",
+            "видео"
+          ],
+          "dec_files": [
+            "вложение",
+            "вложения",
+            "вложений"
+          ]
+        },
+        "document_item": {
+          "context_menu": {
+            "download": "Скачать"
+          }
+        },
+        "audio_item": {
+          "context_menu": {
+            "download": "Скачать"
+          }
+        },
+        "voice_item": {
+          "voice_message": "Голосовое сообщение",
+          "voice_note": "голосовое сообщение"
+        }
+      },
+      "context_menu": {
+        "reply": "Ответить",
+        "edit": "Изменить",
+        "remove": "Удалить"
+      },
+      "dialogs": {
+        "remove_comment": {
+          "desc": "Удалить комментарий ?",
+          "text": "Комментарий будет удалён для всех навсегда.",
+          "action_cancel": "Отмена",
+          "action_remove": "Удалить"
+        }
+      }
+    },
+    "call": {
+      "title": "Звонок",
+      "group_title": "Групповой звонок",
+      "participant": "Участник",
+      "you_suffix": "вы",
+      "participants_list": "Участники звонка",
+      "cancel": "Отмена",
+      "status": {
+        "starting": "Соединение…",
+        "ringing": "Звонок…",
+        "active": "Соединились"
+      },
+      "participants": {
+        "count": [
+          "участник",
+          "участника",
+          "участников"
+        ]
+      },
+      "quality": {
+        "excellent": "Отлично",
+        "good": "Хорошо",
+        "poor": "Плохо",
+        "lost": "Нет связи",
+        "unknown": "Нет данных"
+      },
+      "footer": {
+        "toggle_audio": "Микрофон",
+        "toggle_video": "Камера",
+        "switch_camera": "Сменить камеру",
+        "add_participant": "Добавить участника",
+        "back_to_grid": "Показать всех участников",
+        "leave": "Завершить звонок"
+      },
+      "toasts": {
+        "start_error": "Не удалось начать звонок",
+        "calls_restricted": "Пользователю запрещено звонить",
+        "user_not_found": "Пользователь не найден",
+        "busy": "Абонент занят",
+        "busy_incoming": "{name} пытается вам позвонить, но вы уже разговариваете",
+        "no_answer": "Абонент не ответил",
+        "declined": "Звонок отклонён",
+        "ended": "Звонок завершён",
+        "connection_failed": "Не удалось установить соединение",
+        "media_error": "Проверьте камеру и микрофон",
+        "mic_error": "Не удалось переключить микрофон",
+        "camera_error": "Не удалось переключить камеру",
+        "sync_error": "Не удалось обновить участников",
+        "invited": "Приглашение отправлено",
+        "call_not_active": "Звонок уже завершён",
+        "already_in_call": "Этот пользователь уже участвует в звонке",
+        "invite_self": "Нельзя пригласить себя в звонок",
+        "invite_error": "Не удалось пригласить участника"
+      }
+    },
+    "call_incoming": {
+      "title": "Входящий звонок",
+      "accept": "Принять",
+      "decline": "Отклонить",
+      "status": {
+        "incoming": "Входящий звонок…"
+      },
+      "toasts": {
+        "no_answer": "Вызов не отвечен",
+        "accept_error": "Не удалось подключиться к звонку",
+        "decline_error": "Не удалось отклонить звонок"
+      }
+    },
+    "invite_channel": {
+      "title": "Приглашение",
+      "channel": "Сообщество",
+      "group": "Группа",
+      "members": "Участников",
+      "cancel": "Отмена",
+      "open": "Открыть",
+      "toasts": {
+        "success_subscribe": "Вы подписались на канал",
+        "invite_expired": "Срок действия приглашения истёк",
+        "invite_max_uses": "Лимит использования приглашения исчерпан",
+        "invite_required": "Не указано приглашение",
+        "channel_not_found": "Канал не найден",
+        "entity_mismatch": "Приглашение не подходит для этого канала",
+        "user_not_found": "Пользователь не найден"
+      }
+    },
+    "invite_broadcast": {
+      "title": "Приглашение",
+      "broadcast": "Трансляция",
+      "cancel": "Отмена",
+      "open": "Открыть",
+      "toasts": {
+        "success_subscribe": "Вы подписались на трансляцию",
+        "invite_expired": "Срок действия приглашения истёк",
+        "invite_max_uses": "Лимит использования приглашения исчерпан",
+        "invite_required": "Не указано приглашение",
+        "entity_mismatch": "Приглашение не подходит для этой трансляции"
+      }
+    },
+    "invite_meet": {
+      "title": "Приглашение",
+      "meet": "Конференция",
+      "cancel": "Отмена",
+      "open": "Открыть",
+      "toasts": {
+        "success_subscribe": "Вы присоединились к конференции",
+        "invite_invalid_expired": "Срок действия приглашения истёк",
+        "invite_invalid_max_uses": "Лимит использования приглашения исчерпан",
+        "invite_required": "Не указано приглашение",
+        "entity_mismatch": "Приглашение не подходит для этой конференции"
+      }
+    },
+    "cloud": {
+      "root": "Облако",
+      "tabs": {
+        "mine": "Моё облако",
+        "available": "Доступное для меня"
+      },
+      "shared": {
+        "root": "Общий доступ"
+      },
+      "actions": {
+        "open": "Открыть",
+        "download": "Скачать",
+        "share": "Поделиться",
+        "links": "Ссылки",
+        "remove": "Удалить"
+      },
+      "badges": {
+        "read": "Чтение",
+        "write": "Запись"
+      },
+      "dates": {
+        "created": "Создана",
+        "until": "До"
+      },
+      "empty": {
+        "mine": "Облако пусто. Загрузите файлы или создайте папку",
+        "available": "Нет доступных ссылок",
+        "shared": "В этой папке ничего нет"
+      },
+      "toasts": {
+        "folder_created": "Папка создана",
+        "file_removed": "Файл удалён",
+        "folder_removed": "Папка удалена",
+        "folder_not_found": "Папка не найдена",
+        "access_denied": "Недостаточно прав",
+        "link_created": "Ссылка создана",
+        "link_removed": "Ссылка удалена",
+        "link_revoked": "Ссылка отозвана",
+        "link_not_valid": "Ссылка недействительна",
+        "upload_error": "Не удалось загрузить файл",
+        "invalid_extension": "Недопустимое расширение файла",
+        "download_error": "Не удалось скачать файл",
+        "load_error": "Не удалось загрузить содержимое папки",
+        "load_links_error": "Не удалось загрузить список ссылок"
+      },
+      "dialogs": {
+        "create_folder": {
+          "title": "Новая папка",
+          "name": "Название папки",
+          "action_create": "Создать"
+        },
+        "create_share_link": {
+          "title": "Создать ссылку",
+          "item_name": "Элемент",
+          "access": "Уровень доступа",
+          "access_read": "Чтение",
+          "access_write": "Запись",
+          "expires": "Срок действия",
+          "desc": "Ссылка открывает доступ к элементу. Уровень «Запись» позволяет изменять содержимое папки",
+          "action_create": "Создать",
+          "link_result": "Ссылка готова",
+          "action_copy": "Копировать",
+          "action_close": "Готово"
+        },
+        "share_links": {
+          "title": "Ссылки",
+          "item": "Элемент",
+          "empty": "Ссылок пока нет",
+          "action_close": "Закрыть"
+        },
+        "file_info": {
+          "title": "Файл",
+          "type": "Тип",
+          "action_download": "Скачать",
+          "action_close": "Закрыть"
+        }
+      }
+    }
+  }
+}

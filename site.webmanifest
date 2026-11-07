@@ -1,0 +1,87 @@
+{
+    "name": "Kodme",
+    "short_name": "Kodme",
+    "description": "Приложение позволяет обмениваться сообщениями, в том числе и зашифрованными. Создавать сообщества, делиться разными видами контента.",
+    "categories": [
+        "messenger",
+        "chat"
+    ],
+    "theme_color": "#ffffff",
+    "background_color": "#ffffff",
+    "display": "standalone",
+    "display_override": [
+        "window-controls-overlay"
+    ],
+    "orientation": "portrait-primary",
+    "lang": "ru",
+    "dir": "rtl",
+    "start_url": "/",
+    "icons": [
+        {
+            "src": "/img/icon_16.png",
+            "sizes": "16x16",
+            "type": "image/png"
+        },
+        {
+            "src": "/img/icon_24.png",
+            "sizes": "24x24",
+            "type": "image/png"
+        },
+        {
+            "src": "/img/icon_32.png",
+            "sizes": "32x32",
+            "type": "image/png"
+        },
+        {
+            "src": "/img/icon_48.png",
+            "sizes": "48x48",
+            "type": "image/png"
+        },
+        {
+            "src": "/img/icon_64.png",
+            "sizes": "64x64",
+            "type": "image/png"
+        },
+        {
+            "src": "/img/icon_128.png",
+            "sizes": "128x128",
+            "type": "image/png"
+        },
+        {
+            "src": "/img/icon_256.png",
+            "sizes": "256x256",
+            "type": "image/png"
+        },
+        {
+            "src": "/img/icon_512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "/img/icon_1024.png",
+            "sizes": "1024x1024",
+            "type": "image/png"
+        }
+    ],
+    "share_target": {
+        "action": "/?shareImport",
+        "method": "POST",
+        "enctype": "multipart/form-data",
+        "params": {
+            "files": [
+                {
+                    "name": "file",
+                    "accept": [
+                        "image/jpg",
+                        "image/jpeg",
+                        "image/png",
+                        "image/bmp",
+                        "image/tiff",
+                        "image/gif",
+                        "image/webp"
+                    ]
+                }
+            ]
+        }
+    }
+}

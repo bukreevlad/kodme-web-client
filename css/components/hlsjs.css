@@ -1,0 +1,188 @@
+/* ==========================================================================
+   1. ПЕРЕМЕННЫЕ ЦВЕТОВ (ADWAITA THEME)
+   ========================================================================== */
+
+/* Светлая тема (Adwaita Light) */
+:root {
+    /* Базовые цвета Adwaita для синтаксиса */
+    --color-keyword: #1a5fb4;    /* Классический синий GNOME (Adwaita Blue 5) */
+    --color-string: #26a269;     /* Насыщенный зеленый (Adwaita Green 5) */
+    --color-number: #1c71d8;     /* Светло-синий акцент для констант/чисел */
+    --color-comment: #787878;    /* Нейтральный серый (Adwaita Dark 1) */
+    --color-function: #63452c;   /* Древесно-коричневый для методов/функций */
+    --color-tag: #1a5fb4;        /* Синий для HTML/XML тегов */
+    --color-attribute: #4a525d;  /* Сложный грифельный для атрибутов */
+    --color-constant: #e66100;   /* Оранжевый для литералов и констант (Adwaita Orange 5) */
+    --color-selector: #26a269;   /* Зеленый/Teal для CSS селекторов */
+}
+
+/* Темная тема (Adwaita Dark) */
+:root[data-theme="dark"] {
+    /* Для темной темы используем те же полярные цвета, но адаптируем контраст */
+    --color-keyword: #78aeed;    /* Яркий светлый синий (Adwaita Blue 2) */
+    --color-string: #8ff0a4;     /* Мягкий фисташковый зеленый (Adwaita Green 1) */
+    --color-number: #ffbe6f;     /* Теплый золотистый для чисел (Adwaita Yellow 2) */
+    --color-comment: #9a9996;    /* Приглушенный серый (Adwaita Dark 1) */
+    --color-function: #f6d32d;   /* Фирменный желтый Adwaita для функций */
+    --color-tag: #78aeed;        /* Светло-синий для тегов */
+    --color-attribute: #c0bfbc;  /* Светло-серый для атрибутов */
+    --color-constant: #ff7849;   /* Сочный оранжевый для констант (Adwaita Orange 2) */
+    --color-selector: #3584e4;   /* Насыщенный синий для CSS классов/ID */
+}
+
+/* ==========================================================================
+   2. БАЗОВЫЕ СТИЛИ
+   ========================================================================== */
+.hljs {
+    font-family: var(--font-mono);
+    line-height: 1.4;
+}
+
+/* Блок кода */
+pre code.hljs {
+    display: block;
+    white-space: pre;
+    word-break: normal;
+    word-wrap: normal;
+}
+
+/* ==========================================================================
+   3. СТИЛИЗАЦИЯ СИНТАКСИСА HIGHLIGHT.JS
+   ========================================================================== */
+
+/* Ключевые слова */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-built_in,
+.hljs-type {
+    color: var(--color-keyword);
+}
+
+/* Строки и значения */
+.hljs-string,
+.hljs-attr,
+.hljs-template-variable,
+.hljs-variable {
+    color: var(--color-string);
+}
+
+/* Числа */
+.hljs-number {
+    color: var(--color-number);
+}
+
+/* Комментарии */
+.hljs-comment,
+.hljs-meta {
+    color: var(--color-comment);
+    font-style: italic;
+}
+
+/* Функции */
+.hljs-title,
+.hljs-function .hljs-title {
+    color: var(--color-function);
+    font-weight: var(--font-weight-semibold);
+}
+
+/* Теги HTML/XML */
+.hljs-tag,
+.hljs-name {
+    color: var(--color-tag);
+}
+
+/* Атрибуты */
+.hljs-attribute {
+    color: var(--color-attribute);
+}
+
+/* Константы */
+.hljs-literal,
+.hljs-symbol,
+.hljs-bullet {
+    color: var(--color-constant);
+}
+
+/* Операторы */
+.hljs-operator {
+    color: var(--color-keyword);
+}
+
+/* Селекторы CSS */
+.hljs-selector-class,
+.hljs-selector-id {
+    color: var(--color-selector);
+}
+
+/* Декорации */
+.hljs-emphasis {
+    font-style: italic;
+}
+
+.hljs-strong {
+    font-weight: var(--font-weight-bold);
+}
+
+/* ==========================================================================
+   4. СТИЛИЗАЦИЯ <pre> И МОДИФИКАТОРЫ
+   ========================================================================== */
+
+/* Компактный вариант */
+pre.compact {
+    margin: var(--spacing-2) 0;
+}
+
+pre.compact code.hljs {
+    padding: var(--spacing-3);
+}
+
+/* Без границ */
+pre.no-border {
+    border: none;
+    box-shadow: none;
+}
+
+/* С номерами строк */
+pre.with-line-numbers {
+    counter-reset: line;
+}
+
+pre.with-line-numbers code {
+    position: relative;
+    padding-left: var(--spacing-12);
+}
+
+pre.with-line-numbers code .line:before {
+    counter-increment: line;
+    content: counter(line);
+    position: absolute;
+    left: calc(var(--spacing-12) * -1);
+    width: var(--spacing-9);
+    text-align: right;
+    color: var(--color-comment);
+    opacity: 0.6;
+    user-select: none;
+}
+
+/* ==========================================================================
+   5. КНОПКА КОПИРОВАНИЯ
+   ========================================================================== */
+pre [action-copy] {
+    position: absolute;
+    top: 0.625rem;
+    right: 0.625rem;
+    z-index: 10;
+
+    background-color: var(--color-zinc-800);
+    color: var(--color-zinc-200);
+    border: 1px solid var(--color-zinc-700);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-1) var(--spacing-2);
+    transition: all 0.2s ease;
+}
+
+pre [action-copy]:hover {
+    background-color: var(--color-zinc-700);
+    color: var(--color-white);
+    cursor: pointer;
+}

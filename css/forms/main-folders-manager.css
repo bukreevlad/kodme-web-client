@@ -1,0 +1,22 @@
+.cdm-form.main-folders-manager {
+
+    [data-hero-icon] {
+        >.cdm-icon {
+            stroke-width: 1;
+        }
+    }
+
+    [data-list] {
+        .item {
+            &.selected {
+                [data-check-icon] {
+                    display: flex;
+                }
+            }
+
+            [data-check-icon] {
+                display: none;
+            }
+        }
+    }
+}

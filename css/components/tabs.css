@@ -1,0 +1,130 @@
+/* Токены --tab-bg-active / --tab-close-hover живут в css/forms/home.css:
+   они относятся к .tab менеджера вкладок home, а не к общим .cdm-tabs */
+
+
+.cdm-tabs {
+    list-style: none;
+    margin: 0;
+
+    &.hidden {
+        display: none;
+    }
+}
+
+/* Базовый вид заголовков табов. Здесь — только нейтральная база:
+   интерактивность, доступность, ритм отступов и типографика-по умолчанию.
+   Визуальную «идентичность» (скругление, цвета, hover, активное состояние)
+   каждая форма прописывает сама в своём шаблоне — на разных формах вкладки
+   выглядят по-разному (пилюли, вкладки с верхней линией, простые кнопки).
+   Свои утилиты конкретной формы (padding, hover, active) всегда побеждают
+   этот базовый стиль, а отсутствующие свойства получают аккуратный дефолт */
+@layer components {
+    .cdm-tabs>.item {
+        cursor: pointer;
+        user-select: none;
+        white-space: nowrap;
+        padding: 0.5rem 0.875rem;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+        transition: background-color 150ms ease-out, color 150ms ease-out, border-color 150ms ease-out;
+    }
+
+    /* Доступность: видимый фокус с клавиатуры (цвет/вес активной вкладки
+       задаёт форма, а фокус — общее требование и остаётся здесь) */
+    .cdm-tabs>.item:focus-visible {
+        outline: 2px solid var(--color-brand);
+        outline-offset: 2px;
+    }
+}
+
+.cdm-tabs-content {
+    &.is-slider {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+
+        >.item {
+            &:not(.active) {
+                display: none;
+            }
+
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+
+            &.slide-next-leave,
+            &.slide-prev-leave {
+                display: block;
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+
+
+            &.slide-next-enter {
+                display: block;
+                animation: cdmSlideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            }
+
+            &.slide-next-leave {
+                animation: cdmSlideOutLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            }
+
+            &.slide-prev-enter {
+                display: block;
+                animation: cdmSlideInLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            }
+
+            &.slide-prev-leave {
+                animation: cdmSlideOutRight 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            }
+        }
+    }
+
+    >.item {
+        &:not(.active) {
+            display: none;
+        }
+    }
+}
+
+@keyframes cdmSlideInRight {
+    from {
+        transform: translateX(100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes cdmSlideOutLeft {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+@keyframes cdmSlideInLeft {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes cdmSlideOutRight {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(100%);
+    }
+}

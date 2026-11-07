@@ -1,0 +1,9 @@
+:root {
+    --svg-pattern-color: color-mix(in srgb, var(--color-brand) 15%, transparent);
+    --svg-pattern-bg-gradient: linear-gradient(180deg, color-mix(in oklch, var(--color-brand) 2%, transparent) 0%, transparent 80%);
+}
+
+[data-theme="dark"] {
+    --svg-pattern-color: color-mix(in srgb, var(--color-brand) 5%, transparent);
+    --svg-pattern-bg-gradient: linear-gradient(180deg, color-mix(in oklch, var(--color-brand) 2%, transparent) 0%, transparent 80%);
+}

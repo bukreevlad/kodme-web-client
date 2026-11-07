@@ -1,0 +1,9 @@
+:root {
+    --icon-size: 1.5rem;
+}
+
+.cdm-icon {
+    width: var(--icon-size);
+    height: var(--icon-size);
+    pointer-events: none
+}

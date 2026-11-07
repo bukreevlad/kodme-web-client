@@ -1,0 +1,14 @@
+/* Код: JetBrains Mono.
+   Файл — TrueType, поэтому format("truetype"); вес объявляем только 400 —
+   файл один, и диапазон 400–600 заставлял бы браузер рисовать полужирное
+   синтетическим утолщением (уродливая «жирность»).
+   UI-шрифт вовсе не из файла: стек --font-sans в main.css — системный
+   (на Android PWA это и есть нативный Roboto с настоящими весами). */
+@font-face {
+    font-family: "JetBrains Mono";
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+    src: url("../fonts/JetBrainsMono.ttf") format("truetype");
+}

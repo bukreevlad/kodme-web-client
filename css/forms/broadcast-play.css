@@ -1,0 +1,366 @@
+/* ==========================================================================
+   Форма трансляции (Broadcast Play)
+
+   Разделы файла:
+     1. Переменные и темы
+     2. Шапка и отступ контента
+     3. Сцена и затемнение
+     4. Меню выбора источника
+     5. Чипы статистики
+     6. Состояние эфира [data-live]
+     7. Плейсхолдер «эфир не запущен» и лоадер
+     8. Анимации
+     9. Доступность
+
+   Главное решение файла: состояние эфира живёт ТОЛЬКО в атрибуте
+   `data-live` на корне формы. JS не переключает ни одного класса
+   состояния — он меняет один атрибут, а вид целиком решает CSS.
+   Так состояние не может разойтись с данными: атрибут меняется
+   ровно там, где меняется `form.cast.is_live && form.isStreamLive`.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. ПЕРЕМЕННЫЕ И ТЕМЫ
+
+   Высота шапки пишется в ОТДЕЛЬНУЮ переменную `--bp-header-height`, а не
+   в общую `--form-header-height`. Причина каскадная: `.cdm-form` сам
+   объявляет `--form-header-height: 0px` (css/components/form.css), и это
+   объявление на элементе-корне всегда сильнее унаследованного значения от
+   Overlay. Правило вида `top: calc(var(--form-header-height, 0px) + 0.5rem)`
+   в итоге получало `0px + 0.5rem = 0.5rem`, и плашка налезала на шапку.
+
+   `--bp-header-height` объявляется здесь же, в том же селекторе, и
+   меняется только со скрипта functions/sync_header_offset.js.
+   ========================================================================== */
+.cdm-form.broadcast-play {
+    --bp-header-height: 0px;
+
+    /* Сцена: затемнение сверху нужно, чтобы надпись на видео оставалась
+       читаемой поверх светлых кадров. Высота считается от реальной высоты
+       шапки, а не от процентов — шапка растёт из-за safe-area и системного
+       масштаба шрифта, а процент от высоты сцены ничего об этом не знает */
+    --bp-scene-scrim-height: calc(var(--bp-header-height) * 2);
+
+    --bp-plaque-bg: color-mix(in srgb, var(--color-black, #000) 62%, transparent);
+    --bp-plaque-border: color-mix(in srgb, var(--color-white, #fff) 14%, transparent);
+    --bp-scrim-from: color-mix(in srgb, var(--color-black, #000) 55%, transparent);
+
+    /* Лоадер и переходы. Один параметр на всё, чтобы интерфейс
+       не «дёргался» разными скоростями в разных местах */
+    --bp-anim-fast: 140ms;
+    --bp-anim: 220ms;
+
+}
+
+/* Рамка кадра плеера: packaged-скин рисует её inset-обводкой 1px по токену
+   --media-border-color, который css/components/videojs.css переводит в НАШ
+   --cdm-video-border (white 12%). На скруглённой сцене эта волосяная линия
+   читается случайной обводкой — здесь её снимаем.
+
+   Оверрайд вешается НА САМ .cdm-video-player, а не на .cdm-form.broadcast-play:
+   там токен объявляет сам элемент (videojs.css, секция токенов), а своё
+   объявление всегда сильнее унаследованного значения от предка — тот же
+   каскадный приём, что описан в разделе 1 для --form-header-height.
+
+   Опираемся только на собственный токен и публичный --media-border-color
+   (тот же приём, что у --media-accent-color), а не на внутренности пакета
+   вроде --media-frame-border: при обновлении @videojs/html худший исход —
+   рамка просто вернётся, вёрстка не сломается */
+.cdm-form.broadcast-play .cdm-video-player {
+    --cdm-video-border: transparent;
+}
+
+/* Тёмная тема: чистый чёрный на тёмной теме сливается с фоном,
+   поэтому слегка приподнимаем прозрачность плаки и блика */
+:root[data-theme="dark"] .cdm-form.broadcast-play {
+    --bp-plaque-bg: color-mix(in srgb, var(--color-black, #000) 74%, transparent);
+    --bp-scrim-from: color-mix(in srgb, var(--color-black, #000) 66%, transparent);
+}
+
+/* ==========================================================================
+   2. ШАПКА И ОТСТУП КОНТЕНТА
+
+   Шапка приходит абсолютной из CDM_FORM_HEADER_CLASSES, контент — с
+   `pt-[var(--form-header-height)]`. Здесь мы только отмечаем шапку как
+   источник высоты: за её размером следит ResizeObserver в
+   functions/sync_header_offset.js.
+   ========================================================================== */
+.cdm-form.broadcast-play >.header {
+
+    /* Шапка лежит поверх сцены, поэтому граница всегда нужна: без неё
+       на светлом кадре текст сливается с видео */
+    border-bottom-color: var(--border-color);
+}
+
+.cdm-form.broadcast-play >.content {
+    background-color: var(--form-bg);
+}
+
+/* ==========================================================================
+   3. СЦЕНА И ЗАТЕМНЕНИЕ
+
+   Затемнение — это не `45%` от высоты сцены, а `2 × высота шапки`:
+   полоса должна совпадать с тем местом, где реально лежит контент
+   шапки, а не меняться при смене пропорций видео.
+   ========================================================================== */
+.cdm-form.broadcast-play [data-video-wrap] {
+    position: relative;
+    background-color: var(--color-black, #000);
+    overflow: hidden;
+}
+
+/* Широкий режим сцены: кнопка в панели контролов плеера
+   (functions/init_player.ts → VideoPlayer wideControl) растягивает видео
+   на всю ширину формы, название и статистика остаются в узкой колонке.
+
+   Состояние — атрибут `data-video-wide` на корне формы (handlers/wide.ts),
+   как и у эфира: JS меняет только атрибут, вид решает CSS. Правило не в
+   слое Tailwind — оно бьёт max-w-утилиту шаблона, поэтому переключение
+   чистое и предсказуемое */
+.cdm-form.broadcast-play[data-video-wide="true"] [data-video-wrap] {
+    max-width: none;
+}
+
+/* Обложку сцены рисует сам плеер: init_player.js:73 кладёт её в
+   form.player.poster. Отдельного <img> на сцене нет — мёртвая
+   разметка только занимала место и могла дать битую картинку */
+
+/* Скрин (затемнение сцены). Это unlayered-правило — оно бьёт
+   Tailwind-утилиты, поэтому отдельный класс слоя здесь не нужен */
+.cdm-form.broadcast-play [data-live-scrim] {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: var(--bp-scene-scrim-height);
+    pointer-events: none;
+    z-index: 1;
+    background: linear-gradient(
+        to bottom,
+        var(--bp-scrim-from) 0%,
+        transparent 100%
+    );
+}
+
+/* ==========================================================================
+   4. МЕНЮ ИСТОЧНИКА
+
+   Поповер монтируется Overlay в document.body (см.
+   js/components/overlay/index.js), поэтому селектор вида
+   `.cdm-form.broadcast-play .cdm-context-menu` его не найдёт никогда.
+   Поповеру при открытии вешается собственный класс `cdm-bp-source-menu`
+   — по нему здесь и стилизуем.
+   ========================================================================== */
+.cdm-bp-source-menu .item.is-active {
+    background: color-mix(in srgb, var(--color-brand) 16%, transparent);
+}
+
+.cdm-bp-source-menu .item.is-active .text {
+    font-weight: 600;
+}
+
+/* Шапка меню: текущий источник. Готовый узел из handlers/source.js,
+   в отличие от пунктов, не нажимается и не закрывает поповер */
+.cdm-bp-source-menu [data-source-current] {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.25rem 0.5rem 0.5rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 0.25rem;
+}
+
+.cdm-bp-source-menu [data-source-current] [data-source-current-value] {
+    font-family: var(--font-mono, monospace);
+    font-weight: 600;
+    color: var(--color-brand);
+}
+
+/* ==========================================================================
+   5. ЧИПЫ СТАТИСТИКИ И БЕЙДЖ АВТОРА
+
+   Чип собирается функцией functions/stat_chip.js и размещается в
+   `[data-cast-info]`. Стили здесь, а не в шаблоне: чипов шесть, они
+   переиспользуются, и Tailwind-классы на каждом из них удвоили бы
+   разметку. Тот же приём — для отметки бота в строке автора
+   (functions/render_author.js).
+   ========================================================================== */
+.cdm-form.broadcast-play [data-cast-info] [data-chip] {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.25rem;
+
+    /* Компактная пилюля: значение и иконка в один ряд без вертикального
+       заполнения. padding по вертикали меньше, чем по горизонтали —
+       чип прижимается к тексту, а не «плывёт». Фон — form-bg, а не
+       second-bg: плашка [data-title] теперь карточка-секция на
+       second-bg, и чипы того же цвета с ней слились бы */
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    background-color: var(--form-bg);
+
+    transition: background-color var(--bp-anim-fast) ease;
+}
+
+/* Иконка внутри чипа тянется вместе с ним: без явного размера у неё
+   остаётся дефолтные 1.5rem, и она перерастает подпись */
+.cdm-form.broadcast-play [data-cast-info] [data-chip] svg {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+}
+
+.cdm-form.broadcast-play [data-cast-info] [data-chip] [data-chip-value] {
+    font-size: 0.75rem;
+    line-height: 1.1;
+    font-family: var(--font-mono, monospace);
+}
+
+/* Значение, которое пока не известно (нет потока) — не показываем нули
+   как факт, а приглушаем. Ноль читается как «1 человек смотрит 0p» */
+.cdm-form.broadcast-play [data-cast-info] [data-chip][data-chip-empty="true"] {
+    opacity: 0.45;
+}
+
+/* Отметка бота в строке автора. Без неё автор-бот выглядит как обычный
+   никнейм, и пользователь не понимает, что эфир ведёт автоматика.
+   Элемент создаёт functions/render_author.js, поэтому он не приходит
+   из шаблона и не имеет ни Tailwind-классов, ни скрытия через `hidden` */
+.cdm-form.broadcast-play [data-author-row] [data-author-badge] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.125rem;
+
+    padding: 0.0625rem 0.25rem;
+    border-radius: var(--radius-sm);
+
+    background: color-mix(in srgb, var(--color-brand) 14%, transparent);
+    color: var(--color-brand);
+
+    font-size: 0.65rem;
+    line-height: 1.2;
+    font-weight: 600;
+}
+
+.cdm-form.broadcast-play [data-author-row] [data-author-badge] svg {
+    width: 0.75rem;
+    height: 0.75rem;
+}
+
+/* ==========================================================================
+   6. СОСТОЯНИЕ ЭФИРА [data-live]
+
+   Вид целиком решает CSS, JS только переключает атрибут на корне.
+   Пара `hidden` / `flex` не используется в разметке намеренно:
+   display-утилиты Tailwind v4 идут по алфавиту (`.flex` → `.hidden` →
+   `.inline-flex`), и статичная пара на одном элементе легко превращается
+   в элемент, который нельзя скрыть.
+   ========================================================================== */
+
+/* Бейдж «В эфире» и плашка выбора источника над видео убраны: они
+   перекрывали кадр. Источник выбирается в меню `...` в шапке
+   (handlers/menu.ts → handlers/source.ts), а состояние эфира
+   подписывает плейсхолдер «Эфир не запущен» (раздел 7) */
+
+/* ==========================================================================
+   7. ПЛЕЙСХОЛДЕР «ЭФИР НЕ ЗАПУЩЕН» И ЛОАДЕР
+
+   Плейсхолдер — центр сцены, видимый только пока `data-live="false"`.
+   Без него эфир, который не идёт, выглядит как сломанный плеер:
+   чёрный прямоугольник, кнопка Play и никакого объяснения.
+
+   `display: none` задаётся здесь, а НЕ классом `hidden` из шаблона:
+   пара `hidden` + display-утилита в Tailwind v4 перебивается по
+   алфавиту (`.flex` → `.hidden` → `.inline-flex`), и элемент можно
+   сделать невосприимчивым к скрытию. Своё правило бьёт слой utilities,
+   поэтому переключение чисто и предсказуемо.
+
+   Лоадер в шапке, наоборот, приходит со скрытием через `hidden` и
+   переключается classList в _handlers() — здесь мы его не трогаем.
+   ========================================================================== */
+.cdm-form.broadcast-play [data-live-placeholder] {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+
+    padding: 1rem;
+
+    /* Плейсхолдер не интерактивен: клики уходят под него — в плеер,
+       по кнопкам которых его не должно блокировать */
+    pointer-events: none;
+
+    text-align: center;
+    color: color-mix(in srgb, var(--color-white, #fff) 78%, transparent);
+}
+
+/* Эфир не идёт — показываем по центру сцены */
+.cdm-form.broadcast-play[data-live="false"] [data-live-placeholder] {
+    display: flex;
+}
+
+.cdm-form.broadcast-play [data-live-placeholder] [data-live-placeholder-label] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+
+    padding: 0.375rem 0.75rem;
+    border: 1px solid var(--bp-plaque-border);
+    /* Пилюля — та же форма, что у чипов статистики */
+    border-radius: 9999px;
+    background: var(--bp-plaque-bg);
+
+    color: var(--color-white, #fff);
+    font-size: 0.8rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: 0.01em;
+}
+
+.cdm-form.broadcast-play [data-live-placeholder] svg {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+}
+
+.cdm-form.broadcast-play [data-live-scrim] {
+    transition: opacity var(--bp-anim) ease;
+}
+
+/* ==========================================================================
+   8. АНИМАЦИИ
+
+   Отключаем для тех, кто просил уменьшить движение: у этой формы
+   анимации декоративные, функциональности они не несут.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+    .cdm-form.broadcast-play *,
+    .cdm-form.broadcast-play *::before,
+    .cdm-form.broadcast-play *::after {
+        transition-duration: 1ms !important;
+        animation-duration: 1ms !important;
+    }
+}
+
+/* ==========================================================================
+   9. ДОСТУПНОСТЬ
+
+   Кнопки шапки — нажимаемые элементы, и без явного фокус-кольца
+   с клавиатуры непонятно, что именно выбрано. Кольцо ставим только для
+   клавиатуры, чтобы мышью оно не мигало.
+   ========================================================================== */
+.cdm-form.broadcast-play .header button:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+}
+
+/* Скрытое для глаз, но доступное скринридеру пояснение к сцене */
+.cdm-form.broadcast-play [data-video-wrap] [data-live-scrim][aria-hidden="true"] {
+    user-select: none;
+}

@@ -1,0 +1,389 @@
+@charset "UTF-8";
+
+/* ===========================================================================
+   VIDEO.JS 10 — тема плеера проекта «Код.me»
+
+   Файл состоит из трёх независимых частей:
+
+   1. Токены дизайн-системы (`--cdm-video-*`) — единый источник правды для
+      обоих скинов (нашего light-DOM и packaged `<video-skin>`).
+   2. Тема packaged `<video-skin>` — только через публичные `--media-*`
+      переменные (документация Video.js запрещает опираться на внутренние
+      классы packaged-скина).
+   3. Стили собственного light-DOM скина `<cdm-video-skin>` — полный
+      контроль над элементами, используемыми в «видеокружках».
+
+   Важно: `media-*` элементы живут в light DOM, поэтому их можно стилизовать
+   обычными селекторами. Shadow root есть только у packaged-скина.
+   =========================================================================== */
+
+/* ===========================================================================
+   1. ТОКЕНЫ
+   =========================================================================== */
+
+.cdm-video-player {
+    /* Пропорции: резервируем место до загрузки метаданных (component задаёт
+       --cdm-video-ratio из options.ratio). По умолчанию auto — тогда размеры
+       полностью задаёт родитель, а object-fit решает вопрос с чёрными
+       полосами (как это делал Plyr через width/height 100%). */
+    --cdm-video-ratio: auto;
+
+    /* Фирменный акцент берём из дизайн-системы, чтобы плеер менял цвет вместе
+       со светлой/тёмной темой приложения */
+    --cdm-video-accent: var(--color-brand);
+    --cdm-video-accent-contrast: #ffffff;
+
+    /* Поверхности */
+    --cdm-video-surface: #000000;
+    --cdm-video-scrim: color-mix(in srgb, #000000 72%, transparent);
+    --cdm-video-blur: blur(14px) saturate(140%);
+    --cdm-video-border: color-mix(in srgb, #ffffff 12%, transparent);
+
+    /* Форма */
+    --cdm-video-radius: 0;
+    --cdm-video-control-radius: var(--radius-lg);
+    --cdm-video-control-size: 2.25rem;
+    --cdm-video-control-size-sm: 1.75rem;
+    --cdm-video-icon-size: 1.25rem;
+
+    /* Типографика */
+    --cdm-video-font: var(--font-sans);
+    --cdm-video-font-size: 0.8125rem;
+
+    /* Анимация */
+    --cdm-video-duration: 160ms;
+    --cdm-video-ease: cubic-bezier(0, 0, 0.2, 1);
+
+    /* Управление прозрачностью: используется в fullscreen-режиме и в
+       вариантах, где рамка не нужна */
+    --cdm-video-border-width: 1px;
+
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: var(--cdm-video-ratio);
+    overflow: hidden;
+    border-radius: 0;
+    background-color: var(--cdm-video-surface);
+    box-shadow: none;
+    color: #ffffff;
+    font-family: var(--cdm-video-font);
+    font-size: var(--cdm-video-font-size);
+    line-height: 1.4;
+    contain: paint;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* В полноэкранном режиме рамка, скругление и тень только мешают */
+.cdm-video-player:fullscreen {
+    --cdm-video-radius: 0;
+    --cdm-video-border-width: 0;
+    aspect-ratio: auto;
+    border-radius: 0;
+    box-shadow: none;
+    background-color: #000000;
+}
+
+/* Вариант «без интерфейса» (RTC / LiveKit): только сам <video>.
+
+   Скина нет вообще, поэтому `<media-container>` остаётся обычным элементом
+   без своих размеров (у Video.js размеры контейнера задаёт shadow root
+   скина). Без правил ниже видео схлопнется до 300×150 — размера, который
+   HTML задаёт <video> по умолчанию. */
+.cdm-video-player[data-variant="bare"] {
+    aspect-ratio: auto;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.cdm-video-player[data-variant="bare"] >media-container.cdm-player {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: var(--cdm-video-surface);
+}
+
+.cdm-video-player[data-variant="bare"] >media-container.cdm-player>video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    /* contain, а не cover: плитка в режиме presentation показывает
+       демонстрацию экрана, и обрезка кадра по краям тут неуместна */
+    object-fit: contain;
+    background-color: #000000;
+}
+
+/* ВАЖНО (Tailwind v4): не комбинируем `hidden` с display-утилитами.
+   Скрытие варианта делаем парой hidden/empty-атрибута на самом <video-player>. */
+.cdm-video-player:empty {
+    display: none;
+}
+
+/* ===========================================================================
+   2. PACKAGED-СКИН `<video-skin>` (вариант `full`)
+   Только публичные CSS-переменные Video.js — иначе обновление пакета сломает
+   тему. Токены ниже намеренно повторяют `--cdm-video-*`, чтобы оба скина
+   выглядели одинаково.
+   =========================================================================== */
+
+.cdm-video-player video-skin {
+    --media-accent-color: var(--cdm-video-accent);
+    --media-accent-text-color: var(--cdm-video-accent-contrast);
+    --media-border-color: var(--cdm-video-border);
+    --media-border-radius: var(--cdm-video-radius);
+    --media-font-family: var(--cdm-video-font);
+    --media-object-fit: contain;
+    --media-object-position: center;
+    --media-control-radius: var(--cdm-video-control-radius);
+    --media-control-size: var(--cdm-video-control-size);
+    --media-icon-size: var(--cdm-video-icon-size);
+    --media-duration-fast: var(--cdm-video-duration);
+    --media-backdrop-filter-surface: var(--cdm-video-blur);
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* Нативный <video> — прямой потомок скина в light DOM, а вложен он в
+   <media-container> только через <slot>. Селектор `media-container video`
+   из глобальных стилей Video.js его поэтому НЕ накрывает, задаём сами. */
+.cdm-video-player video-skin > video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background-color: #000000;
+}
+
+/* ===========================================================================
+   3. СОБСТВЕННЫЙ СКИН `<cdm-video-skin>` (вариант `note`)
+   =========================================================================== */
+
+.cdm-video-player[data-variant="note"] {
+    --cdm-video-radius: 0;
+}
+
+cdm-video-skin {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: inherit;
+}
+
+cdm-video-skin > media-container.cdm-player {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: inherit;
+    background-color: var(--cdm-video-surface);
+    isolation: isolate;
+    touch-action: manipulation;
+}
+
+/* --- Медиа-слой ----------------------------------------------------------- */
+
+cdm-video-skin .cdm-player-media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+cdm-video-skin .cdm-player-media video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background-color: #000000;
+}
+
+/* --- Постер -------------------------------------------------------------- */
+/* Состояние отражает сам VideoPlayer (см. VideoPlayer._syncSkinState):
+   элементы media-poster/media-buffering-indicator в Video.js 10 не выставляют
+   состояние в DOM — в packaged-скине это делает биндинг в shadow root. */
+
+cdm-video-skin media-poster.cdm-player-poster {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: block;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--cdm-video-duration) var(--cdm-video-ease);
+}
+
+cdm-video-skin media-poster.cdm-player-poster[data-cdm-visible] {
+    opacity: 1;
+}
+
+/* --- Индикатор буферизации ---------------------------------------------- */
+
+cdm-video-skin media-buffering-indicator.cdm-player-buffering {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 3;
+    display: block;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin: -1.25rem 0 0 -1.25rem;
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--cdm-video-duration) var(--cdm-video-ease);
+}
+
+cdm-video-skin media-buffering-indicator.cdm-player-buffering[data-cdm-buffering] {
+    opacity: 1;
+}
+
+/* Спиннер рисуем сами: тянем реестр иконок Video.js ради одного кружка */
+cdm-video-skin media-buffering-indicator.cdm-player-buffering::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 2px solid color-mix(in srgb, #ffffff 28%, transparent);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: cdm-video-spin 700ms linear infinite;
+}
+
+@keyframes cdm-video-spin {
+    to {
+        rotate: 360deg;
+    }
+}
+
+/* --- Жест «тап» ----------------------------------------------------------- */
+
+cdm-video-skin media-gesture.cdm-player-gesture {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    display: block;
+    cursor: pointer;
+}
+
+/* --- Большая кнопка play -------------------------------------------------- */
+
+cdm-video-skin media-play-button.cdm-player-play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    margin: -1.625rem 0 0 -1.625rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background-color: color-mix(in srgb, #0e0e0e 42%, transparent);
+    box-shadow: 0 0.25rem 1rem color-mix(in srgb, #0e0e0e 32%, transparent);
+    backdrop-filter: var(--cdm-video-blur);
+    -webkit-backdrop-filter: var(--cdm-video-blur);
+    cursor: pointer;
+    opacity: 1;
+    scale: 1;
+    transition:
+        opacity var(--cdm-video-duration) var(--cdm-video-ease),
+        scale var(--cdm-video-duration) var(--cdm-video-ease),
+        background-color var(--cdm-video-duration) var(--cdm-video-ease);
+}
+
+cdm-video-skin media-play-button.cdm-player-play:hover {
+    background-color: var(--cdm-video-accent);
+}
+
+/* Прячем кнопку, когда играет (состояние отражает VideoPlayer) */
+cdm-video-skin media-play-button.cdm-player-play:not([data-cdm-paused]) {
+    opacity: 0;
+    scale: 0.85;
+    pointer-events: none;
+}
+
+/* После досмотра кнопка возвращается как «повтор» */
+cdm-video-skin media-play-button.cdm-player-play[data-cdm-ended] {
+    opacity: 1;
+    scale: 1;
+    pointer-events: auto;
+}
+
+/* Иконки play / pause / replay рисуем на CSS — они одинаковые и для всех
+   вариантов, а `media-icon` тянет за собой реестр иконок пакета. */
+cdm-video-skin media-play-button.cdm-player-play::before,
+cdm-video-skin media-play-button.cdm-player-play::after {
+    content: "";
+    grid-area: 1 / 1;
+    display: block;
+}
+
+/* Play: треугольник */
+cdm-video-skin media-play-button.cdm-player-play::before {
+    width: 0;
+    height: 0;
+    margin-left: 0.2rem;
+    border-top: 0.55rem solid transparent;
+    border-bottom: 0.55rem solid transparent;
+    border-left: 0.9rem solid #ffffff;
+}
+
+/* Pause: две полоски */
+cdm-video-skin media-play-button.cdm-player-play::after {
+    width: 0.85rem;
+    height: 1rem;
+    background-color: #ffffff;
+    clip-path: polygon(0 0, 32% 0, 32% 100%, 0 100%, 0 0, 68% 0, 100% 0, 100% 100%, 68% 100%, 68% 0);
+    opacity: 0;
+}
+
+cdm-video-skin media-play-button.cdm-player-play[data-cdm-paused]:not([data-cdm-ended])::before {
+    opacity: 1;
+}
+
+cdm-video-skin media-play-button.cdm-player-play[data-cdm-paused]:not([data-cdm-ended])::after {
+    opacity: 0;
+}
+
+/* Replay: круговая стрелка */
+cdm-video-skin media-play-button.cdm-player-play[data-cdm-ended]::before {
+    width: 1.1rem;
+    height: 1.1rem;
+    margin: 0;
+    border: 2px solid #ffffff;
+    border-right-color: transparent;
+    border-radius: 50%;
+    rotate: -45deg;
+}
+
+cdm-video-skin media-play-button.cdm-player-play[data-cdm-ended]::after {
+    display: none;
+}
+
+/* --- Доступность ---------------------------------------------------------- */
+
+cdm-video-skin media-play-button.cdm-player-play:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    cdm-video-skin media-play-button.cdm-player-play,
+    cdm-video-skin media-poster.cdm-player-poster,
+    cdm-video-skin media-buffering-indicator.cdm-player-buffering {
+        transition-duration: 1ms;
+    }
+
+    cdm-video-skin media-buffering-indicator.cdm-player-buffering::after {
+        animation-duration: 1.5s;
+    }
+}

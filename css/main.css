@@ -1,0 +1,252 @@
+@charset "utf-8";
+
+/* Базовая настройка */
+@import "tailwindcss";
+@import "overlayscrollbars/styles/overlayscrollbars.css";
+@import "./fonts.css";
+@import "./animations.css";
+
+/* Компоненты */
+@import "./components/form.css";
+@import "./components/modal.css";
+@import "./components/tabs.css";
+@import "./components/toast.css";
+@import "./components/svg-mask.css";
+@import "./components/icons.css";
+@import "./components/hlsjs.css";
+@import "./components/controls.css";
+/* Тема Video.js 10 (компонент video_player). Plyr из проекта удалён,
+   его css больше не нужен. */
+@import "./components/videojs.css";
+
+/* Формы */
+@import "./forms/home.css";
+@import "./forms/main.css";
+@import "./forms/main-folders-manager.css";
+@import "./forms/messages.css";
+@import "./forms/comments.css";
+@import "./forms/secret-chat.css";
+@import "./forms/secret-call.css";
+@import "./forms/call.css";
+@import "./forms/meet-play.css";
+@import "./forms/broadcast-play.css";
+@import "./forms/bot-web-app.css";
+@import "./forms/forward-messages.css";
+@import "./forms/emoji.css";
+
+/* Определение темной темы по атрибуту */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Кастомная дизайн-система и темы для код.me */
+@theme {
+    /* Мягкий «софт-стиль»: воздушные тени без жёстких краёв */
+    --shadow-xs: 0 1px 2px 0 var(--shadow-color);
+    --shadow-sm: 0 1px 2px 0 var(--shadow-color), 0 1px 3px 1px color-mix(in srgb, var(--shadow-color) 60%, transparent);
+    --shadow-md: 0 0 1px 0px var(--shadow-color), 0 2px 6px -2px var(--shadow-color);
+    --shadow-lg: 0 2px 4px -2px var(--shadow-color), 0 12px 24px -8px var(--shadow-color);
+    --shadow-xl: 0 2px 4px -2px var(--shadow-color), 0 24px 48px -12px var(--shadow-color);
+    --shadow-2xl: 0 4px 8px -4px var(--shadow-color), 0 32px 64px -16px var(--shadow-color);
+    --shadow-inner: inset 0 1px 3px 0 color-mix(in srgb, var(--shadow-color) 70%, transparent);
+
+    /* Софт-скругления: на шаг крупнее дефолтных, чтобы карточки и модалки
+       выглядели современнее и «воздушнее» */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --radius-2xl: 1.5rem;
+    --radius-3xl: 2rem;
+    --radius-4xl: 2.5rem;
+}
+
+/* Семантические дизайн-токены.
+   `inline` означает: утилиты Tailwind компилируются в ссылку на «сырую»
+   переменную (`var(--color-brand)` и т.п.), а не в захардкоженное значение.
+   Благодаря этому `bg-accent`, `text-fg-2`, `border-edge` переключаются
+   вместе с темой (`[data-theme="dark"]`) и пользовательским акцентным
+   цветом, как и существующие arbitrary-классы `bg-[var(--color-brand)]`.
+   Имена токенов не пересекаются с сырыми переменными, поэтому текущая
+   разметка продолжает работать без изменений. */
+@theme inline {
+
+    /* Акцентный цвет бренда (меняется пользователем в настройках) */
+    --color-accent: var(--color-brand);
+
+    /* Поверхности */
+    --color-surface: var(--bg-color);
+    --color-surface-2: var(--second-bg);
+
+    /* Текст: основной, вторичный, приглушённый */
+    --color-fg: var(--text-color);
+    --color-fg-2: var(--text-secondary);
+    --color-fg-3: var(--text-muted);
+
+    /* Границы и линии */
+    --color-edge: var(--border-color);
+
+    /* Статусные цвета */
+    --color-success: var(--color-green);
+    --color-warning: var(--color-yellow);
+    --color-danger: var(--color-red);
+}
+
+/* Системные отступы */
+:root {
+    /* Safe-area отступы: подхватываем нативные вставки (чёлка, жестовая панель),
+       с фолбэком на 0px для устройств без вырезов */
+    --safeareatop: env(safe-area-inset-top, 0px);
+    --safeareabottom: env(safe-area-inset-bottom, 0px);
+    --safearealeft: env(safe-area-inset-left, 0px);
+    --safearearight: env(safe-area-inset-right, 0px);
+}
+
+/* Сообщаем браузеру цветовую схему, чтобы нативные контролы
+   (скроллбары, автозаполнение, календари) соответствовали теме */
+:root {
+    color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+}
+
+/* Светлая тема: белые карточки-поверхности на мягком сером холсте —
+   за счёт разницы фонов интерфейс получает «глубину» вместо плоской белой стены */
+:root {
+    /* Базовый размер интерфейса (html). 0.875rem = 14px относительно
+       дефолтного корня браузера (16px). Все rem-отступы и шрифты масштабируются
+       от этой переменной, поэтому она же задаёт «плотность» всего UI.
+       Пользователь может менять её ползунком в настройках оформления. */
+    --interface-size: 0.875rem;
+    --bg-color: #f4f5f7;
+    --color-brand: #1e7ee5;
+    --color-black: #0e0e0e;
+    --color-white: #ffffff;
+    --color-yellow: #ea7a1f;
+    --color-red: #d6453a;
+    --color-green: #3ba535;
+    --second-bg: color-mix(in srgb, var(--color-gray-900) 5%, transparent);
+    --border-color: color-mix(in srgb, var(--color-gray-900) 8%, transparent);
+    --shadow-color: color-mix(in srgb, var(--color-black) 12%, transparent);
+    --text-color: var(--color-gray-900);
+    --text-secondary: #5d6270;
+    --text-muted: #8d929d;
+    --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/* Темная тема: нейтральный тёмный холст #191a1b. Формы/панели того же цвета
+   (см. --form-bg в components/form.css) — их разделяют границы, а не ступень
+   фона; ступенью светлее над ними только всплывающая модалка
+   (--modal-bg в components/modal.css). */
+:root[data-theme="dark"] {
+    --bg-color: #191a1b;
+    --color-brand: #3391dd;
+    --color-black: #0e0e0e;
+    --color-white: #ececec;
+    --color-yellow: #ea7a1f;
+    --color-red: #d6453a;
+    --color-green: #3ba535;
+    --second-bg: color-mix(in srgb, var(--color-white) 6%, transparent);
+    --border-color: color-mix(in srgb, var(--color-white) 10%, transparent);
+    --shadow-color: color-mix(in srgb, var(--color-black) 60%, transparent);
+    --text-color: #e6e8eb;
+    --text-secondary: #9ba1ac;
+    /* Холст стал светлее (#0f1115 → #191a1b) — muted осветлён, чтобы
+       сохранить контраст старой палитры (≈3.9 на холсте) */
+    --text-muted: #727886;
+}
+
+html {
+    overflow: hidden;
+    font-size: var(--interface-size);
+}
+
+/* Применяем к body */
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-size: 1rem;
+    font-family: var(--font-sans);
+    overflow: hidden;
+    line-height: 1.5;
+    letter-spacing: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "kern" 1;
+}
+
+.text-secondary {
+    color: var(--text-secondary);
+}
+
+.text-muted {
+    color: var(--text-muted);
+}
+
+a {
+    color: var(--color-brand);
+    background-color: color-mix(in srgb, var(--color-brand) 10%, transparent);
+    padding: 0 .15rem;
+    border-radius: .3rem;
+    text-decoration: none;
+    transition: background-color 150ms ease-out, color 150ms ease-out;
+}
+
+/* Ссылки в тексте (сообщения, описания) подчёркиваем на hover — привычный
+   affordance без агрессивной смены цвета */
+a:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+/* Единое видимое кольцо фокуса для клавиатурной навигации по ссылкам */
+a:focus-visible,
+[role="button"]:focus-visible,
+[data-action]:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+}
+
+/* ===================================================================== */
+/* Доступность и тач-поведение                                          */
+/* ===================================================================== */
+
+/* Убираем задержку «двойного тапа» и случайный зум на интерактивных элементах */
+button,
+[role="button"],
+[data-action],
+a,
+input,
+select,
+textarea {
+    touch-action: manipulation;
+}
+
+/* Аккуратная обратная связь при нажатии на всех кликабельных элементах.
+   Работает вместе с active:-классами Tailwind на тач-устройствах,
+   где hover-состояния по умолчанию отключены. */
+@media (pointer: coarse) {
+    :is(button, [role="button"], .cursor-pointer):active {
+        -webkit-tap-highlight-color: color-mix(in srgb, var(--color-brand) 18%, transparent);
+    }
+}
+
+/* Выделение скрытых peer-инпутов (чекбоксы/радио/свитчи) —
+   нативный фокус-кольцо оставляем только для клавиатуры */
+::selection {
+    background-color: color-mix(in srgb, var(--color-brand) 25%, transparent);
+}
+
+/* Уважаем настройку «уменьшить движение» в системе */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}

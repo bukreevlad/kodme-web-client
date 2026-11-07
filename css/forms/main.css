@@ -1,0 +1,14 @@
+.cdm-form.main {
+
+    [data-list] {
+        >.item {
+            [data-last-message] {
+                [data-status-icon] {
+                    .cdm-icon {
+                        --icon-size: 1.3rem;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,27 @@
+/* Светлая тема: белая карточка-форма на сером холсте (--bg-color) */
+:root {
+    --form-overlay-bg: color-mix(in oklch, var(--color-black) 25%, transparent);
+    --form-bg: #ffffff;
+    --form-header-min-height: 4rem;
+    --form-max-content-width: 30rem;
+}
+
+/* Темная тема: форма того же цвета, что и холст (--bg-color) — разделяют
+   панели границы, а не разница фонов; ступенью светлее только модалка */
+:root[data-theme="dark"] {
+    --form-overlay-bg: color-mix(in oklch, var(--color-black) 45%, transparent);
+    --form-bg: #1f2021;
+}
+
+.cdm-form {
+    --form-header-height: 0px;
+    --form-footer-height: 0px;
+
+    [data-safe-area-top] {
+        padding-top: var(--safeareatop);
+    }
+
+    [data-safe-area-bottom] {
+        padding-bottom: var(--safeareabottom);
+    }
+}

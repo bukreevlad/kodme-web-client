@@ -1,0 +1,144 @@
+.cdm-form.home {
+    /* Токены состояний «пилюль» менеджера вкладок home (раньше лежали в
+       css/components/tabs.css — там они не использовались, принадлежат .tab) */
+
+    /* Фон активной пилюли (лайт: серый тинт, читается на белой карточке) */
+    --tab-bg-active: color-mix(in srgb, var(--color-black) 7%, transparent);
+    /* Подложка крестика «закрыть» при наведении (лайт: мягкое затемнение) */
+    --tab-close-hover: color-mix(in srgb, var(--color-black) 10%, transparent);
+
+    [data-audio-player-mini-wrap] {
+        height: 3.5rem;
+        transition: all 300ms;
+
+        &:empty {
+            min-height: 0;
+            height: 0;
+        }
+    }
+
+    /* ================================================================== */
+    /* Панель вкладок (TabsManager): состояния пилюль                      */
+    /*                                                                     */
+    /* Статика (высота, скругления, типографика) — в шаблоне менеджера,    */
+    /* а здесь только hover/active/focus: активность переключается         */
+    /* классом .active из JS, наведение — селекторами CSS.                 */
+    /* ================================================================== */
+
+    /* Активная вкладка: тинт + лёгкая тень («карточка на холсте») —
+       тот же язык, что у .cdm-tabs; крестик виден без наведения */
+    .tab.active {
+        background: var(--tab-bg-active);
+        box-shadow: var(--shadow-xs);
+    }
+
+    .tab.active .tab-name {
+        color: var(--text-color);
+    }
+
+    .tab.active .tab-close {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    /* Наведение: тот же тинт, но без тени — активная вкладка выделяется
+       в покое, а ховер просто подсвечивает любую другую */
+    .tab:hover {
+        background: var(--tab-bg-active);
+    }
+
+    .tab:hover .tab-name,
+    .tab:focus-within .tab-name {
+        color: var(--text-color);
+    }
+
+    .tab:hover .tab-close,
+    .tab-close:focus-visible {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    /* Крестик — кнопка; семейство шрифта у кнопок по умолчанию своё */
+    .tab-close {
+        font-family: inherit;
+
+        &:hover {
+            background: var(--tab-close-hover);
+            color: var(--text-color);
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--color-brand);
+            outline-offset: 1px;
+        }
+    }
+}
+
+/* Дарк-вариант токенов «пилюль» home */
+:root[data-theme="dark"] .cdm-form.home {
+    /* Фон активной пилюли (дарк: светлый тинт) */
+    --tab-bg-active: color-mix(in srgb, var(--color-white) 8%, transparent);
+    /* Подложка крестика «закрыть» при наведении (дарк: светлое пятно) */
+    --tab-close-hover: color-mix(in srgb, var(--color-white) 12%, transparent);
+}
+
+/* --------------------------------------------------------------- */
+/* При разрешении экрана меньше 1023px */
+/* --------------------------------------------------------------- */
+@media only screen and (max-width: 1023px) {
+
+    .cdm-form.home {
+
+        >.content {
+            display: block;
+            position: relative;
+            height: 100dvh;
+            width: 100%;
+            overflow: hidden;
+
+            >.left {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                min-width: 100%;
+                height: 100%;
+                z-index: 1;
+                transform: translate3d(0, 0, 0);
+                -webkit-transform: translate3d(0, 0, 0);
+                border-radius: 0;
+            }
+
+            >.middle {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 0;
+                /* Фон под слоем home: переменная --color-background не была
+                   объявлена нигде, слой молча рендерился прозрачным */
+                background: var(--bg-color);
+                transform: translate3d(15%, 0, 0);
+                -webkit-transform: translate3d(15%, 0, 0);
+                border-radius: 0;
+
+                >.tab-container {
+                    display: none;
+                    border-radius: 0;
+                }
+            }
+
+            /* Если в middle есть форма, то показываем его а левый контейнер сдвигаем */
+            &:has(.middle > .form-container > *) {
+                >.middle {
+                    z-index: 2;
+                    transform: translate3d(0, 0, 0);
+                    -webkit-transform: translate3d(0, 0, 0);
+                }
+            }
+
+        }
+
+    }
+}

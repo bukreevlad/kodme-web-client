@@ -1,0 +1,18 @@
+{
+    "selfDefending": false,
+    "deadCodeInjection": false,
+    "numbersToExpressions": true,
+    "identifierNamesGenerator": "hexadecimal",
+    "controlFlowFlattening": false,
+    "splitStrings": true,
+    "stringArray": true,
+    "stringArrayIndexShift": true,
+    "stringArrayRotate": true,
+    "stringArrayShuffle": true,
+    "stringArrayThreshold": 0.75,
+    "rotateStringArray": true,
+    "transformObjectKeys": false,
+    "unicodeEscapeSequence": true,
+    "compact": true,
+    "simplify": true
+}

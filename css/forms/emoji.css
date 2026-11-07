@@ -1,0 +1,36 @@
+:root {
+    --emoji-sticker-backlight-bg: color-mix(in srgb, var(--color-brand) 50%, transparent);
+    --emoji-sticker-backlight-animation-time: 1s;
+}
+
+/* Переход к стикеру в панели «Стикеры»: элемент получает класс .backlight */
+.cdm-modal.emoji {
+    [data-stickers-grid] {
+        .sticker-item {
+
+            &.backlight {
+                animation: emoji-sticker-backlight var(--emoji-sticker-backlight-animation-time);
+                animation-timing-function: cubic-bezier(0.2, 0, 0.2, 1);
+                animation-iteration-count: 2;
+            }
+
+        }
+    }
+}
+
+/* --------------------------------------------------------------- */
+/* Анимации */
+/* --------------------------------------------------------------- */
+@keyframes emoji-sticker-backlight {
+    0% {
+        background-color: inherit;
+    }
+
+    50% {
+        background-color: var(--emoji-sticker-backlight-bg);
+    }
+
+    100% {
+        background-color: inherit;
+    }
+}

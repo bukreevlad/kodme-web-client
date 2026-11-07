@@ -1,0 +1,61 @@
+# Релиз веб-клиента: сборка исходников и публикация dist ассетом релиза.
+#
+# Запускается на каждый push в main публичного репозитория (его наполняет
+# скрипт push_web_client_to_github.sh из монорепозитория). Версия берётся
+# из package.json — её перед пушем задаёт скрипт публикации.
+#
+# Ассет релиза — zip-архив папки dist (обычная сборка, без обфускации).
+# Если релиз с версией уже существует — ассет не перезаписывается.
+
+name: Релиз веб-клиента
+
+on:
+  push:
+    branches: [main]
+
+# На запись в репозиторий: создание тега и релиза через GITHUB_TOKEN
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Исходники репозитория
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Bun — сборка и зависимости
+      - name: Установка Bun
+        uses: oven-sh/setup-bun@v2
+
+      # Версия релиза из package.json
+      - name: Версия из package.json
+        id: version
+        run: echo "version=$(jq -r .version package.json)" >> "$GITHUB_OUTPUT"
+
+      # Обычная сборка клиента -> dist/
+      - name: Сборка
+        run: |
+          bun install
+          bun run build
+
+      # Архив папки dist — ассет релиза
+      - name: Архив статики
+        run: zip -qr "kodme-web-client-${{ steps.version.outputs.version }}.zip" dist
+
+      # Релиз с версией из package.json; существующий релиз не трогаем
+      - name: Публикация релиза
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          ASSET="kodme-web-client-$VERSION.zip"
+          if gh release view "v$VERSION" > /dev/null 2>&1; then
+            echo "ℹ️  Релиз v$VERSION уже существует — ассет не перезаписывается."
+          else
+            gh release create "v$VERSION" "$ASSET" \
+              --title "Веб-клиент $VERSION" \
+              --notes "Сборка web-client $VERSION (обычная, bun run build). Источники — коммит $(git rev-parse --short HEAD)."
+          fi

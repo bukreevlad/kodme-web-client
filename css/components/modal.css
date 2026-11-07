@@ -1,0 +1,11 @@
+/* Светлая тема */
+:root {
+    --modal-overlay-bg: color-mix(in oklch, var(--color-black) 30%, transparent);
+    --modal-bg: #ffffff;
+}
+
+/* Темная тема: диалог — самая светлая поверхность над формой */
+:root[data-theme="dark"] {
+    --modal-overlay-bg: color-mix(in oklch, var(--color-black) 55%, transparent);
+    --modal-bg: color-mix(in srgb, var(--form-bg) 92%, var(--color-white));
+}

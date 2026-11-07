@@ -1,0 +1,21 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+
+    <!-- Фон: закруглёнными углами -->
+    <rect x="0" y="0" width="1024" height="1024" rx="80" ry="80" fill="#22262e"/>
+
+    <!-- Текст "код" от центральной области -->
+    <text x="160" y="520" text-anchor="start" fill="#ffffff"
+          font-family="JetBrains Mono" font-size="380" font-weight="bold">
+        код
+    </text>
+
+    <!-- Белый фон с закруглёнными краями для символов ".me" -->
+    <rect x="190" y="570" width="400" height="160" rx="28" ry="28" fill="#ffffff" />
+
+    <!-- Текст "ми" -->
+    <text x="240" y="705" text-anchor="start" dominant-baseline="start"
+          fill="#22262e" font-family="Arial, Helvetica, sans-serif" font-size="190" font-weight="bold">
+        ми
+    </text>
+
+</svg>

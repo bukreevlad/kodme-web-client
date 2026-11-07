@@ -1,0 +1,17 @@
+@theme {
+  --keyframes-slide-in-right: from { transform: translateX(100%); } to { transform: translateX(0); }
+  --keyframes-slide-out-left: from { transform: translateX(0); } to { transform: translateX(-100%); }
+  --keyframes-slide-in-left: from { transform: translateX(-100%); } to { transform: translateX(0); }
+  --keyframes-slide-out-right: from { transform: translateX(0); } to { transform: translateX(100%); }
+
+  --animate-slide-in-right: slide-in-right 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  --animate-slide-out-left: slide-out-left 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  --animate-slide-in-left: slide-in-left 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  --animate-slide-out-right: slide-out-right 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+:root {
+  --animate-time: 0.25s;
+  --form-animation-time: 0.25s;
+  --animate-func: cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}

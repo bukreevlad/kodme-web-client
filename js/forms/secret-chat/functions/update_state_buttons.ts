@@ -1,0 +1,108 @@
+// Импортируем utils
+import { Logger } from "../../../utils/logs/logger.js";
+import * as Attachments from "../../../utils/messages/attachments.js";
+
+// Импортируем типы
+import type { SecretChat } from "../index.js";
+
+/**
+ * ***************************************************************************
+ * updateStateButtons - переключение состояний кнопок футера формы:
+ * запись голосового / редактирование / обычный ввод.
+ *
+ * Запись (голосовое и видео-кружок) показывается только при пустом поле без
+ * вложений: при набранном тексте или прикреплённых файлах старт записи
+ * унёс бы черновик — прячем обе кнопки.
+ * @param form - Экземпляр формы.
+ * @returns void
+ * ***************************************************************************
+ */
+export function updateStateButtons(form: SecretChat): void {
+
+    try {
+
+        // Если не передана форма
+        if (!form) return;
+
+        // Кнопки футера и поле ввода живут в шаблоне — без них нечего переключать
+        const tpl = form.tpl;
+        const textarea = form.textarea;
+        if (!tpl || !textarea) return;
+
+        // Устанавливаем объекты
+        let create = tpl.querySelector(`:scope >.footer [action-create-message]`);
+        let update = tpl.querySelector(`:scope >.footer [action-update-message]`);
+        let cancelEdit = tpl.querySelector(`:scope >.footer [action-cancel-edit]`);
+        let emoji = tpl.querySelector(":scope >.footer [action-emoji]");
+        let attachFile = tpl.querySelector(":scope >.footer [action-attach-file]");
+        let voiceRecorder = tpl.querySelector(":scope >.footer [action-voice-recorder]");
+        let videoRecorder = tpl.querySelector(":scope >.footer [action-video-recorder]");
+
+        // Кнопки обязаны входить в футер шаблона
+        if (!create || !update || !cancelEdit || !emoji || !attachFile || !voiceRecorder || !videoRecorder) return;
+
+        // 1. Если идёт запись звука
+        if (form.voiceRecorder) {
+            // Во время записи оставляем поле ввода и кнопку микрофона видимыми,
+            // чтобы футер не сжимался, а микрофон мог отменить запись.
+            textarea.classList.remove("hidden");
+            create.classList.add("hidden");
+            update.classList.add("hidden");
+            cancelEdit.classList.add("hidden");
+            emoji.classList.add("hidden");
+            attachFile.classList.add("hidden");
+            voiceRecorder.classList.remove("hidden");
+            videoRecorder.classList.add("hidden");
+            return;
+        }
+
+        // 2. Если сообщение редактируется (и нет записи звука)
+        if (form.editedMessage?.id) {
+            textarea.classList.remove("hidden");
+            create.classList.add("hidden");
+            update.classList.remove("hidden");
+            cancelEdit.classList.remove("hidden");
+            emoji.classList.remove("hidden");
+            attachFile.classList.remove("hidden");
+
+            // Запись при редактировании недоступна: старт записи унёс бы
+            // редактируемый текст и вложения черновика
+            voiceRecorder.classList.add("hidden");
+            videoRecorder.classList.add("hidden");
+            return;
+        }
+
+        // 3. Обычное состояние (нет записи, нет редактирования)
+        textarea.classList.remove("hidden");
+        emoji.classList.remove("hidden");
+        attachFile.classList.remove("hidden");
+
+        // Проверяем текст и вложения черновика
+        let hasTextOrAttachments = textarea.value !== "" || Attachments.isNotEmpty(form.tempMessage?.attachments);
+
+        if (hasTextOrAttachments) {
+            create.classList.remove("hidden");
+
+            // С текстом или вложениями запись недоступна: старт записи
+            // унёс бы черновик, а кнопки отправки — уже достаточно
+            voiceRecorder.classList.add("hidden");
+            videoRecorder.classList.add("hidden");
+        } else {
+
+            // Пустое поле — доступны обе записи (в т.ч. после завершения
+            // предыдущей, когда видеокнопка оставалась скрытой)
+            voiceRecorder.classList.remove("hidden");
+            videoRecorder.classList.remove("hidden");
+            create.classList.add("hidden");
+            emoji.classList.remove("hidden");
+        }
+
+        // Скрываем кнопки редактирования, если они есть
+        update.classList.add("hidden");
+        cancelEdit.classList.add("hidden");
+
+    } catch (error) {
+        Logger.error(error);
+    }
+
+}

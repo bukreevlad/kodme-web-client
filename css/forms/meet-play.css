@@ -1,0 +1,619 @@
+/* ==========================================================================
+   Форма конференции (Meet Play)
+
+   Разделы файла:
+     1. Переменные и темы
+     2. Шапка, футер, контент
+     3. Плитки участников
+     4. Модерация: запрет источников организатором
+     5. Режимы сетки
+     6. Состояния загрузки
+     7. Плавные переходы
+     8. Immersive-режим
+     9. Телефоны
+    10. Доступность
+
+   Модерация даёт кнопкам футера и плиткам явную «красную» подсветку,
+   чтобы отличать «источник выключен участником» от «источник запрещён
+   организатором» — во втором случае участник не может включить его сам.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. ПЕРЕМЕННЫЕ И ТЕМЫ
+
+   Всё оформление держится на этих переменных, а не на размазанных по
+   шаблону `bg-[var(--second-bg)]`. Смена темы меняет здесь пару строк,
+   а не десятки мест в разметке.
+   ========================================================================== */
+.cdm-form.meet-play {
+    --meet-bar-bg: color-mix(in srgb, var(--form-bg) 72%, transparent);
+    --meet-bar-border: color-mix(in srgb, var(--border-color) 80%, transparent);
+    --meet-tile-bg: var(--color-black, #000);
+    --meet-tile-radius: var(--radius-xl);
+    --meet-ring-color: var(--color-brand);
+    --meet-tile-shadow: 0 8px 24px -8px color-mix(in srgb, var(--color-black, #000) 45%, transparent);
+    --meet-overlay-bg: color-mix(in srgb, var(--form-bg) 92%, transparent);
+
+    /* Модерация: запрет источника */
+    --meet-block-color: var(--color-red-500, #ef4444);
+    --meet-block-ring: color-mix(in srgb, var(--meet-block-color) 65%, transparent);
+    --meet-block-badge-bg: color-mix(in srgb, var(--meet-block-color) 88%, transparent);
+
+    /* Качество связи: цвет переопределяется из JS при смене уровня */
+    --meet-quality-color: var(--text-muted);
+
+    /* Длительность переходов. Один параметр на всё, чтобы интерфейс
+       не «дёргался» разными скоростями в разных местах */
+    --meet-anim-fast: 140ms;
+    --meet-anim: 220ms;
+}
+
+/* Тёмная тема: на тёмном фоне чистый красный читается «кричащим»,
+   поэтому слегка приглушаем и убираем полную непрозрачность фона бейджа */
+:root[data-theme="dark"] .cdm-form.meet-play {
+    --meet-bar-bg: color-mix(in srgb, var(--form-bg) 68%, transparent);
+    --meet-tile-shadow: 0 8px 24px -8px rgb(0 0 0 / 60%);
+    --meet-overlay-bg: color-mix(in srgb, var(--form-bg) 96%, transparent);
+
+    --meet-block-color: #f87171;
+    --meet-block-ring: color-mix(in srgb, var(--meet-block-color) 55%, transparent);
+    --meet-block-badge-bg: color-mix(in srgb, var(--meet-block-color) 78%, transparent);
+}
+
+/* ==========================================================================
+   2. ШАПКА, ФУТЕР, КОНТЕНТ
+
+   Шапка и футер — полупрозрачные панели с backdrop-blur, как в форме
+   звонка: размытая подложка отделяет кнопки от картинки и не отнимает
+   высоты у самих плиток.
+   ========================================================================== */
+.cdm-form.meet-play {
+
+    >.header {
+        background-color: var(--meet-bar-bg);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--meet-bar-border);
+
+        /* Панели уезжают, а не исчезают: `display: none` и `hidden`
+           не анимируются, а скрывать шапку без перехода означает
+           «интерфейс сломался» вместо «панели убраны» */
+        transition:
+            opacity var(--meet-anim) ease,
+            transform var(--meet-anim) ease;
+    }
+
+    >.content {
+        background-color: var(--form-bg);
+
+        /* Отступы контента равны высотам панелей (`Form` меряет их и
+           пишет в --form-header-height / --form-footer-height). В
+           immersive панели уезжают, поэтому отступы должны уехать
+           вместе с ними — иначе под сеткой осталась бы пустая полоса
+           высотой с шапку и с футер */
+        transition: padding var(--meet-anim) ease;
+    }
+
+    /* Футер: плавающая «пилюля» с размытой подложкой.
+       Сама панель прозрачная и не перехватывает клики — иначе в
+       режиме presentation мёртвой оказалась бы вся нижняя треть
+       экрана, где обычно как раз и лежит демонстрация.
+
+       Панель абсолютная, как и шапка (она приходит абсолютной из
+       CDM_FORM_HEADER_CLASSES). Это не стилистика, а требование
+       раскладки: контент уже имеет `pb-[var(--form-footer-height)]`
+       — тот самый отступ, который освобождает место под панель. Если
+       футер ещё и остаётся в потоке, высота считается дважды, и
+       между сеткой и «пилюлей» появляется мёртвая полоса в высоту
+       футера. В режимах с полосой участников эта полоса видна
+       непосредственно под миниатюрами — то есть ровно там, где
+       пользователь смотрит. */
+    >.footer {
+        position: absolute;
+        inset: auto 0 0 0;
+        z-index: 10;
+        background-color: transparent;
+        border-top: 0;
+        pointer-events: none;
+
+        transition:
+            opacity var(--meet-anim) ease,
+            transform var(--meet-anim) ease;
+    }
+
+    /* Клик проходит сквозь пустые места футера, но плашка с кнопками
+       остаётся живой. Размытие и тень отделяют её от видео под ней:
+       без этого светлая кнопка на светлом кадре просто исчезает */
+    >.footer >.bar {
+        pointer-events: auto;
+        background-color: var(--meet-bar-bg);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--meet-bar-border);
+        box-shadow: var(--meet-tile-shadow);
+    }
+
+    /* ---------- Качество связи ---------- */
+    /* Цвет приходит из JS в --meet-quality-color, здесь только форма */
+    [data-connection-quality] {
+        background-color: color-mix(in srgb, var(--meet-quality-color) 12%, transparent);
+        color: var(--meet-quality-color);
+        border: 1px solid color-mix(in srgb, var(--meet-quality-color) 30%, transparent);
+    }
+
+    /* ---------- Индикатор активного источника в футере ---------- */
+    /* Футерные кнопки не гасят, а подсвечивают: иконка «микрофон
+       выключен» сама по себе читается нейтрально, и без подложки
+       непонятно, включён источник или просто сломался */
+    .meet-play-active {
+        background-color: color-mix(in srgb, var(--color-brand) 16%, transparent);
+        color: var(--color-brand);
+        border-color: color-mix(in srgb, var(--color-brand) 45%, transparent);
+    }
+}
+
+/* ==========================================================================
+   3. ПЛИТКИ УЧАСТНИКОВ
+   ========================================================================== */
+.cdm-form.meet-play [data-list] .item {
+
+    background-color: var(--meet-tile-bg);
+    border-radius: var(--meet-tile-radius);
+    box-shadow: var(--meet-tile-shadow);
+    transition: box-shadow 150ms ease;
+}
+
+/* Обводка активного спикера. Мягкое свечение вместо анимации:
+   сетка и так живёт, а мигающие рамки на двадцати плитках
+   собирают взгляд в кучу */
+.cdm-form.meet-play [data-list] .item [data-speaking] {
+    box-shadow: inset 0 0 0 2px var(--meet-ring-color);
+}
+
+/* Заглушка с акронимом. Живёт под видео: сам <video> монтируется
+   в этот же слот позже и оказывается поверх, поэтому поднимать
+   заглушку в z-индексе нельзя */
+.cdm-form.meet-play [data-list] .item [data-avatar] {
+    background: radial-gradient(
+        circle at 50% 40%,
+        color-mix(in srgb, var(--color-brand) 12%, var(--meet-tile-bg)) 0%,
+        var(--meet-tile-bg) 70%
+    );
+}
+
+/* Нижняя плашка с именем. Видна всегда: в конференции надо знать,
+   кто на экране, и прятать её до наведения значило бы заставлять
+   наводиться на каждую плитку. Размытая подложка нужна, чтобы
+   подпись читалась поверх светлого видео. */
+.cdm-form.meet-play .item >.info {
+    background-color: var(--meet-bar-bg);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--meet-bar-border);
+    border-radius: 9999px;
+}
+
+/* ==========================================================================
+   4. МОДЕРАЦИЯ: ЗАПРЕТ ИСТОЧНИКОВ ОРГАНИЗАТОРОМ
+   ========================================================================== */
+
+/* Подсветка рамкой: бейджи может перекрыть трансляция экрана,
+   а рамку видно всегда. Тень плитки перечисляем вместе с обводкой,
+   потому что одиночный box-shadow заменил бы её целиком */
+.cdm-form.meet-play [data-list] .item.meet-play-tile-blocked {
+    box-shadow: var(--meet-tile-shadow), inset 0 0 0 2px var(--meet-block-ring);
+}
+
+/* Бейдж запрещённого источника */
+.cdm-form.meet-play .meet-play-block-badge {
+    display: block;
+    width: 1.375rem;
+    height: 1.375rem;
+    padding: 0.1875rem;
+    border-radius: 9999px;
+    color: var(--color-white, #fff);
+    background-color: var(--meet-block-badge-bg);
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 35%);
+}
+
+/* disabled из дизайн-системы гасит кнопку через opacity-50 — этого
+   мало, чтобы отличить запрет от собственного выключения, поэтому
+   добавляем рамку запретного цвета и убираем opacity */
+.cdm-form.meet-play .meet-play-blocked:disabled {
+    opacity: 1;
+    color: var(--meet-block-color);
+    border-color: var(--meet-block-ring);
+    background-color: color-mix(in srgb, var(--meet-block-color) 12%, transparent);
+    cursor: not-allowed;
+}
+
+/* ==========================================================================
+   4a. ПОДНЯТАЯ РУКА
+   ========================================================================== */
+
+/* Значок поднятой руки. Отдельный от бейджей запрета: тот красный и
+   значит «у тебя отобрали», этот — «ты просишь слово», и путать их
+   нельзя. Фон берём из токена бренда, а не из красного запретного */
+.cdm-form.meet-play .meet-play-hand-badge {
+    display: block;
+    width: 1.375rem;
+    height: 1.375rem;
+    padding: 0.1875rem;
+    border-radius: 9999px;
+    color: var(--color-white, #fff);
+    background-color: color-mix(in srgb, var(--color-brand) 88%, transparent);
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 35%);
+}
+
+/* ==========================================================================
+   5. РЕЖИМЫ СЕТКИ (решение В3)
+   Четыре режима: grid / spotlight / sidebar / presentation.
+   Режим задаётся классом на [data-list], а раскладка плиток — в
+   js/forms/meet-play/functions/apply_layout.js (крупная плитка остаётся
+   прямым потомком списка, остальные уезжают в [data-strip]).
+   ========================================================================== */
+.cdm-form.meet-play [data-list] {
+
+    /* Общая часть: плитки тянутся, полоса не схлопывается */
+    >.item {
+        min-width: 0;
+        min-height: 0;
+    }
+
+    /* Полоса: только нейтральные свойства. `display` задаётся ниже
+       по режимам — иначе объявленный здесь `flex` перебил бы и
+       атрибут `hidden`, и `display: none` из режима grid. */
+    >.meet-strip {
+        flex: 0 0 auto;
+        gap: 0.5rem;
+        padding: 0.25rem;
+        scrollbar-width: thin;
+    }
+}
+
+/* В сетке полосы нет: все плитки равные. Видимость решает CSS, а не
+   класс `hidden` в JS — display-утилиты в собранном CSS идут по
+   алфавиту и легко перебивают hidden */
+.cdm-form.meet-play .meet-layout-grid >.meet-strip {
+    display: none;
+}
+
+.cdm-form.meet-play .meet-layout-spotlight >.meet-strip,
+.cdm-form.meet-play .meet-layout-sidebar >.meet-strip,
+.cdm-form.meet-play .meet-layout-presentation >.meet-strip {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+/* --- GRID: все равные --------------------------------------------- */
+.cdm-form.meet-play .meet-layout-grid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    align-content: start;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    width: 100%;
+}
+
+/* Уже 480px — это телефон в горизонтальной ориентации или крупный
+   телефон в портретной. Одна колонка на всю ширину превращала бы
+   каждую плитку в огромный прямоугольник, где видео всё равно
+   вписано по 4:3, а по бокам остаются чёрные поля */
+@media (min-width: 480px) {
+    .cdm-form.meet-play .meet-layout-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 640px) {
+    .cdm-form.meet-play .meet-layout-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 768px) {
+    .cdm-form.meet-play .meet-layout-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1280px) {
+    .cdm-form.meet-play .meet-layout-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+/* --------------------------------------------------------------------------
+   Общая часть режимов с «крупной» плиткой (spotlight / sidebar / presentation).
+   Крупная плитка — единственная, кто остался прямым потомком [data-list];
+   остальные лежат в полосе [data-strip].
+   -------------------------------------------------------------------------- */
+.cdm-form.meet-play .meet-layout-spotlight >.item,
+.cdm-form.meet-play .meet-layout-sidebar >.item,
+.cdm-form.meet-play .meet-layout-presentation >.item {
+
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+}
+
+/* Крупная плитка не 4:3 — иначе демонстрация экрана ужимается в
+   узкую полосу. Пропорции задаёт object-fit: contain у самого видео,
+   поэтому полосы по краям неизбежны, но правильные */
+.cdm-form.meet-play .meet-layout-spotlight >.item >[data-video],
+.cdm-form.meet-play .meet-layout-sidebar >.item >[data-video],
+.cdm-form.meet-play .meet-layout-presentation >.item >[data-video] {
+    aspect-ratio: auto;
+    height: 100%;
+}
+
+/* Миниатюры в полосе: фиксированная ширина и 4:3, иначе плитки
+   схлопываются по высоте полосы и не выравниваются */
+.cdm-form.meet-play .meet-strip >.item {
+    flex: 0 0 auto;
+    width: 9rem;
+    aspect-ratio: 4 / 3;
+}
+
+/* --- SPOTLIGHT: крупная сверху, остальные полосой снизу ------------ */
+.cdm-form.meet-play .meet-layout-spotlight {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    width: 100%;
+    height: 100%;
+}
+
+/* --- SIDEBAR: крупная слева, остальные колонкой справа ------------ */
+.cdm-form.meet-play .meet-layout-sidebar {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    width: 100%;
+    height: 100%;
+}
+
+.cdm-form.meet-play .meet-layout-sidebar >.meet-strip {
+    flex-direction: column;
+    flex: 0 0 11rem;
+    width: 11rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.cdm-form.meet-play .meet-layout-sidebar >.meet-strip >.item {
+    width: 100%;
+}
+
+/* --- PRESENTATION: крупно демонстрация экрана --------------------- */
+/* Отдельная раскладка не нужна: apply_layout.js сам выбирает крупным того,
+   кто показывает экран, и при отсутствии демонстрации режим вырождается
+   в spotlight — визуально это ровно то, что нужно */
+.cdm-form.meet-play .meet-layout-presentation {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    width: 100%;
+    height: 100%;
+}
+
+/* --- Мобильные экраны --------------------------------------------- */
+/* На телефоне колонка съела бы половину крупной плитки, поэтому
+   sidebar раскладывается вертикально, а полоса всегда узкая */
+@media (max-width: 639px) {
+
+    .cdm-form.meet-play .meet-layout-sidebar {
+        flex-direction: column;
+    }
+
+    .cdm-form.meet-play .meet-layout-sidebar >.meet-strip {
+        flex: 0 0 auto;
+        flex-direction: row;
+        width: 100%;
+        height: auto;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
+    .cdm-form.meet-play .meet-layout-sidebar >.meet-strip >.item {
+        width: 6.5rem;
+    }
+
+    .cdm-form.meet-play .meet-strip >.item {
+        width: 6.5rem;
+    }
+}
+
+/* ==========================================================================
+   6. СОСТОЯНИЯ ЗАГРУЗКИ
+
+   Пока идёт подключение, сетка пуста — и пустой чёрный контент выглядит
+   как поломка. Поэтому сетку перекрываем оверлеем с живым текстом и
+   кнопкой отмены: иначе пользователь уже видит шапку и футер с кнопками
+   микрофона и камеры и решает, что они не работают, хотя комната ещё
+   не создана.
+
+   Раньше под оверлеем мигали скелетоны-плитки. Их убрали: они изображали
+   участников, которых в комнате ещё нет, а мигание без остановки раздражало.
+   ========================================================================== */
+.cdm-form.meet-play [data-connecting] {
+    background-color: var(--meet-overlay-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+/* ==========================================================================
+   7. ПЛАВНЫЕ ПЕРЕХОДЫ
+
+   Честное ограничение, которое стоит проговорить: перелить плитки из
+   полосы в сетку одним кадром CSS не умеет. У сетки `display: grid`,
+   у полосы `display: flex`, а `display` не анимируется — плитки за один
+   кадр меняют родителя и визуально прыгают. Сделать настоящий морфинг
+   можно было бы только абсолютным позиционированием всех плиток и
+   ручным расчётом целей в JS, то есть заменой CSS Grid собственным
+  .layout-движком ценой доступности и адаптивности.
+
+   Поэтому здесь не морфинг, а «устаивание»: на 240 мс сетка слегка
+   проявляется и садится на место. Глаз успевает за перемещением, и
+   смена режима перестаёт читаться как сбой вёрстки.
+
+   Пункты, которые реально анимируются: отступы и промежутки сетки
+   (они длины, а значит переходы работают) и сама анимация устаивания.
+   ========================================================================== */
+.cdm-form.meet-play [data-list] {
+    transition:
+        gap var(--meet-anim) ease,
+        padding var(--meet-anim) ease;
+}
+
+/* Плитки в полосе меняют ширину при переходе sidebar ↔ presentation,
+   а ширина — длина, поэтому переход честно работает */
+.cdm-form.meet-play .meet-strip >.item {
+    transition:
+        width var(--meet-anim) ease,
+        opacity var(--meet-anim) ease;
+}
+
+.cdm-form.meet-play .meet-layout-settling >.item {
+    animation: meet-settle 240ms ease;
+}
+
+@keyframes meet-settle {
+    from {
+        opacity: 0.45;
+        transform: scale(0.985);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* ==========================================================================
+   8. IMMERSIVE-РЕЖИМ
+
+   Панели не просто скрываются, а уезжают: сетка получает освободившееся
+   место, и переход читается как «интерфейс убрался», а не как
+   «интерфейс сломался».
+
+   Обе панели абсолютные (см. раздел 2), поэтому места в раскладке они
+   не занимают — освобождать нечего. Место под них держат отступы
+   контента, а их величину задают `--form-header-height` и
+   `--form-footer-height`. Обнуляет их JS
+   (см. functions/toggle_immersive.js), а не CSS: переменные выставлены
+   инлайном на корне формы, и инлайн сильнее любого правила таблицы
+   стилей — пришлось бы писать `!important` ради одной строки.
+
+   Уезжать панели должны на всю свою высоту, а не на фиксированные
+   несколько пикселей, поэтому смещение задаёмо в процентах от
+   собственной высоты панели: `translateY(-100%)` для шапки и
+   `translateY(100%)` для футера.
+
+   Скрытые панели получают `inert` из JS — иначе Tab уводил бы
+   пользователя на невидимую кнопку, а `.bar` с `pointer-events: auto`
+   продолжал бы ловить клики по невидимому месту.
+   ========================================================================== */
+.cdm-form.meet-play.meet-play-immersive >.header {
+    opacity: 0;
+    transform: translateY(-100%);
+}
+
+.cdm-form.meet-play.meet-play-immersive >.footer {
+    opacity: 0;
+    transform: translateY(100%);
+}
+
+/* ==========================================================================
+   9. ТЕЛЕФОНЫ
+
+   Правки, которые на десктопе не нужны, а на телефоне обязательны:
+     - более мелкая подпись на плитке: на 360px ширины имя в две строки
+       съедало бы половину карточки;
+     - кнопка исключения на плитке уменьшенного размера — на телефоне
+       до неё тянутся пальцем, и 2rem там просто много.
+
+   Брейкпоинты самой сетки живут в разделе 5 рядом с самими колонками,
+   а не здесь: иначе правило «две колонки с 480px» оказалось бы
+   оторвано от того, сколько колонок вообще бывает.
+
+   Прокручиваемая «пилюля» футера вынесена из медиазапроса намеренно:
+   при появлении новых кнопок (поднятая рука, реакции) она перестанет
+   помещаться и на планшете, а не только на телефоне.
+   ========================================================================== */
+@media (max-width: 639px) {
+
+    /* Подпись на плитке компактнее */
+    .cdm-form.meet-play .item >.info {
+        left: 0.25rem;
+        bottom: 0.25rem;
+        padding: 0.125rem 0.5rem;
+        font-size: 0.6875rem;
+    }
+
+    /* Кнопка исключения на плитке не нужна во всю величину */
+    .cdm-form.meet-play .item >.info >[action-remove] {
+        width: 1.25rem;
+        height: 1.25rem;
+        padding: 0;
+    }
+}
+
+/* «Пилюля» футера не должна вылезать за край экрана */
+.cdm-form.meet-play >.footer >.bar {
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.cdm-form.meet-play >.footer >.bar::-webkit-scrollbar {
+    display: none;
+}
+
+/* Кнопки внутри не сжимаются: иначе при нехватке места они
+   превращаются в неразличимые кружки */
+.cdm-form.meet-play >.footer >.bar >button {
+    flex: 0 0 auto;
+}
+
+/* ==========================================================================
+   10. ДОСТУПНОСТЬ
+
+   Три вещи, которые не видно, но без которых интерфейс не работает
+   для людей с программами чтения с экрана.
+
+   1. Видимый фокус. Плитка и кнопки футера — интерактивные элементы,
+      но у них нет своего стиля фокуса, и на тёмном видео стандартная
+      рамка браузера теряется.
+   2. Сетка объявлена списком (`role="list"`), а плитки — элементами
+      списка, иначе скринридер читает «список из семнадцати
+      безымянных элементов».
+   3. Движения уважаем: устаивание сетки отключается при
+      `prefers-reduced-motion`.
+   ========================================================================== */
+/* Видимый фокус. У кнопок проекта по умолчанию стоит
+   `outline-transparent`, то есть рамка есть, но она невидимая: цвет
+   задан только у intent primary/warning/danger. На размытой «пилюле»
+   футера и на тёмном видео невидимая рамка фокуса — это просто
+   потерянный фокус. */
+.cdm-form.meet-play button:focus-visible,
+.cdm-form.meet-play [data-list] .item:focus-visible {
+    outline: 2px solid var(--meet-ring-color);
+    outline-offset: 2px;
+}
+
+/* Кнопка выхода остаётся красной и на фокусе: потерять её цвет
+   означало бы на секунду сделать её неотличимой от остальных */
+.cdm-form.meet-play [action-leave]:focus-visible {
+    outline-color: var(--color-red);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .cdm-form.meet-play [data-list],
+    .cdm-form.meet-play .meet-strip >.item,
+    .cdm-form.meet-play >.content,
+    .cdm-form.meet-play >.header,
+    .cdm-form.meet-play >.footer {
+        transition: none;
+    }
+
+    .cdm-form.meet-play .meet-layout-settling >.item {
+        animation: none;
+    }
+}

@@ -1,0 +1,83 @@
+// Импортируем utils
+import { Logger } from "../../../utils/logs/logger.js";
+import { Icons } from "../../../utils/icons.js";
+
+// Импортируем типы
+import type { BotMenuNode } from "../index.js";
+
+/**
+ * ***************************************************************************
+ * Шаблон категории меню бота.
+ *
+ * Используем DOMParser для безопасного и чистого создания элемента без
+ * innerHTML.
+ * @returns DOM-элемент категории.
+ * ***************************************************************************
+ */
+function template(): HTMLElement {
+
+    const element = new DOMParser().parseFromString(`
+        <div class="item flex flex-row gap-2 p-1 hover:bg-[var(--second-bg)] active:bg-[var(--second-bg)] rounded-lg items-center cursor-pointer">
+            ${Icons.icon("Folder")?.outerHTML}
+            <span data-name class=""></span>
+        </div>
+    `, "text/html").querySelector<HTMLElement>(".item");
+
+    // Своя разметка всегда содержит «.item» — без элемента элемент списка не создаётся
+    if (!element) throw new Error("Не найден шаблон: .item");
+
+    return element;
+
+}
+
+/**
+ * ***************************************************************************
+ * Установка данных категории: подпись.
+ * @param element - DOM-элемент категории.
+ * @param data - Данные категории.
+ * ***************************************************************************
+ */
+function setup(element: HTMLElement, data: BotMenuNode): void {
+
+    try {
+
+        // Название
+        let name = element.querySelector("[data-name]");
+        if (name) name.textContent = data.name ?? null;
+
+    } catch (error) {
+        Logger.error(error);
+    }
+
+}
+
+/**
+ * ***************************************************************************
+ * Категория меню бота в форме «Меню бота».
+ *
+ * Легаси-класс возвращал из конструктора DOM-элемент вместо `this`
+ * (класс-фабрика — красный флаг миграции), поэтому модуль переведён на
+ * функцию-фабрику: наружу уходит готовый элемент, внутренняя логика живёт
+ * в замыкании.
+ * @param data - Данные категории.
+ * @returns DOM-элемент категории для вставки в меню.
+ * ***************************************************************************
+ */
+export function createCategoryItem(data: BotMenuNode): HTMLElement {
+
+    // Создаем DOM-элемент из шаблона
+    let element = template();
+
+    // Записываем ссылку на dom элемент
+    if (!data.__domElements__) {
+        data.__domElements__ = [];
+    }
+    data.__domElements__.push(element);
+
+    // Устанавливаем начальные данные
+    setup(element, data);
+
+    // Возвращаем сам элемент для вставки в DOM
+    return element;
+
+}

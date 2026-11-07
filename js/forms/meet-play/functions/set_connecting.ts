@@ -1,0 +1,43 @@
+// Импортируем utils
+import { Logger } from "../../../utils/logs/logger.js";
+
+// Импортируем типы
+import type { MeetPlay } from "../index.js";
+
+/**
+ * ***************************************************************************
+ * Показывает или прячет состояние «подключение к конференции».
+ *
+ * Пока комната не создана, сетка участников пуста. Оставлять пользователя
+ * с пустым экраном и работающими кнопками микрофона нельзя: он решит,
+ * что интерфейс сломан, и уйдёт из конференции, не дождавшись. Поэтому
+ * на время подключения сетку перекрывает оверлей с живым текстом и
+ * возможностью отменить.
+ *
+ * Раньше под оверлеем ещё мигали скелетоны-плитки. Их убрали: они
+ * изображали участников, которых в комнате ещё нет, и мигали без
+ * остановки всё то время, пока шло подключение.
+ * @param form - Экземпляр формы.
+ * @param isConnecting - Идёт ли подключение.
+ * @returns void
+ * ***************************************************************************
+ */
+export function setConnecting(form: MeetPlay, isConnecting: boolean): void {
+
+    try {
+
+        form.isConnecting = Boolean(isConnecting);
+
+        // ---------- ОВЕРЛЕЙ ----------
+        const overlay = form.tpl?.querySelector(":scope >.content [data-connecting]");
+        overlay?.classList.toggle("hidden", !isConnecting);
+
+        // ---------- ПОДПИСЬ ----------
+        const label = overlay?.querySelector(":scope [data-connecting-text]");
+        if (label && isConnecting) label.textContent = window._lc.forms.meet_play.connecting;
+
+    } catch (error) {
+        Logger.debug("🚨 [meet-play]: Не удалось переключить состояние подключения:", error);
+    }
+
+}

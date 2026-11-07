@@ -1,0 +1,962 @@
+// Импортируем сторонние пакеты
+import { OverlayScrollbars } from "overlayscrollbars";
+
+// Импортируем config
+import { CDM_FORM_CLASSES, CDM_FORM_HEADER_CLASSES, CDM_FORM_CONTENT_CLASSES } from "../../config/constants.js";
+
+// Импортируем utils
+import { Logger } from "../../utils/logs/logger.js";
+import { Icons } from "../../utils/icons.js";
+import { Store } from "../../utils/store.js";
+import { getDeclension } from "../../utils/string/declensions.js";
+import { TimeAgoFormatter } from "../../utils/date/time_ago_formatter.js";
+import { LocalStorage } from "../../utils/local_storage.js";
+import { IndexedDB } from "../../utils/indexed_db.js";
+import { SvgMaskManager } from "../../core/managers/svg_mask_manager.js";
+import { TextareaAutosize } from "../../utils/helpers/textarea_autosize.js";
+import { ScrollManager } from "../../core/managers/scroll_manager.js";
+import { GestureController } from "../../utils/gesture_controller.js";
+
+// Импортируем components
+import { Overlay } from "../../components/overlay/index.js";
+import { Avatars } from "../../components/avatars.js";
+import { Buttons } from "../../components/buttons.js";
+import { Inputs } from "../../components/inputs.js";
+
+// Импортируем forms
+import { Main } from "../main/index.js";
+import { GroupTopics } from "../group-topics/index.js";
+
+// Импортируем handlers
+import { onInputTextareaHandler } from "./handlers/on_input_textarea.js";
+import { profileOpenHandler } from "./handlers/profile_open.js";
+import { contextMenuHandler } from "./handlers/context_menu.js";
+import { scrollDownHandler } from "./handlers/scroll_down.js";
+import { botMenuHandler } from "./handlers/bot_menu.js";
+import { emojiHandler } from "./handlers/emoji.js";
+import { onContentScrollHandler } from "./handlers/on_content_scroll.js";
+import { attachDocumentHandler } from "./handlers/attach_document.js";
+import { voiceNotePointerHandler } from "./handlers/voice_note_pointer.js";
+import { startStopVideoNoteRecordHandler } from "./handlers/start_stop_video_note_record.js";
+import { stopVideoNoteHandler } from "./handlers/stop_video_note.js";
+import { switchCameraVideoNoteHandler } from "./handlers/switch_camera_video_note.js";
+import { pauseResumeVideoNoteHandler } from "./handlers/pause_resume_video_note.js";
+import { cancelEditMessageHandler } from "./handlers/cancel_edit_message.js";
+import { createMessageHandler } from "./handlers/create_message.js";
+import { updateMessageHandler } from "./handlers/update_message.js";
+import { textareaPasteBufferHandler } from "./handlers/textarea_paste_buffer.js";
+import { dragAndDropFilesHandler } from "./handlers/drag_and_drop_files.js";
+import type { DragAndDropHandle } from "./handlers/drag_and_drop_files.js";
+
+// Импортируем events
+import { subscribeStoreEvents, unsubscribeStoreEvents } from "./events/store/store_events.js";
+
+// Импортируем functions
+import { firstLoadMessages } from "./functions/first_load_messages.js";
+import { intersection } from "./functions/intersection.js";
+import { updateStateButtons } from "./functions/update_state_buttons.js";
+import { VideoNoteSession } from "./functions/video_note_session.js";
+import { TypingStatus } from "./functions/typing_status.js";
+import { ReactionsUpdater, stopReactionsPolling } from "./functions/reactions_updater.js";
+import { LastViewedBatcher } from "./functions/last_viewed_batcher.js";
+import { VoiceNoteSession } from "./functions/voice_note_session.js";
+
+// Импортируем requests
+import { openChannelRequest } from "./requests/channel_open.js";
+import { updateLastViewedMessageIdRequest } from "./requests/update_last_viewed_message_id.js";
+
+// Импортируем типы
+import type { ChannelRecord, MessageRecord, MessagesDirection } from "./types.js";
+
+/**
+ * Ожидание ack исходящего сообщения (освобождается при закрытии чата).
+ */
+export interface PendingAck {
+
+    /** Разрешить ожидание ack (снимает зависший промис пуша). */
+    resolve?: () => void;
+
+}
+
+/**
+ * Настройки формы сообщений.
+ */
+export interface MessagesFormOptions {
+
+    /** Куда вставить форму. */
+    insertInto?: HTMLElement | null;
+
+}
+
+/**
+ * Данные конструктора формы сообщений.
+ */
+export interface MessagesFormData {
+
+    /** Id канала. */
+    channelId: string;
+
+    /** Игнорировать открытие списка тем группы. */
+    ignoreGroupTopics?: boolean;
+
+    /** Настройки формы. */
+    options?: MessagesFormOptions;
+
+}
+
+// Form
+export class Messages {
+
+    // Реестр всех открытых форм Messages: { channelId: instance }
+    static instances = new Map<string, Messages>();
+
+    /**
+     * ***************************************************************************
+     * Форма сообщений.
+     * @param data - Данные.
+     * @param data.channelId - Id канала.
+     * @param data.ignoreGroupTopics - Игнорировать открытие списка тем группы.
+     * @param data.options - Настройки формы.
+     * @param data.options.insertInto - Куда вставить форму.
+     * ***************************************************************************
+     */
+    constructor(data: MessagesFormData) {
+
+        // Если не передан channelId
+        if (!data?.channelId) throw new Error("Не передан: channelId");
+
+        // Устанавливаем настройки
+        this.options = {
+            insertInto: document.querySelector<HTMLElement>(".cdm-form.home .middle .form-container"),
+            ...data?.options
+        }
+
+        // Каркас формы
+        this.tpl = null;
+        this.modal = null;
+        this.svgMaskManager = null;
+        this.content = null;
+        this.list = null;
+        this.editContainer = null;
+        this.replyContainer = null;
+        this.textarea = null;
+        this.textareaAutosize = null;
+        this.osListScrollInstance = null;                   // overlayScroll instance
+        this.listScrollManager = null;                      // Менеджер скролла
+        this.scrollDownBtn = null;
+        this.name = null;
+        this.subtitle = null;
+        this.wrapFooter = null;
+        this.avatar = null;
+
+        // Состояние окна сообщений
+        this.unreadMarkerBeforeId = null;                   // id сообщения, перед которым стоит маркер непрочитанных
+        this.unreadMarkerObserver = null;                   // observer маркера непрочитанных
+        this._lastInsertDirection = null;                   // направление последней вставки ("prev"/"next")
+        this.pendingIds = new Set<string>();                // локальные id исходящих (ожидают ответ сервера)
+
+        // Планировщик синхронизации окна (обрезка/разделители/маркер)
+        this._listSyncInit = false;
+        this._listSyncScheduled = false;
+        this._listSyncing = false;
+        this._stickToBottom = false;                        // «дёрнуть список вниз» после синхронизации пачки
+
+        // Переменные формы
+        this.ignoreGroupTopics = data.ignoreGroupTopics;    // Игнорировать открытие списка топиков группы
+        this.channelId = data.channelId;                    // ID канала
+        this.channel = null;                                // данные канала
+        this.observer = null;
+        this.editedMessage = null;                          // редактируемое сообщение
+        this.replyMessage = null;                           // сообщение на которое отвечаем
+        this.tempMessage = null;                            // временное сообщение
+        this.voiceRecorder = null;                          // сессия записи голосового (активна во время записи)
+        this.voiceNoteSession = null;                       // постоянная сессия голосовых сообщений
+        this.voiceNoteGestureController = null;             // контроллер жестов микрофона
+        this.videoNoteRecorder = null;                      // видео рекордер
+        this.dragAndDrop = null;                            // обработчики перетаскивания файлов
+        this.uploadAbort = null;                            // контроллер прерывания очереди отправки
+        this.pendingAcks = null;                            // ожидания ack исходящих сообщений
+        this.botStatus = null;                              // статус бота (подпись под именем)
+
+        // =====================
+        this.isMessagesLoading = false;     // флаг подзагрузки сообщений
+        this.isDropActive = false;          // флаг приёма перетаскиваемых файлов
+        // =====================
+
+        // Подписки на события Store
+        this.storeUnsubs = [];
+
+        // Хранилище списка сообщений
+        this.store = new Store<MessageRecord>();
+
+        // Инициализируем модуль статуса активности
+        this.typingStatus = new TypingStatus(this);
+
+        // Менеджер поллинга реакций. Создаём сразу, чтобы подписка обсервера
+        // всегда попадала в существующий объект (у каждого чата свой таймер
+        // и свой набор видимых сообщений)
+        this.reactionsUpdater = new ReactionsUpdater(this);
+
+        // Батчер отметки «прочитано до»: отправляем только последнее значение
+        // с задержкой, чтобы при быстром скролле не жечь лимит запросов.
+        this.lastViewedBatcher = new LastViewedBatcher({
+            context: "[app][messages][last-viewed]",
+            flushCallback: (messageId: string, readCount: number) => {
+
+                // Канал ещё не загружен — отмечать «прочитано до» не по чему
+                if (!this.channel) return;
+
+                // Уменьшаем счётчик непрочитанных на число реально прочитанных
+                // сообщений. Раньше здесь вычитался «минус один», но обсервер
+                // успевал прислать несколько отметок до отправки — бейдж
+                // исчезал быстрее, чем сообщения действительно прочитаны.
+                const unread = parseInt(String(this.channel.total_unread_messages)) || 0;
+                const newUnread = unread > 0 ? Math.max(0, unread - (readCount || 1)) : 0;
+
+                // Обновляем локальное состояние до запроса, чтобы бейдж в списке
+                // чатов не мигал, пока идёт сеть
+                this.channel.total_unread_messages = newUnread;
+
+                return updateLastViewedMessageIdRequest({
+                    id: this.channelId,
+                    message_id: messageId,
+                    total_unread_messages: newUnread
+                });
+            }
+        });
+
+        // Получаем instance
+        let instance = Messages.instances.get(data.channelId);
+        if (instance) return instance;
+
+        // Регистрируем этот экземпляр формы
+        Messages.instances.set(this.channelId, this);
+
+        // Инициализация
+        this._init();
+
+    }
+
+    // Настройки формы
+    options: MessagesFormOptions;
+
+    // Каркас формы
+    tpl: HTMLElement | null;
+    modal: Overlay | null;
+    svgMaskManager: SvgMaskManager | null;
+    content: HTMLElement | null;
+    list: HTMLElement | null;
+    editContainer: HTMLElement | null;
+    replyContainer: HTMLElement | null;
+    textarea: HTMLTextAreaElement | null;
+    textareaAutosize: TextareaAutosize | null;
+    osListScrollInstance: OverlayScrollbars | null;
+    listScrollManager: ScrollManager | null;
+    scrollDownBtn: HTMLElement | null;
+    name: HTMLElement | null;
+    subtitle: HTMLElement | null;
+    wrapFooter: HTMLElement | null;
+    avatar: Avatars | null;
+
+    // Состояние окна сообщений
+    unreadMarkerBeforeId: string | null;
+    unreadMarkerObserver: IntersectionObserver | null;
+    _lastInsertDirection: MessagesDirection | null;
+    pendingIds: Set<string>;
+
+    // Планировщик синхронизации окна
+    _listSyncInit: boolean;
+    _listSyncScheduled: boolean;
+    _listSyncing: boolean;
+    _scheduleListSync?: () => void;
+    _stickToBottom: boolean;
+
+    // Данные канала и подписки
+    ignoreGroupTopics: boolean | undefined;
+    channelId: string;
+    channel: ChannelRecord | null;
+    botStatus: string | null;
+
+    // Сообщения
+    observer: IntersectionObserver | null;
+    editedMessage: MessageRecord | null;
+    replyMessage: MessageRecord | null;
+    tempMessage: MessageRecord | null;
+
+    // Сессии записи
+    voiceRecorder: unknown;
+    voiceNoteSession: VoiceNoteSession | null;
+    voiceNoteGestureController: GestureController | null;
+    videoNoteRecorder: VideoNoteSession | null;
+
+    // Очередь отправки и перетаскивание
+    isMessagesLoading: boolean;
+    isDropActive: boolean;
+    dragAndDrop: DragAndDropHandle | null;
+    uploadAbort: AbortController | null;
+    pendingAcks: Map<string, PendingAck> | null;
+
+    // Хранилище сообщений и менеджеры
+    store: Store<MessageRecord>;
+    typingStatus: TypingStatus;
+
+    /** Менеджер поллинга реакций; null после остановки (stopReactionsPolling). */
+    reactionsUpdater: ReactionsUpdater | null;
+    lastViewedBatcher: LastViewedBatcher;
+
+    // Подписки на события Store
+    storeUnsubs: Array<() => void>;
+
+    // ***************************************************************************
+    // Инициализация
+    // ***************************************************************************
+    async _init(): Promise<void> {
+
+        // Подписываемся на события Store.
+        subscribeStoreEvents(this);
+
+        // Открытие
+        await this._open();
+
+    }
+
+    // ***************************************************************************
+    // Открытие
+    // ***************************************************************************
+    async _open(): Promise<void> {
+
+        try {
+
+            // Шаблон формы
+            const tpl = this._template();
+            if (!tpl) {
+                Logger.error("[app][messages]: Не удалось построить шаблон формы");
+                return;
+            }
+            this.tpl = tpl;
+
+            // Форма
+            this.modal = new Overlay(tpl, {
+                type: "form",
+                url: `?channelId=${this.channelId}`,
+                insertInto: this.options.insertInto,
+                closeOnEsc: false,
+                closeOnOverlay: false,
+                onBeforeOpen: async () => await this._onBeforeOpen(),
+                onOpen: async () => await this._onOpen(),
+                onBeforeClose: () => this._onBeforeClose(),
+                openAnimationClass: null,
+                closeAnimationClass: null
+            });
+
+            // Открываем форму
+            this.modal.open();
+
+        } catch (error) {
+            Logger.error(error);
+        }
+
+    }
+
+    // ***************************************************************************
+    // Обработчики
+    // ***************************************************************************
+    _handlers(): void {
+
+        try {
+
+            // Каркас и его узлы создаются в _open/_onBeforeOpen — без них
+            // обвешивать обработчиками нечего
+            if (!this.tpl || !this.modal || !this.list || !this.osListScrollInstance) return;
+
+            // Закрыть
+            let close = this.tpl.querySelector(":scope >.header [action-close]");
+            close?.addEventListener("click", () => this.modal?.close());
+
+            // Профиль
+            let profile = this.tpl.querySelector(":scope >.header [action-profile]");
+            profile?.addEventListener("click", () => profileOpenHandler(this));
+
+            // Контекстное меню
+            let menu = this.tpl.querySelector(":scope >.header [action-context-menu]");
+            menu?.addEventListener("click", (event) => contextMenuHandler(event, this));
+
+            // Скролл вниз
+            let scrollDown = this.tpl.querySelector(":scope >[action-scroll-down]");
+            scrollDown?.addEventListener("click", () => scrollDownHandler(this));
+
+            // Меню бота
+            let botMenu = this.tpl.querySelector(":scope >.footer [action-bot-menu]");
+            botMenu?.addEventListener("click", () => botMenuHandler(this));
+
+            // Открыть emoji
+            let emoji = this.tpl.querySelector(":scope >.footer [action-emoji]");
+            emoji?.addEventListener("click", () => emojiHandler(this));
+
+            // Прикрепить файл
+            let attachFile = this.tpl.querySelector(":scope >.footer [action-attach-file]");
+            attachFile?.addEventListener("click", () => attachDocumentHandler(this));
+
+            // Прикрепить файл из буфера обмена
+            this.textarea?.addEventListener("paste", (event) => textareaPasteBufferHandler(event, this));
+
+            // Перетаскивание файлов в область чата
+            this.dragAndDrop = dragAndDropFilesHandler(this);
+
+            // Создать сообщение
+            let createMessage = this.tpl.querySelector(":scope >.footer [action-create-message]");
+            createMessage?.addEventListener("click", () => createMessageHandler(this));
+
+            // Запись голосового сообщения (тап — закреплённая запись,
+            // удержание + свайп вверх — отмена, повторное нажатие по микрофону — отмена)
+            let recordVoice = this.tpl.querySelector<HTMLElement>(":scope >.footer [action-voice-recorder]");
+            if (recordVoice) voiceNotePointerHandler(this, recordVoice);
+
+            // Отмена записи голосового сообщения (кнопка X на панели)
+            let cancelVoiceNote = this.tpl.querySelector(":scope [action-voice-note-cancel]");
+            cancelVoiceNote?.addEventListener("click", () => this.voiceNoteSession?.cancel());
+
+            // Пауза/продолжение записи голосового (кнопка на панели)
+            let pauseVoiceNote = this.tpl.querySelector(":scope [action-voice-note-pause]");
+            pauseVoiceNote?.addEventListener("click", () => this.voiceNoteSession?.togglePause());
+
+            // Отправить голосовое сообщение (кнопка на панели)
+            let sendVoiceNote = this.tpl.querySelector(":scope [action-voice-note-send]");
+            sendVoiceNote?.addEventListener("click", () => this.voiceNoteSession?.stop());
+
+            // =========================
+
+            // Запись видео кружочка
+            let recordVideoNote = this.tpl.querySelector(":scope >.footer [action-video-recorder]");
+            recordVideoNote?.addEventListener("click", () => startStopVideoNoteRecordHandler(this));
+
+            // Смена камеры в видео кружочке
+            let switchCameraVideoNote = this.tpl.querySelector(":scope [action-video-note-switch-camera]");
+            switchCameraVideoNote?.addEventListener("click", () => switchCameraVideoNoteHandler(this));
+
+            // Поставить на паузу запись кружочка
+            let pauseRecordVideoNote = this.tpl.querySelector(":scope [action-video-note-pause]");
+            pauseRecordVideoNote?.addEventListener("click", () => pauseResumeVideoNoteHandler(this));
+
+            // Остановить запись кружочка и отправить
+            let stopRecordVideoNote = this.tpl.querySelector(":scope [action-video-note-stop]");
+            stopRecordVideoNote?.addEventListener("click", () => stopVideoNoteHandler(this));
+
+            // =========================
+
+            // Сохранить сообщение
+            let updateMessage = this.tpl.querySelector(":scope >.footer [action-update-message]");
+            updateMessage?.addEventListener("click", () => updateMessageHandler(this));
+
+            let cancelEditMessage = this.tpl.querySelector(":scope >.footer [action-cancel-edit]");
+            cancelEditMessage?.addEventListener("click", () => cancelEditMessageHandler(this));
+
+            // Нажатие клавиш в textarea: keydown даёт KeyboardEvent, input — InputEvent
+            // (оба входят в TextareaInputEvent, который принимает обработчик)
+            this.textarea?.addEventListener("keydown", (event) => onInputTextareaHandler(event, this));
+            this.textarea?.addEventListener("input", (event) => onInputTextareaHandler(event, this));
+
+            // При скролле (список захватывается сейчас: чтение свойства в
+            // замыкании сужение не сохраняет)
+            const list = this.list;
+            this.osListScrollInstance.on("scroll", (osInstance) => {
+                const viewport = osInstance.elements().viewport;
+                onContentScrollHandler(this, viewport, list.children);
+            });
+
+        } catch (error) {
+            Logger.error(error);
+        }
+
+    }
+
+    // ***************************************************************************
+    // Настройка формы
+    // ***************************************************************************
+    async _onBeforeOpen(): Promise<boolean | void> {
+
+        try {
+
+            // Шаблон и модалка создаются в _open до вызова хука
+            if (!this.tpl || !this.modal) return;
+
+            // Получаем контейнер content
+            this.content = this.tpl.querySelector(":scope >.content");
+
+            // Устанавливаем список
+            this.list = this.tpl.querySelector(":scope >.content [data-list]");
+
+            // textarea
+            this.textarea = this.tpl.querySelector<HTMLTextAreaElement>(`:scope >.footer [name="message"]`);
+
+            // Кнопка прокрутки вниз
+            this.scrollDownBtn = this.tpl.querySelector(":scope >[action-scroll-down]");
+
+            // Контейнер для отображения ответов и редактирования
+            this.replyContainer = this.tpl.querySelector(":scope >.footer [data-reply-container]");
+            this.editContainer = this.tpl.querySelector(":scope >.footer [data-edit-container]");
+
+            // Получаем канал из IndexedDB. База может быть ещё не открыта —
+            // тогда канал возьмём из серверного ответа ниже
+            const db = IndexedDB.db;
+            let channel = db ? await db.table("channels").get(this.channelId) : undefined;
+
+            // Если канал найден и у него определен статус подписки (не null и не undefined)
+            if (db && channel && channel.is_subscribed != null) {
+
+                // Если это группа и мы не игнорируем список тем
+                if (channel.type === 2 && this.ignoreGroupTopics !== true) {
+
+                    // Проверяем наличие тем в БД по индексу родителя
+                    const topicsCount = await db.table("channels")
+                        .where("topic_for_group_id").equals(this.channelId).count();
+
+                    // Открываем список тем группы
+                    if (topicsCount > 0) {
+                        new GroupTopics({ channel: channel });
+                        unsubscribeStoreEvents(this);
+                        Messages.instances.delete(this.channelId);
+                        return false;
+                    }
+
+                }
+
+                // Если тем нет или это не группа — обновляем форму как обычно
+                this._update(channel);
+
+            } else {
+
+                // Если канала нет в базе или channel.is_subscribed равен null/undefined — идем на сервер
+                let response = await openChannelRequest({ channel_id: this.channelId });
+                let serverData = response.data;
+
+                // Здесь сервер присылает темы в массиве .topics
+                if (serverData.type === 2 && serverData.topics && serverData.topics.length > 0 && this.ignoreGroupTopics !== true) {
+
+                    // Перед открытием списка тем можно запустить фоновую синхронизацию,
+                    // чтобы они попали в базу, но для редиректа достаточно данных из ответа
+                    new GroupTopics({ channel: serverData });
+                    unsubscribeStoreEvents(this);
+                    Messages.instances.delete(this.channelId);
+                    return false;
+
+                } else {
+                    this._update(serverData);
+                }
+
+            }
+
+            // Без сессии настройки декораций недоступны: дальше настраивать
+            // нечего (легаси здесь же падал с TypeError)
+            const session = LocalStorage.session;
+            if (!session) return;
+
+            // ==================================
+
+            // Получаем значение рут переменной
+            let root = document.documentElement;
+
+            // Устанавливаем размер текста сообщения
+            root.style.setProperty("--message-text-size", `${session.settings.user.decorations.message_text_size}rem`);
+
+            // ==================================
+
+            // Если установлен chat_backgrounds
+            if (session.settings.user.decorations.chat_background.enabled) {
+
+                // Устанавливаем менеджер фонов для чата
+                this.svgMaskManager = new SvgMaskManager(this.tpl, `${session.settings.user.decorations.chat_background.src}`);
+
+                // Инициализация менеджера фонов для чата
+                await this.svgMaskManager.init();
+
+            }
+
+            // ==================================
+
+            // Сообщаем системе, что форма открыта
+            window.dispatchEvent(new CustomEvent("[app][form]::opened", {
+                detail: {
+                    id: this.modal.options.id,
+                    data: {
+                        instance: this,
+                        title: this.channel?.type === 5 ? window._lc.forms.messages.favorite : this.channel?.display_name ?? "",
+                        subtitle: "Сообщения"
+                    }
+                }
+            }));
+
+            // ==================================
+
+            // Записываем VideoNoteSession
+            this.videoNoteRecorder = new VideoNoteSession(this);
+
+        } catch (error) {
+            Logger.error(error);
+        }
+
+    }
+
+    // ***************************************************************************
+    // Форма открылась
+    // ***************************************************************************
+    async _onOpen(): Promise<void> {
+
+        // Узлы выставляет _onBeforeOpen: без textarea и контейнера
+        // инициализировать автосайз/скролл не из чего
+        if (!this.textarea || !this.content) return;
+
+        // Заставляем textarea автоматически подстраиваться под контент
+        this.textareaAutosize = new TextareaAutosize(this.textarea);
+
+        // Инициализируем скроллбар
+        this.osListScrollInstance = OverlayScrollbars(this.content, {
+            scrollbars: { autoHide: "scroll" }, overflow: { x: "hidden", y: "scroll" }
+        });
+
+        // Инициируем скролл менеджер
+        this.listScrollManager = new ScrollManager(this.osListScrollInstance);
+
+        // Запускаем прослушивание observer
+        this.observer = new IntersectionObserver((entries, observer) => {
+            intersection(entries, observer, this);
+        }, {
+            root: this.osListScrollInstance.elements().viewport,
+            rootMargin: "0px 0px -5% 0px",
+            threshold: [0, 0.01, 0.1]
+        });
+
+        // Устанавливаем обработчики
+        this._handlers();
+
+        // Получаем сообщения
+        firstLoadMessages(this);
+
+    }
+
+    // ***************************************************************************
+    // Обновляем данные формы
+    // ***************************************************************************
+    _update(data: ChannelRecord): void {
+
+        // Если нет данных
+        if (!data) return;
+
+        // Записываем данные
+        this.channel = data;
+
+        // Каркас создаётся в _open: без шаблона заполнять нечего. Проверяем
+        // только tpl — name/subtitle/wrapFooter ещё не присвоены (они null
+        // из конструктора) и заполняются ниже, после выборки из шаблона.
+        if (!this.tpl) return;
+
+        // Устанавливаем элементы
+        let avatar = this.tpl.querySelector<HTMLElement>(":scope >.header .cdm-avatar");
+        this.name = this.tpl.querySelector(":scope >.header [data-name]");
+        this.subtitle = this.tpl.querySelector(":scope >.header [data-subtitle]");
+        this.wrapFooter = this.tpl.querySelector(":scope >.footer .wrap-footer");
+
+        // Заголовок, подзаголовок и футер обязаны быть в шаблоне — иначе
+        // заполнять нечего
+        if (!this.name || !this.subtitle || !this.wrapFooter) return;
+
+        // Отображаем данные
+        this.name.textContent = data.display_name;
+        if (this.channel?.type === 5) {
+            this.name.textContent = window._lc.forms.messages.favorite;
+        }
+
+        // Если уведомления выключены (канал загружается вместе с формой —
+        // без него просто не показываем иконку)
+        if (this.channel && !this.channel.is_notifications) {
+            let icon = Icons.icon("BellOff");
+            // Иконка есть в справочнике; guard защищает append от null
+            if (icon) this.name.append(icon);
+        }
+
+        // Определяем id аватара
+        let avatarId = data.id;
+
+        // Если это диалог
+        if ([1, 8].includes(data.type)) {
+            // Пустая строка, как и undefined из легаси, falsy — аватар
+            // возьмёт цвет по имени
+            avatarId = data.display_user_id ?? "";
+        }
+
+        // Аватар
+        this.avatar = Avatars.create({
+            element: avatar,
+            id: avatarId,
+            name: data.display_name,
+            image: data.avatar,
+            size: "md",
+            wrapClasses: [data.type === 2 ? "rounded-xl" : "rounded-full"]
+        });
+
+        // Если это избранное
+        if (data.type === 5) {
+            this.avatar.setIcon("bookmark");
+        }
+
+        // Если это диалог c пользователем
+        if (data.type === 1) {
+            if (data.display_user_is_online) {
+                this.subtitle.textContent = window._lc.forms.messages.online;
+            } else {
+                if (data.display_last_action_at) {
+                    this.subtitle.textContent = `${window._lc.forms.messages.was} ${new TimeAgoFormatter(data.display_last_action_at).formattedTime}`;
+                } else {
+                    this.subtitle.textContent = `${window._lc.forms.messages.offline}`;
+                }
+            }
+        }
+
+        // Если это диалог и пользователь онлайн
+        if (data.type === 1 && data.display_user_is_online) {
+            this.subtitle.classList.add("text-[var(--color-brand)]", "dark:text-[var(--color-brand)]");
+            this.subtitle.classList.remove("text-secondary");
+        } else {
+            this.subtitle.classList.remove("text-[var(--color-brand)]", "dark:text-[var(--color-brand)]");
+            this.subtitle.classList.add("text-secondary");
+        }
+
+        // Если это диалог c ботом
+        if (data.type === 8) {
+
+            // Если нет статуса
+            if (!this.botStatus) {
+                if (data.display_user_is_online) {
+                    this.subtitle.textContent = window._lc.forms.messages.online
+                } else {
+                    if (data.display_last_action_at) {
+                        this.subtitle.textContent = `${window._lc.forms.messages.was} ${new TimeAgoFormatter(data.display_last_action_at).formattedTime}`;
+                    } else {
+                        this.subtitle.textContent = `${window._lc.forms.messages.offline}`;
+                    }
+                }
+            } else {
+                this.subtitle.textContent = this.botStatus;
+            }
+
+        }
+
+        // Если это группа или канал
+        if ([2, 3].includes(data.type)) {
+
+            // Для этих типов сервер всегда присылает число участников;
+            // `?? 0` лишь защищает тип, не меняя отображение
+            const totalMembers = data.total_members ?? 0;
+
+            this.subtitle.textContent =
+                `${totalMembers} ${getDeclension(totalMembers, [
+                    window._lc.forms.messages.dec_one_subscriber,
+                    window._lc.forms.messages.dec_two_subscribers,
+                    window._lc.forms.messages.dec_five_subscribers
+                ])}`;
+
+        }
+
+        // Если это тема группы
+        if (data.type === 4) this.subtitle.textContent = window._lc.forms.messages.group_topic;
+
+        // Если это избранное
+        data.type === 5 && this.subtitle.classList.add("none");
+
+        // Если это чат конференции
+        if (data.type === 6) this.subtitle.textContent = window._lc.forms.messages.conference_chat;
+
+        // Если это чат трансляции
+        if (data.type === 7) this.subtitle.textContent = window._lc.forms.messages.broadcast_chat;
+
+        // Обновляем состояние кнопок
+        updateStateButtons(this);
+
+        // Проверяем возможность написать (канал загружен вместе с формой —
+        // без него футер не скрываем)
+        if (this.channel && !this.channel.is_subscribed && !this.channel.is_posting) {
+            this.wrapFooter.classList.add("hidden");
+        }
+
+    }
+
+    // ***************************************************************************
+    // Действия при закрытии формы
+    // ***************************************************************************
+    async _onBeforeClose(): Promise<void> {
+
+        // Отписываемся от событий Store (item::added / item::removed /
+        // item::updated канала). Без этого подписки жили после закрытия чата
+        // и удерживали форму в памяти.
+        unsubscribeStoreEvents(this);
+
+        // Прерываем цикл отправки сообщений и загрузки файлов: после закрытия
+        // чата очередь не должна продолжать грузить вложения и слать сообщения.
+        this.uploadAbort?.abort();
+
+        // Освобождаем ожидания ack: иначе обработчик пуша `[message]: new`
+        // ждал бы до таймаута уже несуществующую форму.
+        for (const entry of this.pendingAcks?.values() || []) entry.resolve?.();
+        this.pendingAcks?.clear();
+
+        // Удаляем слушатели жестов микрофона перед закрытием формы.
+        this.voiceNoteGestureController?.destroy();
+        this.voiceNoteGestureController = null;
+
+        // Если идёт запись голосового сообщения или ещё ожидает разрешения
+        // микрофона — отменяем и освобождаем ресурсы формы.
+        if (this.voiceRecorder || this.voiceNoteSession?.isStarting || this.voiceNoteSession?.isStopping) {
+            this.voiceNoteSession?.cancel();
+        }
+
+        // Если идёт запись видео-кружочка — отменяем и освобождаем камеру
+        if (this.videoNoteRecorder?.recorder?.isRecording) {
+            this.videoNoteRecorder.cancel();
+        }
+
+        // Очищаем хранилище
+        this.store?.removeAll();
+
+        // Сбрасываем маркер непрочитанных и его observer
+        this.unreadMarkerObserver?.disconnect();
+        this.unreadMarkerObserver = null;
+        this.unreadMarkerBeforeId = null;
+
+        // Останавливаем поллинг реакций, чтобы не оставлять фоновых запросов
+        stopReactionsPolling(this);
+
+        // Сбрасываем набор исходящих сообщений, ожидающих ответа сервера
+        this.pendingIds?.clear();
+
+        // Сбрасываем состояние планировщика синхронизации окна
+        this._listSyncScheduled = false;
+        this._listSyncing = false;
+        this._stickToBottom = false;
+
+        // Отправляем накопленную отметку «прочитано до» перед закрытием чата,
+        // чтобы она не потерялась, и гасим таймер батчера
+        await this.lastViewedBatcher?.flush();
+        this.lastViewedBatcher?.destroy();
+
+        // Снимаем обработчики перетаскивания файлов: после закрытия чата
+        // они остались бы жить на удалённом элементе списка
+        this.dragAndDrop?.destroy();
+        this.dragAndDrop = null;
+
+        // Удаляем экземпляр формы из реестра
+        Messages.instances.delete(this.channelId);
+
+        // Отключаем наблюдение, чтобы избежать утечек памяти
+        if (this.observer) {
+            this.observer.disconnect();
+            this.observer = null;
+        }
+
+        // Удаляем канал из Main.Store если is_subscribed = false
+        // (главная форма может быть уже закрыта — тогда удалять не из чего)
+        const main = Main.instance;
+        if (main) {
+            const channel = main.store.get(this.channelId);
+            if (channel?.is_subscribed === false) {
+                main.store.remove(this.channelId);
+            }
+        }
+
+        // Сообщаем системе, что форма закрыта
+        window.dispatchEvent(new CustomEvent("[app][form]::closed", {
+            detail: { id: this.modal?.options.id }
+        }));
+
+    }
+
+    // ***************************************************************************
+    // Шаблон формы
+    // ***************************************************************************
+    _template(): HTMLElement | null {
+
+        // Получаем параметр Blur из настроек пользователя
+        const isBlur = LocalStorage?.session?.settings?.user?.decorations?.blur || false;
+
+        // invariant: иконка "arrow-up" есть в справочнике — шаблон подсказки
+        // жеста всегда получит разметку (раньше здесь же падал бы TypeError)
+        const slideToCancelIcon = Icons.icon("arrow-up", { settings: { stroke: 2.5 } })!.outerHTML;
+
+        // Мы используем <template> tag или DOMParser для создания DOM без innerHTML
+        return new DOMParser().parseFromString(`
+        
+            <div class="cdm-form messages flex flex-col ${CDM_FORM_CLASSES()} w-full">
+                <div class="header flex flex-row gap-2 p-2 items-center justify-between ${CDM_FORM_HEADER_CLASSES()}">
+                    <div class="flex flex-row w-full gap-2 items-center overflow-hidden">
+                        ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-close"], icon: "ArrowLeft" })}
+                        <div class="cdm-avatar relative"></div>
+                        <div action-profile class="flex flex-col gap-0 overflow-hidden cursor-pointer">
+                            <span data-name class="flex flex-row gap-2 items-center font-semibold truncate"></span>
+                            <span data-subtitle class="text-xs text-secondary truncate"></span>
+                        </div>
+                    </div>
+                    ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-context-menu"], icon: "dots-vertical" })}
+                </div>
+
+                <div class="content w-full h-full flex flex-col bg-[var(--color-black)]/5 dark:bg-[var(--color-black)]/20 ${CDM_FORM_CONTENT_CLASSES()}">
+                    <div data-list class="flex flex-col gap-0 w-full"></div>
+                </div>
+
+                ${Buttons.primary({ shape: "circle", attributes: ["action-scroll-down"], icon: "ArrowBigDown" })}
+                <div data-video-note-preview class="relative flex flex-col gap-3 hidden">
+                    <div data-video-note-timer class="flex flex-row gap-2 items-center justify-center text-[var(--color-red)] font-semibold text-lg">
+                        <span class="w-2.5 h-2.5 rounded-full bg-[var(--color-red)] animate-pulse"></span>
+                        <span data-video-note-timer-value>00:00</span>
+                    </div>
+                    <div class="relative w-full h-full rounded-full overflow-hidden">
+                        <div data-video-wrap class="w-full h-full overflow-hidden rounded-full overflow-hidden"></div>
+                        <div data-video-note-progress-wrap class="w-full h-full pointer-events-none rounded-full overflow-hidden"></div>
+                    </div>
+                    <div data-video-note-action-container class="flex flex-row gap-2 shadow-sm rounded-3xl p-2 items-center ${isBlur ? "backdrop-blur-[20px] bg-[var(--form-bg)]/80" : "bg-[var(--form-bg)]"}">
+                        ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-video-note-switch-camera"], icon: "camera-rotate" })}
+                        ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-video-note-pause"], icon: "player-pause" })}
+                        ${Buttons.danger({ shape: "circle", attributes: ["action-video-note-stop"], icon: { name: "player-stop", settings: { filled: true } } })}
+                    </div>
+                </div>
+
+                <div class="footer absolute flex flex-col shrink-0 gap-2 pb-[2em] max-lg:pb-0 w-full bottom-0 left-0 z-10">
+                    <div data-reply-container class="flex empty:hidden w-[var(--messages-block-max-width)] max-w-[var(--messages-block-max-width)] m-auto"></div>
+                    <div data-edit-container class="flex empty:hidden w-[var(--messages-block-max-width)] max-w-[var(--messages-block-max-width)] m-auto"></div>
+
+                    <div data-voice-note-panel class="relative flex flex-row gap-2 p-2 w-full md:w-[var(--messages-block-max-width)] md:max-w-[var(--messages-block-max-width)] shadow-sm rounded-4xl max-md:rounded-none items-center m-auto ${isBlur ? "backdrop-blur-[20px] bg-[var(--form-bg)]/80" : "bg-[var(--form-bg)]"} hidden">
+                        ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-voice-note-cancel"], icon: "x" })}
+                        <div class="flex flex-row gap-2 items-center justify-center shrink-0">
+                            <span data-voice-note-status class="w-2.5 h-2.5 rounded-full bg-[var(--color-red)] animate-pulse"></span>
+                            <span data-voice-note-timer class="text-[var(--color-red)] font-semibold tabular-nums text-sm">00:00</span>
+                        </div>
+                        <div data-voice-note-wave class="flex flex-row flex-1 items-center justify-center gap-0.5 h-8"></div>
+                        <div class="flex flex-row gap-2 items-center shrink-0">
+                            ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-voice-note-pause"], icon: "player-pause" })}
+                            ${Buttons.danger({ shape: "circle", attributes: ["action-voice-note-send"], icon: { name: "send-2", settings: { filled: true } } })}
+                        </div>
+                        <div data-voice-note-cancel-hint class="hidden absolute inset-0 items-center justify-center gap-2 font-semibold text-sm text-[var(--color-red)]">
+                            ${slideToCancelIcon} ${window._lc.forms.messages.voice_recorder.slide_to_cancel}
+                        </div>
+                    </div>
+
+                    <div class="wrap-footer flex flex-row gap-0 p-2 w-full md:w-[var(--messages-block-max-width)] md:max-w-[var(--messages-block-max-width)] shadow-sm rounded-4xl max-md:rounded-none items-center m-auto ${isBlur ? "backdrop-blur-[20px] bg-[var(--form-bg)]/80" : "bg-[var(--form-bg)]"}">
+                        <div class="flex flex-row gap-0 h-full w-full items-end">
+                            ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-bot-menu"], classes: ["hidden"], icon: "Menu" })}
+                            ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-emoji"], icon: "mood-smile" })}
+                            ${Inputs.textarea({ intent: "transparent", placeholder: window._lc.forms.messages.enter_message, name: "message", rows: 1 })}
+                            ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-attach-file"], icon: "Paperclip" })}
+                            ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-video-recorder"], icon: "Video" })}
+                            ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-voice-recorder"], classes: ["hidden"], icon: "microphone" })}
+                            ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-create-message"], classes: ["hidden"], icon: "send-2" })}
+                            ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-cancel-edit"], classes: ["hidden"], icon: "X" })}
+                            ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-update-message"], classes: ["hidden"], icon: "device-floppy" })}
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        `, "text/html").querySelector<HTMLElement>(".cdm-form");
+
+    }
+
+}

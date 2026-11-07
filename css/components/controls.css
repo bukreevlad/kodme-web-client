@@ -1,0 +1,198 @@
+/* ***************************************************************************
+ * controls.css — глобальные состояния нативных контролов и служебные
+ * визуальные состояния (скелетоны, инвалидность, autofill, select).
+ *
+ * Правила намеренно вынесены за пределы слоёв Tailwind: неслоёный CSS
+ * сильнее утилит, поэтому `.invalid` перекрашивает рамку любого инпута,
+ * независимо от того, каким border-классом он свёрстан.
+ * *************************************************************************** */
+
+/* =========================================================================== */
+/* Инвалидность поля ввода                                                    */
+/* =========================================================================== */
+
+/* Ошибка валидации: красная рамка + мягкий ореол. Работает и для класса
+   `.invalid` (56 вызовов в формах), и для атрибута `aria-invalid="true"`
+   (программная валидация). Ореол через box-shadow, чтобы не конфликтовать
+   с outline фокуса */
+.invalid,
+[aria-invalid="true"] {
+    border-color: var(--color-red) !important;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-red) 18%, transparent);
+}
+
+/* У textarea и других элементов без рамки ореол всё равно должен быть виден */
+.invalid:focus-visible,
+[aria-invalid="true"]:focus-visible {
+    outline-color: var(--color-red);
+}
+
+/* Текст ошибки под полем (компонента Inputs с errorText) */
+[data-input-error] {
+    color: var(--color-red);
+    font-size: 0.75rem;
+    line-height: 1rem;
+    margin-top: 0.25rem;
+}
+
+/* =========================================================================== */
+/* Нативный select                                                            */
+/* =========================================================================== */
+
+/* Единый вид для всех нативных селектов (screen-settings, бот-формы):
+   убираем родной апіеarance и рисуем собственный шеврон на фоне.
+   padding-right оставляет место шеврону */
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 2.25rem;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem;
+    cursor: pointer;
+    transition: border-color 150ms ease-out, box-shadow 150ms ease-out;
+}
+
+select:hover {
+    border-color: color-mix(in srgb, var(--color-black) 25%, transparent);
+}
+
+:root[data-theme="dark"] select:hover {
+    border-color: color-mix(in srgb, var(--color-white) 25%, transparent);
+}
+
+/* =========================================================================== */
+/* Autofill                                                                    */
+/* =========================================================================== */
+
+/* Браузерная заливка автозаполнения должна переживать обе темы: подменяем
+   нативную жёлтую подложку собственным тонированным свечением */
+input:autofill,
+input:autofill:hover,
+input:autofill:focus,
+select:autofill,
+textarea:autofill {
+    -webkit-box-shadow: 0 0 0 1000px var(--form-bg) inset,
+        0 0 0 3px color-mix(in srgb, var(--color-brand) 18%, transparent);
+    box-shadow: 0 0 0 1000px var(--form-bg) inset,
+        0 0 0 3px color-mix(in srgb, var(--color-brand) 18%, transparent);
+    -webkit-text-fill-color: var(--text-color);
+    caret-color: var(--text-color);
+    border-radius: inherit;
+    transition: box-shadow 500ms ease-in-out;
+}
+
+/* =========================================================================== */
+/* Скелетоны загрузки                                                         */
+/* =========================================================================== */
+
+/* Блочный скелетон (компонента Skeleton). Shimmer — мягкий бегущий блик
+   поверх приглушённого фона, уважает prefers-reduced-motion через
+   глобальное правило в main.css */
+.ui-skeleton {
+    position: relative;
+    overflow: hidden;
+    background-color: color-mix(in srgb, var(--color-black) 7%, transparent);
+    border-radius: var(--radius-md);
+}
+
+:root[data-theme="dark"] .ui-skeleton {
+    background-color: color-mix(in srgb, var(--color-white) 8%, transparent);
+}
+
+.ui-skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+        90deg,
+        transparent,
+        color-mix(in srgb, var(--color-white) 45%, transparent),
+        transparent
+    );
+    animation: ui-skeleton-shimmer 1.6s ease-in-out infinite;
+}
+
+:root[data-theme="dark"] .ui-skeleton::after {
+    background: linear-gradient(
+        90deg,
+        transparent,
+        color-mix(in srgb, var(--color-white) 10%, transparent),
+        transparent
+    );
+}
+
+@keyframes ui-skeleton-shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* =========================================================================== */
+/* Индикатор загрузки .cdm-loader (раньше был без стилей и невидим)           */
+/* =========================================================================== */
+
+.cdm-loader {
+    display: inline-block;
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 2px solid color-mix(in srgb, var(--color-brand) 25%, transparent);
+    border-top-color: var(--color-brand);
+    border-radius: 9999px;
+    animation: ui-loader-spin 0.8s linear infinite;
+}
+
+/* Скрытие лоадера. Класс `hidden` живёт в слое utilities (Tailwind v4)
+   и проигрывает unlayered-правилу `display: inline-block` выше по каскаду
+   слоёв, поэтому скрытие задаём собственным правилом — так же, как
+   поступили с плейсхолдером в css/forms/broadcast-play.css */
+.cdm-loader.hidden {
+    display: none;
+}
+
+@keyframes ui-loader-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* =========================================================================== */
+/* Хлебные крошки (cloud, bot-menu, bot-settings)                             */
+/* =========================================================================== */
+
+/* Единый вид крошек вместо хардкод-классов в местах сборки */
+.cdm-crumbs {
+    display: flex;
+    align-items: center;
+    gap: 0.125rem;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    color: var(--text-muted);
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+}
+
+.cdm-crumbs::-webkit-scrollbar {
+    display: none;
+}
+
+.cdm-crumbs .crumb {
+    color: var(--color-brand);
+    padding: 0.125rem 0.375rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background-color 150ms ease-out;
+}
+
+.cdm-crumbs .crumb:hover {
+    background-color: color-mix(in srgb, var(--color-brand) 10%, transparent);
+    text-decoration: none;
+}
+
+.cdm-crumbs .crumb-separator {
+    color: var(--text-muted);
+    user-select: none;
+}
