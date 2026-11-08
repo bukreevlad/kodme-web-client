@@ -432,7 +432,7 @@ export class MeetPlay {
             this._update(response.data);
 
             // Устанавливаем элементы. Без шаблона открываться нечему —
-            // как и в легаси, закрываем форму
+            // закрываем форму
             if (!this.tpl) {
                 this.modal?.close();
                 return;
@@ -557,9 +557,7 @@ export class MeetPlay {
         if (!this.tpl) return;
 
         // ---------- ЗАГОЛОВОК ----------
-        // Название конференции. Раньше здесь стояла статичная строка
-        // «Конференция», и в шапке с вкладками все конференции
-        // выглядели одинаково
+        // Название конференции: имя встречи, иначе — текст из локали
         const title = this.tpl.querySelector(":scope >.header [data-title]");
         if (title) title.textContent = this.meet?.name || t("forms.meet_play.title");
         // ---------- ЗАГОЛОВОК ----------

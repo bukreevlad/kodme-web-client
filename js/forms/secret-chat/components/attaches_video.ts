@@ -22,8 +22,7 @@ import type { AttachParent, AttachmentData } from "./types.js";
  * медиа, превью (заглушка + серверная ссылка или локальный blob) и открытие
  * просмотрщика по клику.
  *
- * Легаси-класс возвращал DOM-узел из конструктора, поэтому состояние
- * (актуальные данные вложения) живёт в замыкании фабрики.
+ * Состояние (актуальные данные вложения) живёт в замыкании фабрики.
  * @param message - Родительское сообщение.
  * @param data - Данные вложения (id, name, metadata и т.д.).
  * @returns DOM-элемент вложения.
@@ -129,9 +128,7 @@ export function createVideoItem(message: AttachParent, data: AttachmentData): HT
                     thumbnailUrl = thumb._url as string;
                 }
 
-                // Прячем размытую заглушку, когда превью уже загрузилось.
-                // Раньше обработчик висел только в ветке серверной ссылки, и
-                // для локального blob он не срабатывал вовсе.
+                // Прячем размытую заглушку, когда превью уже загрузилось
                 if (thumbnail && thumbnailUrl) {
                     thumbnail.onload = () => {
                         placeholder?.classList.add("hidden");
@@ -167,14 +164,12 @@ export function createVideoItem(message: AttachParent, data: AttachmentData): HT
             // Устанавливаем параметры
             let media: MediaItem[] = [];
 
-            // Получаем все медиа в сообщении в порядке файлов payload (как они
-            // разложены в ленте).
-            // Нормализуем вложения: сервер отдаёт массив, локальные (temp/pending)
-            // сообщения — объект-мап, поэтому .forEach на объекте падал.
-            // Копия элемента нужна контракту MediaViewer (id обязателен):
-            // значение id и локальные поля (_file) сохраняются как есть.
-            // У локального вложения id ещё нет — передаём пустую строку
-            // (легаси уходил undefined; оба значения falsy)
+            // Медиа в сообщении — в порядке файлов payload (как в ленте);
+            // нормализуем вложения: сервер отдаёт массив, локальные
+            // (temp/pending) сообщения — объект-мап.
+            // Копия нужна контракту MediaViewer (id обязателен): id и локальные
+            // поля (_file) сохраняются как есть, у локального вложения id ещё
+            // нет — передаём пустую строку.
             const ordered = sortAttachmentsByFiles(normalizeAttachments(message.data.attachments), message.data.files);
             for (const attach of ordered) {
 

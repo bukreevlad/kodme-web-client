@@ -265,8 +265,7 @@ export function matchBlobsToTargets(targets: UploadTargetItem[], blobs: MediaBlo
         if (target?.kind === "original") { original = target; continue; }
 
         // Превью без ширины и рендерация без метки не сматчатся с blob по
-        // ключу (легаси клал бы в Map ключ undefined — он никогда не находился),
-        // поэтому такие цели просто не индексируем
+        // ключу — такие цели не индексируем
         if (target?.kind === "thumbnail") {
             if (target.width !== undefined) thumbnailsByWidth.set(target.width, target);
             continue;

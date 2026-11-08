@@ -478,8 +478,8 @@ export class UserSettings {
                                 ${t("forms.user_settings.about")}
                             </span>
                             <div class="flex flex-col gap-0">
-                                <span class="text-sm text-secondary">${t("forms.user_settings.app_build_version")} __BUILD_VERSION__</span>
-                                <span class="text-sm text-secondary">${t("forms.user_settings.app_build_at")} __BUILD_AT__</span>
+                                <span class="text-sm text-secondary">${t("forms.user_settings.app_build_version")}<span> __BUILD_VERSION__</span></span>
+                                <span class="text-sm text-secondary">${t("forms.user_settings.app_build_at")}<span> __BUILD_AT__</span></span>
                             </div>
                             ${Buttons.create({ attributes: ["action-manage-cache"], text: t("forms.user_settings.manage_cache") })}
                         </div>

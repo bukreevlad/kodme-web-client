@@ -25,9 +25,8 @@ export async function messageTextSizeHandler(form: UserSettingDecorations): Prom
         // Обновляем данные в сессии
         const session = LocalStorage.session;
 
-        // NOTE(MIGRATION): поле объявлено строкой-коэффициентом (см.
-        // SessionDecorationsSettings) — храним строку; читатели умножают или
-        // интерполируют значение, поведение идентично легаси-числу
+        // Поле — строковый коэффициент (см. SessionDecorationsSettings):
+        // храним строку, читатели умножают или интерполируют её
         if (session) {
             session.settings.user.decorations.message_text_size = String(size);
             LocalStorage.updateSession(session);

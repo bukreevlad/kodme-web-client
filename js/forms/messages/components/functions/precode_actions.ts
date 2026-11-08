@@ -53,8 +53,7 @@ export function preCodeActions(message: MessageItem): void {
                     // invariant: <code> внутри блока — всегда HTML-элемент
                     const textToCopy = (code as HTMLElement).innerText;
 
-                    // Копируем через общий хелпер: раньше здесь был «висящий»
-                    // промис navigator.clipboard без .catch() и console.error
+                    // Копируем через общий хелпер: ошибки обрабатывает он
                     await copyText(textToCopy, {
                         context: "[app][messages][precode-actions]"
                     });

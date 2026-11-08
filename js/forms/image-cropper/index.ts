@@ -304,9 +304,8 @@ export class ImageCropper {
     // ***************************************************************************
     _template(): HTMLElement | null {
 
-        // z-index раньше стоял (`z-[1030]`), но не делал ничего: обёртка
-        // диалога создаёт свой stacking context. Порядок слоёв задаёт обёртка —
-        // см. `CDM_Z_INDEX` в `js/config/constants.js`
+        // Порядок слоёв задаёт обёртка диалога — она создаёт свой
+        // stacking context; см. `CDM_Z_INDEX` в `js/config/constants.js`
         return new DOMParser().parseFromString(`
             <div class="cdm-modal image-cropper absolute flex p-0 inset-0 justify-center">
                 <div class="absolute inset-0 bg-black/90"></div>
@@ -344,9 +343,8 @@ export class ImageCropper {
             if (this.imageUrl && !this.imageUrl.startsWith("blob:") && !this.imageUrl.startsWith("data:")) {
 
                 // getMediaSrc отдаёт строку URL, которую перехватывает Service
-                // Worker — она подставляется в src напрямую. Легаси передавал
-                // её в URL.createObjectURL (бросает TypeError на строке), из-за
-                // чего кроппер всегда падал в catch и грузил оригинал в обход кеша
+                // Worker — она подставляется в src напрямую, без
+                // URL.createObjectURL (он бросает TypeError на строке)
                 const mediaUrl = CacheManager.getMediaSrc({
                     url: this.imageUrl,
                     file_token: "",
@@ -439,9 +437,9 @@ export class ImageCropper {
 
                     if (diff > 50 && diff < 300) {
 
-                        // invariant: тап завершается mouse- либо touch-событием —
-                        // легаси читал координаты как pos.x/pos.y; у TouchEvent их
-                        // нет, и двойной тап зумит в центр (_updateZoom: focalX ?? centerX)
+                        // invariant: у TouchEvent нет координат в формате
+                        // pos.x/pos.y — читаем clientX/clientY только у MouseEvent,
+                        // иначе двойной тап зумит в центр (_updateZoom: focalX ?? centerX)
                         const focalX = event instanceof MouseEvent ? event.clientX : undefined;
                         const focalY = event instanceof MouseEvent ? event.clientY : undefined;
 
@@ -503,7 +501,7 @@ export class ImageCropper {
 
     getCropData(): CropRectangle {
 
-        // Элементы кропа обязательны к моменту вырезания — как в легаси,
+        // Элементы кропа обязательны к моменту вырезания —
         // отсутствие это ошибка
         const img = this.elements.img;
         const selection = this.elements.selection;

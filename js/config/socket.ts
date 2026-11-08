@@ -160,7 +160,7 @@ function toServerErrorPayload(value: unknown): ServerErrorPayload {
 /**
  * ***************************************************************************
  * Текст ошибки для конверта-ответа серверу: сообщение ошибки либо строковое
- * представление значения (легаси брало `error.message || String(error)`).
+ * представление значения.
  * @param error - Значение, брошенное обработчиком события.
  * @returns {string} - Текст ошибки.
  * ***************************************************************************
@@ -177,7 +177,7 @@ function formatErrorMessage(error: unknown): string {
 
 /**
  * Признак неуспешного data-ответа: конверт `{ type: "error" }` либо
- * ответ `{ status: false }` (легаси-проверка в _handleCallback).
+ * ответ `{ status: false }`.
  * @param data - Полезная нагрузка callback-конверта.
  * @returns {boolean} - true, если ответ неуспешен.
  */
@@ -214,9 +214,7 @@ export class Socket {
      * Клиент основного сокета.
      *
      * Геттер — guard на инварианте «сокет создаётся при входе в сессию»:
-     * раньше чтение до инициализации падало с TypeError на месте вызова,
-     * теперь — с явной ошибкой с тем же синхронным выбросом (обработчики
-     * ловят её так же, как ловили бы TypeError).
+     * чтение до инициализации бросает явную ошибку синхронно на месте вызова.
      * @throws {Error} Если клиент ещё не создан (запрос вне сессии).
      * @returns {Socket} Экземпляр клиента.
      * ***************************************************************************
@@ -749,10 +747,8 @@ export class Socket {
             this.callbacks.delete(callbackId);
             if (error || isFailedAnswer(data)) {
 
-                // Сервер шлёт структурированную ошибку { message, code, status, reason }.
-                // Раньше приходила
-                // строка, поэтому код (ACCESS_DENIED, RATE_LIMIT_EXCEEDED, ...) и HTTP-статус
-                // были недоступны и клиент матчил текст подстрокой.
+                // Сервер шлёт структурированную ошибку
+                // { message, code, status, reason }.
                 const source: unknown = (typeof error === "object" && error !== null) ? error : (data || {});
                 const payload = toServerErrorPayload(source);
 

@@ -281,10 +281,9 @@ export class Toggle {
         const hasText = this.options.text || (this.options.toggleText && this.options.toggleText.on);
         let textContainer: HTMLDivElement | null = null;
 
-        // Иконка слева от текста. Необязательная: без неё разметка
-        // собирается ровно как раньше, поэтому старые вызовы не затронуты.
-        // Иконка — указатель, чем строка является (камера, микрофон, режим
-        // сетки), поэтому приглушаем её и запрещаем сжиматься
+        // Иконка слева от текста, необязательная. Она указывает, чем строка
+        // является (камера, микрофон, режим сетки), поэтому приглушаем её
+        // и запрещаем сжиматься
         let iconElement: SVGSVGElement | null = null;
         if (this.options.icon && Icons?.icon) {
             iconElement = Icons.icon(this.options.icon, { classes: ["shrink-0", "text-muted"] });

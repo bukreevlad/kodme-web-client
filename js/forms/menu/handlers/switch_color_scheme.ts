@@ -19,8 +19,8 @@ export async function switchColorSchemeHandler(form: Menu): Promise<void> {
         // Кнопка переключения
         const button = form.tpl?.querySelector(":scope >.header [action-swith-color-scheme]");
 
-        // Проверяем выбранный режим. NOTE(MIGRATION): исправлен реальный
-        // баг: отсутствие иконки писало в кнопку строку "undefined"
+        // Проверяем выбранный режим; `?? ""` не даёт записать в кнопку
+        // строку "undefined" при отсутствии иконки
         if (document.documentElement.hasAttribute("data-theme")) {
 
             // Устанавливаем светлую

@@ -220,8 +220,8 @@ export class EditBotCategory {
                 });
             }
 
-            // Отображаем данные (поля категории опциональны — нормализуем:
-            // в легаси undefined уходил в поле как текст «undefined»)
+            // Отображаем данные (поля категории опциональны — нормализуем,
+            // иначе в поле попадёт текст «undefined»)
             name.value = this.category.name ?? "";
             about.value = this.category.about ?? "";
 

@@ -85,9 +85,8 @@ export async function startRTCPlayer(form: BroadcastPlay): Promise<void> {
             body: offer.sdp
         });
 
-        // Неудача WHEP: раньше функция просто возвращалась, и лоадер
-        // висел бы поверх пустой сцены вечно, а RTCPeerConnection
-        // оставался бы висеть до закрытия формы. Теперь чистим за собой
+        // Неудача WHEP: чистим за собой — иначе лоадер висит поверх
+        // пустой сцены, а RTCPeerConnection остаётся до закрытия формы
         if (!response.ok) {
             Logger.error("WHEP request failed:", response);
             stopRTCPlayer(form);

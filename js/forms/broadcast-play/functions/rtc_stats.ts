@@ -96,9 +96,8 @@ export async function getRtcStats(pc: RTCPeerConnection): Promise<RtcStreamInfo 
             audio: { codec: null, bitrate: 0 }
         };
 
-        // Отчеты inbound-rtp собираем в массивы: присваивание в замыкании
-        // forEach сужение локальных let-переменных не сохраняет (тип схлопывался
-        // в never); как и в легаси, берём первый подходящий отчет
+        // Отчеты inbound-rtp собираем в массивы: в замыкании forEach сужение
+        // локальных let-переменных не сохраняется; берём первый подходящий отчет
         const videoReports: InboundRtpReport[] = [];
         const audioReports: InboundRtpReport[] = [];
         let videoCodec: string | null = null;

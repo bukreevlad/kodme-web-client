@@ -270,14 +270,10 @@ function initTileDrag(form: Call, tile?: HTMLElement | null): void {
                     isDragging = false;
                     tile.classList.remove("is-dragging");
 
-                    // После перетаскивания браузер всё равно отправит click.
-                    // Помечаем факт перемещения, чтобы клик не сработал
-                    // как выбор плитки. Сброс не через 0мс: click приходит
-                    // отдельной задачей event-цикла и нулевой таймер может
-                    // отработать раньше него — тогда защита не сработала бы.
-                    // 300мс с запасом покрывают и мышь, и синтетический
-                    // click после touchend; обработчики плиток к тому же
-                    // «съедают» флаг, если клик всё же попал в окно
+                    // После перетаскивания click всё равно приходит:
+                    // помечаем перемещение, чтобы он не выбрал плитку.
+                    // Сброс через 300мс: click — отдельная задача event-цикла,
+                    // 0мс-таймер отработал бы раньше него
                     if (Math.hypot(dx, dy) > CALL_TILE_DRAG_THRESHOLD) {
                         form.selfViewDragMoved = true;
                         if (form.selfViewDragMovedTimer !== null) clearTimeout(form.selfViewDragMovedTimer);

@@ -307,13 +307,6 @@ export class AudioPlayerManager {
 
         // Управление жизненным циклом UI мини-плеера:
         // Если мини-плеера ещё нет — инициализируем его, иначе при необходимости перемонтируем
-        //
-        // NOTE(MIGRATION): легаси вызывал new MiniAudioPlayer(mountContainer, mountOptions),
-        // но конструктор принимает ОДИН аргумент options и раскладывает его как {...options}:
-        // у DOM-элемента нет собственных перечисляемых свойств, поэтому mountContainer
-        // не менял options, а второй аргумент (mountOptions) отбрасывался вовсе.
-        // Вызов без аргументов в точности повторяет прежнее поведение (скрытый баг
-        // легаси — не исправляется здесь, mountOptions уходит только в remount()).
         if (!this.miniPlayer) {
             this.miniPlayer = new MiniAudioPlayer();
         } else if (mountContainer) {
@@ -359,8 +352,8 @@ export class AudioPlayerManager {
                 this.currentUrl = URL.createObjectURL(fileData);
             } else {
                 this.currentUrl = CacheManager.getMediaSrc({
-                    // id обязателен для медиа-трека; без него URL всё равно
-                    // не разрешится — сохраняем легаси-семантику «невалидный URL»
+                    // id обязателен для медиа-трека: без него URL всё равно
+                    // не разрешится
                     url: StorageUrl.forStorage(fileData.id ?? ""),
                     file_token: fileData.token,
                     type: fileData?.metadata?.flags?.is_audio_note === true ? "voice" : "audio"

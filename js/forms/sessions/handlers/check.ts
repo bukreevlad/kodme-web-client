@@ -57,10 +57,8 @@ export async function checkHandler(form: Sessions, data: StoredSession): Promise
             // их источник — этот ответ, дальше они живут до перезагрузки
             applyServerLimits(response.data.server_data);
 
-            // Серверные настройки дописываются в сессию отдельным полем
-            // (легаси писал `session.server = ...` — поле отсутствует в
-            // типе StoredSession, поэтому присваиваем через Object.assign
-            // с тем же эффектом в runtime)
+            // Серверные настройки дописываем в сессию через Object.assign:
+            // поля `server` нет в типе StoredSession
             Object.assign(session, { server: response.data.server_data });
 
             // Обновляем данные сессии

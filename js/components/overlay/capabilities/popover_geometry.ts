@@ -6,8 +6,6 @@ import type { OverlayCapability } from "../types.js";
 
 /**
  * Отступ от краёв обёртки при позиционировании.
- * Раньше эта величина была константой внутри `components/context_menu.js`,
- * оттуда и взято значение.
  */
 const PADDING = 10;
 

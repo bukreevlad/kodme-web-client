@@ -66,8 +66,8 @@ export async function generateImageMetadata(file: MediaInput, widths: number[] =
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
 
-        // Без контекста генерировать превью нечем: раньше здесь же падал
-        // TypeError, теперь — осмысленная ошибка в общий catch
+        // Без контекста генерировать превью нечем — осмысленная ошибка
+        // в общий catch вместо TypeError
         if (!ctx) throw new Error("Не удалось получить контекст canvas 2d для превью");
 
         // 2. Генерируем основные thumbnails

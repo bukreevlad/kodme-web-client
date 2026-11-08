@@ -39,8 +39,6 @@ export async function messageButtonClickHandler(element: Element, button: Messag
     } catch (error) {
 
         // Бот офлайн — сервер отдаёт код BOT_NOT_IN_NETWORK.
-        // Раньше проверялась подстрока «Бот не в сети», которой на сервере нет,
-        // и пользователь не видел причину отказа вообще.
         toastError(error, {
             context: "[app][messages][button-click]",
             codes: ["BOT_NOT_IN_NETWORK"],

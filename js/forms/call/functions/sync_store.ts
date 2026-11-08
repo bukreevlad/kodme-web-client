@@ -47,8 +47,8 @@ export async function syncStore(form: Call): Promise<void> {
 
         // Удаляем из стора тех, кого нет в комнате
         currentIdentitiesInStore.forEach(id => {
-            // invariant: identity участника — всегда строка; String()
-            // сохраняет легаси-семантику includes для нестроковых ключей
+            // invariant: identity участника — всегда строка; String(id)
+            // приводит ключ стора к строке перед сравнением с includes
             if (!newIdentities.includes(String(id))) form.store.remove(id);
         });
 

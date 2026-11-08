@@ -230,9 +230,7 @@ async function _uploadFile(form: Cloud, file: File): Promise<void> {
  */
 function _showUploadError(response: unknown): void {
 
-    // Код ошибки сервера (легаси-конверт ответа { error: { code } };
-    // актуальный сервер отвечает ошибкой через reject — разбор сохранён
-    // на случай легаси-ответа)
+    // Код ошибки из конверта ответа { error: { code } }
     let code = _getLegacyErrorCode(response);
 
     // Если расширение не разрешено — показываем соответствующее сообщение
@@ -245,7 +243,7 @@ function _showUploadError(response: unknown): void {
 }
 
 /**
- * Приватный: код ошибки из легаси-конверта ответа { error: { code } }.
+ * Приватный: код ошибки из конверта ответа { error: { code } }.
  * @param response - Ответ сервера (unknown — сверяемся проверками).
  * @returns Код ошибки либо пустая строка.
  */

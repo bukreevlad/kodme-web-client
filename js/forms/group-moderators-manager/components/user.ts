@@ -20,11 +20,6 @@ import { t } from "../../../utils/i18n/index.js";
  * Строка подписывается на `item::updated::<id>` локального стора формы и
  * держит ссылку на себя в `data.__domElements__`, чтобы стор удалил все
  * копии разом. Клик по строке открывает диалог настроек модератора.
- *
- * Элемент раньше возвращался самим конструктором (`return this.element`) —
- * в TS это запрещено, поэтому строка создаётся через `new ModeratorItem(...)`,
- * а в DOM вставляется её поле `element`. Ненужные геттеры getDOM()/getData()
- * удалены — их никто не вызывал.
  * ***************************************************************************
  */
 export class ModeratorItem {
@@ -142,8 +137,7 @@ export class ModeratorItem {
             // Отображаем данные
             if (name) name.textContent = data.display_name ?? null;
 
-            // dataset принимает строку: String() даёт те же "true"/"false",
-            // что получались раньше из неявного приведения булева значения
+            // dataset принимает строку — String() даёт "true"/"false"
             if (canDeletedMessage) canDeletedMessage.dataset.active = String(!!data?.can_deleted_message);
             if (canCleanMessages) canCleanMessages.dataset.active = String(!!data?.can_clean_messages);
             if (canRestrictMembers) canRestrictMembers.dataset.active = String(!!data?.can_restrict_members);

@@ -21,9 +21,8 @@ export async function slideTo(form: MediaViewer, direction: "prev" | "next"): Pr
     form.gestureLocked = true;
 
     const track = form.elements.track;
-    // NOTE(MIGRATION): исправлен реальный баг: без сцены ширина слайда была
-    // undefined (раньше здесь был прямой доступ и падение) — считаем 0,
-    // анимация не сдвигается, но следующий медиафайл всё равно показывается
+    // Нет сцены — считаем ширину 0: анимация не сдвигается,
+    // но следующий медиафайл всё равно показывается
     const w = form.elements.stage?.clientWidth ?? 0;
     const targetDX = direction === "next" ? -w : w;
 

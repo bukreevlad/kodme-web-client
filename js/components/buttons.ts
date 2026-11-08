@@ -89,10 +89,9 @@ export class Buttons {
 
     // Декларативная карта стилей в духе Tailwind v4 (базовые утилиты).
     // Тени — токены `shadow-xs` из @theme, а не захардкоженные literal'ы.
-    // Прозрачная рамка (border-transparent) компенсирует рамку полей ввода:
-    // у неё есть 1px бордюр, у кнопки раньше не было — из-за этого кнопки
-    // были ниже полей на ~2px. Рамка невидима (фон заливает её область),
-    // но выравнивает высоту кнопок с полями
+    // Прозрачная рамка (border-transparent) компенсирует 1px бордюр полей
+    // ввода и выравнивает высоту кнопок с полями; рамка невидима — фон
+    // заливает её область
     static #baseStyles = "border border-transparent flex items-center justify-center gap-2 font-semibold transition duration-150 cursor-pointer outline-transparent focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-50 disabled:pointer-events-none active:scale-[.98]";
 
     // Варианты кнопок

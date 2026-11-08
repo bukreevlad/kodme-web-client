@@ -25,8 +25,7 @@ interface MoveAndResizeRect {
 export interface MoveAndResizeControllerOptions {
 
     /** Элемент, который двигаем/резаем (форма). Обязателен: без элемента
-     * контроллеру нечего двигать, и раньше ранний выход оставлял
-     * коллекции неинициализированными. */
+     * контроллеру нечего двигать. */
     content: HTMLElement;
 
     /** Элемент, за который тянут (по умолчанию — `content`). */
@@ -147,7 +146,7 @@ export class MoveAndResizeController {
             ...options,
             // `content` обязателен, а `moveElement` резолвится на элемент по
             // умолчанию — после спреда, чтобы явный undefined из вызова
-            // не затёр фолбэк (значения по умолчанию спредятся как раньше)
+            // не затёр фолбэк
             content: options.content,
             moveElement: options.moveElement || options.content
         };

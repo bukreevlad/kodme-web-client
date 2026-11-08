@@ -34,9 +34,8 @@ export function subscribeChannelItemUpdated(form: ChannelProfile): Unsubscribe |
 
     try {
 
-        // Подписываемся на событие обновление канала.
-        // Возвращаемую отписку сохраняет StoreEvents: раньше она терялась,
-        // и каждый открытый профиль навсегда оставлял подписку в Main.store
+        // Подписываемся на событие обновления канала; возвращаемую отписку
+        // сохраняет StoreEvents — без неё подписка в Main.store не снимется
         // invariant: контракт подписки Store — payload: unknown
         return store.on(`item::updated::${form.channelId}`, (data: unknown) => {
 

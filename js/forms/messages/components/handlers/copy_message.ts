@@ -20,10 +20,8 @@ export async function copyMessageHandler(message: MessageItem): Promise<void> {
         // Пустое сообщение копировать нечего
         if (!message?.data?.text) return;
 
-        // Копируем текст сообщения.
-        // Раньше промис navigator.clipboard «висел» без .catch(), и при отказе
-        // (нет прав/не https) пользователь не видел ни тоста, ни ошибки —
-        // try/catch не срабатывал, потому что отказ приходил в промис.
+        // Копируем текст сообщения: успех и отказ clipboard показывает
+        // тост внутри copyText (fallback на execCommand)
         await copyText(unescapeHtml(message.data.text), {
             context: "[app][messages][copy-message]",
             successText: t("forms.messages.components.messages.toasts.message_copied")

@@ -46,9 +46,8 @@ import type { Messages } from "../index.js";
  * MessageItem - компонент строки сообщения: шаблон, рендер текста (markdown),
  * статусы, вложения, реакции, ответ/пересылка и жесты (тап/свайп в ответ).
  *
- * Форма создания - `createMessageItem`: легаси-конструктор возвращал DOM-узел
- * (плюс уходил в системное сообщение), поэтому «конструктор + фабрика»
- * разделены: инстанс здесь — внутренняя деталь, наружу отдаётся элемент.
+ * Форма создания - `createMessageItem`: инстанс класса — внутренняя деталь,
+ * наружу отдаётся готовый элемент.
  * ***************************************************************************
  */
 export class MessageItem {
@@ -77,7 +76,7 @@ export class MessageItem {
     // Ссылки на узлы шаблона: привязываются один раз в конструкторе
     // (_bindNodes) и переиспользуются всеми перерисовками _setup()
     // invariant: узлы входят в собственный шаблон _template(); при битом
-    // шаблоне падение случится в _setup и будет поймано его catch (как в легаси)
+    // шаблоне падение случится в _setup и будет поймано его catch
     block!: HTMLElement;
     presentation!: HTMLElement;
     avatar!: HTMLElement;
@@ -661,9 +660,8 @@ export class MessageItem {
         // Проверка статуса сообщения
         if (channel.type === 1 && (getSessionUserId() === this.data.created_user_id)) {
 
-            // NOTE(MIGRATION): в легаси отсутствие id давало сравнение
-            // null/undefined с id (NaN → false) — сохраняем поведение явной
-            // проверкой; invariant: иконки check/checks входят в набор Icons
+            // При отсутствии id сравнение пропускаем (проверка явная):
+            // invariant: иконки check/checks входят в набор Icons
             const lastViewedId = channel.display_last_viewed_message_id;
             if (lastViewedId != null && lastViewedId < this.data.id) {
                 this.statusIcon.prepend(Icons.icon("check")!);

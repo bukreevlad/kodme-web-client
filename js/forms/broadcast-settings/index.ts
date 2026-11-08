@@ -240,7 +240,7 @@ export class BroadcastSettings {
             let isChat = this.tpl.querySelector<HTMLInputElement>(`:scope >.content [name="is-chat"]`);
 
             // invariant: все input входят в шаблон _template() — при отсутствии
-            // одного из них заполнять форму не из чего (легаси падал в catch)
+            // одного из них заполнять форму не из чего
             if (!name || !about || !rtmpUrl || !rtmpKey || !whipUrl || !chatUrl || !isPublic || !isChat) return;
 
             // Если есть обложка

@@ -82,8 +82,7 @@ export function updateFooter(form: Call): void {
             const isEnabled = local ? source.isEnabled(local) === true : false;
 
             // Иконка отражает состояние устройства; без иконки кнопку
-            // оставляем пустой — NOTE(MIGRATION): исправлен реальный баг:
-            // раньше отсутствие иконки писало в кнопку строку "undefined"
+            // оставляем пустой
             const icon = Icons.icon(isEnabled ? source.on : source.off, {
                 classes: ["w-5", "h-5"]
             });

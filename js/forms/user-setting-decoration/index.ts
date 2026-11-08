@@ -245,7 +245,6 @@ export class UserSettingDecorations {
         try {
 
             // Текущая сессия: без неё настройки декораций не читаются
-            // (легаси здесь же падал с TypeError)
             const session = LocalStorage.session;
             if (!session) return;
 

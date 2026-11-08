@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import "@videojs/html/i18n";
 import "@videojs/html/i18n/locales/ru";
 import "@videojs/html/video/player";
 import "@videojs/html/video/skin";
@@ -240,27 +241,17 @@ if (!customElements.get("cdm-video-skin")) {
  * ***************************************************************************
  * VIDEO_PLAYER - глобальный видеоплеер проекта на Video.js 10.
  *
- * Зачем он нужен
- * --------------
- * Раньше каждое место с видео (media-viewer, видеокружки, трансляции,
- * конференция) самостоятельно поднимало `new Plyr(...)` и повторяло одну и
- * ту же обвязку: события, постер, качество, teardown, `[app][audio]::media-play`.
+ * Video.js 10 — не конструктор, а три custom element'а
+ * (`<video-player>` + скин + `<video>`): компонент скрывает их композицию
+ * и даёт Plyr-совместимый API.
  *
- * Video.js 10 — это не конструктор, а три custom element'а
- * (`<video-player>` + скин + `<video>`), поэтому «просто заменить Plyr»
- * нельзя. Этот компонент скрывает композицию и даёт API, максимально
- * близкий к Plyr, чтобы перенос был механическим.
- *
- * Ключевое решение по стримингу
- * -----------------------------
- * HLS/FLV/RTC-движки (hls.js, mpegts.js, livekit-client, WebRTC) остаются
- * прежними и работают с ТЕМ ЖЕ нативным `<video>`, который отдаётся наружу
- * в `player.video`. Причина — кастомный `xhrSetup` с `?hls_chunk=` (его
- * требует service worker) и WHEP-логика трансляций. Меню качества при этом
- * остаётся нативным для Video.js: уровни hls.js пробрасываются через
- * адаптер `HlsLevelsRenditions` (частный класс ниже), а целые MP4-рендерации
- * загруженного видео — через `FileRenditions` (см.
- * `js/utils/video/file_renditions.js`).
+ * Стриминг: HLS/FLV/RTC-движки (hls.js, mpegts.js, livekit-client, WebRTC)
+ * работают с тем же нативным `<video>`, что отдаётся наружу в `player.video`:
+ * кастомный `xhrSetup` с `?hls_chunk=` (его требует service worker) и
+ * WHEP-логика трансляций требуют родного элемента. Меню качества нативное
+ * для Video.js: уровни hls.js пробрасываются адаптером `HlsLevelsRenditions`
+ * (частный класс ниже), целые MP4-рендерации загруженного видео —
+ * `FileRenditions` (см. `js/utils/video/file_renditions.js`).
  * ***************************************************************************
  */
 export class VideoPlayer {
@@ -276,6 +267,9 @@ export class VideoPlayer {
 
     /** Корневой <video-player> (state boundary Video.js); null после destroy(). */
     player: VideojsPlayerElement | null;
+
+    /** Обёртка <media-i18n> — перевод лейблов плеера; null после destroy(). */
+    i18nProvider: HTMLElement | null = null;
 
     /** Скин плеера (наш light-DOM либо packaged <video-skin>); null после destroy(). */
     skin: HTMLElement | null;
@@ -623,8 +617,15 @@ export class VideoPlayer {
         // Постер
         if (this.options.poster) this.poster = this.options.poster;
 
-        // Монтируем: только после вставки в DOM store получает медиа
-        if (this.host) this.host.appendChild(this.player);
+        // Монтируем: только после вставки в DOM store получает медиа.
+        // Обёртка <media-i18n> даёт лейблам плеера перевод и наследует
+        // <html lang> — смена языка подхватывается без пересоздания
+        if (this.host) {
+            const i18nProvider = document.createElement("media-i18n");
+            i18nProvider.appendChild(this.player);
+            this.i18nProvider = i18nProvider;
+            this.host.appendChild(i18nProvider);
+        }
 
         // Страховка стилей packaged-скина: Chromium при подключении первого
         // экземпляра <video-skin> к документу тихо сбрасывает уже применённые
@@ -1270,13 +1271,14 @@ export class VideoPlayer {
             this.video.querySelectorAll("source").forEach((source) => source.remove());
         } catch (error) { }
 
-        // 5. Убираем <video-player> из DOM — store уничтожится сам
-        try { this.player?.remove(); } catch (error) { }
+        // 5. Убираем плеер из DOM (вместе с обёрткой <media-i18n>) — store уничтожится сам
+        try { (this.i18nProvider ?? this.player)?.remove(); } catch (error) { }
 
         this.store = null;
         this.container = null;
         this.skin = null;
         this.player = null;
+        this.i18nProvider = null;
         this._wideButton = null;
         this._wideTooltip = null;
         this._wideLabel = null;
@@ -1289,26 +1291,16 @@ export class VideoPlayer {
  * ***************************************************************************
  * HlsLevelsRenditions - адаптер списка уровней hls.js под модель Video.js 10.
  *
- * Частный класс `video_player.ts`. Раньше жил отдельным файлом
- * `js/utils/video/hls_renditions.js`, но тот обслуживал ещё и загруженные
- * видео-вложения. Загруженные видео перешли на целые MP4-рендерации
- * (`FileRenditions`), и отдельный модуль стал не нужен.
- * Единственный оставшийся потребитель — HLS живых трансляций из SRS
- * (раздел 11.4 плана), поэтому адаптер переехал сюда и не экспортируется.
+ * Частный класс `video_player.ts`, не экспортируется; потребитель один —
+ * HLS живых трансляций.
  *
- * Зачем это нужно
- * ---------------
- * Video.js 10 умеет показывать меню качества только тогда, когда медиаэлемент
- * «умеет renditions» (проверка `isMediaVideoRenditionCapable` смотрит на
- * наличие свойства `media.videoRenditions`). Мы сознательно НЕ переносим
- * HLS-движок на `@videojs/hlsjs-video`, потому что в проекте есть собственный
- * `xhrSetup`, переписывающий URL чанков на `?hls_chunk=` (это требуется
- * service worker'у, см. `js/sw.js`).
- *
- * Поэтому мы оставляем родной `hls.js`, подключённый к нативному `<video>`, но
- * «притворяемся» для Video.js: подсовываем элементу список уровней hls.js
- * через контракт `videoRenditions`. Видеоплеер сам соберёт из него меню
- * «Качество», а выбор пунктов будет приходить в `selectedIndex`.
+ * Video.js 10 показывает меню качества, только когда медиаэлемент «умеет
+ * renditions» (свойство `media.videoRenditions`, см. проверку
+ * `isMediaVideoRenditionCapable`). HLS остаётся родным hls.js на нативном
+ * `<video>`: его кастомный `xhrSetup` переписывает URL чанков на
+ * `?hls_chunk=` (это требуется service worker'у, см. `js/sw.js`). Адаптер
+ * подсовывает элементу список уровней через контракт `videoRenditions`:
+ * видеоплеер соберёт меню «Качество», выбор пунктов придёт в `selectedIndex`.
  *
  * Контракт, который ждёт Video.js:
  *   - `length` + итерация (`[...list]`) — чтобы получить все rendition'ы;

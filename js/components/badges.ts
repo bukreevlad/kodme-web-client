@@ -125,8 +125,8 @@ export class Badges {
                 const [name = "", ...valueParts] = attr.split("=");
                 badge.setAttribute(name, valueParts.join("="));
             } else if (typeof attr === "object") {
-                // Объект без имени в легаси уходил в setAttribute и получал
-                // "[object Object]" — сохраняем ту же сериализацию DOM
+                // Объект без имени: имя атрибута — строковая сериализация
+                // объекта ("[object Object]"), как у прямого setAttribute
                 if (attr.name) {
                     badge.setAttribute(attr.name, attr.value || "");
                 } else {

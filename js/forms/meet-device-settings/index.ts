@@ -215,8 +215,7 @@ export class MeetDeviceSettings {
                 const radio = event.target;
 
                 // Событие change целятся в элемент; чужой тип без
-                // dataset/matches отбрасываем — раньше это делал
-                // необязательный вызов `radio?.matches?.()`
+                // dataset/matches отбрасываем
                 if (!(radio instanceof HTMLInputElement)) return;
                 if (!radio.matches("input[type='radio'][data-device-id]")) return;
 

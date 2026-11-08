@@ -23,8 +23,7 @@ export async function botMenuHandler(form: Messages): Promise<void> {
         // Если нет формы
         if (!form) return;
 
-        // Меню команд бота имеет смысл только при ботах канала:
-        // раньше отсутствие ботов давало throw «Не передан: bots» в лог
+        // Меню команд бота имеет смысл только при ботах канала
         if (!form.channel?.bots) return;
 
         // Открываем форму botMenu

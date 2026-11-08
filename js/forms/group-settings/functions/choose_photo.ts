@@ -5,9 +5,8 @@ import { cropImage } from "../../../utils/image/image_cropper.js";
 import { uploadDerivedAssets, matchBlobsToTargets } from "../../../utils/media/upload_derived_assets.js";
 
 // Импортируем config
-// NOTE(MIGRATION): MIME берётся из справочника напрямую: обёртка
-// utils/validation принимает только File, а на вход здесь webp-Blob
-// из cropImage — логика определения та же ( делегирование )
+// MIME берётся из справочника напрямую: обёртка utils/validation
+// принимает только File, а на вход здесь webp-Blob из cropImage
 import { resolveMimeType } from "../../../config/file_types.js";
 
 // Импортируем components

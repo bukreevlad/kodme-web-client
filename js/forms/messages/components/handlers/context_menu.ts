@@ -151,7 +151,7 @@ export async function contextMenuHandler(event: Event, message: MessageItem): Pr
         };
 
         // Канал формы обязателен для проверки прав удаления — иначе
-        // легаси падал в catch и меню не открывалось
+        // проверка упадёт в catch и меню не откроется
         if (!message.form.channel) return;
 
         // Имеет ли право удалять "Для всех" в обычных группах/личках

@@ -80,9 +80,7 @@ export function messageAttaches(message: MessageItem): void {
             if (!attachment) continue;
 
             // Тип вложения определяет единый классификатор: он знает и про
-            // mime_type/type, и про голосовые/видео-кружки по метадате.
-            // Раньше эти проверки дублировались здесь и в attachment_strip.js
-            // и со временем разъехались.
+            // mime_type/type, и про голосовые/видео-кружки по метадате
             const type = AttachClassifier.classify(attachment);
 
             // Изображение

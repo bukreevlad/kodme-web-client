@@ -133,12 +133,9 @@ function renderMessage(channel: ChannelItem, data: ChannelRecord): HTMLElement |
     // Проверяем системное ли это сообщение
     if (data?.last_message?.action_type) {
 
-        // Поиск системного сообщения в локализации.
-        // Парсер читает из сообщения только тип события и его payload;
-        // тип в записи объявлен числом, а строка локали — строковый ключ
-        // (на проводе это значение вида "USER_JOINED_GROUP"), поэтому
-        // собираем источник с приведением через String(): поведение
-        // идентично легаси — обращение к объекту локали само приводило ключ
+        // Поиск системного сообщения в локализации: тип события — число,
+        // а ключ локали — строка (значение вида "USER_JOINED_GROUP"),
+        // поэтому источник собираем с приведением через String()
         const messagesLocale = I18n.tree.forms.messages.components.messages.system_messages;
         const systemSource = { ...data.last_message, action_type: String(data.last_message.action_type) };
         text.textContent = parseSystemMessage(systemSource, messagesLocale);
@@ -150,8 +147,8 @@ function renderMessage(channel: ChannelItem, data: ChannelRecord): HTMLElement |
             text.textContent = t("forms.main.components.channels.last_message.sticker");
 
             // Сервер присылает текст экранированным, поэтому снимаем одно экранирование.
-            // NOTE(MIGRATION): пустой текст нормализуется — null/undefined в
-            // unescapeHtml упал бы в catch и превью не отрисовалось вовсе
+            // Пустой текст нормализуем: null/undefined в unescapeHtml упал бы
+            // в catch и превью не отрисовалось вовсе
         } else {
             text.textContent = unescapeHtml(data?.last_message?.text ?? "");
         }
@@ -188,9 +185,9 @@ function renderMessage(channel: ChannelItem, data: ChannelRecord): HTMLElement |
     if (!data?.last_message?.is_error_sending && !data?.last_message?.is_temporary) {
         if (type === 1 && (getSessionUserId() === data?.last_message?.created_user_id)) {
 
-            // NOTE(MIGRATION): в легаси отсутствие id давало сравнение
-            // null/undefined с id (NaN → false) — сохраняем поведение явной
-            // проверкой; invariant: иконки check/checks входят в набор Icons
+            // Отсутствие id — «нет отметки прочтения»: сравнение делаем только
+            // при lastViewedId != null; invariant: иконки check/checks входят
+            // в набор Icons
             const lastViewedId = data.display_last_viewed_message_id;
             if (statusIcon) {
                 if (lastViewedId != null && lastViewedId >= data.last_message.id) {

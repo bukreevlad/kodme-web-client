@@ -9,11 +9,9 @@ export type RawAttribute = string | { name: string; value?: string };
  * applyAttributes - применяет массив сырых атрибутов к элементу.
  *
  * Единая точка парсинга формата атрибутов компонентов (Buttons, Inputs,
- * Badges). Раньше этот код был продублирован в каждом компоненте, а в
- * Avatars — ещё и в урезанной версии (без формата `name=value`).
+ * Badges).
  *
- * Сохранена легаси-семантика: объект без поля `name` сериализуется в
- * `setAttribute` строкой (раньше получался "[object Object]").
+ * Объект без поля `name` сериализуется в `setAttribute` строкой.
  *
  * @param {Element} element - Целевой DOM-элемент.
  * @param {RawAttribute[]} attributes - Массив атрибутов.
@@ -35,8 +33,7 @@ export function applyAttributes(element: Element, attributes: RawAttribute[]): v
         else if (typeof attr === "object" && attr.name) {
             element.setAttribute(attr.name, attr.value || "");
         }
-        // Объект без имени в легаси уходил в setAttribute как "[object Object]" —
-        // сохраняем ту же сериализацию DOM
+        // Объект без имени уходит в setAttribute как "[object Object]"
         else if (typeof attr === "object") {
             element.setAttribute(String(attr), "");
         }

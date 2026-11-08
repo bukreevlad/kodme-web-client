@@ -28,12 +28,8 @@ import { I18n, t } from "../../../utils/i18n/index.js";
  * Одна запись канала может дать несколько строк (общая папка + папки
  * пользователя): каждая строка подписывается на `item::updated::<id>`
  * своего стора и держит ссылку на себя в `data.__domElements__`, чтобы
- * стор удалил все копии разом.
- *
- * Элемент раньше возвращался самим конструктором (`return this.element`) —
- * в TS это запрещено (конструктор обязан возвращать `this`), поэтому
- * строка создаётся через `new ChannelItem(...)`, а в DOM вставляется
- * её поле `element`.
+ * стор удалил все копии разом. В DOM строка вставляется через её
+ * поле `element`.
  * ***************************************************************************
  */
 export class ChannelItem {
@@ -145,7 +141,7 @@ export class ChannelItem {
             this.element.setAttribute("data-id", this.data.id);
 
             // Определяем id аватара: у диалогов — пользователь, иначе — канал
-            // (type опционален — null в includes не попадает, как в легаси)
+            // (type опционален — null в includes не попадает)
             const isDialog = this.data.type != null && [1, 8].includes(this.data.type);
             const avatarId = isDialog ? this.data.display_user_id : this.data.id;
 
@@ -258,8 +254,7 @@ export class ChannelItem {
             // Очищаем
             this.lastMessage.innerHTML = "";
 
-            // Отображаем сообщение (строка может не собраться — тогда
-            // пропускаем, как в легаси, где это падало в catch)
+            // Отображаем сообщение (строка может не собраться — тогда пропускаем)
             const lastMessageEl = createLastMessage(this);
             if (lastMessageEl) this.lastMessage.appendChild(lastMessageEl);
 

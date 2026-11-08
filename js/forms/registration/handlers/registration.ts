@@ -66,8 +66,8 @@ export async function registrationHandler(form: Registration): Promise<void> {
         Inputs.markInvalid(password, false);
         Inputs.markInvalid(retryPassword, false);
 
-        // Запрос (поля предыдущих шагов опциональны в типе — пустая строка
-        // уходит на сервер и получает валидную серверную ошибку, как в легаси)
+        // Поля предыдущих шагов опциональны в типе: пустая строка уходит
+        // на сервер и получает валидную серверную ошибку
         const response = await registrationRequest({
             email: form.email ?? "",
             first_name: form.firstName ?? "",

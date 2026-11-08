@@ -93,8 +93,8 @@ export function generateVideoMetadata(file: MediaInput, widths: number[] = [1200
                 const canvas = document.createElement("canvas");
                 const ctx = canvas.getContext("2d");
 
-                // Без контекста генерировать превью нечем: раньше здесь же падал
-                // TypeError, теперь — осмысленная ошибка в общий catch
+                // Без контекста генерировать превью нечем: бросаем осмысленную
+                // ошибку, её поймает общий catch
                 if (!ctx) throw new Error("Не удалось получить контекст canvas 2d для превью");
 
                 // 1. Генерируем основные thumbnails

@@ -90,9 +90,8 @@ export function attachmentStrip(data: AttachmentStripData | null | undefined, el
             // Показываем до MAX_IMAGE_PREVIEWS превью
             for (let i = 0; i < images.length && i < MAX_IMAGE_PREVIEWS; i++) {
 
-                // Placeholder приходит из метадаты классификатора как unknown —
-                // честная проверка типа вместо приведения; нестроковые значения
-                // пропускаются, как и раньше (falsy)
+                // Placeholder приходит из метадаты классификатора как unknown:
+                // проверяем тип, нестроковые значения пропускаем (falsy)
                 const placeholder = images[i]?.metadata?.placeholder;
                 if (typeof placeholder !== "string") continue;
 

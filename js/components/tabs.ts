@@ -128,7 +128,7 @@ export class Tabs {
         if (activeIndex !== -1) {
             this.currentIndex = activeIndex;
             // Атрибут обязателен по разметке, но по типу его отсутствие → "",
-            // чтобы falsy-проверки ниже работали как с null из легаси
+            // чтобы falsy-проверки ниже работали и с пустой строкой
             const activeLink = this.tabLinksElements[activeIndex];
             if (activeLink) this.currentId = activeLink.getAttribute("data-target") ?? "";
         }
@@ -648,8 +648,8 @@ export class Tabs {
                 currentLinkElem = tempDiv.firstChild;
             }
 
-            // invariant: вызывающий код передаёт корневой HTML-элемент,
-            // иначе раньше здесь же падал setAttribute на не-элементе
+            // invariant: вызывающий код передаёт корневой HTML-элемент —
+            // иначе setAttribute упадёт на не-элементе
             if (!(currentLinkElem instanceof HTMLElement)) {
                 throw new TypeError(`TabManager: addTab: links должен приводиться к HTML-элементу (id "${options?.id}")`);
             }
@@ -675,8 +675,8 @@ export class Tabs {
             paneElem = tempDiv.firstChild;
         }
 
-        // invariant: вызывающий код передаёт корневой HTML-элемент,
-        // иначе раньше здесь же падал setAttribute на не-элементе
+        // invariant: вызывающий код передаёт корневой HTML-элемент —
+        // иначе setAttribute упадёт на не-элементе
         if (!(paneElem instanceof HTMLElement)) {
             throw new TypeError(`TabManager: addTab: pane должен приводиться к HTML-элементу (id "${options?.id}")`);
         }
@@ -684,8 +684,8 @@ export class Tabs {
         paneElem.setAttribute('data-target', options?.id);
         paneElem.classList.add('item');
 
-        // Без контейнера панелей контент таба вставить некуда — раньше здесь
-        // же падало обращение к null, теперь ошибка называется явно
+        // Без контейнера панелей контент таба вставить некуда —
+        // падаем с явной ошибкой вместо обращения к null
         if (!this.tabPanes) {
             throw new TypeError(`TabManager: addTab: контейнер panes не задан (id "${options?.id}")`);
         }

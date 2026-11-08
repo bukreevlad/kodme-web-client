@@ -33,18 +33,14 @@ export async function startHLSPlayer(form: BroadcastPlay): Promise<void> {
         // Если трансляция не запущена
         if (!form.cast?.is_live) return;
 
-        // Без адреса потока либо без <video> запускать нечего: раньше
-        // loadSource/attachMedia получали null и падали в catch
+        // Без адреса потока либо без <video> запускать нечего
         const hlsUrl = form.hlsUrl;
         const video = form.video;
         if (!hlsUrl || !video) return;
 
-        // Проверка поддержки протокола — ВЫШЕ остановки текущего движка.
-        //
-        // HLS играет двумя путями: через MSE (hls.js) и нативно (Safari/iOS,
-        // сам <video> умеет m3u8). Если не работает ни один, раньше движок
-        // всё равно останавливался, лоадер оставался висеть на чёрном экране,
-        // а тост не показывался — пользователь просто терял картинку
+        // Проверка поддержки протокола — ВЫШЕ остановки текущего движка:
+        // иначе движок остановится без тоста, и лоадер останется крутиться
+        // на чёрном экране
         const canPlayNatively = Boolean(video.canPlayType("application/vnd.apple.mpegurl"));
 
         if (!Hls.isSupported() && !canPlayNatively) {

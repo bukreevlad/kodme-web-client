@@ -32,12 +32,9 @@ export async function toggleScreenHandler(form: MeetPlay): Promise<void> {
             await participant?.setCameraEnabled(false);
         }
 
-        // Переключаем экран. Звук при демонстрации — по настройке из
-        // диалога демонстрации: `audio: true` здесь означал, что
-        // звук вкладки уезжает слушателям вместе с галочкой в диалоге
-        // браузера, а выключить это было нечем. Строгое `!== false` —
-        // поле может быть не задано (настройки ни разу не сохраняли),
-        // и это равно «звук нужен», как было раньше
+        // Переключаем экран; звук при демонстрации — по настройке из диалога:
+        // `audio: true` передаёт звук вкладки слушателям. Строгое `!== false` —
+        // поле может быть не задано, и это равно «звук нужен»
         await participant?.setScreenShareEnabled(willEnableScreen, {
             audio: form?.screenSettings?.captureAudio !== false
         });

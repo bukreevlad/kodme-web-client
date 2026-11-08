@@ -144,9 +144,8 @@ export function initRoutes(): void {
  * Подписка на клики по push-уведомлениям при открытом приложении.
  *
  * Service Worker при клике по уведомлению присылает сообщение
- * FOCUS_NOTIFICATION_CLICK с данными уведомления (в т.ч. url deep-link'а).
- * Раньше сообщение никем не обрабатывалось — окно лишь получало фокус.
- * Теперь параметры url разбираются и открываются через общий renderRoutes.
+ * FOCUS_NOTIFICATION_CLICK с данными уведомления (в т.ч. url deep-link'а);
+ * параметры url разбираются и открываются через общий renderRoutes.
  * ***************************************************************************
  */
 export function initNotificationRouter(): void {

@@ -25,9 +25,7 @@ import { I18n, t } from "../../../utils/i18n/index.js";
  * `data-id` обязателен для скролла: по нему ScrollManager находит якорь
  * при вставке prev-пачки в начало списка (см. functions/load_section.ts).
  *
- * Фабрика возвращает готовый DOM-элемент (легаси-конструктор возвращал
- * элемент вместо this — в TS такой паттерн не типизируется честно):
- * `createUserItem(form, data)`.
+ * Фабрика возвращает готовый DOM-элемент: `createUserItem(form, data)`.
  *
  * @param form - Экземпляр формы поиска.
  * @param data - Данные записи.

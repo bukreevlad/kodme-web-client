@@ -138,11 +138,6 @@ export class Themes {
 
             if (!this.tpl) return;
 
-            // NOTE(MIGRATION): из опций формы убрана мёртвая
-            // openAnimationClass: передавалась строкой "slide-in-right",
-            // а оверлей ждёт объект пресета { animation, settings } —
-            // опция никогда не применялась
-
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",

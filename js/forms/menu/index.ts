@@ -348,7 +348,7 @@ export class Menu {
                     </div>
 
                     <div class="p-3">
-                        <span data-version class="text-muted text-sm">${t("forms.menu.build_version")} __BUILD_VERSION__</span>
+                        <span data-version class="text-muted text-sm">${t("forms.menu.build_version")}<span> __BUILD_VERSION__</span></span>
                     </div>
                 </div>
             </div>

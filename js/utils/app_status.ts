@@ -33,9 +33,8 @@ export class AppStatus {
         // Проверяем элемент
         if (!this.element) return;
 
-        // Устанавливаем текст
-        // NOTE(MIGRATION): реальный баг легаси — при text: undefined в разметку
-        // попадала строка "undefined" (приведение к строке в DOM); нормализуем в null → ""
+        // Устанавливаем текст: `undefined` нормализуем в null, иначе
+        // в разметку попадёт строка "undefined"
         this.element.textContent = data.text ?? null;
 
     }

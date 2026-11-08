@@ -150,8 +150,7 @@ export class ActivityStatusManager {
      */
     triggerUIUpdate(channelId: string) {
 
-        // Обновляем форму сообщений, если она открыта
-        // (без канала обновлять нечего — раньше сюда мог уйти null)
+        // Обновляем форму сообщений, если она открыта и канал загружен
         const messagesForm = Messages.instances.get(channelId);
         if (messagesForm && messagesForm.channel && typeof messagesForm._update === "function") {
             messagesForm._update(messagesForm.channel);

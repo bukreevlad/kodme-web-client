@@ -60,9 +60,8 @@ export async function saveScreenSettingsHandler(form: MeetScreenSettings): Promi
         if (resolutionKey === "original") {
             selectedPreset = undefined;
         } else {
-            // Ключ из списка формы сверяем с белым списком пресетов;
-            // неизвестный (например, h360fps30, которого у LiveKit нет)
-            // по-прежнему молча заменяется запасным — как и раньше
+            // Ключ из списка формы сверяем с белым списком пресетов:
+            // неизвестный молча заменяется запасным (h720fps15)
             const base = isScreenSharePresetKey(resolutionKey)
                 ? ScreenSharePresets[resolutionKey]
                 : ScreenSharePresets.h720fps15;
@@ -87,8 +86,8 @@ export async function saveScreenSettingsHandler(form: MeetScreenSettings): Promi
         const captureAudio = tpl.querySelector<HTMLInputElement>("[data-audio]")?.checked !== false;
         // ---------- ЗВУК ----------
 
-        // Родительская форма встречи и её комната обязательны — как в
-        // легаси, без них сохранение падает в catch с тостом
+        // Родительская форма встречи и её комната обязательны: без них
+        // сохранение падает в catch с тостом
         const meetPlayForm = form.meetPlayForm;
         if (!meetPlayForm) throw new Error("[screen-settings]: не найдена форма встречи");
 

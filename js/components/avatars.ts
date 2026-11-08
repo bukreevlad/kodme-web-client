@@ -391,7 +391,7 @@ export class Avatars {
 
         // Создаем иконку
         // Строка иконки может отсутствовать — lookup по "" не найдёт иконки,
-        // что легаси-код обрабатывал через fallback на акроним
+        // тогда срабатывает fallback на акроним (ветка else ниже)
         const iconElement = Icons.icon(this.options.icon ?? "", { settings: { filled: true, color: "var(--color-white)" } });
         if (iconElement) {
 

@@ -208,8 +208,8 @@ export class MediaViewer {
                 insertInto: this.options.insertInto,
                 closeOnOverlay: this.options.closeOnOverlay,
                 closeOnEsc: this.options.closeOnEsc,
-                // Легаси передавал false: отступ от краёв не нужен (тип опции —
-                // класс отступа либо null; оба варианта обрабатываются как «нет отступа»)
+                // Отступ от краёв не нужен: `null` — явное отсутствие
+                // класса отступа (тип опции — класс либо null)
                 wrapPadding: null,
                 overlayBlur: true,
                 onBeforeOpen: async () => await this._onBeforeOpen(),
@@ -361,12 +361,10 @@ export class MediaViewer {
     _template(): HTMLElement {
         const isBlur = LocalStorage?.session?.settings?.user?.decorations?.blur || false;
 
-        // z-index здесь раньше стоял (`z-[1020]`), но не делал ничего: обёртка
-        // диалога уже создаёт свой stacking context, поэтому «поднять
-        // просмотрщик» таким классом было невозможно. Порядок слоёв задаёт
-        // обёртка — см. `CDM_Z_INDEX` в `js/config/constants.js`. Внутри
-        // просмотрщика z-index'ы (`z-10`…`z-60`) работают как обычно, потому
-        // что сравниваются между собой.
+        // Порядок слоёв задаёт обёртка диалога (см. `CDM_Z_INDEX` в
+        // `js/config/constants.js`): свой z-index на корне не действует —
+        // обёртка создаёт свой stacking context, а внутренние z-10…z-60
+        // работают, сравниваясь между собой
         const root = new DOMParser().parseFromString(`
             <div class="cdm-modal image-viewer w-full h-full flex p-0 inset-0 justify-center">
                 <div class="absolute inset-0 bg-black/90"></div>

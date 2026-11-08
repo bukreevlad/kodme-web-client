@@ -36,8 +36,6 @@ export async function updateAppHandler(form: UserSettingCache): Promise<void> {
             }
 
             // Принудительная перезагрузка страницы
-            // NOTE(MIGRATION): убран устаревший аргумент true у reload() —
-            // он игнорируется современными браузерами, поведение идентично
             window.location.reload();
 
         }

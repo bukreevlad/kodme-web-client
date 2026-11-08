@@ -20,10 +20,6 @@ import type { AttachmentData } from "./types.js";
  * ***************************************************************************
  * createVideoNoteItem - видео-кружок: превью с заглушкой, длительность,
  * пропорции 1/1 и ленивый запуск плеера по клику (со всеми рендерациями).
- *
- * Легаси-класс возвращал DOM-узел из конструктора, поэтому состояние плеера
- * живёт в замыкании фабрики. Родительское сообщение компоненту не нужно
- * (все данные читаются из вложения) — параметр убран.
  * @param data - Данные вложения (id, token, metadata и т.д.).
  * @returns DOM-элемент вложения.
  * ***************************************************************************
@@ -122,9 +118,8 @@ export function createVideoNoteItem(data: AttachmentData): HTMLElement {
                     // invariant: у локальной миниатюры есть blob-ссылка _url
                     thumbnailUrl = thumb._url as string;
                 } else {
-                    // id есть у серверного файла; у локального берётся ветка
-                    // выше — пустая строка здесь лишь закрывает тип (легаси
-                    // строила битую ссылку с undefined в URL)
+                    // id есть у серверного файла; у локального его нет —
+                    // пустая строка здесь лишь закрывает тип
                     srcThumbnail = StorageUrl.forStorage(data.id ?? "", { size: thumb !== false ? thumb.width : undefined });
 
                     thumbnailUrl = CacheManager.getMediaSrc({
@@ -135,9 +130,8 @@ export function createVideoNoteItem(data: AttachmentData): HTMLElement {
 
                 }
 
-                // Прячем размытую заглушку, когда превью загрузилось.
-                // Раньше обработчик висел только в ветке серверной ссылки,
-                // и для локального blob он не срабатывал вовсе.
+                // Прячем размытую заглушку, когда превью загрузилось —
+                // в обеих ветках (серверная ссылка и локальный blob).
                 if (thumbnail) {
                     thumbnail.onload = () => {
                         placeholder?.classList.add("hidden");
@@ -161,8 +155,7 @@ export function createVideoNoteItem(data: AttachmentData): HTMLElement {
             } else {
 
                 // Добавляем type=video, чтобы SW сразу понимал, в какой кеш класть.
-                // id есть у серверного файла — легаси строила бы битую ссылку
-                // с undefined в URL
+                // id есть только у серверного файла — у локального пустая строка
                 srcVideoFile = StorageUrl.forStorage(data.id ?? "");
 
             }
@@ -347,8 +340,7 @@ export function createVideoNoteItem(data: AttachmentData): HTMLElement {
             //this.duration?.classList?.remove("hidden");
             //this.playerWrap?.classList?.add("hidden");
 
-            // Освобождаем плеер и HLS-движок: раньше hls.js оставался жить
-            // и накапливал MSE-буферы при каждом досмотре
+            // Освобождаем плеер и HLS-движок — вызов пока отключён
             //this._destroyPlayer();
         });
 

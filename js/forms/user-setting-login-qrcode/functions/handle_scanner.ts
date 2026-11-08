@@ -36,10 +36,8 @@ export async function handleScanner(form: UserSettingLoginWithQRCode, qrData: st
         // Отправляем на сервер
         let response = await scannedRequest({ qr_data: parsedData });
 
-        // NOTE(MIGRATION): убрана мёртвая ветка `if (!response.status)` — в ней
-        // была ссылка на несуществующую переменную result (ReferenceError), а
-        // ResponseHandler бросает ApiError при не-2xx, поэтому тело успешного
-        // ответа всегда status: true
+        // ResponseHandler бросает ApiError при не-2xx —
+        // тело успешного ответа всегда status: true
 
         // Закрываем форму
         form.modal?.close();

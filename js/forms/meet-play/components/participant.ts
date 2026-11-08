@@ -223,9 +223,8 @@ export class ParticipantItem {
                 }
             }
 
-            // Статус микрофона (включен/выключен аппаратно).
-            // NOTE(MIGRATION): исправлен реальный баг: отсутствие иконки
-            // писало в плитку строку "undefined"
+            // Статус микрофона (включен/выключен аппаратно); без иконки
+            // элемент остаётся пустым
             if (this.micStatusEl) {
                 const isMicOn = participant.isMicrophoneEnabled;
                 const micIcon = isMicOn ? Icons.icon("microphone") : Icons.icon("microphone-off");

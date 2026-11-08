@@ -78,7 +78,7 @@ export class VideoNoteSession {
         this.form = form;
 
         // Шаблон обязателен к моменту создания сессии (запись доступна
-        // только из открытой формы) — как в легаси, отсутствие — ошибка
+        // только из открытой формы) — отсутствие это ошибка
         const tpl = form.tpl;
         if (!tpl) throw new Error("[video-note]: не найден шаблон формы");
 
@@ -292,7 +292,7 @@ export class VideoNoteSession {
 
         } else {
 
-            // Канал и поле ввода обязательны к моменту записи — как в легаси,
+            // Канал и поле ввода обязательны к моменту записи —
             // отсутствие обрывает создание через общий catch
             const channel = this.form.channel;
             const textarea = this.form.textarea;

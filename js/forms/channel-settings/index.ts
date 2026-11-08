@@ -190,8 +190,8 @@ export class ChannelSettings {
             // Ссылка
             let link = this.tpl.querySelector(":scope >.content [action-set-link]");
             link?.addEventListener("click", () => {
-                // NOTE(MIGRATION): настройки загружаются до открытия формы;
-                // пустая ссылка нормализуется, чтобы в диалог не «утек» null/undefined
+                // Настройки загружены до открытия формы; пустую ссылку
+                // нормализуем в `""`, чтобы в диалог не утёк null/undefined
                 const settings = this.settings;
                 if (settings) new ChannelSettingLink({ channelId: this.channelId, link: settings.link ?? "" });
             });

@@ -90,9 +90,9 @@ export function subscribeMessagesNew(asyncQueue: AsyncQueue): void {
                     let isMessage = form.store.get(data.id);
 
                     // Возможна гонка: эхо собственной отправки пришло раньше ответа сервера.
-                    // Вместо угадывания тайминга (раньше был setTimeout(300)) детерминированно
-                    // ждём именно ответов по нашим исходящим сообщениям: они резолвятся в
-                    // sending_messages сразу после подмены localId -> serverId.
+                    // Ждём детерминированно ответов по нашим исходящим сообщениям:
+                    // они резолвятся в sending_messages сразу после подмены
+                    // localId -> serverId.
                     if (!isMessage && form.pendingIds?.size > 0 &&
                         data.created_user_id === getSessionUserId()) {
 

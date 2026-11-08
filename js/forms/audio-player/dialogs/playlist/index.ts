@@ -187,7 +187,7 @@ export class PlaylistDialog {
 
             // Запускаем выбранный трек (передаем текущий плейлист и индекс);
             // invariant: контейнер монтирования мини-плеера не задан — плеер
-            // уже смонтирован глобальным менеджером, передаём null как легаси
+            // уже смонтирован глобальным менеджером, поэтому передаём null
             this.manager.play(this.manager.playlist, null, { after: true }, index);
             if (this.form) trackChangeHandler(this.form);
 

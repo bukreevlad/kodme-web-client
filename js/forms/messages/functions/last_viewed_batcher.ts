@@ -185,8 +185,6 @@ export class LastViewedBatcher {
         } catch (error) {
 
             // Отметка о прочтении не критична: логируем и идём дальше.
-            // Раньше здесь был Logger.error в Intersection без объяснения,
-            // и потери отметки никто не замечал.
             Logger.error(`${this.context}: не удалось отправить отметку о прочтении ${messageId}.`, error);
 
         } finally {

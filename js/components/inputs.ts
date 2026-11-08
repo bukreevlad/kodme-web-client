@@ -116,8 +116,7 @@ export class Inputs {
     static #baseStyles = "w-full transition-colors duration-200 focus-visible:outline-2 disabled:opacity-50 disabled:pointer-events-none outline-transparent placeholder:text-[var(--text-muted)]";
 
     // Варианты исполнения полей. Padding задаётся только размером (size),
-    // форма (shape) отвечает за радиус и рамку — раньше отступы дублировались
-    // в shape и size и конфликтовали между собой
+    // форма (shape) отвечает за радиус и рамку
     static #variants: { intent: Record<InputIntent, string>; shape: Record<InputShape, string>; size: Record<InputSize, string> } = {
         intent: {
             standard: "bg-white border-[var(--color-black)]/10 hover:border-[var(--color-black)]/20 focus-visible:border-[var(--color-brand)] focus-visible:outline-[var(--color-brand)]/20 dark:bg-[var(--color-black)]/30 dark:border-[var(--color-white)]/10 dark:hover:border-[var(--color-white)]/20 dark:focus-visible:border-[var(--color-brand)] dark:focus-visible:outline-[var(--color-brand)]/20",

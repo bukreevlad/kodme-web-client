@@ -64,8 +64,7 @@ export async function messageReactionClickHandler(message: MessageItem, reaction
 
     } catch (error) {
 
-        // Показываем причину: раньше здесь был только Logger.error, и отказ
-        // (например, превышение лимита запросов) выглядел как «реакция не сработала»
+        // Показываем причину отказа тостом (например, превышение лимита запросов)
         toastError(error, { context: "[app][messages][reaction-click]" });
 
         // При ошибке откатываем оптимистичное изменение, чтобы UI не врал

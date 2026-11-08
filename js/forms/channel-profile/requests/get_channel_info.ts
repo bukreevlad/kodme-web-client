@@ -25,7 +25,7 @@ export interface ChannelProfileResponse {
     /** Id канала. */
     id: string;
 
-    /** Тип канала (server/constants/channels.ts: 1,8 — диалоги, 2 — группа, 3 — канал, 4 — тема, 5 — избранное). */
+    /** Тип канала (1, 8 — диалоги, 2 — группа, 3 — канал, 4 — тема, 5 — избранное). */
     type: number;
 
     /** Ссылка на канал (@username или публичная ссылка). */

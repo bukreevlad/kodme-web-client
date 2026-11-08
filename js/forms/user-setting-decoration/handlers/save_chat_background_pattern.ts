@@ -25,8 +25,6 @@ export async function saveChatBackgroundPatternHandler(form: UserSettingDecorati
         const session = LocalStorage.session;
         if (!session) return;
 
-        // NOTE(MIGRATION): убран всегда-истинный fallback-путь — шаблонная
-        // строка с data.id никогда не пуста, ветка || не отрабатывала
         session.settings.user.decorations.chat_background.src = `img/svg-backgrounds/${data.id}`;
         LocalStorage.updateSession(session);
 

@@ -86,8 +86,7 @@ function setup(element: HTMLElement, data: BotAppRecord): void {
  */
 function actions(element: HTMLElement, form: BotSettings, data: BotAppRecord): void {
 
-    // Открываем app (легаси передавал `{ app: data }`, но BotApp читает
-    // только appId и молча ничего не открывал)
+    // Открываем app: BotApp читает только appId
     element.addEventListener("click", () => new BotApp({ appId: data.id }));
 
     // Изменить
@@ -103,11 +102,6 @@ function actions(element: HTMLElement, form: BotSettings, data: BotAppRecord): v
 /**
  * ***************************************************************************
  * Строка приложения бота в списке формы настроек.
- *
- * Легаси-класс возвращал из конструктора DOM-элемент вместо `this`
- * (класс-фабрика — красный флаг миграции), поэтому модуль переведён на
- * функцию-фабрику: наружу уходит готовый элемент, внутренняя логика живёт
- * в замыкании.
  *
  * @param form - Экземпляр формы.
  * @param data - Данные приложения.

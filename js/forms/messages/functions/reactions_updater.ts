@@ -210,8 +210,7 @@ export class ReactionsUpdater {
 
         } catch (error) {
 
-            // Ошибка поллинга не критична: в следующий цикл повторим.
-            // Раньше здесь был Logger.error на каждом такте при отсутствии сети.
+            // Ошибка поллинга не критична: в следующий цикл повторим
             Logger.warn(`[app][messages][reactions]: опрос не удался (${this.form.channelId}).`, getErrorMessage(error));
 
         } finally {

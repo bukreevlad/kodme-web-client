@@ -23,8 +23,6 @@ import type { AttachParent, AttachmentData } from "./types.js";
  * медиа, превью (заглушка + серверная ссылка или локальный blob) и открытие
  * просмотрщика по клику.
  *
- * Легаси-класс возвращал DOM-узел из конструктора, поэтому состояние
- * (актуальные данные вложения) живёт в замыкании фабрики.
  * @param message - Родительское сообщение.
  * @param data - Данные вложения (id, name, metadata и т.д.).
  * @returns DOM-элемент вложения.
@@ -129,10 +127,9 @@ export function createVideoItem(message: AttachParent, data: AttachmentData): HT
                     thumbnailUrl = thumb._url as string;
                 } else {
 
-                    // Функция getThumbnailSizeQuery уже возвращает готовую строку вида "?size=400".
+                    // getThumbnailSizeQuery уже возвращает готовую строку "?size=400".
                     // id есть у серверного файла; у локального берётся ветка
-                    // выше — пустая строка лишь закрывает тип (легаси строила
-                    // битую ссылку с undefined в URL)
+                    // выше — пустая строка лишь закрывает тип
                     const srcThumbnail = StorageUrl.forStorage(data.id ?? "", { size: thumb !== false ? thumb.width : undefined });
 
                     thumbnailUrl = CacheManager.getMediaSrc({
@@ -143,9 +140,8 @@ export function createVideoItem(message: AttachParent, data: AttachmentData): HT
 
                 }
 
-                // Прячем размытую заглушку, когда превью уже загрузилось.
-                // Раньше обработчик висел только в ветке серверной ссылки, и
-                // для локального blob он не срабатывал вовсе.
+                // Прячем размытую заглушку, когда превью уже загрузилось —
+                // в обеих ветках (серверная ссылка и локальный blob).
                 if (thumbnail) {
                     thumbnail.onload = () => {
                         placeholder?.classList.add("hidden");
@@ -181,13 +177,10 @@ export function createVideoItem(message: AttachParent, data: AttachmentData): HT
             // Устанавливаем параметры
             let media: MediaItem[] = [];
 
-            // Получаем все медиа в сообщении.
-            // Нормализуем вложения: сервер отдаёт массив, локальные (temp/pending)
-            // сообщения — объект-мап, поэтому .forEach на объекте падал.
-            // Копия элемента нужна контракту MediaViewer (id обязателен):
-            // значение id и локальные поля (_file) сохраняются как есть.
-            // У локального вложения id ещё нет — передаём пустую строку
-            // (легаси уходил undefined; оба значения falsy)
+            // Получаем все медиа в сообщении. Нормализуем вложения: сервер
+            // отдаёт массив, локальные (temp/pending) — объект-мап. Копия
+            // элемента нужна контракту MediaViewer: id обязателен, у локального
+            // вложения его ещё нет — передаём пустую строку
             Attachments.normalize(message.data.attachments).forEach(attach => {
                 if (isKind("image", attach.type || attach.mime_type)) media.push({ ...attach, id: attach.id ?? "" });
                 if (isKind("video", attach.type || attach.mime_type)) media.push({ ...attach, id: attach.id ?? "" });

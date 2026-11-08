@@ -152,11 +152,8 @@ export class PhotoItem {
                     const thumbnails = this.data?.metadata?.thumbnails;
                     const sizeQuery = getThumbnailSizeQuery(thumbnails, 800);
 
-                    // Формируем ссылку через StorageUrl + CacheManager.
-                    //
-                    // Раньше URL собирался вручную через `location.hostname`, а он
-                    // не содержит порт: на любом нестандартном порту (dev, staging)
-                    // превью не грузилось вообще. StorageUrl берёт origin целиком.
+                    // Формируем ссылку через StorageUrl + CacheManager:
+                    // StorageUrl берёт origin целиком, включая порт
                     const mediaUrl = CacheManager.getMediaSrc({
                         // GetThumbnailSizeQuery отдаёт размер в `thumb.width`,
                         // а не в `size`; при отсутствии превью — `thumb: false`,

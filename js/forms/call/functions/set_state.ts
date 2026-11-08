@@ -47,8 +47,7 @@ export function setState(form: Call, state: CallState, text?: string): void {
         // Оверлей нужен, пока звонок НЕ состоялся: в starting и ringing он
         // показывает аватар, имя собеседника, статус, отсчёт и кнопку отмены.
         // В active он обязан убраться — иначе своим фоном закроет видео и
-        // раскладку участников. Раньше условие было перевёрнутым: экран
-        // во время прозвона оставался пустым, а в разговоре — закрытым
+        // раскладку участников.
         const overlay = form?.tpl?.querySelector(":scope >.content [data-call-overlay]");
         const isCallOverlay = state !== "active";
 

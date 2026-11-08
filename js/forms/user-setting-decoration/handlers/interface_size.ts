@@ -25,9 +25,8 @@ export async function interfaceSizeHandler(form: UserSettingDecorations): Promis
         // Обновляем данные в сессии
         const session = LocalStorage.session;
 
-        // NOTE(MIGRATION): поле объявлено строкой-коэффициентом (см.
-        // SessionDecorationsSettings) — храним строку; читатели умножают или
-        // интерполируют значение, поведение идентично легаси-числу
+        // Поле объявлено строкой-коэффициентом (см. SessionDecorationsSettings) —
+        // храним строку; читатели умножают или интерполируют значение
         if (session) {
             session.settings.user.decorations.interface_size = String(scale);
             LocalStorage.updateSession(session);

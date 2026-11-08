@@ -205,10 +205,8 @@ export class UserSettingPrivacy {
             const searchUsers = this.tpl.querySelector<HTMLElement>(`:scope >.content [name="search-users"][value="${privacy.data.privacy_search_users}"]`);
             const sharingFiles = this.tpl.querySelector<HTMLElement>(`:scope >.content [name="sharing-files"][value="${privacy.data.privacy_sharing_files}"]`);
 
-            // Выбираем параметры
-            // NOTE(MIGRATION): некоторые поля может не быть в ответе сервера
-            // (например, privacy_sharing_files сервер пока не возвращает) —
-            // защищаемся от null, чтобы не оборвать настройку формы
+            // Выбираем параметры: некоторых полей может не быть в ответе
+            // сервера — optional chaining не оборвёт настройку формы
             calls?.click();
             messages?.click();
             messageVoice?.click();

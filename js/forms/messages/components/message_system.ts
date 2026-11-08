@@ -110,9 +110,8 @@ function setup(element: HTMLElement, data: MessageData): void {
  * ***************************************************************************
  * Хелпер для открытия профиля пользователя или бота.
  *
- * Ветки разделены: BotProfile требует botId и бросает "Не передан: botId"
- * при передаче { userId } — раньше единый `new FormClass({ userId })`
- * ронял системное сообщение с ботом в catch.
+ * Ветки разделены: BotProfile принимает только botId и бросает
+ * «Не передан: botId» при передаче { userId }.
  * @param userId - Id пользователя (у бота он же botId).
  * @param isBot - Профиль бота.
  * ***************************************************************************
@@ -222,8 +221,7 @@ function parseTemplateMessage(data: MessageData): Element | null {
         }),
 
         BROADCAST_ENDED: () => {
-            // NOTE(MIGRATION): отсутствующие отметки времени дают NaN и раньше
-            // (Date.parse(undefined)) — нормализация "" сохраняет NaN
+            // Отсутствующие отметки времени дают NaN — нормализация ""
             const durationInMs = Date.parse(payload.ended_at ?? "") - Date.parse(payload.started_at ?? "");
             const duration = new DurationFormatter(durationInMs).getFormattedDuration({ includeSeconds: true, includeDays: false });
 
@@ -248,8 +246,6 @@ function parseTemplateMessage(data: MessageData): Element | null {
 
             // Длительность звонка берём из отметки приёма: до неё разговор
             // не начинался, а отсчёт от старта включал бы ещё и прозвон
-            // NOTE(MIGRATION): отсутствующие отметки времени дают NaN и раньше
-            // (Date.parse(undefined)) — нормализация "" сохраняет NaN
             const durationInMs = Date.parse(payload.ended_at ?? "") - Date.parse(payload.accepted_at ?? "");
             const duration = new DurationFormatter(durationInMs).getFormattedDuration({ includeSeconds: true, includeDays: false });
 

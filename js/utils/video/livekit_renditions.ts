@@ -136,7 +136,7 @@ export class LiveKitRenditions extends EventTarget {
      *        уровни берутся из `publication.trackInfo.layers`.
      * @param options.defaultQuality - Качество по умолчанию, если
      *        выбранный уровень не удалось определить (значение enum VideoQuality
-     *        либо строка из легаси-фолбэка).
+     *        либо строка-фолбэк).
      * @returns {LiveKitRenditions}
      * ***************************************************************************
      */

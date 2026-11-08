@@ -664,10 +664,8 @@ export class GestureController {
             ? Math.min(Math.abs(this.validMove) / this.commitDistance, 1)
             : 0;
 
-        // NOTE(MIGRATION): легаси вызывал this.opts[this.gesture]?.onMove?.(dx, dy, direction, progress).
-        // До этой строки жест всегда "swipe" либо "pan" (pinch возвращается выше по isPinching),
-        // а 4-й аргумент progress для pan.onMove в JavaScript игнорируется — вызовы разделены
-        // по типу жеста без изменения поведения.
+        // До этой строки жест всегда "swipe" либо "pan" (pinch отсекается выше
+        // по isPinching), поэтому onMove разделён по типу — progress нужен только swipe
         if (this.gesture === "swipe" && this.direction) {
             this.opts.swipe?.onMove?.(dx, dy, this.direction, progress);
         } else if (this.gesture === "pan" && this.direction) {
@@ -847,9 +845,8 @@ export class GestureController {
      * ***************************************************************************
      */
     isInteractiveElement(target: EventTarget | null): boolean {
-        // NOTE(MIGRATION): цели событий здесь — всегда Element; для «не-элементов»
-        // (document/window) у легаси на .matches() был бы TypeError, поэтому
-        // поведение нормализовано к «элемент не интерактивный» (недостижимый случай).
+        // Нет элемента (document/window) — считаем неинтерактивным:
+        // `matches()` у не-элементов недоступен
         if (!(target instanceof Element)) return false;
 
         if (this.ignoreSelectors.length > 0) {

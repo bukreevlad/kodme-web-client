@@ -161,11 +161,8 @@ export async function menuHandler(event: MeetTriggerEvent, form: MeetPlay): Prom
 
                 const action = MASS_BLOCK_ACTIONS[flag];
 
-                // Есть ли что разрешать: либо действует правило комнаты,
-                // либо у кого-то источник запрещён точечно. Смотрим и на то,
-                // и на другое — раньше проверка смотрела только на карту
-                // участников, и в пустой комнате «Разрешить всем» пропадало,
-                // хотя правило комнаты ещё действовало
+                // Есть ли что разрешать: действует правило комнаты
+                // (defaultBlocks) либо точечный запрет участника (blocks)
                 const isBlockedSomewhere = [form.defaultBlocks, ...Object.values(form.blocks)]
                     .some(blocks => blocks?.[flag] === true);
 
@@ -180,9 +177,7 @@ export async function menuHandler(event: MeetTriggerEvent, form: MeetPlay): Prom
                 }
 
                 // Пункт доступен, даже когда в комнате никого нет: запрет
-                // пишется в правило комнаты и работает «заранее», до первого
-                // участника. Приглушать его было бы враньём —
-                // раньше здесь стояла проверка hasGuests
+                // пишется в правило комнаты и действует до первого участника
                 menuItems.push({
                     text: contextLocales[action.blockKey],
                     iconName: action.blockIcon,

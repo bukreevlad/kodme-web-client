@@ -303,7 +303,7 @@ export class CloudFileInfo {
             if (download) download.disabled = true;
 
             // Скачиваем файл (document_id — id документа для storage URL);
-            // item_id пробрасывается как в легаси — обработчик его не читает
+            // item_id пробрасывается, но обработчик его не читает
             let payload: DownloadFileData & { item_id?: string | undefined } = {
                 ...this.file,
                 item_id: this.item?.id,

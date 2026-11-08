@@ -16,12 +16,7 @@ import type { GroupTopicRecord } from "../types.js";
  *
  * Строка подписывается на `item::updated::<id>` локального стора формы и
  * держит ссылку на себя в `data.__domElements__`, чтобы стор удалил все
- * копии разом.
- *
- * Элемент раньше возвращался самим конструктором (`return this.element`) —
- * в TS это запрещено, поэтому строка создаётся через `new ThemeItem(...)`,
- * а в DOM вставляется её поле `element`. Мёртвые геттеры getDOM()/getData()
- * и пустой обработчик клика удалены — их никто не вызывал.
+ * копии разом. В DOM строка вставляется через её поле `element`.
  * ***************************************************************************
  */
 export class ThemeItem {
@@ -103,12 +98,6 @@ export class ThemeItem {
             // Отображаем данные
             if (name) name.textContent = data.display_name ?? null;
             if (author) author.textContent = data.author_name ?? null;
-
-            // NOTE(MIGRATION): исправлен реальный баг: здесь стояло
-            // «если не текущий пользователь — edit.remove()», но элемента
-            // edit в шаблоне строки темы нет (блок скопирован из компонента
-            // темы оформления) — каждый перерисовывал ловил ReferenceError.
-            // Скрытых элементов у строки нет, удаление блока не меняет UI
 
         } catch (error) {
             Logger.error(error);

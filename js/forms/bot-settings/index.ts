@@ -215,9 +215,8 @@ export class BotSettings {
             // Установить имя
             let link = this.tpl.querySelector(":scope >.content [action-set-link]");
             link?.addEventListener("click", (event) => {
-                // NOTE(MIGRATION): профиль загружается до открытия формы;
-                // пустая ссылка нормализуется — BotSettingLink отвергнет её
-                // при валидации так же, как легаси отвергал бы null
+                // Профиль загружается до открытия формы; пустую ссылку
+                // нормализуем в `""` — BotSettingLink отвергнет её при валидации
                 const profile = this.profile;
                 if (profile) new BotSettingLink({ botId: this.botId, botLink: profile.link ?? "" });
             });

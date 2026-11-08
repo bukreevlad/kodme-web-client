@@ -175,8 +175,7 @@ export async function loadSection(
             offset: CHANNEL_PROFILE_PAGE_SIZE
         });
 
-        // Неожиданный ответ: не гасим состояние (ошибка ≠ пустая страница).
-        // Раньше не-массив молча трактовался как пустой результат
+        // Неожиданный ответ: не гасим состояние (ошибка ≠ пустая страница)
         if (!Array.isArray(response?.data)) {
             Logger.debug(`[app][channel-profile][load-section][${section.id}]: в ответе нет массива`, response);
             return;

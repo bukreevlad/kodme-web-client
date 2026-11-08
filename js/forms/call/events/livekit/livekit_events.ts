@@ -28,9 +28,8 @@ export function subscribeLiveKitEvents(form: Call): void {
     subscribeTrackUnpublished(form);
     subscribeTrackSubscribed(form);
     subscribeTrackUnsubscribed(form);
-    // Легаси подписывал RoomEvent.IsMutedChanged — такого события нет в
-    // livekit-client v2 (было в v1): слушатель висел на undefined и никогда
-    // не срабатывал. Реакцию на mute закрывают TrackMuted/TrackUnmuted
+    // RoomEvent.IsMutedChanged в livekit-client v2 нет —
+    // реакцию на mute закрывают TrackMuted/TrackUnmuted
     subscribeTrackMuted(form);
     subscribeTrackUnmuted(form);
     subscribeConnectionQualityChanged(form);

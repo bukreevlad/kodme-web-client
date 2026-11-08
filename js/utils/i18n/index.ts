@@ -95,6 +95,7 @@ export class I18n {
         });
 
         this._language = language;
+        this.applyDocumentLanguage(language);
         Logger.debug(`[i18n]: инициализация, язык ${language}`);
 
     }
@@ -169,6 +170,7 @@ export class I18n {
         const previousLanguage = this._language;
         await i18next.changeLanguage(language);
         this._language = language;
+        this.applyDocumentLanguage(language);
 
         try {
             globalThis.localStorage?.setItem(this.STORAGE_KEY, language);
@@ -478,9 +480,15 @@ export class I18n {
             // Узлы внутри пересчитанных счётчиков не трогаем: у них свой ключ
             const holder = parent?.closest<HTMLElement>("[data-i18n-count]");
             const skipCount = holder ? rebuilt.has(holder) : false;
-            if (node.nodeValue?.trim() && tag !== "SCRIPT" && tag !== "STYLE" && !skipCount) {
-                const next = swap(node.nodeValue);
-                if (next !== null) node.nodeValue = next;
+            const original = node.nodeValue;
+            if (original?.trim() && tag !== "SCRIPT" && tag !== "STYLE" && !skipCount) {
+                const next = swap(original);
+                if (next !== null) {
+                    // Пробелы по краям узла сохраняем — перевод заменяет только текст
+                    const lead = original.match(/^\s*/)?.[0] ?? "";
+                    const trail = original.match(/\s*$/)?.[0] ?? "";
+                    node.nodeValue = lead + next + trail;
+                }
             }
             node = walker.nextNode();
         }
@@ -496,6 +504,22 @@ export class I18n {
         }
 
         Logger.debug(`[i18n]: тексты обновлены: ${previousLanguage} → ${language}`);
+
+    }
+
+    /**
+     * ***************************************************************************
+     * Держит <html lang> синхронным с текущим языком: от него наследуют
+     * локаль внешние виджеты (плеер Video.js — через обёртку <media-i18n>).
+     * @param {string} language - Код языка.
+     * @returns void
+     * ***************************************************************************
+     */
+    private static applyDocumentLanguage(language: string): void {
+
+        if (typeof document === "undefined") return; // окружение без DOM (тесты)
+
+        document.documentElement.lang = language;
 
     }
 

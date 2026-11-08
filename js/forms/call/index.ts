@@ -359,8 +359,8 @@ export class Call {
                 onBeforeOpen: async () => await this._onBeforeOpen(),
                 onOpen: async () => await this._onOpen(),
                 onBeforeClose: () => this._onBeforeClose(),
-                // Легаси передавал "" — рантайм-эквивалентно null:
-                // пресет формы без явного AnimationPreset не анимирует слой
+                // Пресета анимации нет — слой открывается и закрывается
+                // без анимации
                 openAnimationClass: null,
                 closeAnimationClass: null
             });

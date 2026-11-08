@@ -241,8 +241,7 @@ export function urlify(message: MessageItem): void {
                 if (en.type !== "link") return false;
 
                 try {
-                    // Без url сравнивать hostname не с чем (легаси здесь
-                    // же ловилось catch'ем)
+                    // Без url сравнивать hostname не с чем
                     if (en.url == null) return false;
                     const entityUrlObj = new URL(en.url);
                     // Сравниваем по hostname (домен или IP)

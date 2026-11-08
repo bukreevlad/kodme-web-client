@@ -147,8 +147,8 @@ export class LocalStorage {
 
         // NOTE(MIGRATION): исправлен реальный баг легаси: передавался объект {session_id} вместо строки id — вынесено в отдельный fix-коммит
 
-        // Получаем список сессий (легаси: без try/catch — ошибка разбора летит наружу)
-        // `?? "null"` сохраняет легаси-семантику: JSON.parse(null) → null (нет ключа → не массив)
+        // Получаем список сессий: без try/catch — ошибка разбора летит наружу.
+        // `?? "null"`: JSON.parse(null) → null, поэтому нет ключа — это не массив
         const sessions: unknown = JSON.parse(window.localStorage.getItem("sessions") ?? "null");
 
         // Проходим по сессиям (легаси-условие: sessions && sessions.length > 0)

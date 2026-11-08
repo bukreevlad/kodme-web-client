@@ -122,9 +122,7 @@ export class Toast {
 
     /**
      * ***************************************************************************
-     * Дефолтные настройки. Позиция `top-right` — де-факто стандарт проекта,
-     * раньше дефолтом был `bottom-center`, поэтому вызовы без позиции
-     * переводятся на явный.
+     * Дефолтные настройки. Позиция по умолчанию — `top-right`.
      * ***************************************************************************
      */
     static DEFAULTS: NormalizedToastOptions = {
@@ -394,8 +392,7 @@ export class Toast {
         const type = Toast._isType(rawType) ? rawType : (rawType ? Toast.DEFAULTS.type : "default");
 
         // `duration: 0` — тост не скрывается сам, это осмысленный режим;
-        // `?? NaN` нужен, чтобы пропущенное поле ушло в ту же ветку
-        // «некорректное значение → дефолт», что и раньше (+undefined = NaN)
+        // пропущенное поле уходит в ту же ветку «некорректное значение → дефолт»
         const durationRaw = merged.duration ?? Number.NaN;
         const duration = Number.isFinite(+durationRaw) ? Math.max(0, +durationRaw) : Toast.DEFAULTS.duration;
         const maxInPositionRaw = merged.maxInPosition ?? Number.NaN;
@@ -420,8 +417,8 @@ export class Toast {
 
     /**
      * ***************************************************************************
-     * Приводит контент к строке или узлу. Раньше `new Toast(error)` молча
-     * показывал пустую плашку: объект Error не был ни строкой, ни элементом.
+     * Приводит контент к строке или узлу: `Error` превращается в сообщение,
+     * `null`/`undefined` — в пустую строку.
      * @param {ToastContent} content - Исходный контент.
      * @returns {string|Node} Готовый к вставке контент.
      * ***************************************************************************
@@ -468,8 +465,8 @@ export class Toast {
         this.toastElement.style.setProperty("--toast-accent", Toast.types[this.options.type].accent);
         this.toastElement.style.setProperty("--toast-duration", `${this.options.duration}ms`);
 
-        // Сторона въезда выезда: раньше все позиции анимировались одинаково,
-        // и тост на левом краю выезжал из-за правого
+        // Сторона въезда/выезда для анимации: тост у левого края выезжает
+        // слева, у правого — справа
         const [vertical, side] = position.split("-");
         this.toastElement.dataset.vertical = vertical;
         this.toastElement.dataset.side = side === "left" || side === "right" ? side : "center";
@@ -519,9 +516,8 @@ export class Toast {
 
     /**
      * ***************************************************************************
-     * Наполняет контент тоста. Строка идёт через `textContent`: раньше
-     * использовался `innerHTML`, и текст из сервера или от бота был
-     * потенциальным XSS-вектором.
+     * Наполняет контент тоста. Строка идёт через `textContent`, а не
+     * `innerHTML`: текст из сервера или от бота нельзя исполнять как разметку.
      * @returns {void}
      * ***************************************************************************
      */

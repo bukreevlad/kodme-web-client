@@ -104,9 +104,9 @@ export class RequestQueue {
         return new Promise<T>((resolve, reject) => {
             const taskId = ++this.taskId;
 
-            // Замыкание выполнения: запускает запрос с теми же аргументами,
-            // что и легаси-вызов (без аргументов, если params не задан),
-            // и разрешает внешний промис результатом того же типа T
+            // Замыкание выполнения: запускает запрос с теми же аргументами
+            // (без аргументов, если params не задан) и разрешает внешний
+            // промис результатом того же типа T
             const execute = async (): Promise<void> => {
                 const result = params !== null
                     ? await requestCallback(params)

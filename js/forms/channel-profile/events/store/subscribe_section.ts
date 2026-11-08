@@ -35,13 +35,9 @@ function readSectionDirection(options?: StoreAddOptions): "prev" | "next" | unde
  * ***************************************************************************
  * Подписки формы на события Store секции вкладки.
  *
- * Замена двенадцати файлов events/store/*_item_{added,removed}.js: они
- * различались только именем Store, контейнера списка и класса строки.
- *
  * Отписку возвращаем наружу: её складывает StoreEvents и вызывает при
- * закрытии формы. Раньше подписки на item::added / item::removed не
- * отписывались — они живут ровно столько, сколько живёт сам Store, а Store
- * переживал форму (см. events/store/index.ts).
+ * закрытии формы — подписки на item::added / item::removed не должны
+ * переживать форму.
  *
  * @param form - Экземпляр формы.
  * @param section - Описание секции (см. config/media_sections.ts).

@@ -35,8 +35,7 @@ export async function qrCodePollingHandler(form: LoginWithQRCode, response: QRCo
 
             const { session_id, access_token, refresh_token } = response;
 
-            // Без данных сессии сохранять нечего: раньше сюда уходил
-            // undefined, и в localStorage попадала нерабочая сессия
+            // Без данных сессии сохранять нечего
             if (!session_id || !access_token || !refresh_token) return;
 
             // Сохраняем сессию

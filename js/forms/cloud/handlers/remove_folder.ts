@@ -64,9 +64,7 @@ export async function removeFolderHandler(form: Cloud, data: CloudItem): Promise
  */
 function _showRemoveError(response: unknown): void {
 
-    // Код ошибки сервера (легаси-конверт ответа { error: { code } };
-    // актуальный сервер отвечает ошибкой через reject — разбор сохранён
-    // на случай легаси-ответа)
+    // Код ошибки сервера: читается из конверта ответа { error: { code } }
     let code = _getLegacyErrorCode(response);
 
     // Папка не найдена

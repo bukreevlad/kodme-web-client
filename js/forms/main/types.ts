@@ -343,7 +343,7 @@ export function isChannelWithTopics(value: unknown): value is ChannelRecord {
 
 /**
  * Счётчик непрочитанных из данных канала: сервер отдаёт строкой, клиент
- * пишет числом, а мусор должен давать NaN — как и прямой parseInt в легаси.
+ * пишет числом, а мусор должен давать NaN.
  * @param value - Значение поля total_unread_messages.
  * @returns Число либо NaN, если значение не читается.
  */

@@ -79,14 +79,11 @@ type DecKeys = {
  * attachmentStrip - сборка превью вложений для «компактных» мест формы
  * сообщений: ответ на сообщение (message_reply), футер ответа
  * (footer_reply_message) и футер редактирования (footer_edit_message).
+ * Отличия мест — только локализационные ключи, они передаются через
+ * options.localeScope.
  *
- * Раньше эти три файла содержали ~180 одинаковых строк, расходившихся между
- * собой только набором локализационных ключей. Здесь вся логика одна, а
- * отличия передаются через options.localeScope.
- *
- * Бонус: вложения нормализуются через Attachments, поэтому блок корректно
- * работает и для серверного массива, и для object-map у temp-сообщений
- * (раньше `.filter` на объекте падал с TypeError).
+ * Вложения нормализуются через Attachments: блок работает и для серверного
+ * массива, и для object-map у temp-сообщений.
  * @param data - Данные сообщения/комментария (text, attachments, display_name).
  * @param elements - Найденные DOM-элементы.
  * @param options - Опции.
@@ -105,16 +102,14 @@ export function attachmentStrip(data: AttachmentStripData | MessageData | null |
             return;
         }
 
-        // Локализация: ветка "reply" в components отсутствует (живёт в
-        // messages.reply) — честное чтение без индексации несуществующего
-        // ключа; поведение «reply → undefined» идентично легаси.
+        // Локализация есть только у футера: ветки "reply" в components нет
+        // (она живёт в messages.reply)
         const localeScope = options.localeScope || "reply";
         const locale = localeScope === "reply_footer"
             ? I18n.tree.forms.messages.components.reply_footer
             : undefined;
 
-        // Ключи склонений: футер различает типы вложений, у ответа — общие
-        // файловые слова (легаси: ветка reply в strip не читалась)
+        // Склонения: футер различает типы вложений, у ответа — общие файловые слова
         const decKeys: DecKeys = localeScope === "reply_footer"
             ? {
                 audios: "forms.messages.components.reply_footer.dec_audios",
@@ -163,9 +158,8 @@ export function attachmentStrip(data: AttachmentStripData | MessageData | null |
         // Приводим вложения к массиву (Array с сервера / object-map у temp)
         const all = normalizeAttachments(data.attachments);
 
-        // Раскладываем по типам через общий классификатор: он учитывает и
-        // mime_type/type (сервер/локальный файл), и метадату голосовых и
-        // видео-кружков. Раньше здесь были свои копии проверок mime.
+        // Раскладываем по типам через общий классификатор: mime_type/type
+        // (сервер/локальный файл) плюс метаданные голосовых и видео-кружков
         const images = AttachClassifier.filterByType(all, AttachClassifier.ATTACH_TYPES.IMAGE);
         const audios = all.filter(attach => {
 
@@ -190,9 +184,8 @@ export function attachmentStrip(data: AttachmentStripData | MessageData | null |
             // Показываем до MAX_IMAGE_PREVIEWS превью
             for (let i = 0; i < images.length && i < MAX_IMAGE_PREVIEWS; i++) {
 
-                // Placeholder приходит из метадаты классификатора как unknown —
-                // честная проверка типа вместо приведения; нестроковые значения
-                // пропускаются, как и раньше (falsy)
+                // Placeholder из метадаты классификатора приходит как unknown —
+                // проверяем тип, нестроковые значения пропускаем
                 const placeholder = images[i]?.metadata?.placeholder;
                 if (typeof placeholder !== "string") continue;
 

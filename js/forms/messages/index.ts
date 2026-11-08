@@ -206,9 +206,7 @@ export class Messages {
                 if (!this.channel) return;
 
                 // Уменьшаем счётчик непрочитанных на число реально прочитанных
-                // сообщений. Раньше здесь вычитался «минус один», но обсервер
-                // успевал прислать несколько отметок до отправки — бейдж
-                // исчезал быстрее, чем сообщения действительно прочитаны.
+                // сообщений (readCount)
                 const unread = parseInt(String(this.channel.total_unread_messages)) || 0;
                 const newUnread = unread > 0 ? Math.max(0, unread - (readCount || 1)) : 0;
 
@@ -545,8 +543,7 @@ export class Messages {
 
             }
 
-            // Без сессии настройки декораций недоступны: дальше настраивать
-            // нечего (легаси здесь же падал с TypeError)
+            // Без сессии настройки декораций недоступны: дальше настраивать нечего
             const session = LocalStorage.session;
             if (!session) return;
 
@@ -678,8 +675,7 @@ export class Messages {
 
         // Если это диалог
         if ([1, 8].includes(data.type)) {
-            // Пустая строка, как и undefined из легаси, falsy — аватар
-            // возьмёт цвет по имени
+            // Пустая строка falsy — аватар возьмёт цвет по имени
             avatarId = data.display_user_id ?? "";
         }
 
@@ -872,7 +868,7 @@ export class Messages {
         const isBlur = LocalStorage?.session?.settings?.user?.decorations?.blur || false;
 
         // invariant: иконка "arrow-up" есть в справочнике — шаблон подсказки
-        // жеста всегда получит разметку (раньше здесь же падал бы TypeError)
+        // жеста всегда получит разметку
         const slideToCancelIcon = Icons.icon("arrow-up", { settings: { stroke: 2.5 } })!.outerHTML;
 
         // Мы используем <template> tag или DOMParser для создания DOM без innerHTML

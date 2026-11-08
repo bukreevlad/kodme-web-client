@@ -113,8 +113,8 @@ export class Themes {
 
                 // Создание новой темы
                 let newTheme = document.createElement("style");
-                // NOTE(MIGRATION): реальный баг легаси — при style: undefined в <style>
-                // попадала строка "undefined" (невалидный CSS); нормализуем в ""
+                // style может быть undefined — нормализуем в "", иначе в <style>
+                // попадёт строка "undefined" (невалидный CSS)
                 let style = document.createTextNode(data.theme.style ?? "");
                 newTheme.appendChild(style);
                 newTheme.setAttribute("application-theme", "");

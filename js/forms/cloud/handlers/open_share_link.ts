@@ -112,10 +112,7 @@ export async function openShareLinkHandler(form: Cloud, link: string): Promise<b
     } catch (error) {
 
         // Разбираем код ошибки: отозванная/истёкшая ссылка — свой текст,
-        // остальное — общий текст ошибки загрузки. Раньше здесь был только
-        // Logger.error: ветка `!response.status` мертва (status:false
-        // приходит как reject), поэтому пользователь кликал по ссылке
-        // и не получал ничего
+        // остальное — общий текст ошибки загрузки
         let message = String(typeof error === "object" && error !== null && "message" in error
             ? error.message
             : "");

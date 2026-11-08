@@ -51,8 +51,8 @@ export async function sendReactionHandler(message: MessageItem, reaction: string
 
     } catch (error) {
 
-        // Раньше здесь был только Logger.error: клик по реакции выглядел
-        // как «ничего не произошло» (например, при превышении лимита запросов)
+        // Ошибку показываем тостом: иначе клик по реакции выглядел бы
+        // как «ничего не произошло»
         toastError(error, { context: "[app][messages][send-reaction]" });
 
     }

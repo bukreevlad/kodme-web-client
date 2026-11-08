@@ -111,12 +111,9 @@ function renderMessageContent(channel: TopicItem, data: ChannelRecord): HTMLElem
     // Проверяем системное ли это сообщение
     if (data?.last_message?.action_type) {
 
-        // Поиск системного сообщения в локализации.
-        // Парсер читает из сообщения только тип события и его payload;
-        // тип в записи объявлен числом, а строка локали — строковый ключ
-        // (на проводе это значение вида "USER_JOINED_GROUP"), поэтому
-        // собираем источник с приведением через String(): поведение
-        // идентично легаси — обращение к объекту локали само приводило ключ
+        // Поиск системного сообщения в локализации: парсер читает только
+        // тип события и его payload; тип в записи числом, а ключ локали —
+        // строка ("USER_JOINED_GROUP"), поэтому приводим через String().
         let messagesLocale = I18n.tree.forms.messages.components.messages.system_messages;
         let systemSource = { ...data.last_message, action_type: String(data.last_message.action_type) };
         text.textContent = parseSystemMessage(systemSource, messagesLocale);
@@ -153,16 +150,12 @@ function renderMessageContent(channel: TopicItem, data: ChannelRecord): HTMLElem
     if (!data?.last_message?.is_error_sending && !data?.last_message?.is_temporary) {
         if (type === 1 && (getSessionUserId() === data?.last_message?.created_user_id)) {
 
-            // NOTE(MIGRATION): в легаси отсутствие id давало сравнение
-            // null/undefined с id (NaN → false) — сохраняем поведение явной
-            // проверкой; invariant: иконки check/checks входят в набор Icons
+            // Отсутствующий id не должен совпасть с id сообщения —
+            // проверка `!= null` обязательна; invariant: иконки check/checks
+            // входят в набор Icons
             const lastViewedId = data.display_last_viewed_message_id;
             if (statusIcon) {
                 if (lastViewedId != null && lastViewedId >= data.last_message.id) {
-                    // NOTE(MIGRATION): аргумент классов раньше передавался третьим
-                    // параметром — иконки он игнорировал, и статус рисовался
-                    // без брендинговой обводки. Классы перенесены в options (как в
-                    // одноимённом компоненте главного экрана)
                     statusIcon.innerHTML = Icons.icon("checks", { classes: ["stroke-brand-600", "dark:stroke-brand-500"] })?.outerHTML ?? "";
                 } else {
                     statusIcon.innerHTML = Icons.icon("check")?.outerHTML ?? "";

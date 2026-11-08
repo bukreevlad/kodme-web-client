@@ -274,14 +274,13 @@ export class ChannelProfile {
 
             // =========================
 
-            // Догрузка соседних страниц при скролле каждой вкладки.
-            // Раньше здесь стояло шесть одинаковых подписок; теперь одна
+            // Догрузка соседних страниц при скролле каждой вкладки: одна
             // функция в цикле по конфигу секций.
             //
             // Отписку кладём в this.handlerUnsubs, а не в storeUnsubs:
-            // это не подписки на Store, а слушатели OverlayScrollbars,
-            // и снимать их нужно вместе со скроллбарами в teardown.
-            // Сам onSectionScrollHandler уже троттлит проверку и отменяет
+            // это слушатели OverlayScrollbars, а не подписки на Store,
+            // снимать их нужно вместе со скроллбарами в teardown.
+            // onSectionScrollHandler троттлит проверку и отменяет
             // отложенный вызов при отписке
             this.handlerUnsubs = [];
 
@@ -318,8 +317,8 @@ export class ChannelProfile {
 
         } catch (error) {
 
-            // Пользователь должен понять, что произошло. Раньше ошибка уходила
-            // в лог, а форма открывалась пустой: без аватара, имени и табов
+            // Показываем причину отказа открытия: без тоста пользователь
+            // увидел бы пустую форму — без аватара, имени и табов
             toastError(error, {
                 context: "[app][channel-profile][get-info]",
                 fallback: t("forms.channel_profile.toasts.load_error")
@@ -335,18 +334,16 @@ export class ChannelProfile {
             const links = this.tpl?.querySelector<HTMLElement>(":scope >.content [data-tabs-list]");
             const panes = this.tpl?.querySelector<HTMLElement>(":scope >.content .cdm-tabs-content");
 
-            // Узлы вкладок обязаны быть в шаблоне — иначе как в легаси
-            // отказываемся открываться через общий catch
+            // Узлы вкладок обязаны быть в шаблоне — иначе отказываемся
+            // открываться через общий catch
             if (!links || !panes) throw new Error("[channel-profile]: не найдены узлы вкладок");
 
             this.tabs = new Tabs([
                 { tabs: links, scrollType: "horizontal" }
             ], panes, { isSlider: false });
 
-            // Собираем все вкладки разом по конфигу секций. Раньше здесь стояло
-            // шесть одинаковых блоков по ~25 строк; логика и шаблоны ушли в
-            // functions/build_sections.ts, описание вкладок — в
-            // config/media_sections.ts
+            // Собираем все вкладки разом по конфигу секций: логика и шаблоны —
+            // в functions/build_sections.ts, описание — в config/media_sections.ts
             buildSections(this, MEDIA_SECTIONS);
 
             // Активируем первую вкладку. Именно здесь, а не до сборки:
@@ -526,17 +523,8 @@ export class ChannelProfile {
                         </div>
                     </div>
 
-                    <!--
-                        is-slider здесь раньше стоял статически, хотя Tabs создавался
-                        с { isSlider: false }. Класс задаёт position/overflow и анимации
-                        слайдера, которые при isSlider: false никогда не включаются: JS
-                        не вешает классы slide-*, поэтому анимации не запускаются.
-                        Панели скрывались только потому, что правило
-                        '.cdm-tabs-content > .item:not(.active)' в css/components/tabs.css
-                        и не зависит от is-slider.
-                        Нужные слайдеру свойства перечислены явно (relative/overflow-hidden),
-                        ширина панелей — классом w-full в шаблонах панелей.
-                    -->
+                    <!-- Свойства слайдера (relative/overflow-hidden) заданы явно:
+                         ширина панелей — классом w-full в шаблонах панелей -->
                     <div class="cdm-tabs-content relative overflow-hidden flex w-full p-3"></div>
                     
                 </div>

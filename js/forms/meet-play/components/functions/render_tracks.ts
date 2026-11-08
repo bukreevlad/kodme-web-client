@@ -69,10 +69,9 @@ export async function renderTracks(item: ParticipantItem): Promise<void> {
         );
         const activeVideoTrackSids = activeVideoPubs.map(trackSidOf);
 
-        // Убираем только те <video>, чей трек больше не активен.
-        // Раньше здесь же вызывался полный cleanupParticipantVideo() — он сносил
-        // вообще все видео в слоте, включая только что созданное второе
-        // (сценарий «камера + демонстрация экрана» у одного участника).
+        // Убираем только те <video>, чей трек больше не активен: полный
+        // cleanup слота уничтожит и только что созданное второе видео
+        // («камера + демонстрация экрана» у одного участника)
         const existingVideos = Array.from(item.videoSlot?.querySelectorAll("video") ?? []);
         existingVideos.forEach(videoEl => {
             const domTrackId = videoEl.getAttribute("data-track-id");

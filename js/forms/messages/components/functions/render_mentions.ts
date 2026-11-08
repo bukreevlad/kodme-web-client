@@ -42,9 +42,6 @@ interface MentionMeta {
  *  - Нет regex поверх HTML
  *  - Не мутируем state.src
  *
- * Примечание: «не внутри code/link» достигается самой механикой markdown-it —
- * inline-правило не вызывается в контекстах code/fence, а регистрация
- * `before("link", ...)` означает срабатывание раньше разбора ссылок.
  * @param md - Экземпляр markdown-it.
  * ***************************************************************************
  */
@@ -136,9 +133,8 @@ export function mentionRenderPlugin(md: MarkdownIt): void {
             const meta = (token.meta ?? undefined) as MentionMeta | undefined;
             const content = md.utils.escapeHtml(token.content);
 
-            // Закрывающий </span> раньше стоял ПОСЛЕ тернарника, из-за чего у
-            // mention'а без botAppLink появлялся лишний закрывающий тег и
-            // вложенность HTML ломалась (браузер закрывал span заранее).
+            // Закрывающий span входит в контент, а не в конец строки: после
+            // тернарника он дал бы mention'у без botAppLink лишний тег
             const botApp = meta?.botAppLink
                 ? `<span class="flex flex-row gap-1 px-1 rounded-md bg-[var(--second-bg)]">${Icons.icon("app-window")?.outerHTML}${meta?.botAppLink}</span>`
                 : "";

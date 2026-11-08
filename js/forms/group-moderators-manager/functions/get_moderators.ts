@@ -90,10 +90,6 @@ export async function getModerators(form: GroupModeratorsManager, options: GetMo
             offset: GROUP_MODERATORS_PAGE_SIZE
         });
 
-        // NOTE(MIGRATION): убрана мёртвая ветка `if (response?.status === false)`:
-        // сокет превращает status:false в reject — в try она недостижима, а
-        // ошибка уже обрабатывается в catch (тост с троттлингом)
-
         // Неожиданный ответ — не гасим направление, просто выходим
         if (!Array.isArray(response?.data)) return;
 

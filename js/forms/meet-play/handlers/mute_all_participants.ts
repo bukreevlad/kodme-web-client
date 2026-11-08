@@ -56,8 +56,7 @@ export async function muteAllParticipantsHandler(
         // Проверка запроса
         if (response?.status) {
 
-            // Toast: текст зависитит от источника — раньше один ключ
-            // «про микрофон» показывался и для камер, и для демонстрации
+            // Toast: текст зависит от источника (микрофон, камера, демонстрация)
             Toast.success(blocked
                 ? I18n.tree.forms.meet_play.toasts[`success_mute_all_${flag}`]
                 : I18n.tree.forms.meet_play.toasts[`success_unmute_all_${flag}`]);

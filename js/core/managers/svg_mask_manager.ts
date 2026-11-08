@@ -148,9 +148,8 @@ export class SvgMaskManager {
                     throw new Error("rasterizeSvgWithColor: в разобранном документе нет элемента <svg>");
                 }
 
-                // Получаем оригинальные размеры SVG (атрибут может отсутствовать
-                // или быть не числом — тогда parseFloat даст NaN, как раньше,
-                // и сработает fallback на viewBox)
+                // Оригинальные размеры SVG: атрибут может отсутствовать
+                // или быть не числом — тогда NaN → fallback на viewBox
                 const origW = parseFloat(svgElement.getAttribute("width") ?? "") || svgElement.viewBox.baseVal.width;
                 const origH = parseFloat(svgElement.getAttribute("height") ?? "") || svgElement.viewBox.baseVal.height;
 
@@ -174,9 +173,8 @@ export class SvgMaskManager {
 
                     const ctx = canvas.getContext("2d");
 
-                    // NOTE(MIGRATION): исправлен реальный баг: без контекста
-                    // TypeError внутри onload оставлял промис висеть вечно —
-                    // init() зависал без ответа и без ошибки в логе
+                    // Нет контекста — отклоняем промис, иначе он зависнет
+                    // без ответа и без ошибки в логе
                     if (!ctx) {
                         URL.revokeObjectURL(url);
                         reject(new Error("SvgMaskManager: не удалось получить контекст canvas 2d"));

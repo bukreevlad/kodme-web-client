@@ -192,9 +192,8 @@ export class Main {
                 closeOnEsc: false,
                 closeOnOverlay: false,
 
-                // Легаси передавало false: обе опции читаются как falsy
-                // (свайп и анимации выключены), а в типе оверлея им
-                // соответствует null
+                // Опции читаются как falsy: свайп и анимации выключены —
+                // в типе оверлея выключению соответствует null
                 closeOnSwipe: null,
                 onBeforeOpen: async () => await this._onBeforeOpen(),
                 onOpen: async () => await this._onOpen(),

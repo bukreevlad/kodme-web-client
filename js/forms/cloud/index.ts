@@ -483,8 +483,7 @@ export class Cloud {
 
             // ---------- Скролл «Моё облако» с дозагрузкой ----------
             // Троттлинг + проверка края по последнему элементу —
-            // handlers/on_scroll.ts (раньше — подписка на каждый тик
-            // с проверкой низа viewport ±120 px)
+            // handlers/on_scroll.ts
             this.osMineScrollInstance = OverlayScrollbars(minePane, {
                 scrollbars: { autoHide: "scroll" }, overflow: { x: "hidden", y: "scroll" }
             });

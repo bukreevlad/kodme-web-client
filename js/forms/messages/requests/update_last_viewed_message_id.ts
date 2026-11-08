@@ -33,11 +33,8 @@ export interface UpdateLastViewedData {
  * Отправить отметку «прочитано до» и синхронизировать локальные данные
  * (IndexedDB, Store главного экрана, бейджи папок).
  *
- * Про запросы модуля-обёртки здесь намеренно ничего нет: раньше стояла
- * глобальная `RequestsQueue` на модуль, и при двух открытых чатах запрос
- * одного канала мог быть «вытеснен» (QUEUE_SUPERSEDED) запросом другого.
- * Теперь ограничение частоты делает `functions/last_viewed_batcher.js`,
- * живущий на форме (у каждого чата свой счётчик и своя отметка).
+ * Ограничение частоты отправки делает `functions/last_viewed_batcher.js`
+ * (у каждого чата свой счётчик и своя отметка).
  *
  * @param data - Данные отметки.
  * @throws Ошибка сокета/таймаута пробрасывается без изменений: её логирует
@@ -85,7 +82,7 @@ async function syncLocalState(data: UpdateLastViewedData): Promise<void> {
             const parentStore = Main.instance?.store?.get(entityDB.topic_for_group_id);
             if (parentStore) {
                 // Поле типизировано как string | number — приводим к строке
-                // перед parseInt (легаси-поведение обоих вариантов типа идентично)
+                // перед parseInt
                 const current = parseInt(String(parentStore.total_unread_messages)) || 0;
                 parentStore.total_unread_messages = current > 0 ? current - 1 : "";
                 Main.instance?.store.update(parentStore.id, parentStore);

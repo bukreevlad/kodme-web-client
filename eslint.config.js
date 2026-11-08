@@ -27,7 +27,7 @@ export default [
             // Named exports по умолчанию
             "import/no-default-export": "error",
             // window._lc удалён при переходе на i18next: строка — t(),
-            // объект/массив — I18n.tree (см. plans/WEB-CLIENT-I18N.md)
+            // объект/массив — I18n.tree
             "no-restricted-syntax": ["error", {
                 selector: "MemberExpression[property.name='_lc']",
                 message: "window._lc удалён: строки берите через t() из js/utils/i18n, объекты и массивы — через I18n.tree."

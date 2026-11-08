@@ -51,8 +51,7 @@ export async function sendReactionHandler(form: Comments, item: HTMLElement, rea
 
     } catch (error) {
 
-        // Раньше здесь был только Logger.error: клик по реакции выглядел
-        // как «ничего не произошло» (например, при превышении лимита запросов)
+        // Показываем причину отказа тостом (например, превышение лимита запросов)
         toastError(error, { context: "[app][comments][send-reaction]" });
 
     }
