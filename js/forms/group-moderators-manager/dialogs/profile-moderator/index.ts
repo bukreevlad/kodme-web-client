@@ -19,6 +19,7 @@ import { GroupModeratorsManager } from "../../../group-moderators-manager/index.
 
 // Импортируем handlers
 import { saveModeratorHandler } from "./handlers/save.js";
+import { removeModeratorFromProfileHandler } from "./handlers/remove.js";
 
 // Импортируем requests
 import { getModeratorSettingsRequest } from "./requests/get_settings.js";
@@ -180,6 +181,10 @@ export class GroupProfileModerator {
             // Сохранить
             let save = this.tpl.querySelector(":scope >.footer [action-save]");
             save?.addEventListener("click", () => saveModeratorHandler(this));
+
+            // Удалить модератора
+            let remove = this.tpl.querySelector(":scope >.footer [action-remove]");
+            remove?.addEventListener("click", () => removeModeratorFromProfileHandler(this));
 
         } catch (error) {
             Logger.error(error);
@@ -363,6 +368,13 @@ export class GroupProfileModerator {
                 </div>
                 
                 <div class="footer p-3 flex flex-row gap-2">
+                    ${Buttons.danger({
+                        shape: "square",
+                        attributes: ["action-remove"],
+                        classes: ["w-full"],
+                        icon: "trash",
+                        text: t("forms.group_moderator_profile.remove")
+                    })}
                     ${Buttons.create({
                         shape: "square",
                         attributes: ["action-cancel"],

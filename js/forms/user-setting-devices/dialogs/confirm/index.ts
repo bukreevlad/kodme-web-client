@@ -8,22 +8,15 @@ import { Logger } from "../../../../utils/logs/logger.js";
 import { Overlay } from "../../../../components/overlay/index.js";
 import { Buttons } from "../../../../components/buttons.js";
 
+import { t } from "../../../../utils/i18n/index.js";
+
 /**
- * Настройки диалога подтверждения.
+ * Настройки диалога подтверждения (подписи диалог берёт сам из локали).
  */
 export interface ConfirmDeviceDialogOptions {
 
-    /** Заголовок диалога. */
-    title?: string;
-
-    /** Описание действия. */
-    description?: string;
-
-    /** Текст кнопки «Отмена». */
-    actionClose?: string;
-
-    /** Текст кнопки подтверждения. */
-    actionRemove?: string;
+    /** Какие подписи показать: удаление одной сессии или всех остальных. */
+    scenario?: "remove" | "remove_all";
 
     /** Куда вставить диалог. */
     insertInto?: HTMLElement | null | undefined;
@@ -50,31 +43,23 @@ export class ConfirmDeviceDialog {
 
     /**
      * ***************************************************************************
-     * Диалог подтверждения действия с сессиями.
+     * Диалог подтверждения действия с сессиями: подписи берёт сам из локали.
      * @param data - Данные.
-     * @param data.title - Заголовок диалога.
-     * @param data.description - Описание действия.
-     * @param data.actionClose - Текст кнопки «Отмена».
-     * @param data.actionRemove - Текст кнопки подтверждения.
+     * @param data.scenario - Какие подписи показать (remove — одна сессия,
+     *   remove_all — все остальные).
      * @param data.insertInto - Куда вставить диалог.
      * @param data.callback - Callback подтверждения (true/false).
      * ***************************************************************************
      */
     constructor({
-        title = "",
-        description = "",
-        actionClose = "",
-        actionRemove = "",
+        scenario = "remove",
         insertInto = null,
         callback = null
     }: ConfirmDeviceDialogOptions) {
 
         // Устанавливаем настройки
         this.options = {
-            title,
-            description,
-            actionClose,
-            actionRemove,
+            scenario,
             insertInto,
             callback
         };
@@ -171,19 +156,37 @@ export class ConfirmDeviceDialog {
     // ***************************************************************************
     _template(): HTMLElement {
 
+        // Подписи сценария: удаление одной сессии или всех остальных
+        let title = "";
+        let description = "";
+        let actionClose = "";
+        let actionRemove = "";
+
+        if (this.options.scenario === "remove_all") {
+            title = t("forms.user_setting_devices.dialogs.remove_all.title");
+            description = t("forms.user_setting_devices.dialogs.remove_all.description");
+            actionClose = t("forms.user_setting_devices.dialogs.remove_all.action_close");
+            actionRemove = t("forms.user_setting_devices.dialogs.remove_all.action_remove");
+        } else {
+            title = t("forms.user_setting_devices.dialogs.remove.title");
+            description = t("forms.user_setting_devices.dialogs.remove.description");
+            actionClose = t("forms.user_setting_devices.dialogs.remove.action_close");
+            actionRemove = t("forms.user_setting_devices.dialogs.remove.action_remove");
+        }
+
         return new DOMParser().parseFromString(`
 
             <div class="cdm-modal user-device-confirm flex flex-col p-0 gap-0 ${CDM_MODAL_CLASSES()}">
                 <div class="${CDM_MODAL_HEADER_CLASSES()}">
-                    <span class="flex flex-row gap-2 items-center font-semibold text-base">${this.options.title}</span>
+                    <span class="flex flex-row gap-2 items-center font-semibold text-base">${title}</span>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "x" })}
                 </div>
                 <div class="${CDM_MODAL_CONTENT_CLASSES()}">
-                    <span class="text-secondary text-sm">${this.options.description}</span>
+                    <span class="text-secondary text-sm">${description}</span>
                 </div>
                 <div class="${CDM_MODAL_FOOTER_CLASSES()}">
-                    ${Buttons.create({ attributes: ["action-close"], classes: ["w-full"], text: this.options.actionClose })}
-                    ${Buttons.danger({ attributes: ["action-remove"], classes: ["w-full"], text: this.options.actionRemove })}
+                    ${Buttons.create({ attributes: ["action-close"], classes: ["w-full"], text: actionClose })}
+                    ${Buttons.danger({ attributes: ["action-remove"], classes: ["w-full"], text: actionRemove })}
                 </div>
             </div>
 

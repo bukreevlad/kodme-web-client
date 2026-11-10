@@ -18,6 +18,9 @@ import { replyMessageHandler } from "./reply_message.js";
 import { forwardMessageHandler } from "./forward_message.js";
 import { editMessageHandler } from "./edit_message.js";
 import { removeMessageHandler } from "./remove_message.js";
+import { cleanUserMessagesHandler } from "./clean_user_messages.js";
+import { banMemberHandler } from "./ban_member.js";
+import { unbanMemberHandler } from "./unban_member.js";
 import { removeTemporaryMessageHandler } from "./remove_temporary_message.js";
 import { removePendingMessageHandler } from "./remove_pending_message.js";
 import { resendMessageHandler } from "./resend_message.js";
@@ -167,6 +170,51 @@ export async function contextMenuHandler(event: Event, message: MessageItem): Pr
             !message.data.is_pending &&
             canDelete) {
             menuItems.push(remove);
+        }
+
+        // ================================
+
+        // Пункты модерации: цель — автор сообщения; на своих сообщениях,
+        // на сообщениях модераторов и создателя канала их не показываем
+        const moderationChannel = message.form.channel;
+        const moderationAuthor = message.data.created_user_id;
+        const isModerationType = !!moderationChannel && [2, 3, 4, 6, 7].includes(moderationChannel.type);
+        const isChannelOwner = !!moderationChannel && moderationChannel.created_user_id === sessionUserId;
+        const canClean = isModerationType && (isChannelOwner || (!!moderationChannel?.is_moderator && !!moderationChannel?.can_clean_messages));
+        const canRestrict = isModerationType && (isChannelOwner || (!!moderationChannel?.is_moderator && !!moderationChannel?.can_restrict_members));
+
+        // Цель не должна быть зрителем, модератором или создателем канала
+        const moderationTargetAllowed = typeof moderationAuthor === "string" &&
+            moderationAuthor !== sessionUserId &&
+            moderationAuthor !== moderationChannel?.created_user_id &&
+            !message.data.is_moderator;
+
+        // Удалить все сообщения автора
+        if (canClean && moderationTargetAllowed && !message.data.is_pending && !message.data.is_temporary) {
+            menuItems.push({
+                text: t("forms.messages.components.messages.context_menu.clean_user"),
+                iconName: "eraser",
+                cssClasses: ["text-[var(--color-red)]"],
+                onClick: () => cleanUserMessagesHandler(message)
+            });
+        }
+
+        // Забанить / разблокировать автора
+        if (canRestrict && moderationTargetAllowed) {
+            if (message.data.author_is_blocked) {
+                menuItems.push({
+                    text: t("forms.messages.components.messages.context_menu.unban_user"),
+                    iconName: "refresh",
+                    onClick: () => unbanMemberHandler(message)
+                });
+            } else {
+                menuItems.push({
+                    text: t("forms.messages.components.messages.context_menu.ban_user"),
+                    iconName: "ban",
+                    cssClasses: ["text-[var(--color-red)]"],
+                    onClick: () => banMemberHandler(message)
+                });
+            }
         }
 
         // ================================

@@ -3,9 +3,13 @@ import { Logger } from "../../../utils/logs/logger.js";
 
 // Импортируем components
 import { Avatars } from "../../../components/avatars.js";
+import { Buttons } from "../../../components/buttons.js";
 
 // Импортируем forms
 import { GroupProfileModerator } from "../dialogs/profile-moderator/index.js";
+
+// Импортируем handlers
+import { removeModeratorHandler } from "../handlers/remove_moderator.js";
 
 // Импортируем типы
 import { isGroupModeratorRecord } from "../types.js";
@@ -99,6 +103,7 @@ export class ModeratorItem {
                         </div>
                     </div>
                 </div>
+                ${Buttons.danger({ shape: "circle", attributes: ["action-remove"], icon: "trash", classes: ["shrink-0"] })}
             </div>
         `, "text/html").querySelector<HTMLElement>(".item");
 
@@ -152,6 +157,13 @@ export class ModeratorItem {
     // Обработчики (Private Method)
     // ***************************************************************************
     _actions(): void {
+
+        // Удалить модератора: клик по кнопке не должен открывать настройки
+        const remove = this.element?.querySelector(":scope [action-remove]");
+        remove?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            removeModeratorHandler(this.form, this.data.user_id);
+        });
 
         // Открыть настройки модератора
         this.element?.addEventListener("click", () => new GroupProfileModerator({

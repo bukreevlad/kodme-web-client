@@ -25,12 +25,9 @@ export async function removeAllOtherDevicesHandler(form: UserSettingDevices): Pr
 
     try {
 
-        // Диалог подтверждения удаления всех других сеансов
+        // Диалог подтверждения удаления всех других сеансов (подписи берёт сам)
         let dialogConfirm = new ConfirmDeviceDialog({
-            title: t("forms.user_setting_devices.dialogs.remove_all.title"),
-            description: t("forms.user_setting_devices.dialogs.remove_all.description"),
-            actionClose: t("forms.user_setting_devices.dialogs.remove_all.action_close"),
-            actionRemove: t("forms.user_setting_devices.dialogs.remove_all.action_remove"),
+            scenario: "remove_all",
             insertInto: form.modal?.content,
             callback: async (response) => {
 

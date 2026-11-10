@@ -58,7 +58,10 @@
       "document_not_processed": "The file is still being processed, try sending it later",
       "media_processing_disabled": "File processing is temporarily unavailable",
       "upload_rejected": "Storage rejected the file (400). Try again later",
-      "file_fallback_name": "file"
+      "file_fallback_name": "file",
+      "moderator_not_found": "The user is not a moderator",
+      "member_banned": "Access to the channel is restricted",
+      "channel_not_found": "Channel not found"
     }
   },
   "components": {
@@ -562,12 +565,19 @@
             "reply": "Reply",
             "forward": "Forward",
             "edit": "Edit",
-            "remove": "Delete"
+            "remove": "Delete",
+            "clean_user": "Delete all messages by author",
+            "ban_user": "Ban member",
+            "unban_user": "Unban member"
           },
           "toasts": {
             "message_removed": "Message deleted",
             "message_copied": "Message copied",
-            "message_forwarded": "Message forwarded"
+            "message_forwarded": "Message forwarded",
+            "clean_success": "Member's messages deleted",
+            "ban_success": "Member banned",
+            "unban_success": "Ban lifted",
+            "cannot_ban": "This member can't be banned"
           },
           "system_messages": {
             "USER_JOINED_GROUP": {
@@ -611,6 +621,10 @@
             "CALL_MISSED": {
               "string": "Missed call",
               "array": "missed call"
+            },
+            "USER_ROLE_CHANGED_TO_USER_IN_GROUP": {
+              "string": "{{user_name}} is no longer a moderator",
+              "array": "is no longer a moderator"
             }
           },
           "comments": {
@@ -674,6 +688,19 @@
           "for_all": "Delete for everyone",
           "action_cancel": "Cancel",
           "action_remove": "Delete"
+        },
+        "confirm_moderation": {
+          "action_close": "Cancel",
+          "clean": {
+            "title": "Delete all messages by this author?",
+            "description": "This member's messages will be deleted for everyone. This action cannot be undone.",
+            "action_remove": "Delete"
+          },
+          "ban": {
+            "title": "Ban member?",
+            "description": "The member will be removed from the channel and won't be able to post there.",
+            "action_remove": "Ban"
+          }
         }
       },
       "title": "Messages"
@@ -2113,7 +2140,17 @@
         "desc": "Create an invite — it will appear here"
       },
       "toasts": {
-        "load_error": "Failed to load the invites"
+        "load_error": "Failed to load the invites",
+        "success_revoke": "Invite revoked",
+        "revoke_not_found": "The invite has already been revoked"
+      },
+      "dialogs": {
+        "revoke": {
+          "title": "Revoke invite?",
+          "description": "The link to the stream will stop working. This action cannot be undone.",
+          "action_close": "Cancel",
+          "action_remove": "Revoke"
+        }
       }
     },
     "broadcasts": {
@@ -2181,7 +2218,17 @@
         "desc": "Create an invite — it will appear here"
       },
       "toasts": {
-        "load_error": "Failed to load the invites"
+        "load_error": "Failed to load the invites",
+        "success_revoke": "Invite revoked",
+        "revoke_not_found": "The invite has already been revoked"
+      },
+      "dialogs": {
+        "revoke": {
+          "title": "Revoke invite?",
+          "description": "The invite link will stop working. This action cannot be undone.",
+          "action_close": "Cancel",
+          "action_remove": "Revoke"
+        }
       }
     },
     "channel_setting_link": {
@@ -2282,7 +2329,8 @@
       "disabled": "Disabled",
       "toasts": {
         "success_save": "Settings updated"
-      }
+      },
+      "remove": "Remove"
     },
     "group_moderators_manager": {
       "title": "Moderation",
@@ -2298,7 +2346,16 @@
         "desc": "Assign moderators — they will appear here"
       },
       "toasts": {
-        "load_error": "Failed to load the moderators"
+        "load_error": "Failed to load the moderators",
+        "success_remove": "Moderator removed"
+      },
+      "dialogs": {
+        "remove": {
+          "title": "Remove moderator?",
+          "description": "The user will lose moderator rights but stay in the group.",
+          "action_close": "Cancel",
+          "action_remove": "Remove"
+        }
       }
     },
     "group_setting_link": {
@@ -2449,7 +2506,17 @@
         "desc": "Create an invite — it will appear here"
       },
       "toasts": {
-        "load_error": "Failed to load the invites"
+        "load_error": "Failed to load the invites",
+        "success_revoke": "Invite revoked",
+        "revoke_not_found": "The invite has already been revoked"
+      },
+      "dialogs": {
+        "revoke": {
+          "title": "Revoke invite?",
+          "description": "The link to the conference will stop working. This action cannot be undone.",
+          "action_close": "Cancel",
+          "action_remove": "Revoke"
+        }
       }
     },
     "meets": {

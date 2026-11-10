@@ -64,6 +64,9 @@ export interface ChannelRecord extends StoreItem {
     /** Разрешена ли публикация (канал без подписки). */
     is_posting?: boolean;
 
+    /** Забанен ли текущий пользователь модерацией канала. */
+    is_blocked?: boolean;
+
     /** Число подписчиков (группа/канал). */
     total_members?: number;
 
@@ -98,6 +101,12 @@ export interface ChannelRecord extends StoreItem {
     /** Разрешено ли модератору удалять сообщения «для всех». */
     can_deleted_message?: boolean;
 
+    /** Разрешено ли модератору удалять все сообщения участника. */
+    can_clean_messages?: boolean;
+
+    /** Разрешено ли модератору блокировать участников. */
+    can_restrict_members?: boolean;
+
     /** Темы группы (в ответе сервера `[channel]: open`). */
     topics?: ChannelRecord[];
 
@@ -122,6 +131,12 @@ export interface MessageRecord extends StoreItem {
 
     /** Id автора. */
     created_user_id?: string | undefined;
+
+    /** Забанен ли автор сообщения модерацией (пункт «Разблокировать» в меню). */
+    author_is_blocked?: boolean;
+
+    /** Является ли автор сообщения модератором канала. */
+    is_moderator?: boolean;
 
     /** Id канала. */
     channel_id?: string;

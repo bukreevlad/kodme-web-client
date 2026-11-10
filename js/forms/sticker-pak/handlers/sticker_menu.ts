@@ -78,10 +78,6 @@ function confirmDeleteSticker(form: StickerPak, sticker: StickerItem): void {
 
     // Подтверждение удаления
     new ConfirmStickerDialog({
-        title: t("forms.sticker_pak.confirm.title"),
-        description: t("forms.sticker_pak.confirm.description"),
-        actionClose: t("forms.sticker_pak.confirm.cancel"),
-        actionRemove: t("forms.sticker_pak.confirm.confirm"),
         callback: async (response) => {
 
             // Отмена — выходим

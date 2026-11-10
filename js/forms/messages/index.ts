@@ -11,6 +11,8 @@ import { Store } from "../../utils/store.js";
 import { I18n, t } from "../../utils/i18n/index.js";
 import { LocalStorage } from "../../utils/local_storage.js";
 import { IndexedDB } from "../../utils/indexed_db.js";
+import { getErrorMessage } from "../../utils/helpers/error_util.js";
+import { toastError } from "../../utils/ui/toast_error.js";
 import { SvgMaskManager } from "../../core/managers/svg_mask_manager.js";
 import { TextareaAutosize } from "../../utils/helpers/textarea_autosize.js";
 import { ScrollManager } from "../../core/managers/scroll_manager.js";
@@ -524,7 +526,22 @@ export class Messages {
             } else {
 
                 // Если канала нет в базе или channel.is_subscribed равен null/undefined — идем на сервер
-                let response = await openChannelRequest({ channel_id: this.channelId });
+                let response;
+                try {
+                    response = await openChannelRequest({ channel_id: this.channelId });
+                } catch (error) {
+
+                    // Тост: имя ошибки сервера маппится в api.errors
+                    toastError(error, { context: "[app][messages][open-channel]" });
+
+                    // Отказ сервера (бан, доступ, нет канала) закрывает
+                    // пустую форму; сетевая ошибка — только тост, возможен повтор
+                    const message = getErrorMessage(error);
+                    const isRefused = ["MEMBER_BANNED", "ACCESS_DENIED", "CHANNEL_NOT_FOUND"].some((code) => message.includes(code));
+                    if (isRefused) return false;
+                    return;
+
+                }
                 let serverData = response.data;
 
                 // Здесь сервер присылает темы в массиве .topics
@@ -762,9 +779,9 @@ export class Messages {
         // Обновляем состояние кнопок
         updateStateButtons(this);
 
-        // Проверяем возможность написать (канал загружен вместе с формой —
-        // без него футер не скрываем)
-        if (this.channel && !this.channel.is_subscribed && !this.channel.is_posting) {
+        // Проверяем возможность написать: забанен или нет прав публикации
+        // (канал загружен вместе с формой — без него футер не скрываем)
+        if (this.channel && (this.channel.is_blocked || (!this.channel.is_subscribed && !this.channel.is_posting))) {
             this.wrapFooter.classList.add("hidden");
         }
 

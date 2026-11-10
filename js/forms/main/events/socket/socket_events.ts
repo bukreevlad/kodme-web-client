@@ -7,6 +7,7 @@ import { subscribeBroadcasts } from "./broadcasts/index.js";
 import { subscribeUsers } from "./users/index.js";
 import { subscribeChannels } from "./channels/index.js";
 import { subscribeChannelsMembers } from "./channels-members/index.js";
+import { subscribeModeration } from "./moderation/index.js";
 
 /**
  * ***************************************************************************
@@ -30,6 +31,7 @@ export class SocketEvents {
         subscribeUsers();
         subscribeChannels();
         subscribeChannelsMembers();
+        subscribeModeration();
 
     }
 

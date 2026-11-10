@@ -204,6 +204,8 @@ function parseTemplateMessage(data: MessageData): Element | null {
 
         USER_ROLE_CHANGED_TO_MODERATOR_IN_GROUP: joinedConfig, // Поведение идентично
 
+        USER_ROLE_CHANGED_TO_USER_IN_GROUP: joinedConfig, // Поведение идентично
+
         USER_RENAMED_GROUP: () => ({
             html: `<div data-template class="flex flex-row gap-1">
                     <span data-link class="underline cursor-pointer">${payload.user_name ?? data.display_name ?? ""}</span>

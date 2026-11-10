@@ -1,23 +1,28 @@
 // Импортируем utils
 import { Logger } from "../../../utils/logs/logger.js";
 
+// Импортируем components
+import { Buttons } from "../../../components/buttons.js";
+
 // Импортируем handlers
 import { copyInviteHandler } from "./handlers/copy_invite.js";
+import { removeInviteHandler } from "./handlers/remove_invite.js";
 
 // Импортируем типы
 import { isMeetInvite } from "../types.js";
 import type { StoreEventName } from "../../../utils/store.js";
 import type { MeetInviteRecord } from "../types.js";
 import type { MeetManageInvites } from "../index.js";
+import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
  * createInviteItem - строка приглашения в списке.
  *
- * Отображает название и ссылку приглашения, по клику копирует ссылку
- * в буфер обмена. Строка живёт в data.__domElements__ (для удаления копий
- * при выгрузке из стора) и подписывается на точечное событие обновления
- * записи.
+ * Отображает название и ссылку приглашения: клик по строке копирует ссылку
+ * в буфер обмена, кнопка-корзина отзывает приглашение (с подтверждением).
+ * Строка живёт в data.__domElements__ (для удаления копий при выгрузке
+ * из стора) и подписывается на точечное событие обновления записи.
  *
  * Фабрика возвращает готовый DOM-элемент: `createInviteItem(form, data)`.
  *
@@ -66,9 +71,17 @@ export function createInviteItem(form: MeetManageInvites, data: MeetInviteRecord
 
         // invariant: шаблон выше — наши строки, .item в нём всегда есть
         return new DOMParser().parseFromString(`
-            <div class="item flex flex-col gap-0 p-2 hover:bg-[var(--second-bg)] active:bg-[var(--second-bg)] cursor-pointer rounded-lg">
-                <span data-name class="truncate"></span>
-                <span data-link class="text-sm text-secondary"></span>
+            <div class="item flex flex-row gap-2 items-center p-2 hover:bg-[var(--second-bg)] active:bg-[var(--second-bg)] cursor-pointer rounded-lg">
+                <div class="flex flex-col gap-0 min-w-0 flex-1">
+                    <span data-name class="truncate"></span>
+                    <span data-link class="text-sm text-secondary truncate"></span>
+                </div>
+                ${Buttons.transparent({
+            intent: "transparent",
+            shape: "circle",
+            attributes: ["action-revoke", "title=" + t("forms.meet_manage_invites.dialogs.revoke.action_remove"), "aria-label=" + t("forms.meet_manage_invites.dialogs.revoke.action_remove")],
+            icon: "trash"
+        })}
             </div>
         `, "text/html").querySelector<HTMLElement>(".item")!;
 
@@ -104,13 +117,21 @@ export function createInviteItem(form: MeetManageInvites, data: MeetInviteRecord
 
     /**
      * ***************************************************************************
-     * Обработчики: копирование ссылки приглашения по клику на строку.
+     * Обработчики: копирование ссылки по клику на строку, отзыв приглашения
+     * по кнопке-корзине (клик по кнопке не копирует ссылку).
      * ***************************************************************************
      */
     function actions(): void {
 
         // Скопировать ссылку
         element.addEventListener("click", () => copyInviteHandler(current));
+
+        // Отозвать приглашение
+        let revoke = element.querySelector("[action-revoke]");
+        revoke?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            removeInviteHandler(form, current);
+        });
 
     }
 

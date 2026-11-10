@@ -27,12 +27,9 @@ export async function removeSessionHandler(form: UserSettingDevices, data: Sessi
 
     try {
 
-        // Диалог подтверждения удаления сессии
+        // Диалог подтверждения удаления сессии (подписи берёт сам)
         let dialogConfirm = new ConfirmDeviceDialog({
-            title: t("forms.user_setting_devices.dialogs.remove.title"),
-            description: t("forms.user_setting_devices.dialogs.remove.description"),
-            actionClose: t("forms.user_setting_devices.dialogs.remove.action_close"),
-            actionRemove: t("forms.user_setting_devices.dialogs.remove.action_remove"),
+            scenario: "remove",
             insertInto: form.modal?.content,
             callback: async (response) => {
 
