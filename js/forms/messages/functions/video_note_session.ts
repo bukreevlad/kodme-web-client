@@ -126,12 +126,18 @@ export class VideoNoteSession {
             // Камера пишет в контейнер видео — без него стартовать не из чего
             if (!this.videoWrap) throw new Error("[video-note]: не найден контейнер видео");
 
+            // Панель должна быть видна и во время запроса разрешений/запуска
+            // камеры, а не только после первого события MediaRecorder.
+            this.activateUI();
+            this.progress.setProcessing();
             await this.recorder.start(this.videoWrap);
             if (startToken !== this.startToken) {
                 this.recorder._cleanup();
                 return;
             }
-            if (this.recorder.isRecording) this.activateUI();
+            this.progress.stopProcessing();
+            if (this.recorder.isRecording) updateStateButtons(this.form);
+            else this.cancel();
 
         } catch (error) {
 

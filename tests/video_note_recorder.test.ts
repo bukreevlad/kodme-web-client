@@ -26,7 +26,7 @@ function setup() {
     });
     const recorder = Object.assign(Object.create(VideoRecorder.prototype), {
         isRecording: false,
-        videoSource: { play: async () => {} },
+        videoSource: { play: async () => {}, style: {} },
         canvas: { captureStream: () => stream },
         _startRenderLoop: mock(() => {}),
         _setupPreview: mock(() => {}),
@@ -36,10 +36,10 @@ function setup() {
     return { recorder, getNative: () => native };
 }
 
-test("запуск видеокружка дожидается onstart до показа интерфейса", async () => {
+test("запуск видеокружка завершается только после onstart", async () => {
     const { recorder, getNative } = setup();
     let ready = false;
-    const started = recorder.start({} as HTMLElement).then(() => { ready = true; });
+    const started = recorder.start({ replaceChildren: () => {} } as unknown as HTMLElement).then(() => { ready = true; });
     // getUserMedia и play завершились, нативный start только поставил событие в очередь.
     await Promise.resolve();
     await Promise.resolve();
@@ -55,10 +55,26 @@ test("запуск видеокружка дожидается onstart до по
 
 test("ошибка запуска рекордера отклоняет запуск и освобождает ресурсы", async () => {
     const { recorder, getNative } = setup();
-    const started = recorder.start({} as HTMLElement);
+    const started = recorder.start({ replaceChildren: () => {} } as unknown as HTMLElement);
     await Promise.resolve();
     await Promise.resolve();
     getNative().onerror!();
     await expect(started).rejects.toThrow("MediaRecorder start failed");
     expect(recorder._cleanup).toHaveBeenCalledTimes(1);
+});
+
+
+test("источник камеры добавлен в DOM до ожидания воспроизведения", async () => {
+    const { recorder, getNative } = setup();
+    let resolvePlay!: () => void;
+    recorder.videoSource.play = () => new Promise<void>(resolve => { resolvePlay = resolve; });
+    const replaceChildren = mock(() => {});
+    const starting = recorder.start({ replaceChildren } as unknown as HTMLElement);
+    await Promise.resolve();
+    expect(replaceChildren).toHaveBeenCalledWith(recorder.videoSource);
+    resolvePlay();
+    await Promise.resolve();
+    getNative().onstart!();
+    await starting;
+    expect(recorder.isRecording).toBe(true);
 });

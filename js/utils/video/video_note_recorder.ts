@@ -126,6 +126,15 @@ export class VideoRecorder {
             this.videoSource.playsInline = true;
             this.videoSource.srcObject = deviceStream;
 
+            // Держим источник камеры в DOM во время play(): браузеры могут
+            // откладывать воспроизведение отсоединённого видео. До готовности
+            // canvas-превью пользователь уже видит живую камеру.
+            Object.assign(this.videoSource.style, {
+                width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%",
+                position: "static", opacity: "1", pointerEvents: "auto"
+            });
+            previewContainer.replaceChildren(this.videoSource);
+
             // Ждем воспроизведения, но ловим ошибку прерывания
             try {
                 await this.videoSource.play();
@@ -363,8 +372,10 @@ export class VideoRecorder {
 
         // Источником превью всегда является наш стабильный поток с Canvas
         this.previewElement.srcObject = this.stream;
-        container.innerHTML = "";
-        container.appendChild(this.previewElement);
+        Object.assign(this.videoSource.style, {
+            position: "absolute", inset: "0", opacity: "0", pointerEvents: "none"
+        });
+        container.replaceChildren(this.videoSource, this.previewElement);
     }
 
     /**
