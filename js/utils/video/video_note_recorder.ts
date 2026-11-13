@@ -164,16 +164,20 @@ export class VideoRecorder {
                 }
             };
 
-            // Прослушивание
-            this.recorder.onstart = () => {
-                this.isRecording = true;
-                this.startTime = Date.now();
-                this._startTimer();
-                Logger.debug("[VideoRecorder] MediaRecorder started");
-            };
-
-            // Старт
-            this.recorder.start(100);
+            // start() ставит событие onstart в очередь. Ждём его, чтобы
+            // сессия показывала превью уже с активным состоянием записи.
+            const recorder = this.recorder;
+            await new Promise<void>((resolve, reject) => {
+                recorder.onstart = () => {
+                    this.isRecording = true;
+                    this.startTime = Date.now();
+                    this._startTimer();
+                    Logger.debug("[VideoRecorder] MediaRecorder started");
+                    resolve();
+                };
+                recorder.onerror = () => reject(new Error("[VideoRecorder] MediaRecorder start failed"));
+                recorder.start(100);
+            });
 
         } catch (error) {
             Logger.error("[VideoRecorder] Start error:", error);
