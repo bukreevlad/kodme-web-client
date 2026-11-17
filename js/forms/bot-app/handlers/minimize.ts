@@ -2,7 +2,7 @@
 import { Logger } from "../../../utils/logs/logger.js";
 
 // Импортируем managers
-import { TabsManager } from "../../../core/managers/form_tabs_manager.js";
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 
 // Импортируем типы
 import { isWindowGeometryOverlay } from "../types.js";
@@ -54,9 +54,9 @@ export async function minimizeHandler(form: BotApp): Promise<void> {
         // Окно свёрнуто — разворот снова возможен
         form.maximized = false;
 
-        // Убираем только таб: форма остаётся открытой, поэтому событие
-        // [app][form]::closed не шлём — оно означает закрытие формы
-        TabsManager.removeTab(form.modal.options.id);
+        // Пилюля уходит, форма остаётся открытой: роль возвращается во
+        // встроенную (сворнутая форма живёт в бот-профиле)
+        FormsRegistry.update(form.modal.options.id, { placement: "attached", workspace: null });
 
     } catch (error) {
         Logger.error(error);

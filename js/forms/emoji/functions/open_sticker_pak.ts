@@ -1,5 +1,5 @@
 // Импортируем utils
-import { Logger } from "../../../utils/logs/logger.js";
+
 import { toastError } from "../../../utils/ui/toast_error.js";
 
 // Импортируем components

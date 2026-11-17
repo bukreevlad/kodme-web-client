@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -15,7 +16,6 @@ import { Buttons } from "../../components/buttons.js";
 import { Toggle } from "../../components/toggle.js";
 
 // Импортируем forms
-import { Broadcasts } from "../broadcasts/index.js";
 
 // Импортируем handlers
 import { typePlayChangeHandler } from "./handlers/type_play_change.js";
@@ -35,8 +35,6 @@ export interface BroadcastsSettingsOptions {
 // Form
 export class BroadcastsSettings {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: BroadcastsSettings | null = null;
 
     /**
      * ***************************************************************************
@@ -50,7 +48,7 @@ export class BroadcastsSettings {
 
         // Поиск открытой формы списка трансляций: настройки открываются
         // внутри неё. Если список закрыт — остаётся левая колонка home
-        const insertInto: HTMLElement | null = Broadcasts.instance?.modal?.content
+        const insertInto: HTMLElement | null = FormsRegistry.get("broadcasts")?.content
             || document.querySelector(".cdm-form.home .left");
 
         // Устанавливаем настройки
@@ -66,12 +64,10 @@ export class BroadcastsSettings {
         this.osListScrollInstance = null; // overlayScroll instance
 
         // Проверяем, существует ли уже экземпляр
-        if (BroadcastsSettings.instance) {
-            return BroadcastsSettings.instance;
-        }
+        const opened = FormsRegistry.getOwner<BroadcastsSettings>("broadcasts-settings");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        BroadcastsSettings.instance = this;
 
         // Инициализация
         this._init();
@@ -113,6 +109,8 @@ export class BroadcastsSettings {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "broadcasts-settings",
                 url: `?broadcasts-settings`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -215,8 +213,6 @@ export class BroadcastsSettings {
     // ***************************************************************************
     async _onBeforeClose(): Promise<void> {
 
-        // Удаляем экземпляр формы
-        BroadcastsSettings.instance = null;
 
     }
 

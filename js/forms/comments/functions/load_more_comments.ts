@@ -75,10 +75,11 @@ export async function commentsHistory(form: Comments, options: CommentsHistoryOp
         // Комментарии страницы
         let comments = response.data?.comments ?? [];
 
-        // Пустая страница вниз — конец потока: запечатываем границу, чтобы
-        // больше не долбить сервер одним и тем же запросом
+        // Пустая страница — конец потока в эту сторону: запечатываем границу,
+        // чтобы больше не долбить сервер одним и тем же запросом
         if (comments.length === 0) {
             if (options.direction === "next") form.lastCommentId = cursorId;
+            else form.firstCommentId = cursorId;
             return 0;
         }
 

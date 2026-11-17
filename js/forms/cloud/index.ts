@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import type { Tabs as TabsType } from "../../components/tabs.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -6,6 +7,7 @@ import { CDM_FORM_CLASSES, CDM_FORM_HEADER_CLASSES, CDM_FORM_CONTENT_CLASSES } f
 
 // Импортируем utils
 import { Logger } from "../../utils/logs/logger.js";
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { Icons } from "../../utils/icons.js";
 import { Store } from "../../utils/store.js";
 
@@ -36,7 +38,7 @@ import { uploadFiles } from "./functions/upload_files.js";
 import { CreateFolder } from "../cloud-folder-create/index.js";
 
 // Импортируем типы
-import type { Tabs as TabsType } from "../../components/tabs.js";
+
 import type {
     CloudAccessLevel,
     CloudAvailableLink,
@@ -102,8 +104,6 @@ interface CloudTabData {
 // Form
 export class Cloud {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: Cloud | null = null;
 
     /**
      * ***************************************************************************
@@ -117,7 +117,7 @@ export class Cloud {
 
         // Устанавливаем настройки
         this.options = {
-            insertInto: document.querySelector<HTMLElement>(".cdm-form.home .left"),
+            insertInto: document.querySelector<HTMLElement>(".cdm-form.home .middle .form-container"),
             ...data?.options
         }
 
@@ -197,12 +197,10 @@ export class Cloud {
         this.folderErrorToasts = {};
 
         // Проверяем, существует ли уже экземпляр
-        if (Cloud.instance) {
-            return Cloud.instance;
-        }
+        const opened = FormsRegistry.getOwner<Cloud>("cloud");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        Cloud.instance = this;
 
         // Инициализация
         this._init();
@@ -297,7 +295,7 @@ export class Cloud {
     static async openShareLink(link: string): Promise<Cloud> {
 
         // Если форма уже открыта — активируем и открываем ссылку
-        let form = Cloud.instance;
+        let form = FormsRegistry.getOwner<Cloud>("cloud");
         if (form) {
             form.shareLinkToken = link;
             form.modal?.activate?.();
@@ -339,6 +337,10 @@ export class Cloud {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "cloud",
+                placement: "workspace",
+                workspace: "cloud",
                 url: `?cloud`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -381,7 +383,7 @@ export class Cloud {
             let createFolder = this.tpl.querySelector(":scope >.header [action-create-folder]");
             createFolder?.addEventListener("click", () => {
                 if (this.mode === "available") this._setMode("mine");
-                new CreateFolder({ form: this });
+                new CreateFolder({});
             });
 
             // Загрузить файл
@@ -503,6 +505,11 @@ export class Cloud {
             // Активируем вкладку «Моё облако»
             this.tabs.activateTab("mine");
 
+            // Пилюля рабочего места: заголовки живут в записи реестра
+            if (this.modal) if (this.modal) FormsRegistry.update(this.modal.options.id, {
+                title: t("forms.cloud.root")
+            });
+
         } catch (error) {
             Logger.error(error);
         }
@@ -564,8 +571,6 @@ export class Cloud {
         // Сбрасываем ссылку на диалог ссылок
         this.shareLinksDialog = null;
 
-        // Удаляем экземпляр формы
-        Cloud.instance = null;
 
     }
 
@@ -823,7 +828,7 @@ export class Cloud {
 
             // Режим плитки
             list.classList.toggle("grid", isGrid);
-            list.classList.toggle("grid-cols-3", isGrid);
+            list.classList.toggle("cloud-tiles", isGrid);
             list.classList.toggle("gap-2", isGrid);
         });
 

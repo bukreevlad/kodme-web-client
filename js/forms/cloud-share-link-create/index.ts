@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { CDM_FORM_CLASSES, CDM_FORM_HEADER_CLASSES, CDM_FORM_CONTENT_CLASSES, CDM_FORM_SECTION_CLASSES } from "../../config/constants.js";
 
 // Импортируем utils
@@ -18,7 +19,7 @@ import { createHandler } from "./handlers/create.js";
 import { fullLink } from "../cloud/functions/full_link.js";
 
 // Импортируем типы
-import type { Cloud } from "../cloud/index.js";
+
 import type { CloudItem, CloudShareLinkRow } from "../cloud/types.js";
 import { t } from "../../utils/i18n/index.js";
 
@@ -37,9 +38,6 @@ export interface CreateShareLinkOptions {
  */
 export interface CreateShareLinkData {
 
-    /** Экземпляр формы облака. */
-    form: Cloud;
-
     /** Папка или файл, для которого создаётся ссылка. */
     item: CloudItem;
 
@@ -51,28 +49,25 @@ export interface CreateShareLinkData {
 // Form
 export class CreateShareLink {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: CreateShareLink | null = null;
 
     /**
      * ***************************************************************************
      * Форма создания ссылки-приглашения.
      * @param data - Данные.
-     * @param data.form - Экземпляр формы облака.
      * @param data.item - Папка или файл, для которого создаётся ссылка.
      * @param data.options - Настройки формы.
      * ***************************************************************************
      */
     constructor(data: CreateShareLinkData) {
 
-        // Если не передан form или item
-        if (!data?.form) throw new Error("Не передан: form");
+        // Если не передан item
         if (!data?.item) throw new Error("Не передан: item");
 
-        // Устанавливаем настройки. Форма живёт в левой колонке home —
-        // как и group-create, а не поверх всего документа
+        // Устанавливаем настройки: диалог открывается в открытой форме
+        // облака, а не в левой колонке home
+        let insertInto = FormsRegistry.get("cloud")?.content || null;
         this.options = {
-            insertInto: document.querySelector(".cdm-form.home .left"),
+            insertInto: insertInto || data.options?.insertInto || document.querySelector(".cdm-form.home .left"),
             ...data?.options
         }
 
@@ -81,16 +76,13 @@ export class CreateShareLink {
         this.modal = null;
 
         // Переменные формы
-        this.form = data.form;
         this.item = data.item;
 
         // Проверяем, существует ли уже экземпляр
-        if (CreateShareLink.instance) {
-            return CreateShareLink.instance;
-        }
+        const opened = FormsRegistry.getOwner<CreateShareLink>("cloud-share-link-create");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        CreateShareLink.instance = this;
 
         // Инициализация
         this._init();
@@ -104,8 +96,7 @@ export class CreateShareLink {
     tpl: HTMLElement | null = null;
     modal: Overlay | null = null;
 
-    // Экземпляр формы облака и элемент, на который создаётся ссылка
-    form: Cloud;
+    // Элемент, на который создаётся ссылка
     item: CloudItem;
 
     // ***************************************************************************
@@ -134,6 +125,8 @@ export class CreateShareLink {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "cloud-share-link-create",
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
                 closeOnOverlay: false,
@@ -241,8 +234,6 @@ export class CreateShareLink {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        CreateShareLink.instance = null;
 
     }
 

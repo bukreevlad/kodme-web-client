@@ -12,6 +12,7 @@ import { LocalStorage } from "../../utils/local_storage.js";
 import { SvgMaskManager } from "../../core/managers/svg_mask_manager.js";
 import { TextareaAutosize } from "../../utils/helpers/textarea_autosize.js";
 import { ScrollManager } from "../../core/managers/scroll_manager.js";
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { secretChatsTable } from "../../utils/secret_chats/secret_chats_db.js";
 
 // Импортируем components
@@ -39,7 +40,6 @@ import { attachDocumentHandler } from "./handlers/attach_document.js";
 import { textareaPasteBufferHandler } from "./handlers/textarea_paste_buffer.js";
 import { dragAndDropFilesHandler } from "./handlers/drag_and_drop_files.js";
 import { voiceNotePointerHandler } from "./handlers/voice_note_pointer.js";
-import { startStopVideoNoteRecordHandler } from "./handlers/start_stop_video_note_record.js";
 import { stopVideoNoteHandler } from "./handlers/stop_video_note.js";
 import { pauseResumeVideoNoteHandler } from "./handlers/pause_resume_video_note.js";
 import { switchCameraVideoNoteHandler } from "./handlers/switch_camera_video_note.js";
@@ -74,9 +74,6 @@ import { t } from "../../utils/i18n/index.js";
 
 // Form
 export class SecretChat {
-
-    // Реестр всех открытых форм SecretChat: { chatId: instance }
-    static instances = new Map<string, SecretChat>();
 
     /**
      * ***************************************************************************
@@ -164,11 +161,10 @@ export class SecretChat {
         this.readReceiptsBatcher = new ReadReceiptsBatcher(this);
 
         // Получаем instance
-        let instance = SecretChat.instances.get(data.chatId);
+        let instance = FormsRegistry.getOwner<SecretChat>(`secret-chat:${data.chatId}`);
         if (instance) return instance;
 
         // Регистрируем этот экземпляр формы
-        SecretChat.instances.set(this.chatId, this);
 
         // Инициализация
         this._init();
@@ -275,6 +271,10 @@ export class SecretChat {
             // Форма
             this.modal = new Overlay(tpl, {
                 type: "form",
+                owner: this,
+                id: `secret-chat:${this.chatId}`,
+                placement: "workspace",
+                workspace: `secret-chat:${this.chatId}`,
                 url: `?secretChatId=${this.chatId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -344,9 +344,8 @@ export class SecretChat {
             // Перетаскивание файлов в область чата
             this.dragAndDrop = dragAndDropFilesHandler(this);
 
-            // Запись голосового сообщения (тап — закреплённая запись,
-            // удержание + свайп вверх — отмена, повторное нажатие по микрофону — отмена)
-            let recordVoice = this.tpl.querySelector<HTMLElement>(":scope >.footer [action-voice-recorder]");
+            // Общая кнопка: тап переключает голос/видео, удержание записывает.
+            let recordVoice = this.tpl.querySelector<HTMLElement>(":scope >.footer [data-note-recorder]");
             if (recordVoice) voiceNotePointerHandler(this, recordVoice);
 
             // Отмена записи голосового сообщения (кнопка X на панели)
@@ -362,10 +361,6 @@ export class SecretChat {
             sendVoiceNote?.addEventListener("click", () => this.voiceNoteSession?.stop());
 
             // =========================
-
-            // Запись видео кружочка
-            let recordVideoNote = this.tpl.querySelector(":scope >.footer [action-video-recorder]");
-            recordVideoNote?.addEventListener("click", () => startStopVideoNoteRecordHandler(this));
 
             // Смена камеры в видео кружочке
             let switchCameraVideoNote = this.tpl.querySelector(":scope [action-video-note-switch-camera]");
@@ -495,17 +490,11 @@ export class SecretChat {
 
             // ==================================
 
-            // Сообщаем системе, что форма открыта
-            window.dispatchEvent(new CustomEvent("[app][form]::opened", {
-                detail: {
-                    id: this.modal.options.id,
-                    data: {
-                        instance: this,
-                        title: this.peerName,
-                        subtitle: t("forms.secret_chat.tab_subtitle")
-                    }
-                }
-            }));
+            // Пилюля рабочего места: заголовки живут в записи реестра
+            if (this.modal) FormsRegistry.update(this.modal.options.id, {
+                title: this.peerName,
+                subtitle: t("forms.secret_chat.tab_subtitle")
+            });
 
         } catch (error) {
             Logger.error(error);
@@ -596,7 +585,7 @@ export class SecretChat {
         }
 
         // Если идёт запись видео-кружочка — отменяем и освобождаем камеру
-        if (this.videoNoteRecorder?.recorder?.isRecording) {
+        if (this.videoNoteRecorder?.isStarting || this.videoNoteRecorder?.recorder?.isRecording) {
             this.videoNoteRecorder.cancel();
         }
 
@@ -628,7 +617,6 @@ export class SecretChat {
         this._stickToBottom = false;
 
         // Удаляем экземпляр формы из реестра
-        SecretChat.instances.delete(this.chatId);
 
         // Отключаем наблюдение, чтобы избежать утечек памяти
         if (this.observer) {
@@ -638,13 +626,8 @@ export class SecretChat {
 
         // Обновляем строку чата в общем списке диалогов (прочтение/превью):
         // квитации «прочитано» уходят перед закрытием, бейдж должен погаснуть
-        const main = Main.instance;
+        const main = FormsRegistry.getOwner<Main>("main");
         if (main) await updateSecretChatRow(main, this.chatId);
-
-        // Сообщаем системе, что форма закрыта
-        window.dispatchEvent(new CustomEvent("[app][form]::closed", {
-            detail: { id: this.modal?.options.id }
-        }));
 
     }
 
@@ -670,7 +653,7 @@ export class SecretChat {
         const isBlur = LocalStorage?.session?.settings?.user?.decorations?.blur || false;
 
         // Иконка подсказки «свайп вверх — отменить» на панели голосового
-        const slideToCancelIcon = Icons.icon("arrow-up", { settings: { stroke: 2.5 } })?.outerHTML ?? "";
+        const slideToCancelIcon = Icons.icon("arrow-left", { settings: { stroke: 2.5 } })?.outerHTML ?? "";
 
         // Мы используем DOMParser для создания DOM без innerHTML
         return new DOMParser().parseFromString(`
@@ -742,8 +725,10 @@ export class SecretChat {
                             ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-emoji"], icon: "mood-smile" })}
                             ${Inputs.textarea({ intent: "transparent", placeholder: t("forms.secret_chat.enter_message"), name: "message", rows: 1 })}
                             ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-attach-file"], icon: "Paperclip" })}
-                            ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-video-recorder"], icon: "Video" })}
-                            ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-voice-recorder"], classes: ["hidden"], icon: "microphone" })}
+                            <div data-note-recorder data-recording-mode="voice" class="flex shrink-0 select-none touch-none">
+                                ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-video-recorder"], classes: ["hidden"], icon: "Video" })}
+                                ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-voice-recorder"], icon: "microphone" })}
+                            </div>
                             ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-create-message"], classes: ["hidden"], icon: "send-2" })}
                             ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-cancel-edit"], classes: ["hidden"], icon: "X" })}
                             ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-update-message"], classes: ["hidden"], icon: "device-floppy" })}

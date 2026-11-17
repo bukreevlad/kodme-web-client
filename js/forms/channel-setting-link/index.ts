@@ -3,6 +3,7 @@ import { CDM_FORM_CLASSES, CDM_FORM_HEADER_CLASSES, CDM_FORM_CONTENT_CLASSES, CD
 
 // Импортируем utils
 import { Logger } from "../../utils/logs/logger.js";
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 
 // Импортируем components
 import { Overlay } from "../../components/overlay/index.js";
@@ -10,7 +11,6 @@ import { Buttons } from "../../components/buttons.js";
 import { Inputs } from "../../components/inputs.js";
 
 // Импортируем forms
-import { ChannelSettings } from "../channel-settings/index.js";
 
 // Импортируем handlers
 import { saveHandler } from "./handlers/save.js";
@@ -45,8 +45,6 @@ export interface ChannelSettingLinkOptions {
 // Form
 export class ChannelSettingLink {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: ChannelSettingLink | null = null;
 
     // Настройки формы
     options: ChannelSettingLinkOptions;
@@ -74,10 +72,8 @@ export class ChannelSettingLink {
         // Если не передан channelId
         if (!data?.channelId) throw new Error("Не передан: channelId");
 
-        // Поиск открытой формы настроек канала: ссылка устанавливается
-        // внутри неё. Если настройки закрыты — левая колонка home
-        const insertInto: HTMLElement | null = ChannelSettings.instances.get(data.channelId)?.modal?.content
-            || document.querySelector(".cdm-form.home .left");
+        const insertInto: HTMLElement | null = FormsRegistry.get(`channel-settings:${data.channelId}`)?.content
+            ?? document.querySelector<HTMLElement>(".cdm-form.home .left");
 
         // Устанавливаем настройки
         this.options = {
@@ -94,12 +90,10 @@ export class ChannelSettingLink {
         this.link = data.link;
 
         // Проверяем, существует ли уже экземпляр
-        if (ChannelSettingLink.instance) {
-            return ChannelSettingLink.instance;
-        }
+        const opened = FormsRegistry.getOwner<ChannelSettingLink>("channel-setting-link");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        ChannelSettingLink.instance = this;
 
         // Инициализация
         this._init();
@@ -131,6 +125,10 @@ export class ChannelSettingLink {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: `channel-setting-link:${this.channelId}`,
+                placement: "stack",
+                parent: FormsRegistry.getByContent(this.options.insertInto ?? null)?.id ?? null,
                 url: `?channel-setting-link=${this.channelId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -194,8 +192,6 @@ export class ChannelSettingLink {
     // ***************************************************************************
     _onClose(): void {
 
-        // Удаляем экземпляр формы
-        ChannelSettingLink.instance = null;
 
     }
 

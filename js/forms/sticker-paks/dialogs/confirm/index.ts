@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { CDM_MODAL_CLASSES, CDM_MODAL_CONTENT_CLASSES, CDM_MODAL_FOOTER_CLASSES, CDM_MODAL_HEADER_CLASSES } from "../../../../config/constants.js";
 
 // Импортируем utils
@@ -26,8 +27,6 @@ export interface ConfirmStickerPakDialogOptions {
 // Form
 export class ConfirmStickerPakDialog {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: ConfirmStickerPakDialog | null = null;
 
     /** Настройки диалога. */
     options: Required<ConfirmStickerPakDialogOptions>;
@@ -59,12 +58,10 @@ export class ConfirmStickerPakDialog {
         };
 
         // Проверяем, существует ли уже экземпляр
-        if (ConfirmStickerPakDialog.instance) {
-            return ConfirmStickerPakDialog.instance;
-        }
+        const opened = FormsRegistry.getOwner<ConfirmStickerPakDialog>("sticker-paks-dialogs-confirm");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        ConfirmStickerPakDialog.instance = this;
 
         // Инициализация
         this._init();
@@ -94,6 +91,8 @@ export class ConfirmStickerPakDialog {
             // Модальное окно
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "sticker-paks-dialogs-confirm",
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
                 closeOnOverlay: true,
@@ -144,8 +143,6 @@ export class ConfirmStickerPakDialog {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        ConfirmStickerPakDialog.instance = null;
 
     }
 

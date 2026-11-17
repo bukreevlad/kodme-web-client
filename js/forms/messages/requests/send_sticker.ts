@@ -17,6 +17,12 @@ export interface SendStickerRequestData {
     /** Id документа стикера. */
     sticker_document_id: string;
 
+    /**
+     * Клиентский ключ идемпотентности. Повтор запроса с тем же ключом
+     * не создаёт дубль — сервер вернёт message_id уже созданного сообщения.
+     */
+    random_id: string;
+
 }
 
 /**
@@ -39,7 +45,8 @@ export async function sendStickerRequest(data: SendStickerRequestData): Promise<
         .emitWithAck<CreateMessageResult>("[message]: send", {
             channel_id: data.channel_id,
             text: "",
-            sticker_document_id: data.sticker_document_id
+            sticker_document_id: data.sticker_document_id,
+            random_id: data.random_id
         });
 
 }

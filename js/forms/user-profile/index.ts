@@ -6,8 +6,8 @@ import { CDM_FORM_CLASSES, CDM_FORM_HEADER_CLASSES, CDM_FORM_CONTENT_CLASSES } f
 
 // Импортируем utils
 import { Logger } from "../../utils/logs/logger.js";
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { LocalStorage } from "../../utils/local_storage.js";
-import { Icons } from "../../utils/icons.js";
 
 // Импортируем components
 import { Overlay } from "../../components/overlay/index.js";
@@ -54,9 +54,6 @@ export interface UserProfileData {
 // Form
 export class UserProfile {
 
-    // Реестр всех открытых форм UserProfile: { userId: instance }
-    static instances = new Map<string, UserProfile>();
-
     // Переменные формы
     userId: string;
 
@@ -102,10 +99,8 @@ export class UserProfile {
 
         // Регистрируем этот экземпляр формы
         // Проверяем, существует ли уже экземпляр
-        let instance = UserProfile.instances.get(data.userId);
+        let instance = FormsRegistry.getOwner<UserProfile>(`user-profile:${data.userId}`);
         if (instance) return instance;
-
-        UserProfile.instances.set(this.userId, this);
 
         // Инициализация
         this._init();
@@ -138,6 +133,10 @@ export class UserProfile {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: `user-profile:${this.userId}`,
+                placement: "workspace",
+                workspace: `user-profile:${this.userId}`,
                 url: `?user-profile=${this.userId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
@@ -265,17 +264,11 @@ export class UserProfile {
 
             // ==================================
 
-            // Сообщаем системе, что форма открыта
-            window.dispatchEvent(new CustomEvent("[app][form]::opened", {
-                detail: {
-                    id: this.modal?.options.id,
-                    data: {
-                        instance: this,
-                        title: this.profile.display_name,
-                        subtitle: t("forms.user_profile.subtitle")
-                    }
-                }
-            }));
+            // Пилюля рабочего места: заголовки живут в записи реестра
+            if (this.modal) if (this.modal) FormsRegistry.update(this.modal.options.id, {
+                title: this.profile.display_name,
+                subtitle: t("forms.user_profile.subtitle")
+            });
 
             // ==================================
 
@@ -300,12 +293,6 @@ export class UserProfile {
     _onBeforeClose(): void {
 
         // Удаляем экземпляр формы из реестра
-        UserProfile.instances.delete(this.userId);
-
-        // Сообщаем системе, что форма закрыта
-        window.dispatchEvent(new CustomEvent("[app][form]::closed", {
-            detail: { id: this.modal?.options.id }
-        }));
 
     }
 

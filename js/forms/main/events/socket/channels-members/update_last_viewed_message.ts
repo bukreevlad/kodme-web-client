@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../../../../core/managers/forms_registry.js";
 import { Socket } from "../../../../../config/socket.js";
 
 // Импортируем utils
@@ -61,24 +62,19 @@ export function subscribeUpdateLastViewedMessage(): void {
                 // Нагрузка сокета типизирована как unknown: работаем только с известной структурой
                 if (!isViewedMessagePayload(data)) return;
 
-                // Получаем из IndexedDB
-                const channelIndexedDB = await channelsTable().get(data.channel_id);
-
-                // Обновляем данные
-                if (channelIndexedDB) {
-                    channelIndexedDB.last_viewed_message_id = data.message_id;
-                    await channelsTable().put(channelIndexedDB);
-                }
+                // Патчим отметку (записи может не быть — событие могло прийти
+                // раньше загрузки канала; удалённый канал не «воскресает»)
+                await channelsTable().update(data.channel_id, { last_read_id: data.message_id });
 
                 // =====================================
 
                 // Получаем канал из Store
-                const channelStore = Main.instance?.store.get(data.channel_id);
+                const channelStore = FormsRegistry.getOwner<Main>("main")?.store.get(data.channel_id);
 
                 // Обновляем данные
                 if (channelStore) {
-                    channelStore.last_viewed_message_id = data.message_id;
-                    Main.instance?.store.update(data.channel_id, channelStore);
+                    channelStore.last_read_id = data.message_id;
+                    FormsRegistry.getOwner<Main>("main")?.store.update(data.channel_id, channelStore);
                 }
 
             } catch (error) {

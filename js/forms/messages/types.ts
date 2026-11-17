@@ -5,6 +5,9 @@ import type { AttachmentsRaw } from "../../utils/messages/attachments.js";
 // Импортируем components
 import type { AvatarImageDocument } from "../../components/avatars.js";
 
+// Импортируем типы
+import type { ChannelKind, SystemActionPayload } from "../../types/domain.js";
+
 // Импортируем типы компонентов формы (реакции сообщения)
 import type { MessageReaction } from "./components/types.js";
 
@@ -15,12 +18,6 @@ import type { BotMenuBot } from "../bot-menu/index.js";
  * Направление подгрузки страницы истории сообщений (keyset-пагинация).
  */
 export type MessagesDirection = "prev" | "next";
-
-/**
- * Тип канала: 1 — диалог, 2 — группа, 3 — канал, 4 — тема группы,
- * 5 — избранное, 6 — чат конференции, 7 — чат трансляции, 8 — диалог с ботом.
- */
-export type ChannelType = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
 /**
  * ***************************************************************************
@@ -37,8 +34,8 @@ export interface ChannelRecord extends StoreItem {
     /** Id канала. */
     id: string;
 
-    /** Тип канала. */
-    type: number;
+    /** Вид канала. */
+    kind: ChannelKind;
 
     /** Отображаемое имя канала/диалога. */
     display_name: string;
@@ -55,17 +52,17 @@ export interface ChannelRecord extends StoreItem {
     /** Аватар канала/диалога. */
     avatar?: AvatarImageDocument | null;
 
-    /** Включены ли уведомления. */
-    is_notifications?: boolean;
+    /** Подписка на уведомления (null — подписки нет). */
+    notifications?: { mode: "all" | "none" | "mentions" } | null;
 
     /** Подписан ли текущий пользователь. */
     is_subscribed?: boolean;
 
-    /** Разрешена ли публикация (канал без подписки). */
-    is_posting?: boolean;
+    /** Режим публикации: все подписанные либо только администраторы. */
+    posting_mode?: "all" | "admins";
 
-    /** Забанен ли текущий пользователь модерацией канала. */
-    is_blocked?: boolean;
+    /** Закрыт ли канал администратором платформы. */
+    is_closed?: boolean;
 
     /** Число подписчиков (группа/канал). */
     total_members?: number;
@@ -83,17 +80,20 @@ export interface ChannelRecord extends StoreItem {
     /** Id папок, в которые входит канал. */
     main_folders_ids?: string[];
 
-    /** Id группы-родителя (для тем). */
-    topic_for_group_id?: string | null;
+    /** Id родительской группы (для тем). */
+    parent_channel_id?: string | null;
 
-    /** Id последнего просмотренного сообщения. */
-    last_viewed_message_id?: string | null;
+    /** Позиция прочитанного текущим пользователем. */
+    last_read_id?: string | null;
 
-    /** Id последнего сообщения, просмотренного собеседником (диалог). */
-    display_last_viewed_message_id?: string | null;
+    /** Позиция прочитанного собеседником (диалог). */
+    display_last_read_id?: string | null;
 
-    /** Id создателя канала (для проверки прав на удаление «для всех»). */
-    created_user_id?: string;
+    /** Id владельца канала (для проверки прав на удаление «для всех»). */
+    owner_id?: string;
+
+    /** Id владельца родительской группы — для тем его права равны правам владельца темы. */
+    parent_owner_id?: string | null;
 
     /** Текущий пользователь — модератор канала. */
     is_moderator?: boolean;
@@ -106,6 +106,9 @@ export interface ChannelRecord extends StoreItem {
 
     /** Разрешено ли модератору блокировать участников. */
     can_restrict_members?: boolean;
+
+    /** Разрешено ли модератору писать в сущности с «Только администратор». */
+    can_posting_messages?: boolean;
 
     /** Темы группы (в ответе сервера `[channel]: open`). */
     topics?: ChannelRecord[];
@@ -130,7 +133,7 @@ export interface MessageRecord extends StoreItem {
     id: string;
 
     /** Id автора. */
-    created_user_id?: string | undefined;
+    author_id?: string | undefined;
 
     /** Забанен ли автор сообщения модерацией (пункт «Разблокировать» в меню). */
     author_is_blocked?: boolean;
@@ -146,6 +149,12 @@ export interface MessageRecord extends StoreItem {
 
     /** Время создания (ISO). */
     created_at?: string;
+
+    /** Тип системного действия (задан — сообщение системное). */
+    action_type?: string | null;
+
+    /** Полезные данные системного действия (статус звонка и т.п.). */
+    action_payload?: SystemActionPayload | null;
 
     /** Вложения (массив либо объект-мап локальной формы). */
     attachments?: AttachmentsRaw;
@@ -165,14 +174,11 @@ export interface MessageRecord extends StoreItem {
     /** Число комментариев под постом (сервер для type = 3). */
     count_comments?: number;
 
-    /** Разрешено ли комментирование поста (для type = 3). */
-    is_commenting?: boolean;
+    /** Личный флаг комментирования поста (null — наследует настройку канала). */
+    is_commenting?: boolean | null;
 
     /** Флаг «временное» — живёт только на клиенте. */
     is_temporary?: boolean;
-
-    /** Отображённые копии сообщения (одна запись может попасть в список дважды). */
-    __domElements__?: HTMLElement[];
 
     /** Вызвать редактирование сообщения (навешивает компонент сообщения). */
     __editMessage__?: () => void;

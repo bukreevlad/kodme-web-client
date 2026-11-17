@@ -66,10 +66,8 @@ export class PhotoItem {
         if (data?.id) this.element.setAttribute("data-id", String(data.id));
 
         // Записываем ссылку на dom элемент
-        if (!this.data.__domElements__) {
-            this.data.__domElements__ = [];
-        }
-        this.data.__domElements__.push(this.element);
+        // Регистрируем DOM-копию строки в реестре стора секции
+        this.form.photoStore.registerDomElement(this.data.id, this.element);
 
         // Функция для обновления данных
         this.data.__update__ = (data) => this.update(data);
@@ -279,9 +277,8 @@ export class PhotoItem {
                 this.update(data as ChannelSectionItemData);
             });
 
-            // Отписку снимает teardown через removeAll(): Store при очистке
-            // удаляет динамические подписки элементов (utils/store.ts)
-            this.data.__unsubscribeStore__ = unsubscribe;
+            // Запоминаем отписку в сторе — она вызовется при удалении элемента
+            this.form.photoStore.addItemSubscription(this.data.id, unsubscribe);
 
         } catch (error) {
             Logger.error(error);

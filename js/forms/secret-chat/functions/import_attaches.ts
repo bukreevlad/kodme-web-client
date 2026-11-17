@@ -1,7 +1,7 @@
 // Импортируем сторонние пакеты
-import { v7 as Uuidv7 } from "uuid";
 
 // Импортируем utils
+import { v7 as Uuidv7 } from "uuid";
 import { Logger } from "../../../utils/logs/logger.js";
 import { buildLocalMediaMetadata } from "../../../utils/media/local_media_metadata.js";
 import { filterFiles } from "../../../utils/validation/file_validator.js";

@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { LocalStorage } from "../../../utils/local_storage.js";
 import { Logger } from "../../../utils/logs/logger.js";
 
@@ -40,7 +41,7 @@ export async function isChatBackgroundsHandler(form: UserSettingDecorations): Pr
         LocalStorage.updateSession(session);
 
         // Получаем все открытые формы Messages
-        const MessagesInstances = Array.from(Messages.instances.values());
+        const MessagesInstances = FormsRegistry.getOwners<Messages>("messages:");
 
         // Проходим по формам и изменяем фон
         MessagesInstances.forEach(instance => {

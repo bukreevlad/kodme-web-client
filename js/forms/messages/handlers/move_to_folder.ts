@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 import { IndexedDB } from "../../../utils/indexed_db.js";
 
@@ -62,7 +63,7 @@ export async function moveToFolderHandler(channel: ChannelRecord): Promise<void>
 
                             // Обновляем данные
                             channel.main_folders_ids?.push(folder.id);
-                            Main.instance?.store.update(channel.id, channel);
+                            FormsRegistry.getOwner<Main>("main")?.store.update(channel.id, channel);
 
                             // Обновляем IndexedDB
                             await IndexedDB.db?.table("channels").update(channel.id, {
@@ -91,7 +92,7 @@ export async function moveToFolderHandler(channel: ChannelRecord): Promise<void>
                             // Обновляем данные
                             let filteredFolders = channel.main_folders_ids?.filter(f => f !== folder.id);
                             channel.main_folders_ids = filteredFolders || [];
-                            Main.instance?.store.update(channel.id, channel);
+                            FormsRegistry.getOwner<Main>("main")?.store.update(channel.id, channel);
 
                             // Обновляем IndexedDB
                             await IndexedDB.db?.table("channels").update(channel.id, {

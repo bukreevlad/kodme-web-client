@@ -11,8 +11,7 @@ import type { StoreAddOptions, StoreItem } from "../../utils/store.js";
  * Поля — только те, что реально читает код формы: строки списков, аватары,
  * подписи. Состав различается по категориям (у ботов — `link` вместо
  * `display_name`, у людей — `is_online`/`last_action_at`, у сообществ —
- * `total_members`), поэтому поля опциональны. Служебный ключ `__domElements__`
- * живёт здесь же, потому что его пишут и читают подписки стора.
+ * `total_members`), поэтому поля опциональны.
  ***************************************************************************
  */
 export interface SearchRecord extends StoreItem {
@@ -37,9 +36,6 @@ export interface SearchRecord extends StoreItem {
 
     /** Момент последней активности (ISO-строка) — для «Был(а) …» (users). */
     last_action_at?: string;
-
-    /** Отображённые копии строки (одна запись может попасть в список дважды). */
-    __domElements__?: HTMLElement[];
 
 }
 

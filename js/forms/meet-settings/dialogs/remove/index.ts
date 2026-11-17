@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -12,7 +13,7 @@ import { Overlay } from "../../../../components/overlay/index.js";
 import { Buttons } from "../../../../components/buttons.js";
 
 // Импортируем forms
-import { MeetSettings } from "../../../meet-settings/index.js";
+
 import { t } from "../../../../utils/i18n/index.js";
 
 /**
@@ -44,8 +45,6 @@ export interface RemoveMeetData {
 // Form
 export class RemoveMeet {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: RemoveMeet | null = null;
 
     // Переменные формы
     meetId: string;
@@ -74,8 +73,7 @@ export class RemoveMeet {
         if (!data?.meetId) throw new Error("Не передан: meetId");
 
         // Поиск открытой формы настроек конференции
-        let meetSettingsForm = MeetSettings.instances.get(data.meetId);
-        let insertInto = meetSettingsForm?.modal?.content || null;
+        let insertInto = FormsRegistry.get(`meet-settings:${data.meetId}`)?.content || null;
 
         // Устанавливаем настройки
         this.options = {
@@ -94,12 +92,10 @@ export class RemoveMeet {
         this.callback = data.callback;
 
         // Проверяем, существует ли уже экземпляр
-        if (RemoveMeet.instance) {
-            return RemoveMeet.instance;
-        }
+        const opened = FormsRegistry.getOwner<RemoveMeet>("meet-settings-dialogs-remove");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        RemoveMeet.instance = this;
 
         // Инициализация
         this._init();
@@ -129,6 +125,8 @@ export class RemoveMeet {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "meet-settings-dialogs-remove",
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
                 closeOnOverlay: true,
@@ -216,8 +214,6 @@ export class RemoveMeet {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        RemoveMeet.instance = null;
 
     }
 

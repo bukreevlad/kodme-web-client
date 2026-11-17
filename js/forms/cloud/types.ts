@@ -55,9 +55,8 @@ export interface CloudFolderEntry {
  * CloudItem - элемент облака в хранилище формы (папка или файл).
  *
  * Поля — только те, что реально читает код формы: строки списков, шапка,
- * загрузка файлов. Служебные ключи (__domElements__, __progressInstances__,
- * __uploader__) живут здесь же, потому что их пишут и читают компоненты
- * и подписки стора.
+ * загрузка файлов. Служебные ключи (__progressInstances__, __uploader__)
+ * живут здесь же, потому что их пишут и читают компоненты.
  ***************************************************************************
  */
 export interface CloudItem extends StoreItem {
@@ -107,9 +106,6 @@ export interface CloudItem extends StoreItem {
     /** Локальный файл (живёт до ответа сервера). */
     _file?: File;
 
-    /** Отображённые копии элемента (папка/файл попадает в список дважды). */
-    __domElements__?: HTMLElement[];
-
     /** Инстансы прогресса загрузки (по одному на DOM-копию). */
     __progressInstances__?: ProgressIndicator[];
 
@@ -146,9 +142,6 @@ export interface CloudAvailableLink extends StoreItem {
 
     /** Срок действия (ISO-строка). */
     expires_at?: string | null;
-
-    /** Отображённые копии строки. */
-    __domElements__?: HTMLElement[];
 
 }
 

@@ -114,10 +114,8 @@ export function createApplicationItem(form: BotSettings, data: BotAppRecord): HT
     let element = template();
 
     // Записываем ссылку на dom элемент
-    if (!data.__domElements__) {
-        data.__domElements__ = [];
-    }
-    data.__domElements__.push(element);
+    // Регистрируем DOM-копию строки в реестре стора приложений
+    form.storeApps.registerDomElement(data.id, element);
 
     // Устанавливаем начальные данные
     setup(element, data);

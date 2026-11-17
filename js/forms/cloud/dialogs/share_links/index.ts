@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { CDM_MODAL_CLASSES, CDM_MODAL_CONTENT_CLASSES, CDM_MODAL_FOOTER_CLASSES, CDM_MODAL_HEADER_CLASSES } from "../../../../config/constants.js";
 
 // Импортируем utils
@@ -19,7 +20,7 @@ import { revokeHandler } from "./handlers/revoke.js";
 import { fullLink } from "../../functions/full_link.js";
 
 // Импортируем типы
-import type { Cloud } from "../../index.js";
+import { Cloud } from "../../index.js";
 import type { CloudItem, CloudShareLinkRow } from "../../types.js";
 import { t } from "../../../../utils/i18n/index.js";
 
@@ -38,9 +39,6 @@ export interface ShareLinksOptions {
  */
 export interface ShareLinksData {
 
-    /** Экземпляр формы облака. */
-    form: Cloud;
-
     /** Папка или файл, для которого показать ссылки. */
     item: CloudItem;
 
@@ -52,27 +50,24 @@ export interface ShareLinksData {
 // Form
 export class ShareLinks {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: ShareLinks | null = null;
 
     /**
      * ***************************************************************************
      * Форма управления ссылками-приглашениями.
      * @param data - Данные.
-     * @param data.form - Экземпляр формы облака.
      * @param data.item - Папка или файл, для которого показать ссылки.
      * @param data.options - Настройки формы.
      * ***************************************************************************
      */
     constructor(data: ShareLinksData) {
 
-        // Если не передан form или item
-        if (!data?.form) throw new Error("Не передан: form");
+        // Если не передан item
         if (!data?.item) throw new Error("Не передан: item");
 
-        // Устанавливаем настройки
+        // Устанавливаем настройки: диалог открывается в открытой форме облака
+        let insertInto = FormsRegistry.get("cloud")?.content || null;
         this.options = {
-            insertInto: document.body,
+            insertInto: insertInto || data.options?.insertInto || document.body,
             ...data?.options
         }
 
@@ -81,21 +76,19 @@ export class ShareLinks {
         this.modal = null;
 
         // Переменные формы
-        this.form = data.form;
         this.item = data.item;
         this.list = null;
         this.empty = null;
 
         // Проверяем, существует ли уже экземпляр
-        if (ShareLinks.instance) {
-            return ShareLinks.instance;
-        }
+        const opened = FormsRegistry.getOwner<ShareLinks>("cloud-dialogs-share_links");
+        if (opened) return opened;
 
-        // Регистрируем диалог в форме для обновления после отзыва ссылки
-        data.form.shareLinksDialog = this;
+        // Регистрируем диалог в форме облака для обновления после отзыва ссылки
+        const cloudForm = FormsRegistry.getOwner<Cloud>("cloud");
+        if (cloudForm) cloudForm.shareLinksDialog = this;
 
         // Сохраняем ссылку на текущий экземпляр
-        ShareLinks.instance = this;
 
         // Инициализация
         this._init();
@@ -109,8 +102,7 @@ export class ShareLinks {
     tpl: HTMLElement | null = null;
     modal: Overlay | null = null;
 
-    // Экземпляр формы облака и элемент, на который ссылки
-    form: Cloud;
+    // Элемент, на который ссылки
     item: CloudItem;
 
     // Элементы списка ссылок
@@ -143,6 +135,8 @@ export class ShareLinks {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "cloud-dialogs-share_links",
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
                 closeOnOverlay: true,
@@ -306,12 +300,12 @@ export class ShareLinks {
     _onBeforeClose(): void {
 
         // Удаляем ссылку на диалог из формы
-        if (this.form.shareLinksDialog === this) {
-            this.form.shareLinksDialog = null;
+        // Снимаем регистрацию диалога в форме облака
+        const cloudForm = FormsRegistry.getOwner<Cloud>("cloud");
+        if (cloudForm?.shareLinksDialog === this) {
+            cloudForm.shareLinksDialog = null;
         }
 
-        // Удаляем экземпляр формы
-        ShareLinks.instance = null;
 
     }
 

@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -41,8 +42,6 @@ export interface ConfirmLanguageChangeData {
 // Form
 export class ConfirmLanguageChange {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: ConfirmLanguageChange | null = null;
 
     /** Отображаемое имя языка. */
     name: string;
@@ -87,12 +86,10 @@ export class ConfirmLanguageChange {
         this.osListScrollInstance = null;
 
         // Проверяем, существует ли уже экземпляр
-        if (ConfirmLanguageChange.instance) {
-            return ConfirmLanguageChange.instance;
-        }
+        const opened = FormsRegistry.getOwner<ConfirmLanguageChange>("user-setting-language-dialogs-confirm");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        ConfirmLanguageChange.instance = this;
 
         // Инициализация
         this._init();
@@ -122,6 +119,8 @@ export class ConfirmLanguageChange {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "user-setting-language-dialogs-confirm",
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
                 closeOnOverlay: true,
@@ -205,8 +204,6 @@ export class ConfirmLanguageChange {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        ConfirmLanguageChange.instance = null;
 
     }
 

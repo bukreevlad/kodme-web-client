@@ -20,18 +20,17 @@ export async function resendMessageHandler(message: MessageItem): Promise<void> 
 
     try {
 
-        // Удаляем сообщение из IndexedDB
-        let pendingMessage = await IndexedDB.db?.table<MessageRecord, string>("pending_messages").get(message.data.id);
-        if (pendingMessage) {
+        // Снимаем флаг ошибки у записи очереди
+        const db = IndexedDB.db;
+        const updated = db
+            ? await db.table<MessageRecord, string>("pending_messages").update(message.data.id, { is_error_sending: false })
+            : 0;
 
-            // Оменяем флаг ошибки и обновляем
-            pendingMessage.is_error_sending = false;
-            await IndexedDB.db?.table<MessageRecord, string>("pending_messages").put(pendingMessage);
+        // Если записи уже нет (пришло полное сообщение) — отправлять нечего
+        if (updated > 0) {
 
-            // Удаляем сообщение из Messages.Store
-            message.form.store.update(pendingMessage.id, pendingMessage);
-
-            // Начинаем отправку
+            // Обновляем запись в Store и запускаем отправку
+            message.form.store.update(message.data.id, { is_error_sending: false });
             sendingMessages(message.form);
 
         }

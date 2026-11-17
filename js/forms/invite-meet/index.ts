@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -62,8 +63,6 @@ export type InviteMeetInput = Omit<InviteMeetData, "meet_id"> & {
 // Form
 export class InviteMeet {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: InviteMeet | null = null;
 
     /** Настройки формы. */
     options: InviteMeetOptions;
@@ -115,12 +114,10 @@ export class InviteMeet {
         this.about = data.about;
 
         // Проверяем, существует ли уже экземпляр
-        if (InviteMeet.instance) {
-            return InviteMeet.instance;
-        }
+        const opened = FormsRegistry.getOwner<InviteMeet>("invite-meet");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        InviteMeet.instance = this;
 
         // Инициализация
         this._init();
@@ -152,6 +149,8 @@ export class InviteMeet {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "invite-meet",
                 url: `?meet-invite=${this.meetId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
@@ -234,8 +233,6 @@ export class InviteMeet {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        InviteMeet.instance = null;
 
     }
 

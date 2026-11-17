@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -23,7 +24,7 @@ import { EmptyState } from "../../components/empty_state.js";
 import { subscribeStoreEvents } from "./events/store/store_events.js";
 
 // Импортируем forms
-import { BroadcastSettings } from "../broadcast-settings/index.js";
+
 import { BroadcastInviteCreate } from "../broadcast-invite-create/index.js";
 
 // Импортируем handlers
@@ -59,9 +60,6 @@ export interface BroadcastManageInvitesData {
 // Form
 export class BroadcastManageInvites {
 
-    // Реестр всех открытых форм BroadcastManageInvites: { castId: instance }
-    static instances = new Map<string, BroadcastManageInvites>();
-
     /**
      * ***************************************************************************
      * Форма управления приглашениями трансляции.
@@ -77,8 +75,7 @@ export class BroadcastManageInvites {
         if (!data?.castId) throw new Error("Не передан: castId");
 
         // Поиск открытого окна настроек трансляции
-        let broadcastSettingsForm = BroadcastSettings.instances.get(data.castId);
-        let insertInto = broadcastSettingsForm?.modal?.content || null;
+        let insertInto = FormsRegistry.get(`broadcast-settings:${data.castId}`)?.content || null;
 
         // Устанавливаем настройки
         this.options = {
@@ -112,11 +109,10 @@ export class BroadcastManageInvites {
         this.store = new Store<BroadcastInvite>();
 
         // Получаем instance
-        let instance = BroadcastManageInvites.instances.get(data.castId);
+        let instance = FormsRegistry.getOwner<BroadcastManageInvites>(`broadcast-manage-invites:${data.castId}`);
         if (instance) return instance;
 
         // Регистрируем этот экземпляр формы
-        BroadcastManageInvites.instances.set(this.castId, this);
 
         // Инициализация
         this._init();
@@ -183,6 +179,8 @@ export class BroadcastManageInvites {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: `broadcast-manage-invites:${this.castId}`,
                 url: `?broadcast-manage-invites=${this.castId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -288,7 +286,6 @@ export class BroadcastManageInvites {
         this._offScrollInvites = null;
 
         // Удаляем экземпляр формы из реестра
-        BroadcastManageInvites.instances.delete(this.castId);
 
     }
 

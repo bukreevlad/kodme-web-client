@@ -21,8 +21,8 @@ import { t } from "../../../utils/i18n/index.js";
  *
  * Отображает название и ссылку приглашения: клик по строке копирует ссылку
  * в буфер обмена, кнопка-корзина отзывает приглашение (с подтверждением).
- * Строка живёт в data.__domElements__ (для удаления копий при выгрузке
- * из стора) и подписывается на точечное событие обновления записи.
+ * Строка регистрируется в реестре DOM-копий стора (для удаления копий
+ * при выгрузке из стора) и подписывается на точечное событие обновления записи.
  *
  * @param form - Экземпляр формы приглашений.
  * @param data - Данные приглашения.
@@ -37,11 +37,8 @@ export function createInviteItem(form: ChannelManageInvites, data: ChannelInvite
     // Создаем DOM-элемент из шаблона
     const element = template();
 
-    // Записываем ссылку на dom элемент
-    if (!current.__domElements__) {
-        current.__domElements__ = [];
-    }
-    current.__domElements__.push(element);
+    // Регистрируем DOM-копию строки в реестре стора
+    form.store.registerDomElement(current.id, element);
 
     // Устанавливаем начальные данные
     setup(current);
@@ -152,8 +149,8 @@ export function createInviteItem(form: ChannelManageInvites, data: ChannelInvite
 
             });
 
-            // Сохраняем функцию отписки в data, чтобы стор мог вызвать ее при удалении
-            current.__unsubscribeStore__ = unsubscribe;
+            // Запоминаем отписку в сторе — она вызовется при удалении элемента
+            form.store.addItemSubscription(current.id, unsubscribe);
 
         } catch (error) {
             Logger.error(error);

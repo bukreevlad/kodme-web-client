@@ -53,6 +53,9 @@ export function subscribeSection(form: Search, section: SearchSection, createIte
             // вставляется в начало — последовательный prepend складывает
             // её в возрастающем порядке, старые записи остаются сверху
             const item = createItem(form, payload);
+
+            // Регистрируем DOM-копию строки в реестре стора секции
+            store.registerDomElement(payload.id, item);
             const direction = hasDirection(options) ? options.direction : undefined;
             if (direction === "prev") {
                 list.prepend(item);
@@ -62,29 +65,8 @@ export function subscribeSection(form: Search, section: SearchSection, createIte
 
         });
 
-        // Удаление: у записи может быть несколько копий элемента
-        const offRemoved = store.on("item::removed", (payload) => {
-
-            if (!isSearchRecord(payload)) return;
-
-            const elements = payload.__domElements__;
-            if (!Array.isArray(elements)) return;
-
-            for (const element of elements) {
-                if (element && typeof element.remove === "function") element.remove();
-            }
-
-            Logger.debug(`[app][search][${section.id}]: удалено копий — ${elements.length}`);
-
-            // Очищаем массив, чтобы не копить утечки памяти
-            payload.__domElements__ = [];
-
-        });
-
-        return () => {
-            offAdded();
-            offRemoved();
-        };
+        // DOM-копии строк стор снимает сам при удалении элементов
+        return offAdded;
 
     } catch (error) {
 

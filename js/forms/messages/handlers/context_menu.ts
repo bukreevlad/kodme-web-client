@@ -10,6 +10,7 @@ import type { PopoverMenuItem } from "../../../components/overlay/popover_menu.j
 import { ChannelProfile } from "../../channel-profile/index.js";
 import { UserProfile } from "../../user-profile/index.js";
 import { Call } from "../../call/index.js";
+import { ChannelMembers } from "../../channel-members/index.js";
 
 // Импортируем handlers
 import { enableNotifyHandler } from "./enable_notify.js";
@@ -20,8 +21,15 @@ import { clearHistoryHandler } from "./clear_history.js";
 import { removeDialogHandler } from "./remove_dialog.js";
 import { moveToFolderHandler } from "./move_to_folder.js";
 
+// Импортируем db
+import { channelsTable } from "../../main/db.js";
+
+// Импортируем functions
+import { getSessionUserId } from "../../main/functions/session_identity.js";
+
 // Импортируем типы
 import type { Messages } from "../index.js";
+import type { ChannelRecord } from "../../main/types.js";
 import { t } from "../../../utils/i18n/index.js";
 
 /**
@@ -49,8 +57,8 @@ export async function contextMenuHandler(event: Event, form: Messages): Promise<
             iconName: "Bell",
             onClick: () => enableNotifyHandler(form)
         };
-        if (!form.channel.is_notifications && form.channel.is_subscribed
-            && [1, 2, 3, 4, 6, 7, 8].includes(form.channel.type)
+        if (form.channel.notifications?.mode !== "all" && form.channel.is_subscribed
+            && form.channel.kind !== "favorite"
         ) {
             menuItems.push(enableNotify);
         }
@@ -61,8 +69,8 @@ export async function contextMenuHandler(event: Event, form: Messages): Promise<
             iconName: "BellOff",
             onClick: () => disableNotifyHandler(form)
         };
-        if (form.channel.is_notifications && form.channel.is_subscribed
-            && [1, 2, 3, 4, 6, 7, 8].includes(form.channel.type)
+        if (form.channel.notifications?.mode === "all" && form.channel.is_subscribed
+            && form.channel.kind !== "favorite"
         ) {
             menuItems.push(disableNotify);
         }
@@ -74,6 +82,17 @@ export async function contextMenuHandler(event: Event, form: Messages): Promise<
             onClick: () => new ChannelProfile({ channelId: form.channelId })
         };
         menuItems.push(profile);
+
+        // menu item: список участников есть у групп, сообществ, тем и чатов
+        // конференций/трансляций; права проверяются отдельно по типу
+        let members: PopoverMenuItem = {
+            text: t("forms.messages.context_menu.members"),
+            iconName: "users",
+            onClick: () => new ChannelMembers({ channelId: form.channelId })
+        };
+        if (await canViewMembers(form.channel)) {
+            menuItems.push(members);
+        }
 
         // ================================
 
@@ -88,7 +107,7 @@ export async function contextMenuHandler(event: Event, form: Messages): Promise<
                 new UserProfile({ userId: channel.display_user_id });
             }
         };
-        if (form.channel.type === 1) {
+        if (form.channel.kind === "dialog") {
             menuItems.push(userProfile);
         }
 
@@ -108,7 +127,7 @@ export async function contextMenuHandler(event: Event, form: Messages): Promise<
                 });
             }
         };
-        if (form.channel.type === 1) {
+        if (form.channel.kind === "dialog") {
             menuItems.push(call);
         }
 
@@ -124,7 +143,7 @@ export async function contextMenuHandler(event: Event, form: Messages): Promise<
                 if (channel) moveToFolderHandler(channel);
             }
         };
-        if (form.channel.type !== 5) {
+        if (form.channel.kind !== "favorite") {
             menuItems.push(moveToFolder);
         }
 
@@ -134,7 +153,7 @@ export async function contextMenuHandler(event: Event, form: Messages): Promise<
             iconName: "user-plus",
             onClick: () => subscribeChannelHandler(form)
         };
-        if (form.channel.type === 3 && !form.channel.is_subscribed) {
+        if (form.channel.kind === "channel" && !form.channel.is_subscribed) {
             menuItems.push(subscribeChannel);
         }
 
@@ -145,7 +164,7 @@ export async function contextMenuHandler(event: Event, form: Messages): Promise<
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => unsubscribeChannelHandler(form)
         };
-        if (form.channel.type === 3 && form.channel.is_subscribed) {
+        if (form.channel.kind === "channel" && form.channel.is_subscribed) {
             menuItems.push(unsubscribeChannel);
         }
 
@@ -155,7 +174,7 @@ export async function contextMenuHandler(event: Event, form: Messages): Promise<
             iconName: "user-plus",
             onClick: () => subscribeChannelHandler(form)
         };
-        if (form.channel.type === 2 && !form.channel.is_subscribed) {
+        if (form.channel.kind === "group" && !form.channel.is_subscribed) {
             menuItems.push(subscribeGroup);
         }
 
@@ -166,7 +185,7 @@ export async function contextMenuHandler(event: Event, form: Messages): Promise<
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => unsubscribeChannelHandler(form)
         };
-        if (form.channel.type === 2 && form.channel.is_subscribed) {
+        if (form.channel.kind === "group" && form.channel.is_subscribed) {
             menuItems.push(unsubscribeGroup);
         }
 
@@ -177,7 +196,7 @@ export async function contextMenuHandler(event: Event, form: Messages): Promise<
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => clearHistoryHandler(form)
         };
-        if ([1, 8].includes(form.channel.type) && form.channel.is_subscribed) {
+        if (form.channel.kind === "dialog" && form.channel.is_subscribed) {
             menuItems.push(clearHistory);
         }
 
@@ -188,7 +207,7 @@ export async function contextMenuHandler(event: Event, form: Messages): Promise<
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => removeDialogHandler(form)
         };
-        if ([1, 8].includes(form.channel.type) && form.channel.is_subscribed) {
+        if (form.channel.kind === "dialog" && form.channel.is_subscribed) {
             menuItems.push(removeDialog);
         }
 
@@ -208,5 +227,45 @@ export async function contextMenuHandler(event: Event, form: Messages): Promise<
     } catch (error) {
         Logger.error(error);
     }
+
+}
+
+/**
+ * ***************************************************************************
+ * canViewMembers - видит ли пользователь список участников канала.
+ *
+ * Сервер отдаёт список только подписанным участникам (и только создателю
+ * и модераторам в сообществе); здесь права проверяются по данным канала:
+ * для темы — по подписке родительской группы, для чатов конференции и
+ * трансляций — по факту открытия чата (тот же доступ проверялся при
+ * открытии). Диалоги и избранное списков не имеют.
+ * @param channel - Канал, для которого строится меню.
+ * @returns Promise<boolean>: true — пункт «Участники» показывается.
+ * ***************************************************************************
+ */
+async function canViewMembers(channel: ChannelRecord): Promise<boolean> {
+
+    // Списки есть у групп, сообществ, тем и чатов конференций/трансляций
+    if (channel.kind === "dialog" || channel.kind === "favorite") return false;
+
+    // Сообщество: список только создателю и модераторам
+    if (channel.kind === "channel") {
+        return channel.owner_id === getSessionUserId() || channel.is_moderator === true;
+    }
+
+    // Группа: только подписанный участник
+    if (channel.kind === "group") return channel.is_subscribed === true;
+
+    // Тема: подписка наследуется от родительской группы — читаем её из IndexedDB
+    if (channel.kind === "topic") {
+        if (channel.is_subscribed === true) return true;
+        if (!channel.parent_channel_id) return false;
+        const parent = await channelsTable().get(channel.parent_channel_id);
+        return parent?.is_subscribed === true;
+    }
+
+    // Чаты конференции и трансляций: участие в родительской сущности
+    // проверялось при открытии чата — форма открыта, значит доступ был
+    return true;
 
 }

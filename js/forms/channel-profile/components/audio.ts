@@ -97,10 +97,8 @@ export class AudioItem {
         if (data?.id) this.element.setAttribute("data-id", String(data.id));
 
         // Записываем ссылку на dom элемент
-        if (!this.data.__domElements__) {
-            this.data.__domElements__ = [];
-        }
-        this.data.__domElements__.push(this.element);
+        // Регистрируем DOM-копию строки в реестре стора секции
+        this.form.audioStore.registerDomElement(this.data.id, this.element);
 
         // Функция для обновления данных
         this.data.__update__ = (data) => this.update(data);

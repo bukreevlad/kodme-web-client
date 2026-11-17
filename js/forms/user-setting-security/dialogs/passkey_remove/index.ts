@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { CDM_MODAL_CLASSES, CDM_MODAL_CONTENT_CLASSES, CDM_MODAL_FOOTER_CLASSES, CDM_MODAL_HEADER_CLASSES } from "../../../../config/constants.js";
 
 // Импортируем utils
@@ -28,8 +29,6 @@ export interface PasskeyRemoveDialogOptions {
 // Form
 export class PasskeyRemoveDialog {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: PasskeyRemoveDialog | null = null;
 
     /** Настройки диалога. */
     options: Required<PasskeyRemoveDialogOptions>;
@@ -63,12 +62,10 @@ export class PasskeyRemoveDialog {
         };
 
         // Проверяем, существует ли уже экземпляр
-        if (PasskeyRemoveDialog.instance) {
-            return PasskeyRemoveDialog.instance;
-        }
+        const opened = FormsRegistry.getOwner<PasskeyRemoveDialog>("user-setting-security-dialogs-passkey_remove");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        PasskeyRemoveDialog.instance = this;
 
         // Инициализация
         this._init();
@@ -98,6 +95,8 @@ export class PasskeyRemoveDialog {
             // Модальное окно
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "user-setting-security-dialogs-passkey_remove",
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
                 closeOnOverlay: true,
@@ -144,8 +143,6 @@ export class PasskeyRemoveDialog {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        PasskeyRemoveDialog.instance = null;
 
     }
 

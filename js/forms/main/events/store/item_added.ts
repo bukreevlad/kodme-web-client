@@ -34,7 +34,7 @@ export function subscribeItemAdded(form: Main): void {
             const item = data.is_secret_chat ? new SecretChatItem(form, data) : new ChannelItem(form, data);
 
             // Добавляем в список
-            if (data.type !== 4) {
+            if (data.kind !== "topic") {
                 const pane = form.foldersTabs?.getPane("all");
                 const list = pane?.querySelector<HTMLElement>("[data-list]");
                 list && list.appendChild(item.element);

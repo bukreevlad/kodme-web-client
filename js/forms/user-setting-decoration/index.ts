@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -32,7 +33,6 @@ import { brandColorHandler } from "./handlers/brand_color.js";
 import { uiRadiusHandler } from "./handlers/ui_radius.js";
 
 // Импортируем forms
-import { UserProfile } from "../user-profile/index.js";
 
 // Импортируем events
 import { subscribeStoreEvents } from "./events/store/store_events.js";
@@ -64,8 +64,6 @@ export interface UserSettingDecorationsData {
 // Form
 export class UserSettingDecorations {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: UserSettingDecorations | null = null;
 
     /** Настройки формы. */
     options: UserSettingDecorationsOptions;
@@ -106,8 +104,7 @@ export class UserSettingDecorations {
         if (!data?.userId) throw new Error("Не передан: userId");
 
         // Поиск открытого профиля пользователя
-        const userProfileForm = UserProfile.instances.get(data.userId);
-        const insertInto = userProfileForm?.modal?.content || null;
+        const insertInto = FormsRegistry.get(`user-profile:${data.userId}`)?.content || null;
 
         // Устанавливаем настройки
         this.options = {
@@ -119,12 +116,10 @@ export class UserSettingDecorations {
         this.userId = data.userId;
 
         // Проверяем, существует ли уже экземпляр
-        if (UserSettingDecorations.instance) {
-            return UserSettingDecorations.instance;
-        }
+        const opened = FormsRegistry.getOwner<UserSettingDecorations>("user-setting-decoration");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        UserSettingDecorations.instance = this;
 
         // Инициализация
         this._init();
@@ -159,6 +154,8 @@ export class UserSettingDecorations {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "user-setting-decoration",
                 url: `?user-setting-decoration=${this.userId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -408,8 +405,6 @@ export class UserSettingDecorations {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        UserSettingDecorations.instance = null;
 
     }
 

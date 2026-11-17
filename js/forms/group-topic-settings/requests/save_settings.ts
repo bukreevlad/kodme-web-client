@@ -20,10 +20,10 @@ export interface GroupTopicSettingsSaveData {
     about: string;
 
     /** Публичная/Закрытая. */
-    is_public: boolean;
+    visibility: "public" | "private";
 
     /** Кто может публиковать. */
-    is_posting: boolean;
+    posting_mode: "all" | "admins";
 
 }
 

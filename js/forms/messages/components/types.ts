@@ -5,10 +5,13 @@ import * as Attachments from "../../../utils/messages/attachments.js";
 import type { AttachmentsRaw } from "../../../utils/messages/attachments.js";
 import type { AvatarImageDocument } from "../../../components/avatars.js";
 import type { MediaItemMetadata } from "../../media-viewer/types.js";
+import type { ChannelKind, SystemActionPayload } from "../../../types/domain.js";
 import type { MessageRecord } from "../types.js";
 
 // Импортируем forms (только типы)
 import type { Messages } from "../index.js";
+
+export type { SystemActionPayload } from "../../../types/domain.js";
 
 /**
  * Аргумент команды бота: пара «ключ — значение» либо отдельное значение.
@@ -145,43 +148,6 @@ export interface SystemMessageLocaleEntry {
  * Ветка локали system_messages: action_type → шаблоны.
  */
 export type SystemMessagesLocale = Record<string, SystemMessageLocaleEntry>;
-
-/**
- * Payload системного сообщения (поля зависят от action_type).
- */
-export interface SystemActionPayload {
-
-    /** Id пользователя-участника события. */
-    user_id?: string;
-
-    /** Имя пользователя. */
-    user_name?: string;
-
-    /** Отображаемое имя (приоритет над user_name). */
-    display_name?: string;
-
-    /** Участник — бот. */
-    is_bot?: boolean;
-
-    /** Название группы (переименование). */
-    group_name?: string;
-
-    /** Id трансляции. */
-    cast_id?: string;
-
-    /** Время старта трансляции/звонка (ISO). */
-    started_at?: string;
-
-    /** Время окончания (ISO). */
-    ended_at?: string;
-
-    /** Время приёма звонка (ISO). */
-    accepted_at?: string;
-
-    /** Прочие поля payload. */
-    [key: string]: unknown;
-
-}
 
 /**
  * ***************************************************************************
@@ -380,13 +346,13 @@ export interface MessageData extends MessageRecord {
     avatar?: AvatarImageDocument | null;
 
     /** Тип канала (1 — диалог, 3 — канал и т.д.). */
-    channel_type?: number;
+    channel_kind?: ChannelKind;
 
     /** Количество комментариев под постом (заполняется сервером, канал type = 3). */
     count_comments?: number;
 
-    /** Разрешено ли комментирование поста (наследуется от канала, может быть переключено). */
-    is_commenting?: boolean;
+    /** Личный флаг комментирования поста (null — наследует настройку канала). */
+    is_commenting?: boolean | null;
 
     /** Автор — бот. */
     is_bot?: boolean;
@@ -398,10 +364,10 @@ export interface MessageData extends MessageRecord {
     is_error_sending?: boolean;
 
     /** Тип системного сообщения (для системных сообщений). */
-    action_type?: string;
+    action_type?: string | null;
 
     /** Payload системного сообщения. */
-    action_payload?: SystemActionPayload;
+    action_payload?: SystemActionPayload | null;
 
     /** Сущности текста (команды бота, mention'ы, ссылки). */
     entities?: MessageEntity[];
@@ -429,8 +395,5 @@ export interface MessageData extends MessageRecord {
 
     /** Id бота-источника (для перехода из блока пересылки). */
     bot_id?: string;
-
-    /** Отписка компонента от точечных событий Store (снимает Main). */
-    __unsubscribeStore__?: () => void;
 
 }

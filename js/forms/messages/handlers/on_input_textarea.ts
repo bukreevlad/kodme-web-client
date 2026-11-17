@@ -51,7 +51,7 @@ export async function onInputTextareaHandler(event: TextareaInputEvent, form: Me
         form.textarea?.classList?.remove("invalid");
 
         // Отправляем статус активности
-        if ([1, 2, 4, 6, 7].includes(form.channel?.type ?? -1)) {
+        if (form.channel?.kind != null && form.channel.kind !== "channel" && form.channel.kind !== "favorite") {
             // textarea может отсутствовать (нет поля ввода) — тогда статус не шлём
             const inputLength = form.textarea?.value.trim().length ?? 0;
             if (event.type === "input" && inputLength > 0) {
@@ -97,7 +97,7 @@ export async function onInputTextareaHandler(event: TextareaInputEvent, form: Me
                 let item: MessageRecord | undefined;
                 for (let i = items.length - 1; i >= 0; i--) {
                     const candidate = items[i];
-                    if (candidate && candidate.created_user_id === sessionUserId) {
+                    if (candidate && candidate.author_id === sessionUserId) {
                         item = candidate;
                         break;
                     }

@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -31,8 +32,6 @@ export interface BotCreateOptions {
 // Form
 export class BotCreate {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: BotCreate | null = null;
 
     /** Настройки формы. */
     options: BotCreateOptions;
@@ -66,12 +65,10 @@ export class BotCreate {
         }
 
         // Проверяем, существует ли уже экземпляр
-        if (BotCreate.instance) {
-            return BotCreate.instance;
-        }
+        const opened = FormsRegistry.getOwner<BotCreate>("bot-create");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        BotCreate.instance = this;
 
         // Инициализация
         this._init();
@@ -101,6 +98,8 @@ export class BotCreate {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "bot-create",
                 url: `?bot-create`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -187,8 +186,6 @@ export class BotCreate {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        BotCreate.instance = null;
 
     }
 

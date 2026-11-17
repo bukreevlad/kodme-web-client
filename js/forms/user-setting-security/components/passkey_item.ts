@@ -40,10 +40,8 @@ export function createPasskeyItem(form: UserSettingSecurity, data: PasskeyListIt
     const element = template();
 
     // Записываем ссылку на dom элемент (для удаления копий при item::removed)
-    if (!current.__domElements__) {
-        current.__domElements__ = [];
-    }
-    current.__domElements__.push(element);
+    // Регистрируем DOM-копию строки в реестре стора
+    form.store.registerDomElement(current.id, element);
 
     // Устанавливаем начальные данные
     setup(current);

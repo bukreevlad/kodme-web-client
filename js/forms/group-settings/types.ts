@@ -22,10 +22,10 @@ export interface GroupSettingsRecord {
     link?: string | null;
 
     /** Группа публичная. */
-    is_public?: boolean;
+    visibility?: "public" | "private";
 
     /** Кто может публиковать. */
-    is_posting?: boolean;
+    posting_mode?: "all" | "admins";
 
     /** Документ изображения аватара. */
     avatar?: AvatarImageDocument | null;

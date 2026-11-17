@@ -1,9 +1,6 @@
-// Импортируем config
-import { Socket } from "../../../../../config/socket.js";
-
 // Импортируем utils
+import { FormsRegistry } from "../../../../../core/managers/forms_registry.js";
 import { Logger } from "../../../../../utils/logs/logger.js";
-import { AsyncQueue } from "../../../../../utils/helpers/async_queue.js";
 
 // Импортируем forms
 import { Main } from "../../../index.js";
@@ -18,99 +15,86 @@ import { isMessageRecord } from "../../../types.js";
 
 /**
  * ***************************************************************************
- * Подписка на обновление сообщения (правка/статусы): запись мержится в
- * локальной БД, обновляется превью последнего сообщения канала (в БД,
- * сайдбаре и списке тем), открытый диалог перерисовывает сообщение.
- * @param asyncQueue - Общая очередь сообщений (см. subscribeMessagesNew).
+ * Применяет событие обновления сообщения (правка/статусы) к локальным
+ * хранилищам и UI: запись мержится в локальной БД, обновляется превью
+ * последнего сообщения канала (в БД, сайдбаре и списке тем), открытый
+ * диалог перерисовывает сообщение.
+ * @param data - Нагрузка события (запись сообщения).
+ * @returns {void}
  * ***************************************************************************
  */
-export function subscribeMessagesUpdate(asyncQueue: AsyncQueue): void {
+export async function applyMessageUpdate(data: unknown): Promise<void> {
+    Logger.debug("[app][feed]::message_edit", data);
 
-    // ***************************************************************************
-    // Обновляем сообщение
-    // ***************************************************************************
-    Socket.client.on("[message]: update", (data, timestamp) => {
-        Logger.debug("[app][ws]::[message]: update", data, timestamp);
+    try {
 
-        // Сохраняем задачу в очереди и выполняем асинхронно
-        asyncQueue.enqueue(async () => {
+        // Нагрузка сокета типизирована как unknown: работаем только с записью сообщения
+        if (!isMessageRecord(data)) return;
 
-            try {
+        // Подготавливаем данные для IndexedDB (патч: удалённое параллельно
+        // сообщение не «воскресает»)
+        const cleanData = cleanMessage(data);
+        await messagesTable().update(data.id, cleanData);
 
-                // Нагрузка сокета типизирована как unknown: работаем только с записью сообщения
-                if (!isMessageRecord(data)) return;
+        // ======================================
 
-                // Подготавливаем данные для IndexedDB
-                const cleanData = cleanMessage(data);
-                await messagesTable().put(cleanData);
+        // Получаем канал из IndexedDB
+        const channelDB = await channelsTable().get(data.channel_id);
+        if (channelDB) {
 
-                // ======================================
-
-                // Получаем канал из IndexedDB
-                const channelDB = await channelsTable().get(data.channel_id);
-                if (channelDB) {
-
-                    // Обновляем данные (pts приходит строкой — bigint в pg,
-                    // стор и типы хранят число)
-                    channelDB.last_pts = data.pts !== undefined ? Number(data.pts) : undefined;
-                    if (channelDB.last_message_id === data.id) {
-                        channelDB.last_message = cleanData;
-                    }
-
-                    // Записываем в IndexedDB
-                    await channelsTable().put(channelDB);
-
-                    // Если это тема — обновляем превью в списке тем и у родителя
-                    if (channelDB.topic_for_group_id) {
-
-                        // Поиск формы GroupTopics
-                        const gtForm = GroupTopics.instances.get(channelDB.topic_for_group_id);
-                        if (gtForm) gtForm.store.update(channelDB.id, channelDB);
-
-                        // Поиск группы
-                        const parentStore = Main.instance?.store.get(channelDB.topic_for_group_id);
-                        if (parentStore && parentStore.last_message?.id === data.id) {
-                            parentStore.last_message = data;
-                            Main.instance?.store.update(parentStore.id, parentStore);
-                        }
-
-                    }
-                }
-
-                // ======================================
-
-                // Поиск формы
-                const form = Messages.instances.get(data.channel_id);
-                if (form) {
-                    const isMessage = form.store.get(data.id);
-                    const isBottom = form.listScrollManager?.isAtBottom();
-                    if (isMessage) {
-                        form.store.update(data.id, { ...data, is_temporary: false });
-                    }
-
-                    // Если скролл был внизу
-                    if (isBottom) {
-                        form.listScrollManager?.scrollToBottom();
-                    }
-                }
-
-                // ======================================
-
-                // Обновление канала
-                const channelStore = Main.instance?.store.get(data.channel_id);
-
-                // Если канал найден
-                if (channelStore && !channelDB?.topic_for_group_id) {
-                    if (channelStore.last_message_id === data.id) {
-                        channelStore.last_message = data;
-                        Main.instance?.store.update(channelStore.id, channelStore);
-                    }
-                }
-
-            } catch (error) {
-                Logger.error(error);
+            // Обновляем данные (патч: удалённый параллельно канал не «воскресает»)
+            if (channelDB.last_message_id === data.id) {
+                await channelsTable().update(channelDB.id, { last_message: cleanData });
             }
 
-        });
-    });
+            // Если это тема — обновляем превью в списке тем и у родителя
+            if (channelDB.parent_channel_id) {
+
+                // Поиск формы GroupTopics
+                const gtForm = FormsRegistry.getOwner<GroupTopics>(`group-topics:${channelDB.parent_channel_id}`);
+                if (gtForm) gtForm.store.update(channelDB.id, channelDB);
+
+                // Поиск группы
+                const parentStore = FormsRegistry.getOwner<Main>("main")?.store.get(channelDB.parent_channel_id);
+                if (parentStore && parentStore.last_message?.id === data.id) {
+                    parentStore.last_message = data;
+                    FormsRegistry.getOwner<Main>("main")?.store.update(parentStore.id, parentStore);
+                }
+
+            }
+        }
+
+        // ======================================
+
+        // Поиск формы
+        const form = FormsRegistry.getOwner<Messages>(`messages:${data.channel_id}`);
+        if (form) {
+            const isMessage = form.store.get(data.id);
+            const isBottom = form.listScrollManager?.isAtBottom();
+            if (isMessage) {
+                form.store.update(data.id, { ...data, is_temporary: false });
+            }
+
+            // Если скролл был внизу
+            if (isBottom) {
+                form.listScrollManager?.scrollToBottom();
+            }
+        }
+
+        // ======================================
+
+        // Обновление канала
+        const channelStore = FormsRegistry.getOwner<Main>("main")?.store.get(data.channel_id);
+
+        // Если канал найден
+        if (channelStore && !channelDB?.parent_channel_id) {
+            if (channelStore.last_message_id === data.id) {
+                channelStore.last_message = data;
+                FormsRegistry.getOwner<Main>("main")?.store.update(channelStore.id, channelStore);
+            }
+        }
+
+    } catch (error) {
+        Logger.error(error);
+    }
 }

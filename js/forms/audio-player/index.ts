@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -43,8 +44,6 @@ export interface AudioPlayerOptions {
  */
 export class AudioPlayer {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: AudioPlayer | null = null;
 
     /** Настройки формы. */
     options: AudioPlayerOptions;
@@ -96,12 +95,10 @@ export class AudioPlayer {
         this.manager = new AudioPlayerManager();
 
         // Проверяем, существует ли уже экземпляр
-        if (AudioPlayer.instance) {
-            return AudioPlayer.instance;
-        }
+        const opened = FormsRegistry.getOwner<AudioPlayer>("audio-player");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        AudioPlayer.instance = this;
 
         // Инициализация
         this._init();
@@ -131,6 +128,8 @@ export class AudioPlayer {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "audio-player",
                 url: `?audio-player`,
                 onBeforeOpen: async () => await this._onBeforeOpen(),
                 onOpen: () => this._onOpen(),
@@ -274,7 +273,7 @@ export class AudioPlayer {
             const playlistBtn = this.tpl.querySelector<HTMLElement>("[data-toggle-playlist]");
             if (playlistBtn) {
                 playlistBtn.onclick = () => {
-                    if (!PlaylistDialog.instance) {
+                    if (!FormsRegistry.getOwner<PlaylistDialog>("audio-player-dialogs-playlist")) {
                         new PlaylistDialog(this);
                     }
                 };
@@ -315,7 +314,7 @@ export class AudioPlayer {
     _renderPlaylist(): void {
 
         // Перерисовываем список в открытом диалоге плейлиста
-        PlaylistDialog.instance?._render();
+        FormsRegistry.getOwner<PlaylistDialog>("audio-player-dialogs-playlist")?._render();
 
     }
 
@@ -325,7 +324,7 @@ export class AudioPlayer {
     _onBeforeClose(): void {
 
         // Закрываем открытый диалог плейлиста
-        PlaylistDialog.instance?.modal?.close();
+        FormsRegistry.getOwner<PlaylistDialog>("audio-player-dialogs-playlist")?.modal?.close();
 
         // Отписываемся от обновлений в AudioPlayerManager
         if (this.currentTrackId && this._updateCallback) {
@@ -357,8 +356,6 @@ export class AudioPlayer {
         this.tpl = null;
         this.modal = null;
 
-        // Удаляем глобальный экземпляр
-        AudioPlayer.instance = null;
 
         // Скрываем базовый проигрыватель
         this.manager.isAudioPlayerOpened = false;

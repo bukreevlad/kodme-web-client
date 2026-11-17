@@ -13,7 +13,7 @@ import { startNoAnswerTimer } from "../functions/no_answer_timer.js";
 import { startCallRequest } from "../requests/start.js";
 
 // Импортируем forms
-// Значимый импорт: нужен доступ к реестру Call.instances. Цикл
+// Значимый импорт: нужен доступ к реестру открытых форм. Цикл
 // «index → handlers/start_call → index» безопасен: к моменту вызова
 // обработчика класс уже объявлен (обращение к Call отложено на runtime)
 import { Call } from "../index.js";
@@ -48,9 +48,7 @@ export async function startCallHandler(form: Call): Promise<boolean> {
         // [call]: declined и по нему её находят другие обработчики.
         // Реестр живёт на классе; цикл не замыкается — импорт только тип
         if (form.callId && form.key !== form.callId) {
-            Call.instances.delete(form.key);
             form.key = form.callId;
-            Call.instances.set(form.key, form);
         }
 
         // ---------- ПРОЗВОН ----------

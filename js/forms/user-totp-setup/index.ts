@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { CDM_FORM_CLASSES, CDM_FORM_HEADER_CLASSES, CDM_FORM_CONTENT_CLASSES, CDM_FORM_SECTION_CLASSES } from "../../config/constants.js";
 
 // Импортируем utils
@@ -40,8 +41,6 @@ export interface TotpSetupDialogOptions {
 // Form
 export class TotpSetupDialog {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: TotpSetupDialog | null = null;
 
     /** Настройки диалога. */
     options: Required<TotpSetupDialogOptions>;
@@ -85,12 +84,10 @@ export class TotpSetupDialog {
         };
 
         // Проверяем, существует ли уже экземпляр
-        if (TotpSetupDialog.instance) {
-            return TotpSetupDialog.instance;
-        }
+        const opened = FormsRegistry.getOwner<TotpSetupDialog>("user-totp-setup");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        TotpSetupDialog.instance = this;
 
         // Инициализация
         this._init();
@@ -120,6 +117,8 @@ export class TotpSetupDialog {
             // Модальное окно
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "user-totp-setup",
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
                 closeOnOverlay: false,
@@ -192,8 +191,6 @@ export class TotpSetupDialog {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        TotpSetupDialog.instance = null;
 
     }
 

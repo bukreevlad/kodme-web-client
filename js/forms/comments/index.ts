@@ -8,6 +8,7 @@ import { Overlay } from "../../components/overlay/index.js";
 import { TextareaAutosize } from "../../utils/helpers/textarea_autosize.js";
 import { ScrollManager } from "../../core/managers/scroll_manager.js";
 import { SvgMaskManager } from "../../core/managers/svg_mask_manager.js";
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { LocalStorage } from "../../utils/local_storage.js";
 import { Buttons } from "../../components/buttons.js";
 import { Inputs } from "../../components/inputs.js";
@@ -47,23 +48,19 @@ import { dragAndDropFilesHandler } from "./handlers/drag_and_drop_files.js";
 import { textareaPasteBufferHandler } from "./handlers/textarea_paste_buffer.js";
 import { emojiHandler } from "./handlers/emoji.js";
 import { voiceNotePointerHandler } from "./handlers/voice_note_pointer.js";
-import { startStopVideoNoteRecordHandler } from "./handlers/start_stop_video_note_record.js";
 import { switchCameraVideoNoteHandler } from "./handlers/switch_camera_video_note.js";
 import { pauseResumeVideoNoteHandler } from "./handlers/pause_resume_video_note.js";
 import { stopVideoNoteHandler } from "./handlers/stop_video_note.js";
 
 // Импортируем типы
 import type { GestureController } from "../../utils/gesture_controller.js";
-import type { CommentRecord, CommentsDirection, CommentsFormData, CommentsFormOptions, PendingAck } from "./types.js";
+import type { CommentRecord, CommentsDirection, CommentsFormData, CommentsFormOptions } from "./types.js";
 import type { CommentOpenResult } from "./requests/comment_open.js";
 import type { DragAndDropHandle } from "./handlers/drag_and_drop_files.js";
 import type { MessageData } from "../messages/components/types.js";
 
 // Form
 export class Comments {
-
-    // Реестр всех открытых форм Comments: { postId: instance }
-    static instances = new Map<string, Comments>();
 
     /**
      * ***************************************************************************
@@ -116,7 +113,6 @@ export class Comments {
         this.editedComment = null;                          // редактируемый комментарий
         this.replyComment = null;                           // комментарий, на который отвечаем
         this.uploadAbort = null;                            // контроллер прерывания очереди отправки
-        this.pendingAcks = null;                            // ожидания ack исходящих комментариев
 
         // Флаг подзагрузки комментариев (защита от параллельных запросов)
         this.isCommentsLoading = false;
@@ -192,11 +188,10 @@ export class Comments {
         });
 
         // Получаем instance
-        let instance = Comments.instances.get(data.postId);
+        let instance = FormsRegistry.getOwner<Comments>(`comments:${data.postId}`);
         if (instance) return instance;
 
         // Регистрируем этот экземпляр формы
-        Comments.instances.set(this.postId, this);
 
         // Инициализация
         this._init();
@@ -239,7 +234,6 @@ export class Comments {
     editedComment: CommentRecord | null;
     replyComment: CommentRecord | null;
     uploadAbort: AbortController | null;
-    pendingAcks: Map<string, PendingAck> | null;
 
     // Состояние окна ленты
     newDividerBeforeId: string | null;
@@ -304,6 +298,10 @@ export class Comments {
             // Форма
             this.modal = new Overlay(tpl, {
                 type: "form",
+                owner: this,
+                id: `comments:${this.postId}`,
+                placement: "workspace",
+                workspace: `comments:${this.postId}`,
                 url: `?comments=${this.postId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -374,7 +372,7 @@ export class Comments {
 
             // Запись голосового комментария (тап — закреплённая запись,
             // удержание + свайп вверх — отмена, повторный тап — отмена)
-            let recordVoice = this.tpl.querySelector<HTMLElement>(":scope >.footer [action-voice-recorder]");
+            let recordVoice = this.tpl.querySelector<HTMLElement>(":scope >.footer [data-note-recorder]");
             if (recordVoice) voiceNotePointerHandler(this, recordVoice);
 
             // Отмена записи голосового (кнопка X на панели)
@@ -392,8 +390,6 @@ export class Comments {
             // =========================
 
             // Запись видео-кружка
-            let recordVideoNote = this.tpl.querySelector(":scope >.footer [action-video-recorder]");
-            recordVideoNote?.addEventListener("click", () => startStopVideoNoteRecordHandler(this));
 
             // Смена камеры в видео-кружке
             let switchCameraVideoNote = this.tpl.querySelector(":scope [action-video-note-switch-camera]");
@@ -481,17 +477,11 @@ export class Comments {
             // Обновляем форму
             this.update(result);
 
-            // Сообщаем системе, что форма открыта
-            window.dispatchEvent(new CustomEvent("[app][form]::opened", {
-                detail: {
-                    id: this.modal.options.id,
-                    data: {
-                        instance: this,
-                        title: t("forms.comments.title"),
-                        subtitle: ""
-                    }
-                }
-            }));
+            // Пилюля рабочего места: заголовки живут в записи реестра
+            if (this.modal) FormsRegistry.update(this.modal.options.id, {
+                title: t("forms.comments.title"),
+                subtitle: ""
+            });
 
         } catch (error) {
             Logger.error(error);
@@ -617,7 +607,7 @@ export class Comments {
             this.voiceNoteSession?.cancel();
         }
 
-        if (this.videoNoteRecorder?.recorder?.isRecording) {
+        if (this.videoNoteRecorder?.isStarting || this.videoNoteRecorder?.recorder?.isRecording) {
             this.videoNoteRecorder.cancel();
         }
 
@@ -639,11 +629,6 @@ export class Comments {
         // Прерываем цикл отправки комментариев и загрузки файлов
         this.uploadAbort?.abort();
 
-        // Освобождаем ожидания ack: иначе обработчик пуша `[comment]: new`
-        // ждал бы до таймаута уже несуществующую форму
-        for (const entry of this.pendingAcks?.values() || []) entry.resolve?.();
-        this.pendingAcks?.clear();
-
         // Очищаем черновик и очередь (живут только в памяти — без IndexedDB
         // после закрытия формы они не восстанавливаются)
         this.tempComment = null;
@@ -657,7 +642,6 @@ export class Comments {
         this.replyComment = null;
 
         // Удаляем экземпляр формы из реестра
-        Comments.instances.delete(this.postId);
 
         // Отключаем наблюдение строк, чтобы избежать утечек памяти
         if (this.observer) {
@@ -676,11 +660,6 @@ export class Comments {
         this._listSyncing = false;
         this._stickToBottom = false;
 
-        // Сообщаем системе, что форма закрыта
-        window.dispatchEvent(new CustomEvent("[app][form]::closed", {
-            detail: { id: this.modal?.options.id }
-        }));
-
     }
 
     // ***************************************************************************
@@ -689,7 +668,7 @@ export class Comments {
     _template(): HTMLElement | null {
 
         // Иконка подсказки «свайп вверх — отмена» на панели голосового
-        const slideToCancelIcon = Icons.icon("arrow-up", { settings: { stroke: 2.5 } })?.outerHTML ?? "";
+        const slideToCancelIcon = Icons.icon("arrow-left", { settings: { stroke: 2.5 } })?.outerHTML ?? "";
 
         // Мы используем DOMParser для создания DOM без innerHTML
         return new DOMParser().parseFromString(`
@@ -752,8 +731,10 @@ export class Comments {
                             ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-emoji"], icon: "mood-smile" })}
                             ${Inputs.textarea({ intent: "transparent", placeholder: t("forms.comments.enter_comment"), name: "comment", rows: 1 })}
                             ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-attach-file"], icon: "Paperclip" })}
-                            ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-video-recorder"], icon: "Video" })}
-                            ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-voice-recorder"], icon: "microphone" })}
+                            <div data-note-recorder data-recording-mode="voice" class="flex shrink-0 select-none touch-none">
+                                ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-video-recorder"], classes: ["hidden"], icon: "Video" })}
+                                ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-voice-recorder"], icon: "microphone" })}
+                            </div>
                             ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-create-comment"], classes: ["hidden"], icon: "send-2" })}
                             ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-cancel-edit"], classes: ["hidden"], icon: "X" })}
                             ${Buttons.create({ intent: "transparent", shape: "circle", attributes: ["action-update-comment"], classes: ["hidden"], icon: "device-floppy" })}

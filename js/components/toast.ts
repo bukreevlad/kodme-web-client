@@ -3,6 +3,7 @@
  * Импортируем config
  * ***************************************************************************
  */
+import { FormsRegistry } from "../core/managers/forms_registry.js";
 import { scaleUp } from "../config/animations.js";
 
 /**
@@ -173,7 +174,6 @@ export class Toast {
      * (нужен для ограничения стопки).
      * ***************************************************************************
      */
-    static instances = new Map<string | number, Toast>();
     static active = new Set<Toast>();
 
     /** Исходные настройки из вызова (для дедупликации). */
@@ -274,13 +274,12 @@ export class Toast {
 
         // Дедупликация: повторный тост с тем же id обновляет уже показанный,
         // а не плодит копии. Поэтому конструктор возвращает чужой экземпляр.
-        const existing = this.options.id ? Toast.instances.get(this.options.id) : null;
+        const existing = this.options.id ? FormsRegistry.getOwner<Toast>(`toast:${this.options.id}`) : null;
         if (existing && !existing.isClosed) {
             return existing.update(content, this.rawOptions);
         }
 
         if (this.options.id) {
-            Toast.instances.set(this.options.id, this);
         }
 
         this._createElements();
@@ -1021,7 +1020,6 @@ export class Toast {
         this._clearTimer();
 
         if (this.options.id) {
-            Toast.instances.delete(this.options.id);
         }
 
         if (!this.toastElement) {

@@ -26,33 +26,21 @@ export async function editMessageHandler(message: MessageItem): Promise<void> {
         let isEditedMessage = message.form.editedMessage;
         if (isEditedMessage) {
 
-            // Сообщение из Messages.Store (записи может там уже не быть)
-            let storedMessage = message.form.store.get(isEditedMessage.id);
-            if (storedMessage) {
-                let domElements = storedMessage.__domElements__;
-                if (domElements && Array.isArray(domElements)) {
-                    domElements.forEach(element => {
-                        if (element) {
-                            element.classList.remove("is-edited");
-                        }
-                    });
-                }
-            }
+            // Снимаем подсветку со старого редактируемого сообщения
+            // (записи в сторе может уже не быть)
+            message.form.store.getDomElements(isEditedMessage.id).forEach(element => {
+                element.classList.remove("is-edited");
+            });
 
         }
 
         // Записываем редактируемое сообщение
         message.form.editedMessage = message.data;
 
-        // Элемент
-        let domElements = message?.data?.__domElements__;
-        if (domElements && Array.isArray(domElements)) {
-            domElements.forEach(element => {
-                if (element) {
-                    element.classList.add("is-edited");
-                }
-            });
-        }
+        // Подсвечиваем копии редактируемого сообщения
+        message.form.store.getDomElements(message.data.id).forEach(element => {
+            element.classList.add("is-edited");
+        });
 
         // Устанавливаем элементы (без поля редактировать нечего)
         let textarea = message.form.textarea;

@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { Logger } from "../../utils/logs/logger.js";
 
 // Импортируем config
@@ -20,8 +21,6 @@ import { t } from "../../utils/i18n/index.js";
 // Form
 export class LoginWithQRCode {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: LoginWithQRCode | null = null;
 
     /** Настройки формы. */
     options: object;
@@ -52,12 +51,10 @@ export class LoginWithQRCode {
         }
 
         // Проверяем, существует ли уже экземпляр
-        if (LoginWithQRCode.instance) {
-            return LoginWithQRCode.instance;
-        }
+        const opened = FormsRegistry.getOwner<LoginWithQRCode>("login-with-qrcode");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        LoginWithQRCode.instance = this;
 
         // Инициализация
         this._init();
@@ -89,6 +86,8 @@ export class LoginWithQRCode {
             // Модальное окно
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "login-with-qrcode",
                 closeOnEsc: false,
                 closeOnOverlay: false,
                 onBeforeOpen: () => this._setup(),
@@ -151,8 +150,6 @@ export class LoginWithQRCode {
         // Отключаем поллинг (интервал мог не запускаться)
         if (this.pollingInterval !== null) clearInterval(this.pollingInterval);
 
-        // Удаляем экземпляр формы
-        LoginWithQRCode.instance = null;
 
     }
 

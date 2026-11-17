@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../../../../core/managers/forms_registry.js";
 import { Socket } from "../../../../../config/socket.js";
 
 // Импортируем utils
@@ -9,8 +10,6 @@ import { AsyncQueue } from "../../../../../utils/helpers/async_queue.js";
 import { Comments } from "../../../../comments/index.js";
 
 // Импортируем functions
-import { getSessionUserId } from "../../../functions/session_identity.js";
-import { awaitPendingAcks } from "../../../../comments/functions/sending_comments.js";
 import { CommentList } from "../../../../comments/functions/comment_list.js";
 import { updateCommentsCount } from "../../../../comments/functions/push_state.js";
 import { applyCommentsCountDelta } from "./count_comments.js";
@@ -59,23 +58,21 @@ export function subscribeCommentsNew(asyncQueue: AsyncQueue): void {
                 // ======================================
 
                 // Форма ветки открыта — дорисовываем комментарий в ленте
-                const form = Comments.instances.get(entityId);
+                const form = FormsRegistry.getOwner<Comments>(`comments:${entityId}`);
                 if (!form) return;
 
                 // Подзаголовок формы («N комментариев»)
                 updateCommentsCount(form, (form.post?.count_comments ?? 0) + 1);
 
-                // Возможно, это эхо собственной отправки: пуш `[comment]: new`
-                // приходит в комнату канала и отправителю, и мог обогнать ответ
-                // на `[comment]: send` — детерминированно ждём исходов отправки
-                let existing = form.store.get(data.id);
-                if (!existing && (form.pendingIds?.size ?? 0) > 0
-                    && data.created_user_id === getSessionUserId()) {
-
-                    await awaitPendingAcks(form);
-                    existing = form.store.get(data.id);
-
+                // Эхо собственной отправки несёт random_id исходящего —
+                // находим локальную запись по нему и переименовываем в серверный id
+                const localId = typeof data.random_id === "string" && data.random_id ? data.random_id : null;
+                const localEcho = localId != null ? form.store.get(localId) : undefined;
+                if (localEcho && localEcho.id !== data.id) {
+                    form.store.replaceId(localEcho.id, data.id);
                 }
+
+                const existing = form.store.get(data.id);
 
                 // Комментарий уже в Store (свой эхо после replaceId либо чужой,
                 // пришедший параллельно с догрузкой истории) — гидратация
@@ -88,6 +85,7 @@ export function subscribeCommentsNew(asyncQueue: AsyncQueue): void {
 
                     // Локальный id исходящего больше не актуален
                     form.pendingIds?.delete(data.id);
+                    if (localId != null) form.pendingIds?.delete(localId);
 
                     return;
 

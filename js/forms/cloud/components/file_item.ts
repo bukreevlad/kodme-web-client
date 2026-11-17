@@ -69,11 +69,8 @@ export function createCloudFileItem(
     // Создаем DOM-элемент из шаблона
     const element = template();
 
-    // Записываем ссылку на dom элемент
-    if (!current.__domElements__) {
-        current.__domElements__ = [];
-    }
-    current.__domElements__.push(element);
+    // Регистрируем DOM-копию строки в реестре стора
+    ownerStore.registerDomElement(current.id, element);
 
     // Устанавливаем начальные данные
     setup(current);

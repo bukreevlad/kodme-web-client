@@ -7,6 +7,16 @@ import type { Answer } from "../../../types/domain.js";
 import type { EntityType } from "../types.js";
 
 /**
+ * Вложение запроса отправки комментария (ключ объекта — document_id).
+ */
+export interface CreateCommentAttachment {
+
+    /** Имя файла. */
+    file_name: string;
+
+}
+
+/**
  * Данные запроса отправки комментария.
  */
 export interface CreateCommentData {
@@ -24,7 +34,13 @@ export interface CreateCommentData {
     reply_to_comment_id?: string | null;
 
     /** Вложения: мапа `{[document_id]: {...}}` (null — без вложений). */
-    attachments?: Record<string, unknown> | null;
+    attachments?: Record<string, CreateCommentAttachment> | null;
+
+    /**
+     * Клиентский ключ идемпотентности (у исходящих — локальный id):
+     * повтор запроса с тем же ключом не создаёт дубль.
+     */
+    random_id?: string | null;
 
 }
 

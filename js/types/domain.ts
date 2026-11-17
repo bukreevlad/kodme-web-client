@@ -110,3 +110,109 @@ export interface WsOutgoingCallback {
     /** Результат обработки события. */
     data: unknown;
 }
+
+/**
+ * Вид канала: диалог, группа, сообщество, тема, избранное, чат конференции
+ * или чат трансляции.
+ */
+export type ChannelKind = "dialog" | "group" | "channel" | "topic" | "favorite" | "meet_chat" | "cast_chat";
+
+/** Тип события ленты канала (единый поток живых и догоняющих обновлений). */
+export type ChannelFeedEventType =
+    | "message_new"
+    | "message_edit"
+    | "message_deleted"
+    | "history_cleared"
+    | "messages_cleaned"
+    | "member_joined"
+    | "member_left"
+    | "member_banned"
+    | "member_unbanned"
+    | "channel_created"
+    | "channel_removed"
+    | "channel_updated"
+    | "topic_created";
+
+/**
+ * Событие ленты канала: живой толчок `[channel]: feed` и элемент догонки
+ * `[channel]: get updates` — одного формата. Применяется по порядку `pts`.
+ */
+export interface ChannelFeedEvent {
+    /** Id канала. */
+    channel_id: string;
+    /** Тип события. */
+    type: ChannelFeedEventType;
+    /** Позиция события в ленте канала. */
+    pts: number;
+    /** Полезная нагрузка события (у сообщений может содержать готовые данные). */
+    payload: Record<string, unknown>;
+    /** Время события (заполняется в догонке). */
+    created_at?: IsoTimestamp;
+}
+
+/** Тип события личной ленты пользователя (появление и исчезновение каналов). */
+export type UserFeedEventType =
+    | "channel_created"
+    | "channel_removed";
+
+/**
+ * Событие личной ленты пользователя: живой толчок `[user]: feed` и элемент
+ * догонки `[user]: get updates` — одного формата. Применяется по порядку
+ * `upid`.
+ */
+export interface UserFeedEvent {
+    /** Позиция события в личной ленте. */
+    upid: number;
+    /** Тип события. */
+    type: UserFeedEventType;
+    /** Полезная нагрузка события ({ channel_id }). */
+    payload: Record<string, unknown>;
+    /** Время события (заполняется в догонке). */
+    created_at?: IsoTimestamp;
+}
+
+/**
+ * Payload системного сообщения (поля зависят от action_type).
+ */
+export interface SystemActionPayload {
+
+    /** Id пользователя-участника события. */
+    user_id?: string;
+
+    /** Имя пользователя. */
+    user_name?: string;
+
+    /** Отображаемое имя (приоритет над user_name). */
+    display_name?: string;
+
+    /** Участник — бот. */
+    is_bot?: boolean;
+
+    /** Название группы (переименование). */
+    group_name?: string;
+
+    /** Id трансляции. */
+    cast_id?: string;
+
+    /** Id звонка. */
+    call_id?: string;
+
+    /** Статус звонка: ringing → missed | declined | canceled | finished. */
+    status?: string;
+
+    /** Длительность разговора в секундах (finished). */
+    duration?: number | null;
+
+    /** Время старта трансляции/звонка (ISO). */
+    started_at?: string;
+
+    /** Время окончания (ISO). */
+    ended_at?: string;
+
+    /** Время приёма звонка (ISO). */
+    accepted_at?: string;
+
+    /** Прочие поля payload. */
+    [key: string]: unknown;
+
+}

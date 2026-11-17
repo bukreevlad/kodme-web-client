@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -16,8 +17,6 @@ import { t } from "../../../utils/i18n/index.js";
 // Form
 export class UserIsNotContact {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: UserIsNotContact | null = null;
 
     /**
      * ***************************************************************************
@@ -35,12 +34,10 @@ export class UserIsNotContact {
         this.osListScrollInstance = null; // overlayScroll instance
 
         // Проверяем, существует ли уже экземпляр
-        if (UserIsNotContact.instance) {
-            return UserIsNotContact.instance;
-        }
+        const opened = FormsRegistry.getOwner<UserIsNotContact>("user-profile-dialogs-user-is-not-contact");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        UserIsNotContact.instance = this;
 
         // Инициализация
         this._init();
@@ -79,6 +76,8 @@ export class UserIsNotContact {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "user-profile-dialogs-user-is-not-contact",
                 closeOnEsc: true,
                 closeOnOverlay: true,
                 onBeforeOpen: async () => await this._onBeforeOpen(),
@@ -161,8 +160,6 @@ export class UserIsNotContact {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        UserIsNotContact.instance = null;
 
     }
 

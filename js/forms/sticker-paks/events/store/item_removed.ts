@@ -10,8 +10,8 @@ import type { StickerPaks } from "../../index.js";
 
 /**
  * ***************************************************************************
- * event: Обработка удаления пака из UI: убирает отображённые копии
- * элемента и обновляет пустое состояние списка.
+ * event: Обработка удаления пака из UI: обновляет пустое состояние
+ * списка (DOM-копии элемента стор снимает сам).
  * @param form - Экземпляр формы.
  * ***************************************************************************
  */
@@ -25,26 +25,7 @@ export function subscribeItemRemoved(form: StickerPaks): void {
             // Стор шлёт payload как unknown — сверяемся guard'ом
             if (!isStickerPakItem(data)) return;
 
-            // Проверяем наличие массива элементов
-            if (data.__domElements__ && Array.isArray(data.__domElements__)) {
-
-                // Удаляем отображённые копии элемента
-                data.__domElements__.forEach((element) => {
-
-                    try {
-                        element.remove();
-                    } catch (error) {
-                        Logger.error("[app][sticker-paks][item-removed]:", error);
-                    }
-
-                });
-
-                // Очищаем массив копий (стор живёт дольше DOM)
-                data.__domElements__ = [];
-
-            }
-
-            // Показываем/прячем пустое состояние списка
+            // Показываем/прячем пустое состояние списка (DOM-копии стор снимает сам)
             updateEmptyState(form);
 
         });

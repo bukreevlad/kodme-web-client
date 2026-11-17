@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 
 // Импортируем components
@@ -21,7 +22,7 @@ import { I18n, t } from "../../../utils/i18n/index.js";
  * TOPIC_ITEM - строка темы (или общего чата группы) в списке формы тем.
  *
  * Строка подписывается на `item::updated::<id>` локального стора формы и
- * держит ссылку на себя в `data.__domElements__`, чтобы стор удалил все
+ * регистрирует себя в реестре DOM-копий стора, чтобы стор удалил все
  * копии разом.
  * ***************************************************************************
  */
@@ -52,11 +53,8 @@ export class TopicItem {
         // Создаем DOM-элемент из шаблона
         this.element = this._template();
 
-        // Записываем ссылку на dom элемент
-        if (!this.data.__domElements__) {
-            this.data.__domElements__ = [];
-        }
-        this.data.__domElements__.push(this.element);
+        // Регистрируем DOM-копию строки в реестре стора
+        this.form.store.registerDomElement(this.data.id, this.element);
 
         // Устанавливаем начальные данные
         this._setup(this.data);
@@ -121,7 +119,7 @@ export class TopicItem {
                 name: data.display_name,
                 image: data.avatar,
                 size: "xl",
-                wrapClasses: [data.type === 2 ? "rounded-xl" : "rounded-full"]
+                wrapClasses: [data.kind === "group" ? "rounded-xl" : "rounded-full"]
             });
 
             // Название
@@ -156,7 +154,7 @@ export class TopicItem {
 
         // Открыть канал
         this.element?.addEventListener("click", () => {
-            let instance = Messages.instances.get(this.data.id);
+            let instance = FormsRegistry.getOwner<Messages>(`messages:${this.data.id}`);
             if (instance) {
                 instance?.modal?.activate();
             } else {
@@ -195,8 +193,8 @@ export class TopicItem {
 
             });
 
-            // Сохраняем функцию отписки в data, чтобы стор мог вызвать её при удалении
-            this.data.__unsubscribeStore__ = unsubscribe;
+            // Запоминаем отписку в сторе — она вызовется при удалении элемента
+            this.form.store.addItemSubscription(this.data.id, unsubscribe);
 
         } catch (error) {
             Logger.error(error);

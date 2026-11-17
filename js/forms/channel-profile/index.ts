@@ -3,6 +3,7 @@ import { CDM_FORM_CLASSES, CDM_FORM_HEADER_CLASSES, CDM_FORM_CONTENT_CLASSES } f
 
 // Импортируем utils
 import { Logger } from "../../utils/logs/logger.js";
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { LocalStorage } from "../../utils/local_storage.js";
 import { Store } from "../../utils/store.js";
 import { toastError } from "../../utils/ui/toast_error.js";
@@ -31,7 +32,6 @@ import { teardown } from "./functions/teardown.js";
 import { buildSections } from "./functions/build_sections.js";
 
 // Импортируем forms
-import { Messages } from "../messages/index.js";
 
 // Импортируем types (тип экземпляра скроллбара панели вкладки)
 import type { OverlayScrollbars } from "overlayscrollbars";
@@ -66,9 +66,6 @@ export interface ChannelProfileData {
 
 // Form
 export class ChannelProfile {
-
-    // Реестр всех открытых форм ChannelProfile: { channelId: instance }
-    static instances = new Map<string, ChannelProfile>();
 
     /** Настройки формы. */
     options: ChannelProfileOptions;
@@ -163,9 +160,10 @@ export class ChannelProfile {
         // Если не передан channelId
         if (!data?.channelId) throw new Error("Не передан: channelId");
 
-        // Поиск открытого окна сообщений
-        const messagesForm = Messages.instances.get(data.channelId);
-        const insertInto = messagesForm?.modal?.content || document.querySelector<HTMLElement>(".cdm-form.home .middle >.form-container");
+        // Точка монтирования — контент открытого окна сообщений; без него
+        // форма встаёт в общий контейнер
+        const insertInto = FormsRegistry.get(`messages:${data.channelId}`)?.content
+            ?? document.querySelector<HTMLElement>(".cdm-form.home .middle >.form-container");
 
         // Устанавливаем настройки
         this.options = {
@@ -185,11 +183,10 @@ export class ChannelProfile {
         this.audioNoteStore = new Store<ChannelSectionItemData>();
 
         // Получаем instance
-        const instance = ChannelProfile.instances.get(data.channelId);
+        const instance = FormsRegistry.getOwner<ChannelProfile>(`channel-profile:${data.channelId}`);
         if (instance) return instance;
 
         // Регистрируем этот экземпляр формы
-        ChannelProfile.instances.set(this.channelId, this);
 
         // Инициализация
         this._init();
@@ -226,6 +223,10 @@ export class ChannelProfile {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: `channel-profile:${this.channelId}`,
+                placement: "stack",
+                parent: FormsRegistry.getByContent(this.options.insertInto ?? null)?.id ?? null,
                 url: `?channel-profile=${this.channelId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
@@ -248,7 +249,6 @@ export class ChannelProfile {
             teardown(this);
 
             // Убираем форму из реестра, чтобы повторное открытие создало новую
-            ChannelProfile.instances.delete(this.channelId);
 
         }
 
@@ -437,7 +437,7 @@ export class ChannelProfile {
         let avatarId: string | undefined = this.profile.id;
 
         // Если это диалог
-        if ([1, 8].includes(this.profile.type)) {
+        if (this.profile.kind === "dialog") {
             avatarId = this.profile.display_user_id;
         }
 
@@ -448,11 +448,11 @@ export class ChannelProfile {
             name: this.profile.display_name,
             image: this.profile?.avatar,
             size: "3xl",
-            wrapClasses: [this.profile?.type === 2 ? "rounded-xl" : "rounded-full"]
+            wrapClasses: [this.profile?.kind === "group" ? "rounded-xl" : "rounded-full"]
         });
 
         // Если это избранное
-        if (this.profile.type === 5) {
+        if (this.profile.kind === "favorite") {
             this.avatar.setIcon("bookmark");
         }
 
@@ -466,12 +466,12 @@ export class ChannelProfile {
         const sessionUser = LocalStorage.session?.user as { id?: string } | null;
 
         // Если это не автор
-        if (sessionUser?.id !== this.profile.created_user_id) {
+        if (sessionUser?.id !== this.profile.owner_id) {
             settings.classList.add("hidden");
         }
 
         // Если это не канал, группа или тема
-        if (![2, 3, 4].includes(this.profile.type)) {
+        if (this.profile.kind !== "group" && this.profile.kind !== "channel" && this.profile.kind !== "topic") {
             settings.classList.add("hidden");
         }
 
@@ -488,7 +488,6 @@ export class ChannelProfile {
         teardown(this);
 
         // Убираем форму из реестра, чтобы повторное открытие создало новую
-        ChannelProfile.instances.delete(this.channelId);
 
     }
 

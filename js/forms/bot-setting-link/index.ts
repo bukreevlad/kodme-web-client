@@ -1,5 +1,6 @@
 // Импортируем utils
 import { Logger } from "../../utils/logs/logger.js";
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { Icons } from "../../utils/icons.js";
 
 // Импортируем config
@@ -11,7 +12,6 @@ import { Buttons } from "../../components/buttons.js";
 import { Inputs } from "../../components/inputs.js";
 
 // Импортируем forms
-import { BotProfile } from "../bot-profile/index.js";
 
 // Импортируем handlers
 import { saveBotLinkHandler } from "./handlers/save.js";
@@ -46,8 +46,6 @@ export interface BotSettingLinkOptions {
 // Form
 export class BotSettingLink {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: BotSettingLink | null = null;
 
     /** Настройки формы. */
     options: BotSettingLinkOptions;
@@ -83,7 +81,7 @@ export class BotSettingLink {
         // Поиск открытого профиля бота: дочерняя форма (приложение, команда,
         // категория, ссылка) должна открыться внутри него. Если профиль
         // закрыт — остаётся левая колонка home
-        const insertInto: HTMLElement | null = BotProfile.instances.get(data.botId)?.modal?.content
+        const insertInto: HTMLElement | null = FormsRegistry.get(`bot-profile:${data.botId}`)?.content
             || document.querySelector(".cdm-form.home .left");
 
         // Устанавливаем настройки
@@ -97,12 +95,10 @@ export class BotSettingLink {
         this.botLink = data.botLink;
 
         // Проверяем, существует ли уже экземпляр
-        if (BotSettingLink.instance) {
-            return BotSettingLink.instance;
-        }
+        const opened = FormsRegistry.getOwner<BotSettingLink>("bot-setting-link");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        BotSettingLink.instance = this;
 
         // Инициализация
         this._init();
@@ -134,6 +130,8 @@ export class BotSettingLink {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "bot-setting-link",
                 url: `?bot-setting-ling=${this.botId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -197,8 +195,6 @@ export class BotSettingLink {
     // ***************************************************************************
     _onClose(): void {
 
-        // Удаляем экземпляр формы
-        BotSettingLink.instance = null;
 
     }
 

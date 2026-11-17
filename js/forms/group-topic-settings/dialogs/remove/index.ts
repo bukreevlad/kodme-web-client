@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -12,7 +13,7 @@ import { Overlay } from "../../../../components/overlay/index.js";
 import { Buttons } from "../../../../components/buttons.js";
 
 // Импортируем forms
-import { GroupTopicSettings } from "../../../group-topic-settings/index.js";
+
 import { t } from "../../../../utils/i18n/index.js";
 
 /**
@@ -44,8 +45,6 @@ export interface RemoveGroupTopicData {
 // Form
 export class RemoveGroupTopic {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: RemoveGroupTopic | null = null;
 
     // Переменные формы
     channelId: string;
@@ -74,8 +73,7 @@ export class RemoveGroupTopic {
         if (!data?.channelId) throw new Error("Не передан: channelId");
 
         // Поиск открытой формы настроек темы
-        let topicSettingsForm = GroupTopicSettings.instances.get(data.channelId);
-        let insertInto = topicSettingsForm?.modal?.content || null;
+        let insertInto = FormsRegistry.get(`group-topic-settings:${data.channelId}`)?.content || null;
 
         // Устанавливаем настройки
         this.options = {
@@ -94,12 +92,10 @@ export class RemoveGroupTopic {
         this.callback = data.callback;
 
         // Проверяем, существует ли уже экземпляр
-        if (RemoveGroupTopic.instance) {
-            return RemoveGroupTopic.instance;
-        }
+        const opened = FormsRegistry.getOwner<RemoveGroupTopic>("group-topic-settings-dialogs-remove");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        RemoveGroupTopic.instance = this;
 
         // Инициализация
         this._init();
@@ -129,6 +125,8 @@ export class RemoveGroupTopic {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "group-topic-settings-dialogs-remove",
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
                 closeOnOverlay: true,
@@ -216,8 +214,6 @@ export class RemoveGroupTopic {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        RemoveGroupTopic.instance = null;
 
     }
 

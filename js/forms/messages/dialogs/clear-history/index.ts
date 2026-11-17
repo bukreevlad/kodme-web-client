@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -62,8 +63,6 @@ export interface ClearHistoryData {
 // Form
 export class ClearHistory {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: ClearHistory | null = null;
 
     /**
      * ***************************************************************************
@@ -78,7 +77,7 @@ export class ClearHistory {
     constructor(data: ClearHistoryData) {
 
         // Поиск открытой формы сообщений
-        let messageForm = Messages.instances?.get(data.channelId);
+        let messageForm = FormsRegistry.getOwner<Messages>(`messages:${data.channelId}`);
         let insertInto = messageForm?.modal?.content || null;
 
         // Устанавливаем настройки
@@ -98,12 +97,10 @@ export class ClearHistory {
         this.forAllCheckbox = data?.forAllCheckbox || false;
 
         // Проверяем, существует ли уже экземпляр
-        if (ClearHistory.instance) {
-            return ClearHistory.instance;
-        }
+        const opened = FormsRegistry.getOwner<ClearHistory>("messages-dialogs-clear-history");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        ClearHistory.instance = this;
 
         // Инициализация
         this._init();
@@ -149,6 +146,8 @@ export class ClearHistory {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "messages-dialogs-clear-history",
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
                 closeOnOverlay: true,
@@ -240,8 +239,6 @@ export class ClearHistory {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        ClearHistory.instance = null;
 
     }
 

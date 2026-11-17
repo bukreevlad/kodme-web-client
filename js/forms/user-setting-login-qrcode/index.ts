@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { Html5Qrcode } from "html5-qrcode";
 
 // Импортируем config
@@ -12,7 +13,6 @@ import { Overlay } from "../../components/overlay/index.js";
 import { Buttons } from "../../components/buttons.js";
 
 // Импортируем forms
-import { UserProfile } from "../user-profile/index.js";
 
 // Импортируем functions
 import { startScanner } from "./functions/start_scanner.js";
@@ -45,8 +45,6 @@ export interface UserSettingLoginWithQRCodeData {
 // Form
 export class UserSettingLoginWithQRCode {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: UserSettingLoginWithQRCode | null = null;
 
     /** Настройки формы. */
     options: UserSettingLoginWithQRCodeOptions;
@@ -81,8 +79,7 @@ export class UserSettingLoginWithQRCode {
         if (!data?.userId) throw new Error("Не передан: userId");
 
         // Поиск открытого профиля пользователя
-        let userProfileForm = UserProfile.instances.get(data.userId);
-        let insertInto = userProfileForm?.modal?.content || null;
+        let insertInto = FormsRegistry.get(`user-profile:${data.userId}`)?.content || null;
 
         // Устанавливаем настройки
         this.options = {
@@ -98,12 +95,10 @@ export class UserSettingLoginWithQRCode {
         this.html5QrCode = null;
 
         // Проверяем, существует ли уже экземпляр
-        if (UserSettingLoginWithQRCode.instance) {
-            return UserSettingLoginWithQRCode.instance;
-        }
+        const opened = FormsRegistry.getOwner<UserSettingLoginWithQRCode>("user-setting-login-qrcode");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        UserSettingLoginWithQRCode.instance = this;
 
         // Инициализация
         this._init();
@@ -133,6 +128,8 @@ export class UserSettingLoginWithQRCode {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "user-setting-login-qrcode",
                 url: `?user-setting-login-qrcode=${this.userId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -194,8 +191,6 @@ export class UserSettingLoginWithQRCode {
             Logger.error("Cleanup error:", error);
         }
 
-        // Удаляем экземпляр формы
-        UserSettingLoginWithQRCode.instance = null;
 
     }
 

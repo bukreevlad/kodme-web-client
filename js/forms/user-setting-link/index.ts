@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -14,7 +15,6 @@ import { Buttons } from "../../components/buttons.js";
 import { Inputs } from "../../components/inputs.js";
 
 // Импортируем forms
-import { UserSettings } from "../user-settings/index.js";
 
 // Импортируем handlers
 import { saveHandler } from "./handlers/save.js";
@@ -49,8 +49,6 @@ export interface UserSettingLinkData {
 // Form
 export class UserSettingLink {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: UserSettingLink | null = null;
 
     /** Настройки формы. */
     options: UserSettingLinkOptions;
@@ -84,10 +82,10 @@ export class UserSettingLink {
         // Если не передан userId
         if (!data?.userId) throw new Error("Не передан: userId");
 
-        // Поиск открытой формы настроек пользователя: публичная ссылка
-        // устанавливается внутри неё. Если настройки закрыты — левая колонка home
-        const insertInto: HTMLElement | null = UserSettings.instance?.modal?.content
-            || document.querySelector(".cdm-form.home .left");
+        // Точка монтирования — контент открытых настроек пользователя;
+        // если они закрыты — левая колонка home
+        const insertInto: HTMLElement | null = FormsRegistry.get(`user-settings:${data.userId}`)?.content
+            ?? document.querySelector<HTMLElement>(".cdm-form.home .left");
 
         // Устанавливаем настройки
         this.options = {
@@ -99,12 +97,10 @@ export class UserSettingLink {
         this.userId = data.userId;
 
         // Проверяем, существует ли уже экземпляр
-        if (UserSettingLink.instance) {
-            return UserSettingLink.instance;
-        }
+        const opened = FormsRegistry.getOwner<UserSettingLink>("user-setting-link");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        UserSettingLink.instance = this;
 
         // Инициализация
         this._init();
@@ -134,6 +130,8 @@ export class UserSettingLink {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "user-setting-link",
                 url: `?user-setting-link=${this.userId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -228,8 +226,6 @@ export class UserSettingLink {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        UserSettingLink.instance = null;
 
     }
 

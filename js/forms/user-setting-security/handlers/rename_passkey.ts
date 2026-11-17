@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 import { getErrorMessage, getErrorStatus } from "../../../utils/helpers/error_util.js";
 
@@ -53,7 +54,7 @@ export function renamePasskeyHandler(form: UserSettingSecurity, data: PasskeyLis
                     if (response.status) {
 
                         // Закрываем диалог
-                        PasskeyRenameDialog.instance?.modal?.close();
+                        FormsRegistry.getOwner<PasskeyRenameDialog>("user-passkey-rename")?.modal?.close();
 
                         // Обновляем имя в данных и DOM строки
                         data.name = name;

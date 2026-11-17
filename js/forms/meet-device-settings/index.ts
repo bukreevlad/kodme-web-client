@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -60,7 +61,6 @@ export interface MeetDeviceSettingsData {
 export class MeetDeviceSettings {
 
     /** Единственный экземпляр формы. */
-    static instance: MeetDeviceSettings | null = null;
 
     /** Форма конференции, в которую вложена эта форма. */
     meetPlayForm: MeetPlay | null = null;
@@ -100,8 +100,8 @@ export class MeetDeviceSettings {
 
         // Поиск открытого окна конференции (реестр отдаёт undefined при
         // промахе — поле формы хранит null)
-        this.meetPlayForm = MeetPlay.instances.get(data.meetId) ?? null;
-        let insertInto = this.meetPlayForm?.modal?.content || null;
+        this.meetPlayForm = FormsRegistry.getOwner<MeetPlay>(`meet-play:${data.meetId}`) ?? null;
+        let insertInto = FormsRegistry.get(`meet-play:${data.meetId}`)?.content || null;
 
         // Устанавливаем настройки
         this.options = {
@@ -113,12 +113,10 @@ export class MeetDeviceSettings {
         this.meetId = data.meetId;
 
         // Проверяем, существует ли уже экземпляр
-        if (MeetDeviceSettings.instance) {
-            return MeetDeviceSettings.instance;
-        }
+        const opened = FormsRegistry.getOwner<MeetDeviceSettings>("meet-device-settings");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        MeetDeviceSettings.instance = this;
 
         // Инициализация
         this._init();
@@ -160,6 +158,8 @@ export class MeetDeviceSettings {
             // Форма настроек
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "meet-device-settings",
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
                 closeOnOverlay: false,
@@ -339,8 +339,6 @@ export class MeetDeviceSettings {
      */
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        MeetDeviceSettings.instance = null;
 
     }
 

@@ -6,6 +6,7 @@ import { CDM_FORM_CLASSES, CDM_FORM_HEADER_CLASSES, CDM_FORM_CONTENT_CLASSES } f
 
 // Импортируем utils
 import { Logger } from "../../utils/logs/logger.js";
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { Store } from "../../utils/store.js";
 
 // Импортируем core
@@ -27,7 +28,6 @@ import { createHandler } from "./handlers/create.js";
 import { onTopicsScrollHandler } from "./handlers/on_topics_scroll.js";
 
 // Импортируем forms
-import { ChannelProfile } from "../channel-profile/index.js";
 
 // Импортируем типы
 import type { GroupTopicRecord } from "./types.js";
@@ -58,9 +58,6 @@ export interface GroupTopicsManagerData {
 
 // Form
 export class GroupTopicsManager {
-
-    // Реестр всех открытых форм GroupTopicsManager: { channelId: instance }
-    static instances = new Map<string, GroupTopicsManager>();
 
     // Настройки формы
     options: GroupTopicsManagerOptions;
@@ -104,9 +101,8 @@ export class GroupTopicsManager {
         // Если не передан channelId
         if (!data?.channelId) throw new Error("Не передан: channelId");
 
-        // Поиск открытого профиля канала
-        let channelProfileForm = ChannelProfile.instances.get(data.channelId);
-        let insertInto = channelProfileForm?.modal?.content || null;
+        // Точка монтирования — контент открытого профиля канала
+        let insertInto = FormsRegistry.get(`channel-profile:${data.channelId}`)?.content ?? null;
 
         // Устанавливаем настройки
         this.options = {
@@ -140,11 +136,10 @@ export class GroupTopicsManager {
         this.store = new Store<GroupTopicRecord>();
 
         // Получаем instance
-        let instance = GroupTopicsManager.instances.get(data.channelId);
+        let instance = FormsRegistry.getOwner<GroupTopicsManager>(`group-topics-manager:${data.channelId}`);
         if (instance) return instance;
 
         // Регистрируем этот экземпляр формы
-        GroupTopicsManager.instances.set(this.channelId, this);
 
         // Инициализация
         this._init();
@@ -177,6 +172,10 @@ export class GroupTopicsManager {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: `group-topics-manager:${this.channelId}`,
+                placement: "stack",
+                parent: FormsRegistry.getByContent(this.options.insertInto ?? null)?.id ?? null,
                 url: `?group-topics-manager=${this.channelId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -282,7 +281,6 @@ export class GroupTopicsManager {
         this._offScrollTopics = null;
 
         // Удаляем экземпляр формы из реестра
-        GroupTopicsManager.instances.delete(this.channelId);
 
     }
 

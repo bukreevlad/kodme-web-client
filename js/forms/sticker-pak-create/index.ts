@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { CDM_FORM_CLASSES, CDM_FORM_HEADER_CLASSES, CDM_FORM_CONTENT_CLASSES, CDM_FORM_SECTION_CLASSES } from "../../config/constants.js";
 
 // Импортируем utils
@@ -28,8 +29,6 @@ export interface StickerPakCreateOptions {
 // Form
 export class StickerPakCreate {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: StickerPakCreate | null = null;
 
     /** Настройки формы. */
     options: StickerPakCreateOptions;
@@ -59,12 +58,10 @@ export class StickerPakCreate {
         }
 
         // Проверяем, существует ли уже экземпляр
-        if (StickerPakCreate.instance) {
-            return StickerPakCreate.instance;
-        }
+        const opened = FormsRegistry.getOwner<StickerPakCreate>("sticker-pak-create");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        StickerPakCreate.instance = this;
 
         // Инициализация
         this._init();
@@ -94,6 +91,8 @@ export class StickerPakCreate {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "sticker-pak-create",
                 url: `?stickers&create`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -172,8 +171,6 @@ export class StickerPakCreate {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        StickerPakCreate.instance = null;
 
     }
 

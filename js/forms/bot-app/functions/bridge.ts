@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 import { getErrorMessage, getErrorStatus } from "../../../utils/helpers/error_util.js";
 
@@ -306,7 +307,7 @@ export class Bridge {
         if (parsed.protocol !== "https:") return;
 
         // Диалог-синглтон: закрываем предыдущий, чтобы показать актуальную ссылку
-        MessageUrlClickConfirm.instance?.modal?.close();
+        FormsRegistry.getOwner<MessageUrlClickConfirm>("messages-components-dialogs-message-url-click-confirm")?.modal?.close();
 
         // Открытие — через подтверждение: источник команды — стороннее приложение
         new MessageUrlClickConfirm({ url: parsed.toString() });
@@ -335,7 +336,7 @@ export class Bridge {
         if (Date.now() < this._permissionCooldownUntil) return;
 
         // Диалог уже открыт — повторные запросы не показываем
-        if (PermissionDialog.instance || this._permissionDialog) return;
+        if (FormsRegistry.getOwner<PermissionDialog>("bot-app-dialogs-permission") || this._permissionDialog) return;
 
         // Показываем диалог подтверждения платформы
         this._permissionDialog = new PermissionDialog({

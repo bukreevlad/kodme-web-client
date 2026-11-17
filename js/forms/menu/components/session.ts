@@ -54,12 +54,8 @@ export function createSessionItem(form: Menu, data: MenuSessionItem): HTMLElemen
 
     if (button) {
 
-        // DOM-копия строки — в общий список сессии: по ней элемент списка
-        // удаляется из DOM при выгрузке записи из стора (см. subscribeItemRemoved)
-        if (!data.__domElements__) {
-            data.__domElements__ = [];
-        }
-        data.__domElements__.push(button.dom);
+        // Регистрируем DOM-копию строки в реестре стора
+        form.store.registerDomElement(data.id, button.dom);
 
         // Авторизация
         button.dom.addEventListener("click", () => authSessionHandler(form, data));

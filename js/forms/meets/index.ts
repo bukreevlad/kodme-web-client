@@ -6,6 +6,7 @@ import { CDM_FORM_CLASSES, CDM_FORM_HEADER_CLASSES, CDM_FORM_CONTENT_CLASSES } f
 
 // Импортируем utils
 import { Logger } from "../../utils/logs/logger.js";
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { Store } from "../../utils/store.js";
 
 // Импортируем core
@@ -23,6 +24,7 @@ import { EmptyState } from "../../components/empty_state.js";
 import { subscribeStoreEvents } from "./events/store/store_events.js";
 
 // Импортируем handlers
+import { createMeetHandler } from "./handlers/create_meet.js";
 import { menuHandler } from "./handlers/menu.js";
 import { onMeetsScrollHandler } from "./handlers/on_meets_scroll.js";
 
@@ -53,8 +55,6 @@ export interface MeetsData {
 // Form
 export class Meets {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: Meets | null = null;
 
     /**
      * ***************************************************************************
@@ -95,12 +95,10 @@ export class Meets {
         this.store = new Store<MeetRecord>();
 
         // Проверяем, существует ли уже экземпляр
-        if (Meets.instance) {
-            return Meets.instance;
-        }
+        const opened = FormsRegistry.getOwner<Meets>("meets");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        Meets.instance = this;
 
         // Инициализация
         this._init();
@@ -167,6 +165,10 @@ export class Meets {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "meets",
+                placement: "workspace",
+                workspace: "meets",
                 url: `?meets`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -204,6 +206,10 @@ export class Meets {
             // Контекстное меню
             let menu = this.tpl.querySelector(":scope >.header [action-menu]");
             menu?.addEventListener("click", (event) => menuHandler(event, this));
+
+            // Кнопка «Создать конференцию» в пустом состоянии
+            let create = this.tpl.querySelector(":scope >.content [action-create-meet]");
+            create?.addEventListener("click", () => createMeetHandler(this));
 
             // =========================
 
@@ -248,16 +254,10 @@ export class Meets {
             // Блок пустого состояния списка
             this.empty = this.tpl.querySelector(":scope >.content [data-empty]");
 
-            // Сообщаем системе, что форма открыта
-            window.dispatchEvent(new CustomEvent("[app][form]::opened", {
-                detail: {
-                    id: this.modal?.options.id,
-                    data: {
-                        instance: this,
-                        title: t("forms.meets.title")
-                    }
-                }
-            }));
+            // Пилюля рабочего места: заголовки живут в записи реестра
+            if (this.modal) if (this.modal) FormsRegistry.update(this.modal.options.id, {
+                title: t("forms.meets.title")
+            });
 
             // Получаем конференции
             await getMeets(this);
@@ -289,13 +289,7 @@ export class Meets {
         // Очищаем хранилище
         this.store?.removeAll();
 
-        // Удаляем экземпляр формы
-        Meets.instance = null;
 
-        // Сообщаем системе, что форма закрыта
-        window.dispatchEvent(new CustomEvent("[app][form]::closed", {
-            detail: { id: this.modal?.options.id }
-        }));
 
     }
 
@@ -323,7 +317,12 @@ export class Meets {
                         icon: "video",
                         compact: true,
                         attributes: ["data-empty"],
-                        classes: ["hidden", "flex-1"]
+                        classes: ["hidden", "flex-1"],
+                        action: {
+                            text: t("forms.meets.empty.create"),
+                            icon: "plus",
+                            attributes: ["action-create-meet"]
+                        }
                     })}
                 </div>
             </div>

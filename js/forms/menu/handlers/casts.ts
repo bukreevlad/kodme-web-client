@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 
 // Импортируем forms
@@ -18,8 +19,8 @@ export function castsHandler(form: Menu): void {
     try {
 
         // Открываем форму
-        if (Broadcasts.instance) {
-            Broadcasts.instance?.modal?.activate();
+        if (FormsRegistry.getOwner<Broadcasts>("broadcasts")) {
+            FormsRegistry.getOwner<Broadcasts>("broadcasts")?.modal?.activate();
         } else {
             new Broadcasts();
         }

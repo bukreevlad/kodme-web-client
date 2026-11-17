@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { CDM_FORM_CLASSES, CDM_FORM_CONTENT_CLASSES } from "../../config/constants.js";
 
 // Импортируем utils
@@ -67,8 +68,6 @@ export interface SecretCallData {
  */
 export class SecretCall {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: SecretCall | null = null;
 
     /**
      * ***************************************************************************
@@ -92,13 +91,13 @@ export class SecretCall {
         this.modal = null;
 
         // Проверяем, существует ли уже экземпляр
-        if (SecretCall.instance) {
-            SecretCall.instance.modal?.activate();
-            return SecretCall.instance;
+        const opened = FormsRegistry.getOwner<SecretCall>("secret-call");
+        if (opened) {
+            opened.modal?.activate();
+            return opened;
         }
 
         // Сохраняем ссылку на текущий экземпляр
-        SecretCall.instance = this;
 
         // Инициализация
         this._init();
@@ -165,6 +164,7 @@ export class SecretCall {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
                 closeOnOverlay: false,
@@ -288,8 +288,6 @@ export class SecretCall {
         for (const unsubscribe of this.unsubscribes) unsubscribe();
         this.unsubscribes = [];
 
-        // Удаляем экземпляр формы
-        SecretCall.instance = null;
 
     }
 

@@ -32,8 +32,8 @@ const NAME_COLORS = [
  * createMessageItem - строка сообщения онлайн-чата.
  *
  * Отображает имя автора (цвет стабильно вычисляется из его id) и текст
- * сообщения. Строка живёт в data.__domElements__ для удаления копий при
- * выгрузке из стора.
+ * сообщения. DOM-копию строки регистрирует вызывающий код
+ * (events/store/item_added.ts).
  *
  * @param data - Данные сообщения.
  * @returns Готовый DOM-элемент строки.
@@ -43,12 +43,6 @@ export function createMessageItem(data: OnlineChatMessage): HTMLElement {
 
     // Создаем DOM-элемент из шаблона
     const element = template();
-
-    // Записываем ссылку на dom элемент
-    if (!data.__domElements__) {
-        data.__domElements__ = [];
-    }
-    data.__domElements__.push(element);
 
     // Устанавливаем начальные данные
     setup(data);
@@ -87,7 +81,7 @@ export function createMessageItem(data: OnlineChatMessage): HTMLElement {
         try {
 
             // Получаем числовой хеш из UUID
-            let hash = hashString(next.created_user_id);
+            let hash = hashString(next.author_id);
 
             // Вычисляем индекс цвета (остаток от деления)
             let colorIndex = hash % NAME_COLORS.length;

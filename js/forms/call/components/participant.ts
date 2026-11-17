@@ -81,11 +81,8 @@ export class ParticipantItem {
         // плитки по крупной и полосе, не заглядывая в хранилище
         this.element.dataset.identity = data?.participant?.identity || data?.id || "";
 
-        // Записываем ссылку на dom элемент
-        if (!this.data.__domElements__) {
-            this.data.__domElements__ = [];
-        }
-        this.data.__domElements__.push(this.element);
+        // Регистрируем DOM-копию строки в реестре стора
+        this.form.store.registerDomElement(this.data.id, this.element);
 
         // Быстрые ссылки на элементы
         this.videoSlot = this.element.querySelector<HTMLElement>(":scope [data-video]");
@@ -296,9 +293,8 @@ export class ParticipantItem {
 
             });
 
-            // Сохраняем функцию отписки в data, чтобы событие удаления
-            // элемента могло снять подписку (см. events/store/item_removed.ts)
-            this.data.__unsubscribeStore__ = unsubscribe;
+            // Запоминаем отписку в сторе — она вызовется при удалении элемента
+            this.form.store.addItemSubscription(this.data.id, unsubscribe);
 
             // И саму карточку — по ней снимаются плееры и аудио участника
             this.data.__component__ = this;
@@ -311,23 +307,17 @@ export class ParticipantItem {
 
     /**
      * ***************************************************************************
-     * Отписывается от обновлений и снимает плееры участника.
+     * Снимает плееры участника.
      *
-     * Вызывается из событий Store при удалении элемента: без этого
-     * `<audio>` с чужим голосом остался бы в документе и участника
-     * было бы слышно после его выхода из звонка.
+     * Вызывается из событий Store при удалении элемента (точечную подписку
+     * строки закрывает стор): без этого `<audio>` с чужим голосом остался бы
+     * в документе и участника было бы слышно после его выхода из звонка.
      * @returns {void}
      * ***************************************************************************
      */
     destroy(): void {
 
         try {
-
-            // Отписка от обновления (тот же ключ, что и в _subscribeToUpdates)
-            if (typeof this.data?.__unsubscribeStore__ === "function") {
-                this.data.__unsubscribeStore__();
-                this.data.__unsubscribeStore__ = null;
-            }
 
             // Уничтожаем плееры и чистим видеослот
             Array.from(this.players.keys()).forEach((trackId) => {

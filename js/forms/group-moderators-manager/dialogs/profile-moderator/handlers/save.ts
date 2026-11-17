@@ -31,10 +31,11 @@ export async function saveModeratorHandler(form: GroupProfileModerator): Promise
         let canDeletedMessage = tpl.querySelector<HTMLInputElement>(`:scope >.content [name="can-deleted-message"]`);
         let canCleanMessages = tpl.querySelector<HTMLInputElement>(`:scope >.content [name="can-clean-messages"]`);
         let canRestrictMembers = tpl.querySelector<HTMLInputElement>(`:scope >.content [name="can-restrict-members"]`);
+        let canPostingMessages = tpl.querySelector<HTMLInputElement>(`:scope >.content [name="can-posting-messages"]`);
 
         // Профиль и переключатели обязаны быть — иначе сохранять нечего
         const profile = form.profile;
-        if (!profile || !canDeletedMessage || !canCleanMessages || !canRestrictMembers) return;
+        if (!profile || !canDeletedMessage || !canCleanMessages || !canRestrictMembers || !canPostingMessages) return;
 
         // Делаем запрос на сервер
         let response = await saveModeratorRequest({
@@ -45,6 +46,7 @@ export async function saveModeratorHandler(form: GroupProfileModerator): Promise
             can_restrict_members: canRestrictMembers.checked,
             can_invite_users: false,
             can_pin_messages: false,
+            can_posting_messages: canPostingMessages.checked,
         });
 
         // Проверка ответа

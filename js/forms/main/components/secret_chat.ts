@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 import { Icons } from "../../../utils/icons.js";
 
@@ -25,8 +26,8 @@ import { I18n, t } from "../../../utils/i18n/index.js";
  * локально, превью собирается из расшифрованных данных payload, а не из
  * серверных сообщений. Механика копий строки и подписки на стор — та же:
  * одна запись может дать несколько строк (общая папка + папки пользователя),
- * каждая строка подписывается на `item::updated::<id>` и держит ссылку на
- * себя в `data.__domElements__`, чтобы стор удалил все копии разом.
+ * каждая строка подписывается на `item::updated::<id>` и регистрирует себя
+ * в реестре DOM-копий стора, чтобы стор удалил все копии разом.
  * ***************************************************************************
  */
 export class SecretChatItem {
@@ -62,11 +63,8 @@ export class SecretChatItem {
         // Создаем DOM-элемент из шаблона
         this.element = this._template();
 
-        // Инициализируем массив, если его еще нет, и добавляем текущий DOM-элемент
-        if (!this.data.__domElements__) {
-            this.data.__domElements__ = [];
-        }
-        this.data.__domElements__.push(this.element);
+        // Регистрируем DOM-копию строки в реестре стора
+        this.form.store.registerDomElement(this.data.id, this.element);
 
         // Устанавливаем начальные данные
         this._setup(this.data);
@@ -179,7 +177,7 @@ export class SecretChatItem {
         // Открыть секретный чат (живёт только локально)
         this.element.addEventListener("click", () => {
 
-            const instance = SecretChat.instances.get(this.data.id);
+            const instance = FormsRegistry.getOwner<SecretChat>(`secret-chat:${this.data.id}`);
             if (instance) {
                 instance.modal?.activate();
             } else {
@@ -248,8 +246,8 @@ export class SecretChatItem {
 
             });
 
-            // Сохраняем функцию отписки в data, чтобы Main мог вызвать ее при удалении
-            this.data.__unsubscribeStore__ = unsubscribe;
+            // Запоминаем отписку в сторе — она вызовется при удалении элемента
+            this.form.store.addItemSubscription(this.data.id, unsubscribe);
 
         } catch (error) {
             Logger.error(error);

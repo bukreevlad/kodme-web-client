@@ -21,6 +21,7 @@
 
 /* Формы */
 @import "./forms/home.css";
+@import "./forms/cloud.css";
 @import "./forms/main.css";
 @import "./forms/main-folders-manager.css";
 @import "./forms/messages.css";

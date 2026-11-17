@@ -3,6 +3,7 @@ import { LocalStorage } from "../utils/local_storage.js";
 
 // Импортируем типы
 import type { AttachmentsRaw } from "../utils/messages/attachments.js";
+import type { ChannelKind } from "../types/domain.js";
 
 // Получаем параметр Blur из настроек пользователя
 const isBlur = () => { return LocalStorage?.session?.settings?.user?.decorations?.blur || false };
@@ -276,6 +277,20 @@ export const THEMES_SCROLL_THROTTLE_MS = 150;
 // первый и последний элементы списка, а не все дети
 export const THEMES_LOAD_AHEAD_PX = 250;
 
+// Размер одной страницы списка участников канала.
+// Сервер по умолчанию отдаёт 35 и ограничивает offset диапазоном 1..100
+export const MEMBERS_PAGE_SIZE = 35;
+
+// Троттлинг проверки догрузки при скролле списка участников (мс).
+// Те же причины, что у THEMES_SCROLL_THROTTLE_MS: OverlayScrollbars
+// шлёт scroll на каждый тик прокрутки — десятки раз в секунду
+export const MEMBERS_SCROLL_THROTTLE_MS = 150;
+
+// За сколько пикселей до края списка участников начинать догрузку (px).
+// Список «старые сверху, новые снизу» (порядок по id участника),
+// проверяются только первый и последний элементы
+export const MEMBERS_LOAD_AHEAD_PX = 250;
+
 // Размер одной страницы списка паков стикеров.
 // Сервер по умолчанию отдаёт 50 и ограничивает limit диапазоном 1..100
 export const STICKERS_PAGE_SIZE = 50;
@@ -534,7 +549,7 @@ export interface TempMessage {
     id: string;
 
     /** Id автора. */
-    created_user_id: string;
+    author_id: string;
 
     /** URL аватара автора. */
     avatar_host_url: string;
@@ -546,7 +561,7 @@ export interface TempMessage {
     channel_id: string;
 
     /** Тип канала. */
-    channel_type: string;
+    channel_kind: ChannelKind | null;
 
     /** Текст сообщения. */
     text: string | null;
@@ -613,11 +628,11 @@ export interface TempMessage {
 // Временное сообщение
 export const TEMP_MESSAGE: TempMessage = {
     id: "",
-    created_user_id: "",
+    author_id: "",
     avatar_host_url: "",
     display_name: "",
     channel_id: "",
-    channel_type: "",
+    channel_kind: null,
     text: null,
     reply_to_message_id: null,
     reply_to_message: null,

@@ -20,8 +20,8 @@ import { t } from "../../../utils/i18n/index.js";
  * createChannelItem - строка канала в списке пересылки.
  *
  * Отображает аватар, название и статус строки; по клику выделяет или
- * снимает выделение (см. handlers/click.ts). Строка живёт в
- * data.__domElements__ (для удаления копий при выгрузке из стора)
+ * снимает выделение (см. handlers/click.ts). Строка регистрируется в
+ * реестре DOM-копий стора (для удаления копий при выгрузке из стора)
  * и подписывается на точечное событие обновления записи.
  *
  * Фабрика возвращает строку-объект { form, data, element }.
@@ -42,11 +42,8 @@ export function createChannelItem(form: ForwardMessages, data: ForwardChannelRec
     // Формируем строку списка
     const item: ChannelItem = { form, data, element };
 
-    // Записываем ссылку на dom элемент
-    if (!current.__domElements__) {
-        current.__domElements__ = [];
-    }
-    current.__domElements__.push(element);
+    // Регистрируем DOM-копию строки в реестре стора
+    form.store.registerDomElement(current.id, element);
 
     // Устанавливаем начальные данные
     setup(current);
@@ -115,7 +112,7 @@ export function createChannelItem(form: ForwardMessages, data: ForwardChannelRec
             let avatarId = next.id;
 
             // Если это диалог
-            if (next.type != null && [1, 8].includes(next.type)) {
+            if (next.kind === "dialog") {
                 avatarId = next.display_user_id ?? avatarId;
             }
 
@@ -129,12 +126,12 @@ export function createChannelItem(form: ForwardMessages, data: ForwardChannelRec
             });
 
             // Если это избранное
-            if (next.type === 5) {
+            if (next.kind === "favorite") {
                 avatarInstance.setIcon("bookmark");
             }
 
             // Если это диалог и пользователь онлайн
-            if (next.type != null && [1, 8].includes(next.type)) {
+            if (next.kind === "dialog") {
                 if (next.display_user_is_online) {
                     avatarInstance.setStatus("online");
                 } else {
@@ -143,7 +140,7 @@ export function createChannelItem(form: ForwardMessages, data: ForwardChannelRec
             }
 
             // Если это группа
-            if (next.type === 2) {
+            if (next.kind === "group") {
                 avatar.classList.add("cube");
             }
 
@@ -151,7 +148,7 @@ export function createChannelItem(form: ForwardMessages, data: ForwardChannelRec
             name.textContent = next.display_name ?? null;
 
             // Если уведомления выключены
-            if (!next.is_notifications) {
+            if (next.notifications?.mode !== "all") {
                 const icon = Icons.icon("BellOff");
                 if (icon) name.append(icon);
             }
@@ -201,8 +198,8 @@ export function createChannelItem(form: ForwardMessages, data: ForwardChannelRec
 
             });
 
-            // Сохраняем функцию отписки в data, чтобы стор мог вызвать ее при удалении
-            current.__unsubscribeStore__ = unsubscribe;
+            // Запоминаем отписку в сторе — она вызовется при удалении элемента
+            form.store.addItemSubscription(current.id, unsubscribe);
 
         } catch (error) {
             Logger.error(error);

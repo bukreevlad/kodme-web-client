@@ -1,7 +1,7 @@
 // Импортируем сторонние пакеты
-import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем utils
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { AudioPlayerManager } from "../../utils/audio/audio_player.js";
 import { Logger } from "../../utils/logs/logger.js";
 
@@ -82,7 +82,7 @@ export class MiniAudioPlayer {
 
         // Устанавливаем настройки
         this.options = {
-            insertInto: Home.instance?.tpl?.querySelector(":scope [data-audio-player-mini-wrap]"),
+            insertInto: FormsRegistry.getOwner<Home>("home")?.tpl?.querySelector(":scope [data-audio-player-mini-wrap]"),
             ...options
         }
 

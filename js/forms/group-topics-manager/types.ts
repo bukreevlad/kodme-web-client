@@ -19,12 +19,6 @@ export interface GroupTopicRecord extends StoreItem {
     /** Имя автора темы. */
     author_name?: string;
 
-    /** Отрисованные копии строки (каждая копия добавляет свой DOM). */
-    __domElements__?: HTMLElement[];
-
-    /** Отписка компонента строки от точечного события обновления. */
-    __unsubscribeStore__?: () => void;
-
 }
 
 /**

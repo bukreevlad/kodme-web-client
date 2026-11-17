@@ -68,11 +68,6 @@ export function createCategoryItem(data: BotMenuNode): HTMLElement {
     let element = template();
 
     // Записываем ссылку на dom элемент
-    if (!data.__domElements__) {
-        data.__domElements__ = [];
-    }
-    data.__domElements__.push(element);
-
     // Устанавливаем начальные данные
     setup(element, data);
 

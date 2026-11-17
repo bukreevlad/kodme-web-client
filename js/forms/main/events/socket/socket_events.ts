@@ -1,13 +1,12 @@
 // Импортируем events
 import { subscribeAuthExpired } from "./auth/expired.js";
-import { subscribeMessages } from "./messages/index.js";
+import { subscribeChannelFeed } from "./feed.js";
+import { subscribeUserFeed } from "./user_feed.js";
 import { subscribeComments } from "./comments/index.js";
 import { subscribeCall } from "./call/index.js";
 import { subscribeBroadcasts } from "./broadcasts/index.js";
 import { subscribeUsers } from "./users/index.js";
-import { subscribeChannels } from "./channels/index.js";
 import { subscribeChannelsMembers } from "./channels-members/index.js";
-import { subscribeModeration } from "./moderation/index.js";
 
 /**
  * ***************************************************************************
@@ -24,14 +23,13 @@ export class SocketEvents {
     static init(): void {
 
         subscribeAuthExpired();
-        subscribeMessages();
+        subscribeChannelFeed();
+        subscribeUserFeed();
         subscribeComments();
         subscribeCall();
         subscribeBroadcasts();
         subscribeUsers();
-        subscribeChannels();
         subscribeChannelsMembers();
-        subscribeModeration();
 
     }
 

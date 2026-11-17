@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { CDM_MODAL_CLASSES } from "../../config/constants.js";
 
 // Импортируем utils
@@ -27,9 +28,6 @@ import { t } from "../../utils/i18n/index.js";
 
 // Form
 export class BotApp {
-
-    // Реестр всех открытых форм BotApp: { appId: instance }
-    static instances = new Map<string, BotApp>();
 
     /** Настройки формы. */
     options: BotAppData["options"];
@@ -101,14 +99,13 @@ export class BotApp {
 
         // Повторное открытие: возвращаем уже открытый экземпляр
         // и выводим его на передний план
-        const instance = BotApp.instances.get(data.appId);
+        const instance = FormsRegistry.getOwner<BotApp>(`bot-app:${data.appId}`);
         if (instance) {
             instance.modal?.activate();
             return instance;
         }
 
         // Регистрируем этот экземпляр формы
-        BotApp.instances.set(data.appId, this);
 
         // Инициализация
         this._init();
@@ -145,6 +142,8 @@ export class BotApp {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: `bot-app:${this.appId}`,
                 url: `?bot-web-app=${this.appId}`,
                 insertInto: this.options?.insertInto,
                 closeOnEsc: false,
@@ -167,7 +166,6 @@ export class BotApp {
             Logger.error(error);
 
             // Снимаем экземпляр из реестра — повторное открытие создаст новый
-            BotApp.instances.delete(this.appId);
 
             // Показываем ошибку открытия пользователю
             if (getErrorMessage(error).includes("RATE_LIMIT_EXCEEDED")) {
@@ -282,12 +280,6 @@ export class BotApp {
         this.bridge.destroy();
 
         // Удаляем экземпляр формы из реестра
-        BotApp.instances.delete(this.appId);
-
-        // Сообщаем системе, что форма закрыта
-        window.dispatchEvent(new CustomEvent("[app][form]::closed", {
-            detail: { id: this.modal?.options.id }
-        }));
 
     }
 

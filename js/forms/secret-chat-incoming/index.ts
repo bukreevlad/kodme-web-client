@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { CDM_MODAL_CLASSES, CDM_MODAL_CONTENT_CLASSES, CDM_MODAL_FOOTER_CLASSES, CDM_MODAL_HEADER_CLASSES } from "../../config/constants.js";
 
 // Импортируем utils
@@ -44,9 +45,6 @@ export interface SecretChatIncomingData {
  */
 export class SecretChatIncoming {
 
-    // Экземпляры по id приглашения (приглашений может прийти несколько подряд)
-    static instances = new Map<string, SecretChatIncoming>();
-
     /**
      * ***************************************************************************
      * Модалка входящего приглашения в секретный чат.
@@ -63,10 +61,9 @@ export class SecretChatIncoming {
         this.modal = null;
 
         // Проверяем, существует ли уже экземпляр этого приглашения
-        if (SecretChatIncoming.instances.has(data.chatId)) return;
+        if (FormsRegistry.getOwner<SecretChatIncoming>(`secret-chat-incoming:${data.chatId}`)) return;
 
         // Сохраняем ссылку на текущий экземпляр
-        SecretChatIncoming.instances.set(data.chatId, this);
 
         // Инициализация
         this._init();
@@ -192,7 +189,6 @@ export class SecretChatIncoming {
         this.unsubscribes = [];
 
         // Удаляем экземпляр формы
-        SecretChatIncoming.instances.delete(this.chatId);
 
     }
 

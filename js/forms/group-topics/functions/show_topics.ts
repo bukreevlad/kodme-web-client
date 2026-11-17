@@ -20,7 +20,7 @@ export async function showTopics(form: GroupTopics): Promise<void> {
         // Таблица читается через общий Dexie API (db.table), а не через
         // свойство-слой: в типе IndexedDB.db нет объявленных таблиц
         const topics = await IndexedDB.db?.table("channels")
-            .where("topic_for_group_id")
+            .where("parent_channel_id")
             .equals(form.channel.id)
             .toArray();
 

@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -31,8 +32,6 @@ export interface GroupCreateOptions {
 // Form
 export class GroupCreate {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: GroupCreate | null = null;
 
     // Настройки формы
     options: GroupCreateOptions;
@@ -65,12 +64,10 @@ export class GroupCreate {
         this.osListScrollInstance = null; // overlayScroll instance
 
         // Проверяем, существует ли уже экземпляр
-        if (GroupCreate.instance) {
-            return GroupCreate.instance;
-        }
+        const opened = FormsRegistry.getOwner<GroupCreate>("group-create");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        GroupCreate.instance = this;
 
         // Инициализация
         this._init();
@@ -103,6 +100,8 @@ export class GroupCreate {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "group-create",
                 url: `?group-create`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -189,8 +188,6 @@ export class GroupCreate {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        GroupCreate.instance = null;
 
     }
 
@@ -274,14 +271,10 @@ export class GroupCreate {
                                 ${t("forms.group_create.can_posting")}
                             </span>
                             <span class="text-sm text-secondary">${t("forms.group_create.can_posting_desc")}</span>
-                            ${Toggle.switch({
-            name: "is-posting",
-            checked: false,
-            toggleText: {
-                on: t("forms.group_create.all_posting"),
-                off: t("forms.group_create.admin_posting")
-            }
-        })}
+                            ${Toggle.cardGroup([
+            { name: "is-posting", value: "true", checked: false, text: t("forms.group_create.all_posting"), description: t("forms.group_create.posting_all_desc") },
+            { name: "is-posting", value: "false", checked: true, text: t("forms.group_create.admin_posting"), description: t("forms.group_create.posting_admin_desc") }
+        ])}
                         </div>
 
                     </div>

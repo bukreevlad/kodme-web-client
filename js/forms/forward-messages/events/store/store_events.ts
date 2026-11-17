@@ -1,6 +1,5 @@
 // Импортируем events
 import { subscribeItemAdded } from "./item_added.js";
-import { subscribeItemRemoved } from "./item_removed.js";
 
 // Импортируем типы
 import type { ForwardMessages } from "../../index.js";
@@ -13,7 +12,7 @@ import type { ForwardMessages } from "../../index.js";
  */
 export function subscribeStoreEvents(form: ForwardMessages): void {
 
+    // DOM-копии и подписки строк стор снимает сам при удалении элементов
     subscribeItemAdded(form);
-    subscribeItemRemoved(form);
 
 }

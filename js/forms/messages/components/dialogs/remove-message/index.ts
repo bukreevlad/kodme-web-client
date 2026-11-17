@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../../../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -62,7 +63,6 @@ export interface RemoveMessageDialogData {
 export class RemoveMessage {
 
     /** Единственный экземпляр формы (Singleton). */
-    static instance: RemoveMessage | null = null;
 
     /** Настройки формы. */
     options: { insertInto?: HTMLElement | null | undefined };
@@ -95,7 +95,7 @@ export class RemoveMessage {
 
         // Поиск открытого профиля пользователя (id канала опционален —
         // без него искать по реестру нечего)
-        let messageForm = data.channelId != null ? Messages.instances.get(data.channelId) : undefined;
+        let messageForm = data.channelId != null ? FormsRegistry.getOwner<Messages>(`messages:${data.channelId}`) : undefined;
         let insertInto = messageForm?.modal?.content || null;
 
         // Устанавливаем настройки
@@ -109,12 +109,10 @@ export class RemoveMessage {
         this.forAllCheckbox = data?.forAllCheckbox || false;
 
         // Проверяем, существует ли уже экземпляр
-        if (RemoveMessage.instance) {
-            return RemoveMessage.instance;
-        }
+        const opened = FormsRegistry.getOwner<RemoveMessage>("messages-components-dialogs-remove-message");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        RemoveMessage.instance = this;
 
         // Инициализация
         this._init();
@@ -146,6 +144,8 @@ export class RemoveMessage {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "messages-components-dialogs-remove-message",
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
                 closeOnOverlay: true,
@@ -240,8 +240,6 @@ export class RemoveMessage {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        RemoveMessage.instance = null;
 
     }
 

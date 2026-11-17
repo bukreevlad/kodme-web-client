@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -28,11 +29,10 @@ import { getCastSettingsRequest } from "./requests/get_cast_settings.js";
 
 // Импортируем forms
 import { BroadcastManageInvites } from "../broadcast-manage-invites/index.js";
-import { BroadcastPlay } from "../broadcast-play/index.js";
 
 // Импортируем типы
 import type { SessionProfile } from "../menu/types.js";
-import type { BroadcastSettingsRecord } from "./types.js";
+
 import { t } from "../../utils/i18n/index.js";
 
 /**
@@ -61,9 +61,6 @@ export interface BroadcastSettingsOptions {
 // Form
 export class BroadcastSettings {
 
-    // Реестр всех открытых форм BroadcastSettings: { castId: instance }
-    static instances = new Map<string, BroadcastSettings>();
-
     // Переменные формы
     castId: string;
 
@@ -91,8 +88,7 @@ export class BroadcastSettings {
         if (!data?.castId) throw new Error("Не передан: castId");
 
         // Поиск открытого окна трансляции
-        let broadcastPlayForm = BroadcastPlay.instances.get(data.castId);
-        let insertInto = broadcastPlayForm?.modal?.content || null;
+        let insertInto = FormsRegistry.get(`broadcast-play:${data.castId}`)?.content || null;
 
         // Устанавливаем настройки
         this.options = {
@@ -112,11 +108,10 @@ export class BroadcastSettings {
         this.castId = data.castId;
 
         // Получаем instance
-        let instance = BroadcastSettings.instances.get(data.castId);
+        let instance = FormsRegistry.getOwner<BroadcastSettings>(`broadcast-settings:${data.castId}`);
         if (instance) return instance;
 
         // Регистрируем этот экземпляр формы
-        BroadcastSettings.instances.set(this.castId, this);
 
         // Инициализация
         this._init();
@@ -149,6 +144,9 @@ export class BroadcastSettings {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: `broadcast-settings:${this.castId}`,
+                placement: "stack",
                 url: `?broadcast-settings=${this.castId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -319,7 +317,6 @@ export class BroadcastSettings {
     _onBeforeClose(): void {
 
         // Удаляем экземпляр формы из реестра
-        BroadcastSettings.instances.delete(this.castId);
 
     }
 

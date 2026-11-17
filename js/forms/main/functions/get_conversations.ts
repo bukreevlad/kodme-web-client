@@ -6,8 +6,8 @@ import { getErrorName } from "../../../utils/helpers/error_util.js";
 import { Toast } from "../../../components/toast.js";
 
 // Импортируем requests
-import { getUserConverstionRequest } from "../requests/get_user_converstion.js";
-import type { GetUserConverstionData } from "../requests/get_user_converstion.js";
+import { getConversationsRequest } from "../requests/get_conversations.js";
+import type { GetConversationsData } from "../requests/get_conversations.js";
 
 // Импортируем db
 import { channelsTable, messagesTable, pendingMessagesTable } from "../db.js";
@@ -81,7 +81,7 @@ export async function getConversations(form: Main): Promise<void> {
                 const entityToSave: ChannelRecord = {
                     ...cleanItem,
                     last_pts: ptsToSave,
-                    ...(parentId && { topic_for_group_id: parentId })
+                    ...(parentId && { parent_channel_id: parentId })
                 };
 
                 // 5. Сохранение в IndexedDB
@@ -112,14 +112,14 @@ export async function getConversations(form: Main): Promise<void> {
         while (hasMore) {
 
             // Формируем параметры запроса
-            const queryParams: GetUserConverstionData = {
+            const queryParams: GetConversationsData = {
                 direction: "next",
                 ...(cursorId && { cursor_id: cursorId }),
                 offset: 50
             };
 
             // Делаем запрос на сервер
-            const conversations = await getUserConverstionRequest(queryParams);
+            const conversations = await getConversationsRequest(queryParams);
 
             // Проверяем наличие данных
             if (conversations.status && Array.isArray(conversations.data) && conversations.data.length > 0) {
@@ -135,7 +135,7 @@ export async function getConversations(form: Main): Promise<void> {
 
                     await processEntity(channel);
 
-                    if (channel.type === 2 && Array.isArray(channel.topics)) {
+                    if (channel.kind === "group" && Array.isArray(channel.topics)) {
                         for (const topic of channel.topics) {
                             // Тема могла исчезнуть между запросами сервера —
                             // в JSON это null, разбираем только валидные
@@ -167,7 +167,7 @@ export async function getConversations(form: Main): Promise<void> {
             if (!serverIds.has(existing.id)) {
                 await channelsTable().delete(existing.id);
 
-                if (existing.type !== 4) {
+                if (existing.kind !== "topic") {
                     form.store.remove(existing.id);
                 }
 

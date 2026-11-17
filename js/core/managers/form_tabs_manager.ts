@@ -1,80 +1,61 @@
-// Загружаем utils
+// Импортируем utils
+import type { Home } from "../../forms/home/index.js";
 import { IsMobile } from "../../utils/helpers/is_mobile.js";
-
-// Загружаем forms
-import { Home } from "../../forms/home/index.js";
+import { Logger } from "../../utils/logs/logger.js";
 import { t } from "../../utils/i18n/index.js";
 
-/**
- * Модалка формы, нужная менеджеру табов: показать/скрыть шаблон и
- * активировать/закрыть форму.
- */
-export interface FormTabModal {
-    /** Шаблон формы в DOM (его видимость переключается при смене таба). */
-    tpl?: HTMLElement | null;
-    /** Вывести форму на передний план. */
-    activate?: () => void | Promise<void>;
-    /** Закрыть форму (она сама кинет событие `[app][form]::closed`). */
-    close?: () => void | Promise<void>;
-}
+// Импортируем managers
+import { FormsRegistry } from "./forms_registry.js";
+import { LayoutManager } from "./layout_manager.js";
 
-/**
- * Экземпляр формы, который может жить в панели табов.
- * Требования минимальны: табу нужна только модалка формы.
- */
-export interface FormTabInstance {
-    /** Модалка формы; у форм без модалки таб закрывается вручную. */
-    modal?: FormTabModal | null;
-}
-
-/**
- * Данные таба, приходящие в событии `[app][form]::opened`.
- */
-export interface FormTabData {
-    /** Экземпляр формы (Messages, Call и т.д.). */
-    instance: FormTabInstance;
-    /** Заголовок таба. */
-    title?: string;
-    /** Подпись таба. */
-    subtitle?: string;
-}
+// Импортируем типы
+import type { FormEntry } from "./forms_registry.js";
 
 // Собственные события window приложения: типизация detail для слушателей ниже.
 declare global {
     interface WindowEventMap {
-        /** Открыта форма: `detail.id` — id модалки, `detail.data` — данные таба. */
-        "[app][form]::opened": CustomEvent<{ id: string; data: FormTabData }>;
-        /** Закрыта форма: `detail.id` — id модалки. */
-        "[app][form]::closed": CustomEvent<{ id: string }>;
-        /** Запрос активации уже открытой формы: `detail.id` — id модалки. */
+        /** Запрос активации уже открытой формы: `detail.id` — id слоя. */
         "[app][form]::activate": CustomEvent<{ id: string }>;
     }
 }
 
-/** Запись реестра табов: DOM-элемент и экземпляр формы. */
-interface FormTabEntry {
-    /** Элемент таба в панели. */
-    tab: HTMLElement;
-    /** Экземпляр формы-владельца таба. */
-    instance: FormTabInstance;
-}
-
 /**
  * ***************************************************************************
- * TabsManager - универсальный менеджер вкладок для любых типов форм.
+ * TABS_MANAGER - пульт пилюль вкладок.
+ * ***************************************************************************
+ *
+ * Рисует пилюли для записей реестра открытых форм с ролью `workspace`:
+ * создание/обновление/удаление пилюли идут по событиям `FormsRegistry`,
+ * а видимостью форм владеет `LayoutManager` (активация рабочего места).
+ * Пилюля ничего не решает сама — она только передаёт команды:
+ * клик → активировать форму, крестик → закрыть форму.
+ *
+ * Кто чем владеет:
+ * - `FormsRegistry` — данные об открытом (включая заголовки пилюль);
+ * - `LayoutManager` — контейнеры, раскладки, видимость;
+ * - этот менеджер — только DOM пилюль.
+ *
+ * Мобильная версия: пилюль нет (стек форм в `.left`), менеджер не работает.
  * ***************************************************************************
  */
 export class TabsManager {
 
-    // Устанавливаем параметры
+    /** Панель пилюль (контейнер в DOM). */
     static container: HTMLElement | null = null;
+
+    /** Список пилюль (контейнер-обёртка панели). */
     static list: Element | null = null;
-    static tabs = new Map<string, FormTabEntry>();
-    static currentActiveId: string | null = null;
+
+    /** Пилюли по id записей реестра открытых форм. */
+    static tabs = new Map<string, HTMLElement>();
+
+    /** Подписки инициализированы (init может вызываться повторно). */
+    private static _watchAttached = false;
 
     /**
      * ***************************************************************************
-     * @param {HTMLElement} container - Элемент, где будут табы.
+     * Инициализация пульта: панель пилюль и подписки на реестр/раскладки.
+     * @param {HTMLElement} container - Элемент панели пиуль (с `[data-list]`).
      * ***************************************************************************
      */
     static init(container: HTMLElement) {
@@ -90,225 +71,16 @@ export class TabsManager {
 
     /**
      * ***************************************************************************
-     * Инициализация глобальных событий для связи с формами.
+     * Создаёт DOM-элемент пилюли. Фабрика вынесена отдельно: её переопределяют
+     * тесты (без DOM в тестовом окружении).
+     * @returns {HTMLElement} - DOM-элемент пилюли.
      * ***************************************************************************
      */
-    static _initGlobalEvents() {
-
-        // Слушаем открытие новой формы
-        window?.addEventListener("[app][form]::opened", (e) => {
-            const { id, data } = e.detail;
-            if (id && data) this.addTab(id, data);
-        });
-
-        // Слушаем закрытие формы
-        window?.addEventListener("[app][form]::closed", (e) => {
-            const { id } = e.detail;
-            if (id) this.removeTab(id);
-        });
-
-        // Слушаем запрос на активацию существующей формы
-        window?.addEventListener("[app][form]::activate", (e) => {
-            const { id } = e.detail;
-            if (id && this.tabs.has(id)) {
-                this.activateTab(id);
-            }
-        });
-
-    }
-
-    /**
-     * ***************************************************************************
-     * Добавить форму в панель табов. Вызывается обработчиком события
-     * `[app][form]::opened` и напрямую формами (разворачивание
-     * WebApp-приложения в плавающее окно).
-     * @param {string} id - Уникальный идентификатор (channelId, callId и т.д.).
-     * @param {FormTabData} data - Данные таба (экземпляр формы, заголовок, подпись).
-     * ***************************************************************************
-     */
-    static addTab(id: string, data: FormTabData) {
-
-        // Если мобильная версия
-        if (IsMobile.get()) return;
-
-        // Панель табов не инициализирована (init не вызван) — отображать нечего
-        if (!this.list) return;
-
-        // Проверяем, не открыт ли уже этот ID
-        if (this.tabs.has(id)) {
-            this.activateTab(id);
-            return;
-        }
-
-        // Проверяем, не открыт ли этот инстанс под другим ID
-        const existingId = this.hasInstance(data.instance);
-        if (existingId) {
-            this.activateTab(existingId);
-            return;
-        }
-
-        const tabEl = this._templateTab();
-        tabEl.dataset.id = id;
-
-        // Элементы подписей входят в шаблон _templateTab — пропускаем только
-        // если разметку когда-нибудь поменяют не в нашу пользу
-        const tabName = tabEl.querySelector(".tab-name");
-        const tabSubtitle = tabEl.querySelector(".tab-subtitle");
-        if (tabName) tabName.textContent = data.title ?? null;
-        if (tabSubtitle) tabSubtitle.textContent = data.subtitle ?? null;
-
-        // Клик по табу
-        tabEl?.addEventListener("click", (e) => {
-            // invariant: цель клика по табу — всегда Element с closest()
-            if (e.target instanceof Element && !e.target.closest(".tab-close")) {
-                data.instance.modal?.activate?.();
-            }
-        });
-
-        // Клик по кнопке закрытия — вызываем закрытие формы
-        tabEl.querySelector(".tab-close")?.addEventListener("click", (e) => {
-            e.stopPropagation();
-
-            // Сначала закрываем саму форму (она сама кинет событие form:closed)
-            if (data.instance?.modal) {
-                data.instance.modal.close?.();
-            } else {
-                // Если модалки нет, удаляем таб вручную
-                this.removeTab(id);
-            }
-        });
-
-        // Отображаем
-        this.list.append(tabEl);
-
-        // Даем время браузеру отрисовать новый таб, потом обновляем OS
-        requestAnimationFrame(() => {
-            if (Home.instance && Home.instance.osListScrollInstance) {
-                const os = Home.instance.osListScrollInstance;
-                os.update();
-                tabEl.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
-            }
-        });
-
-        // Добавляем в Map
-        this.tabs.set(id, { tab: tabEl, instance: data.instance });
-
-        // При добавлении новой формы сразу активируем её
-        this.activateTab(id);
-
-    }
-
-    /**
-     * ***************************************************************************
-     * Визуальная активация таба.
-     * @param {string} id - ID формы.
-     * ***************************************************************************
-     */
-    static activateTab(id: string) {
-
-        // Запоминаем текущий активный ID
-        this.currentActiveId = id;
-
-        // Проходим по табам
-        this.tabs.forEach((data, currentId) => {
-            const isActive = (currentId === id);
-            const formTpl = data.instance?.modal?.tpl;
-
-            data.tab.classList.toggle("active", isActive);
-
-            if (formTpl) {
-                if (isActive) {
-                    formTpl.style.visibility = "";
-                    formTpl.style.opacity = "";
-                    formTpl.style.pointerEvents = "";
-                    if (formTpl.style.display === "none") formTpl.style.display = "flex";
-                } else {
-                    formTpl.style.visibility = "hidden";
-                    formTpl.style.opacity = "0";
-                    formTpl.style.pointerEvents = "none";
-                }
-            }
-        });
-
-    }
-
-    /**
-     * ***************************************************************************
-     * Обновить заголовок таба
-     * @param {string} id - ID формы.
-     * @param {string} newTitle - Новый заголовок.
-     * ***************************************************************************
-     */
-    static updateTitle(id: string, newTitle: string) {
-
-        const data = this.tabs.get(id);
-        if (data) {
-            const nameEl = data.tab.querySelector(".tab-name");
-            if (nameEl) nameEl.textContent = newTitle;
-        }
-
-    }
-
-    /**
-     * ***************************************************************************
-     * Удалить таб. Удаляется только запись таба — сама форма при этом не
-     * закрывается (её закрытие приходит отдельным событием
-     * `[app][form]::closed`); вызывается и напрямую формами (сворачивание
-     * WebApp-приложения в плавающее окно).
-     * @param {string} id - ID формы.
-     * ***************************************************************************
-     */
-    static removeTab(id: string) {
-
-        const data = this.tabs.get(id);
-        if (data) {
-
-            // Удаляем DOM-элемент
-            data.tab.remove();
-
-            // Удаляем из реестра
-            this.tabs.delete(id);
-
-            // Если закрытый таб был активным, нужно переключиться на другой
-            if (this.currentActiveId === id) {
-
-                if (this.tabs.size > 0) {
-
-                    const keys = Array.from(this.tabs.keys());
-                    const lastId = keys[keys.length - 1];
-                    if (lastId) this.activateTab(lastId);
-
-                } else {
-                    this.currentActiveId = null;
-                }
-
-            }
-        }
-
-    }
-
-    /**
-    * ***************************************************************************
-    * Проверить, существует ли таб с конкретным экземпляром формы.
-    * @param {unknown} instance - Экземпляр формы.
-    * @returns {string|null} - Возвращает ID таба, если найден.
-    * ***************************************************************************
-    */
-    static hasInstance(instance: unknown): string | null {
-        for (const [id, data] of this.tabs) {
-            if (data.instance === instance) return id;
-        }
-        return null;
-    }
-
-    // ***************************************************************************
-    // Шаблон таба
-    // ***************************************************************************
-    static _templateTab(): HTMLElement {
+    static createTabElement(): HTMLElement {
 
         // Пилюля: статика (высота, скругления, типографика) — здесь,
         // а состояния hover/active — в css/forms/home.css, потому что
-        // активность переключается классом .active из activateTab()
+        // активность переключается классом .active из _syncActiveState()
         const tab = new DOMParser().parseFromString(`
 
             <div class="tab flex flex-row items-center gap-2 h-12 max-w-[15rem] pl-2 pr-2 cursor-pointer select-none rounded-md transition-all duration-150 motion-reduce:transition-none">
@@ -331,6 +103,232 @@ export class TabsManager {
 
         return tab;
 
+    }
+
+    // --- Private Methods ---
+
+    /**
+     * ***************************************************************************
+     * Инициализирует подписки: события реестра (пилюли) и раскладок
+     * (активность), мост старых событий форм.
+     * @private
+     * ***************************************************************************
+     */
+    static _initGlobalEvents(): void {
+
+        // Подписки вешаются один раз: init может вызываться повторно
+        if (this._watchAttached) return;
+        this._watchAttached = true;
+
+        // Запись реестра создана/обновлена — показать/обновить пилюлю
+        FormsRegistry.on("registered", (entry) => this._syncPill(entry));
+        FormsRegistry.on("updated", (entry) => this._syncPill(entry));
+
+        // Запись снята — пилюля уходит, рабочее место закрывается
+        FormsRegistry.on("unregistered", (entry) => {
+            this._dropPill(entry.id);
+            LayoutManager.closeWorkspace(entry.id);
+        });
+
+        // Место активировано — подсветить его пилюлю
+        LayoutManager.on("workspace-activated", () => this._syncActiveState());
+
+        // форма выведена на передний план — активировать её рабочее место
+        window.addEventListener("[app][form]::activate", (e) => {
+            const { id } = e.detail;
+            if (id) LayoutManager.activate(id);
+        });
+
+    }
+
+    /**
+     * ***************************************************************************
+     * Синхронизирует пилюлю с записью реестра: создаёт/обновляет пилюлю
+     * рабочего места либо убирает пилюлю, если запись перестала быть местом.
+     * @private
+     * @param {FormEntry} entry - Запись реестра открытых форм.
+     * ***************************************************************************
+     */
+    static _syncPill(entry: FormEntry): void {
+
+        // Если мобильная версия — пилюль и рабочих мест нет
+        if (IsMobile.get()) return;
+
+        const workspaceId = entry.workspace ?? entry.id;
+
+        // Пилюли положены только рабочим местам; если роль сменилась —
+        // убрать пилюлю и закрыть место
+        if (entry.placement !== "workspace") {
+            this._dropPill(entry.id);
+            // Своё место закрываем, чужое (владелец панели) — не трогаем
+            if (workspaceId === entry.id) LayoutManager.closeWorkspace(workspaceId);
+            return;
+        }
+
+        // Рабочее место живёт вместе с пикулей: создаётся один раз (и
+        // активируется), контейнер подхватывается после монтирования слоя
+        LayoutManager.openWorkspace(workspaceId, entry.wrap ? { container: entry.wrap } : undefined);
+
+        // Панель пиуль не инициализирована — отображать нечего
+        if (!this.list) return;
+
+        let tab = this.tabs.get(entry.id);
+        if (!tab) {
+            tab = this.createTabElement();
+            tab.dataset.id = entry.id;
+            this._bindTab(tab, entry.id);
+            this.list.append(tab);
+            this.tabs.set(entry.id, tab);
+            this._scrollPillIntoView(tab);
+        }
+
+        this._fillTab(tab, entry);
+    }
+
+    /**
+     * ***************************************************************************
+     * Привязывает команды пилюли: клик активирует форму, крестик закрывает.
+     * @private
+     * @param {HTMLElement} tab - DOM-элемент пилюли.
+     * @param {string} id - Id записи реестра.
+     * ***************************************************************************
+     */
+    static _bindTab(tab: HTMLElement, id: string): void {
+
+        // Клик по пикуле — вывести форму на передний план
+        tab.addEventListener("click", (e) => {
+            // Клик по кнопке закрытия гасится её обработчиком (stopPropagation);
+            // проверка цели — страховка от клика по её потомкам
+            const target = e.target;
+            if (target && "closest" in target && typeof target.closest === "function" && target.closest(".tab-close")) return;
+            this._activateEntry(id);
+        });
+
+        // Клик по кнопке закрытия — закрыть форму
+        tab.querySelector(".tab-close")?.addEventListener("click", (e) => {
+            e.stopPropagation();
+            this._closeEntry(id);
+        });
+
+    }
+
+    /**
+     * ***************************************************************************
+     * Заполняет пилюлю данными записи и подсвечивает активность.
+     * @private
+     * @param {HTMLElement} tab - DOM-элемент пилюли.
+     * @param {FormEntry} entry - Запись реестра открытых форм.
+     * ***************************************************************************
+     */
+    static _fillTab(tab: HTMLElement, entry: FormEntry): void {
+
+        const tabName = tab.querySelector(".tab-name");
+        const tabSubtitle = tab.querySelector(".tab-subtitle");
+        if (tabName) tabName.textContent = entry.title ?? null;
+        if (tabSubtitle) tabSubtitle.textContent = entry.subtitle ?? null;
+
+        tab.classList.toggle("active", LayoutManager.isActive(entry.workspace ?? entry.id));
+    }
+
+    /**
+     * ***************************************************************************
+     * Убирает пилюлю из DOM (само рабочее место не трогает).
+     * @private
+     * @param {string} id - Id записи реестра.
+     * ***************************************************************************
+     */
+    static _dropPill(id: string): void {
+
+        const tab = this.tabs.get(id);
+        if (!tab) return;
+
+        tab.remove();
+        this.tabs.delete(id);
+    }
+
+    /**
+     * ***************************************************************************
+     * Переподсвечивает активность всех пиуль (по активному рабочему месту).
+     * @private
+     * ***************************************************************************
+     */
+    static _syncActiveState(): void {
+
+        this.tabs.forEach((tab, id) => {
+            const entry = FormsRegistry.get(id);
+            tab.classList.toggle("active", LayoutManager.isActive(entry?.workspace ?? id));
+        });
+    }
+
+    /**
+     * ***************************************************************************
+     * Выводит форму на передний план: форма сама активируется (raise +
+     * навигация), а её рабочее место подсвечивается.
+     * @private
+     * @param {string} id - Id записи реестра.
+     * ***************************************************************************
+     */
+    static _activateEntry(id: string): void {
+
+        const entry = FormsRegistry.get(id);
+        if (!entry) return;
+
+        // Форма умеет активировать себя сама (слой + навигация)
+        if ("activate" in entry.instance && typeof entry.instance.activate === "function") {
+            void entry.instance.activate();
+            return;
+        }
+
+        // Без activate — выводим слой и место напрямую
+        FormsRegistry.raise(id);
+        LayoutManager.activate(entry.workspace ?? id);
+    }
+
+    /**
+     * ***************************************************************************
+     * Закрывает форму: форма закрывается сама (событие и снятие с реестра
+     * придут от её слоя), иначе снимаем пилюлю сами.
+     * @private
+     * @param {string} id - Id записи реестра.
+     * ***************************************************************************
+     */
+    static _closeEntry(id: string): void {
+
+        const entry = FormsRegistry.get(id);
+        if (!entry) return;
+
+        // Форма умеет закрывать себя сама
+        if ("close" in entry.instance && typeof entry.instance.close === "function") {
+            void entry.instance.close();
+            return;
+        }
+
+        // Без close — снимаем пилюлю и рабочее место
+        Logger.warn(`[app][tabs]: Слой "${id}" не закрывается сам — снимаем пилюлю.`);
+        this._dropPill(id);
+        LayoutManager.closeWorkspace(entry.workspace ?? id);
+    }
+
+    /**
+     * ***************************************************************************
+     * Прокручивает панель пиуль к новой пикуле.
+     * @private
+     * @param {HTMLElement} tab - DOM-элемент пилюли.
+     * ***************************************************************************
+     */
+    static _scrollPillIntoView(tab: HTMLElement): void {
+
+        // Даем время браузеру отрисовать новый таб, потом обновляем OS.
+        // Home импортируется лениво: он тянет DOM-компоненты, а пульт не
+        // должен зависеть от конкретной формы
+        requestAnimationFrame(() => {
+            void import("../../forms/home/index.js").then(({ Home }) => {
+                const os = FormsRegistry.getOwner<Home>("home")?.osListScrollInstance;
+                if (!os) return;
+                os.update();
+                tab.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+            });
+        });
     }
 
 }

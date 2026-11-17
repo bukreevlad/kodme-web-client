@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { Main } from "../../../main/index.js";
 
 // Импортируем типы
@@ -18,7 +19,7 @@ import type { GroupTopics } from "../../index.js";
 export function subscribeChannelItemUpdated(form: GroupTopics): (() => void) | null {
 
     // Синглтон главной формы — источник подписки; без него подписываться не на что
-    const store = Main.instance?.store;
+    const store = FormsRegistry.getOwner<Main>("main")?.store;
     if (!store) return null;
 
     // Подписываемся на событие обновления канала. Шаблон события передаётся

@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 
 // Импортируем forms
@@ -18,8 +19,8 @@ export function themesHandler(form: Menu): void {
     try {
 
         // Открываем форму
-        if (Themes.instance) {
-            Themes.instance?.modal?.activate();
+        if (FormsRegistry.getOwner<Themes>("themes")) {
+            FormsRegistry.getOwner<Themes>("themes")?.modal?.activate();
         } else {
             new Themes();
         }

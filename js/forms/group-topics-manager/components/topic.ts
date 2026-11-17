@@ -1,9 +1,7 @@
 // Импортируем utils
 import { Logger } from "../../../utils/logs/logger.js";
-import { Icons } from "../../../utils/icons.js";
 
 // Импортируем forms
-import { ChannelProfile } from "../../channel-profile/index.js";
 
 // Импортируем типы
 import { isGroupTopicRecord } from "../types.js";
@@ -15,7 +13,7 @@ import type { GroupTopicRecord } from "../types.js";
  * THEME_ITEM - строка темы в списке менеджера тем группы.
  *
  * Строка подписывается на `item::updated::<id>` локального стора формы и
- * держит ссылку на себя в `data.__domElements__`, чтобы стор удалил все
+ * регистрирует себя в реестре DOM-копий стора, чтобы стор удалил все
  * копии разом. В DOM строка вставляется через её поле `element`.
  * ***************************************************************************
  */
@@ -46,11 +44,8 @@ export class ThemeItem {
         // Создаем DOM-элемент из шаблона
         this.element = this._template();
 
-        // Записываем ссылку на dom элемент
-        if (!this.data.__domElements__) {
-            this.data.__domElements__ = [];
-        }
-        this.data.__domElements__.push(this.element);
+        // Регистрируем DOM-копию строки в реестре стора
+        this.form.store.registerDomElement(this.data.id, this.element);
 
         // Устанавливаем начальные данные
         this._setup(this.data);
@@ -134,8 +129,8 @@ export class ThemeItem {
 
             });
 
-            // Сохраняем функцию отписки в data, чтобы стор мог вызвать её при удалении
-            this.data.__unsubscribeStore__ = unsubscribe;
+            // Запоминаем отписку в сторе — она вызовется при удалении элемента
+            this.form.store.addItemSubscription(this.data.id, unsubscribe);
 
         } catch (error) {
             Logger.error(error);

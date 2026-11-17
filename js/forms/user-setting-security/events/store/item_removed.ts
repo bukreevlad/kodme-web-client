@@ -24,23 +24,10 @@ export function subscribeItemRemoved(form: UserSettingSecurity): void {
         form.store.on("item::removed", (data) => {
 
             // Стор шлёт payload как unknown — сверяемся guard'ом
-            const record = isPasskeyListItem(data) ? data : null;
-            const elements = record?.__domElements__;
-
-            // Проверяем наличие массива элементов
-            if (elements && Array.isArray(elements)) {
-                elements.forEach(element => {
-                    if (element && typeof element.remove === 'function') {
-                        element.remove();
-                    }
-                });
-                Logger.debug(`Успешно удалено копий элемента: ${elements.length}`);
-
-                // Очищаем массив, чтобы не копить утечки памяти
-                record.__domElements__ = [];
-            }
+            if (!isPasskeyListItem(data)) return;
 
             // Если в списке не осталось ключей — показываем заглушку
+            // (DOM-копии стор снимает сам)
             updatePasskeysEmptyState(form);
 
         });

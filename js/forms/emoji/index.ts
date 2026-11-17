@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -70,7 +71,6 @@ export interface EmojiFormData {
 export class Emoji {
 
     /** Переменная для хранения единственного экземпляра формы */
-    static instance: Emoji | null = null;
 
     /** Настройки формы. */
     options: EmojiOptions;
@@ -170,12 +170,10 @@ export class Emoji {
         this.focusSticker = data.focusSticker ?? null;
 
         // Проверяем, существует ли уже экземпляр
-        if (Emoji.instance) {
-            return Emoji.instance;
-        }
+        const opened = FormsRegistry.getOwner<Emoji>("emoji");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        Emoji.instance = this;
 
         // Инициализация
         this._init();
@@ -207,6 +205,8 @@ export class Emoji {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "popover",
+                owner: this,
+                id: "emoji",
                 fit: "shrink",
                 url: `?emoji`,
                 insertInto: this.options.insertInto,
@@ -338,8 +338,6 @@ export class Emoji {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        Emoji.instance = null;
 
     }
 

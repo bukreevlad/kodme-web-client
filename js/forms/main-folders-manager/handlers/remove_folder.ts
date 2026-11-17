@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 import { LocalStorage } from "../../../utils/local_storage.js";
 import { getErrorMessage } from "../../../utils/helpers/error_util.js";
@@ -54,10 +55,12 @@ export async function removeFolderHandler(folder: MainFoldersManagerFolder): Pro
             LocalStorage.updateSession(LocalStorage.session);
 
             // Удаляем папку в менеджере папок
-            MainFoldersManager.instance?.store.remove(folder.id);
+            FormsRegistry.getOwner<MainFoldersManager>("main-folders-manager")?.store.remove(folder.id);
 
             // Удаляем папку на главной форме (live-синхронизация вкладок)
-            if (Main.instance) removeFolderTab(Main.instance, folder.id);
+            const main = FormsRegistry.getOwner<Main>("main");
+
+            if (main) removeFolderTab(main, folder.id);
 
         }
 

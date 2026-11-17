@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 import { CacheManager } from "../../../utils/cache_manager.js";
 import { getThumbnailSizeQuery } from "../../../utils/helpers/get_thumbnail_size_query.js";
@@ -40,11 +41,8 @@ export function createCastItem(form: Broadcasts, data: BroadcastCast): HTMLEleme
     // при вставке пачки в начало списка (см. functions/get_casts.ts)
     if (data?.id) element.setAttribute("data-id", data.id);
 
-    // Записываем ссылку на dom элемент
-    if (!current.__domElements__) {
-        current.__domElements__ = [];
-    }
-    current.__domElements__.push(element);
+    // Регистрируем DOM-копию строки в реестре стора
+    form.store.registerDomElement(current.id, element);
 
     // Устанавливаем начальные данные
     setup(current);
@@ -172,7 +170,7 @@ export function createCastItem(form: Broadcasts, data: BroadcastCast): HTMLEleme
                 form.callback(current);
             } else {
 
-                let instance = BroadcastPlay.instances.get(current.id);
+                let instance = FormsRegistry.getOwner<BroadcastPlay>(`broadcast-play:${current.id}`);
                 if (instance) {
                     instance.modal?.activate();
                 } else {
@@ -208,8 +206,8 @@ export function createCastItem(form: Broadcasts, data: BroadcastCast): HTMLEleme
 
             });
 
-            // Сохраняем функцию отписки в data, чтобы Main мог вызвать ее при удалении
-            current.__unsubscribeStore__ = unsubscribe;
+            // Запоминаем отписку в сторе — она вызовется при удалении элемента
+            form.store.addItemSubscription(current.id, unsubscribe);
 
         } catch (error) {
             Logger.error(error);

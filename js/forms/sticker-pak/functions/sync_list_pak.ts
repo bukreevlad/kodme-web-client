@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 
 // Импортируем forms
@@ -27,7 +28,7 @@ export function syncListPak(form: StickerPak, patch: (item: StickerPakItem) => S
     try {
 
         // Форма списка не открыта — синхронизировать нечего
-        const listForm = StickerPaks.instance;
+        const listForm = FormsRegistry.getOwner<StickerPaks>("sticker-paks");
         if (!listForm) return;
 
         // Записи пака может не быть (например, пак открыт из чужого списка)

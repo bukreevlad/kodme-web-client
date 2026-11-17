@@ -7,6 +7,7 @@ import { CDM_FORM_CLASSES, CDM_FORM_HEADER_CLASSES, CDM_FORM_CONTENT_CLASSES } f
 
 // Импортируем utils
 import { Logger } from "../../utils/logs/logger.js";
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { Store } from "../../utils/store.js";
 
 // Импортируем components
@@ -14,8 +15,6 @@ import { Overlay } from "../../components/overlay/index.js";
 import { Buttons } from "../../components/buttons.js";
 import { Toast } from "../../components/toast.js";
 
-// Импортируем forms
-import { Messages } from "../messages/index.js";
 
 // Импортируем events
 import { subscribeStoreEvents } from "./events/store/store_events.js";
@@ -23,6 +22,7 @@ import { subscribeLiveKitEvents } from "./events/livekit/livekit_events.js";
 
 // Импортируем handlers
 import { menuHandler } from "./handlers/menu.js";
+import { openChatHandler } from "./handlers/open_chat.js";
 import { toggleAudioHandler } from "./handlers/toggle_audio.js";
 import { toggleVideoHandler } from "./handlers/toggle_video.js";
 import { switchCameraHandler } from "./handlers/switch_camera.js";
@@ -80,7 +80,6 @@ export interface MeetPlayData {
 export class MeetPlay {
 
     /** Реестр всех открытых форм MeetPlay: { meetId: instance }. */
-    static instances = new Map<string, MeetPlay>();
 
     /** Настройки формы. */
     options: { insertInto?: HTMLElement | null };
@@ -231,11 +230,10 @@ export class MeetPlay {
         this.store = new Store<MeetParticipantItem>();
 
         // Получаем instance
-        let instance = MeetPlay.instances.get(data.meetId);
+        let instance = FormsRegistry.getOwner<MeetPlay>(`meet-play:${data.meetId}`);
         if (instance) return instance;
 
         // Регистрируем этот экземпляр формы
-        MeetPlay.instances.set(this.meetId, this);
 
         // Инициализация
         this._init();
@@ -298,6 +296,10 @@ export class MeetPlay {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: `meet-play:${this.meetId}`,
+                placement: "workspace",
+                workspace: `meet-play:${this.meetId}`,
                 url: `?meet-play=${this.meetId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -352,13 +354,9 @@ export class MeetPlay {
             let menu = this.tpl.querySelector(":scope >.header [action-menu]");
             menu?.addEventListener("click", (event) => menuHandler(event, this));
 
-            // Открыть чат
+            // Открыть чат (на десктопе — в боковой контейнер home)
             let openChat = this.tpl.querySelector(":scope >.header [action-open-chat]");
-            openChat?.addEventListener("click", () => {
-                // Ссылка в замыкании читается в момент клика
-                const meet = this.meet;
-                if (meet) new Messages({ channelId: meet.chat_channel_id });
-            });
+            openChat?.addEventListener("click", () => openChatHandler(this));
 
             // Настройки сетки. Отдельная кнопка в шапке, потому что
             // режим сетки переключают часто, а в меню он спрятан
@@ -452,17 +450,11 @@ export class MeetPlay {
             // оверлей с текстом и отменой (см. setConnecting)
             setConnecting(this, true);
 
-            // Сообщаем системе, что форма открыта
-            window.dispatchEvent(new CustomEvent("[app][form]::opened", {
-                detail: {
-                    id: this.modal?.options.id,
-                    data: {
-                        instance: this,
-                        title: this.meet?.name || t("forms.meet_play.title"),
-                        subtitle: t("forms.meet_play.title")
-                    }
-                }
-            }));
+            // Пилюля рабочего места: заголовки живут в записи реестра
+            if (this.modal) if (this.modal) FormsRegistry.update(this.modal.options.id, {
+                title: this.meet?.name || t("forms.meet_play.title"),
+                subtitle: t("forms.meet_play.title")
+            });
 
         } catch (error) {
             Logger.error("[meet-play] Ошибка открытия конференции:", error);
@@ -533,7 +525,7 @@ export class MeetPlay {
      */
     get isCreator(): boolean {
 
-        return this.meet?.created_user_id === getSessionUserId();
+        return this.meet?.owner_id === getSessionUserId();
 
     }
 
@@ -614,12 +606,6 @@ export class MeetPlay {
         // ---------- CLEANUP ----------
 
         // Удаляем экземпляр формы из реестра
-        MeetPlay.instances.delete(this.meetId);
-
-        // Сообщаем системе, что форма закрыта
-        window.dispatchEvent(new CustomEvent("[app][form]::closed", {
-            detail: { id: this.modal?.options.id }
-        }));
 
     }
 

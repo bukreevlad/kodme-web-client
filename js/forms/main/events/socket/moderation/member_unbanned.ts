@@ -1,9 +1,5 @@
-// Импортируем config
-import { Socket } from "../../../../../config/socket.js";
-
 // Импортируем utils
 import { Logger } from "../../../../../utils/logs/logger.js";
-import { AsyncQueue } from "../../../../../utils/helpers/async_queue.js";
 
 // Импортируем db
 import { messagesTable } from "../../../db.js";
@@ -39,40 +35,29 @@ function isModerationMemberPayload(value: unknown): value is ModerationMemberPay
 
 /**
  * ***************************************************************************
- * Подписка на разблокировку участника: состояние бана автора снимается
- * в локальных сообщениях канала (для показа пункта «Забанить»).
- * @param asyncQueue - Общая очередь сообщений модерации.
+ * Применяет событие разблокировки участника к локальным хранилищам: состояние
+ * бана автора снимается в локальных сообщениях канала (для показа пункта
+ * «Забанить»).
+ * @param data - Нагрузка события (id канала и id участника).
+ * @returns {void}
  * ***************************************************************************
  */
-export function subscribeModerationMemberUnbanned(asyncQueue: AsyncQueue): void {
+export async function applyMemberUnbanned(data: unknown): Promise<void> {
+    Logger.debug("[app][feed]::member_unbanned", data);
 
-    // ***************************************************************************
-    // Снимаем пометку бана с сообщений автора
-    // ***************************************************************************
-    Socket.client.on("[moderation]: member unbanned", (data, timestamp) => {
-        Logger.debug("[app][ws]::[moderation]: member unbanned", data, timestamp);
+    try {
 
-        // Сохраняем задачу в очереди и выполняем асинхронно
-        asyncQueue.enqueue(async () => {
+        // Нагрузка сокета типизирована как unknown: работаем только с известной структурой
+        if (!isModerationMemberPayload(data)) return;
 
-            try {
+        // Снимаем пометку бана в локальных сообщениях автора
+        await messagesTable()
+            .where("channel_id")
+            .equals(data.channel_id)
+            .and(message => message.author_id === data.user_id)
+            .modify({ author_is_blocked: false });
 
-                // Нагрузка сокета типизирована как unknown: работаем только с известной структурой
-                if (!isModerationMemberPayload(data)) return;
-
-                // Снимаем пометку бана в локальных сообщениях автора
-                await messagesTable()
-                    .where("channel_id")
-                    .equals(data.channel_id)
-                    .and(message => message.created_user_id === data.user_id)
-                    .modify({ author_is_blocked: false });
-
-            } catch (error) {
-                Logger.error(error);
-            }
-
-        });
-
-    });
-
+    } catch (error) {
+        Logger.error(error);
+    }
 }

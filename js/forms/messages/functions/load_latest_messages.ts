@@ -1,10 +1,13 @@
 // Импортируем сторонние пакеты
-import Dexie from "dexie";
 import { v7 as Uuidv7 } from "uuid";
+import Dexie from "dexie";
 
 // Импортируем utils
 import { Logger } from "../../../utils/logs/logger.js";
 import { IndexedDB } from "../../../utils/indexed_db.js";
+
+// Импортируем db
+import { putFullMessages } from "../../main/db.js";
 
 // Импортируем requests
 import { getMessagesHistoryRequest } from "../requests/get_messages_history.js";
@@ -156,7 +159,7 @@ async function fetchTail(form: Messages): Promise<MessageRecord[]> {
 
     // Сохраняем в IndexedDB, чтобы при следующем прыжке не дёргать сервер
     if (db && form?.channel?.is_subscribed) {
-        await db.table<MessageRecord, string>("messages").bulkPut(tail).catch((e: unknown) => Logger.error(e));
+        await putFullMessages(tail).catch((e: unknown) => Logger.error(e));
     }
 
     return tail;
@@ -167,7 +170,7 @@ async function fetchTail(form: Messages): Promise<MessageRecord[]> {
  * Пересборка окна сообщений вокруг «хвоста» канала.
  * Очищаем Store и DOM, добавляем хвост (append) и исходящие pending-сообщения,
  * которые должны оставаться видимыми в самом низу. Маркер непрочитанных
- * фиксируем перед первым сообщением, которое новее last_viewed_message_id
+ * фиксируем перед первым сообщением, которое новее last_read_id
  * (при прыжке вниз «стена» непрочитанных остаётся сверху окна).
  * @param form - Форма сообщений.
  * @param messages - Хвост канала (возрастающий порядок id).
@@ -197,7 +200,7 @@ async function rebuildWindow(form: Messages, messages: MessageRecord[]): Promise
 
     // Фиксируем маркер непрочитанных перед первым сообщением новее last_viewed
     // (канал может быть ещё не загружен — тогда маркер не фиксируем)
-    const lastViewedId = form.channel?.last_viewed_message_id;
+    const lastViewedId = form.channel?.last_read_id;
     const isNeverRead = !lastViewedId || lastViewedId === ZERO_UUID || lastViewedId === ZERO_UUID_V7;
     if (!isNeverRead) {
         const firstUnread = messages.find((message) => message.id > lastViewedId);

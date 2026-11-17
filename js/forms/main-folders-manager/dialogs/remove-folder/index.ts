@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { CDM_MODAL_CLASSES, CDM_MODAL_CONTENT_CLASSES, CDM_MODAL_FOOTER_CLASSES, CDM_MODAL_HEADER_CLASSES } from "../../../../config/constants.js";
 
 // Импортируем utils
@@ -42,8 +43,6 @@ export interface RemoveFolderDialogData {
 // Dialog
 export class RemoveFolderDialog {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: RemoveFolderDialog | null = null;
 
     // Настройки формы
     options: RemoveFolderDialogOptions;
@@ -76,12 +75,10 @@ export class RemoveFolderDialog {
         this.modal = null;
 
         // Проверяем, существует ли уже экземпляр
-        if (RemoveFolderDialog.instance) {
-            return RemoveFolderDialog.instance;
-        }
+        const opened = FormsRegistry.getOwner<RemoveFolderDialog>("main-folders-manager-dialogs-remove-folder");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        RemoveFolderDialog.instance = this;
 
         // Инициализация
         this._init();
@@ -111,6 +108,8 @@ export class RemoveFolderDialog {
             // Модальное окно
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "main-folders-manager-dialogs-remove-folder",
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
                 closeOnOverlay: true,
@@ -198,8 +197,6 @@ export class RemoveFolderDialog {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        RemoveFolderDialog.instance = null;
 
     }
 

@@ -1,7 +1,8 @@
 // Импортируем сторонние пакеты
-import { v7 as Uuidv7 } from "uuid";
 
 // Импортируем utils
+import { v7 as Uuidv7 } from "uuid";
+import { SecretSendFile } from "../functions/sending_messages.js";
 import { canSend } from "../../../utils/validation/message_validator.js";
 import { toastError } from "../../../utils/ui/toast_error.js";
 import { isKind } from "../../../config/file_types.js";
@@ -16,7 +17,7 @@ import { SecretChatsManager } from "../../../core/managers/secret_chats_manager.
 // Импортируем functions
 import { blobToDataUri } from "../functions/build_attaches.js";
 import { registerLocalOriginals } from "../functions/file_progress.js";
-import { queueFiles, type SecretSendFile } from "../functions/sending_messages.js";
+import { queueFiles } from "../functions/sending_messages.js";
 import { resetTextarea } from "../functions/reset_textarea.js";
 import { updateStateButtons } from "../functions/update_state_buttons.js";
 

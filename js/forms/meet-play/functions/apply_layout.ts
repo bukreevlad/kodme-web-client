@@ -2,7 +2,7 @@
 import { Logger } from "../../../utils/logs/logger.js";
 
 // Импортируем functions
-import { LAYOUTS, pickFocus } from "./parse_room_state.js";
+import { pickFocus } from "./parse_room_state.js";
 
 // Импортируем типы
 import { isMeetLayout } from "../types.js";

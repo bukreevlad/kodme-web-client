@@ -4,7 +4,7 @@ import { SOCKET_REQUEST_TIMEOUT } from "../../../config/constants.js";
 
 // Импортируем типы
 import type { Answer } from "../../../types/domain.js";
-import type { ChannelUpdateItem } from "../types.js";
+import type { ChannelFeedEvent } from "../../../types/domain.js";
 
 /**
  * Точка отсчёта одного канала: id и последний применённый PTS.
@@ -38,10 +38,13 @@ export interface GetUpdatesData {
 export interface GetUpdatesPayload {
 
     /** Обновления всех каналов в порядке возрастания PTS. */
-    items: ChannelUpdateItem[];
+    items: ChannelFeedEvent[];
 
     /** Пакет заполнил лимит — у сервера есть ещё данные. */
     has_more: boolean;
+
+    /** Каналы с отрезанной лентой точкой — перечитать целиком. */
+    too_long: string[];
 
 }
 

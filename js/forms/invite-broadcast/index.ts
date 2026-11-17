@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -62,8 +63,6 @@ export type InviteBroadcastInput = Omit<InviteBroadcastData, "broadcast_id"> & {
 // Form
 export class InviteBroadcast {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: InviteBroadcast | null = null;
 
     /** Настройки формы. */
     options: InviteBroadcastOptions;
@@ -115,12 +114,10 @@ export class InviteBroadcast {
         this.about = data.about;
 
         // Проверяем, существует ли уже экземпляр
-        if (InviteBroadcast.instance) {
-            return InviteBroadcast.instance;
-        }
+        const opened = FormsRegistry.getOwner<InviteBroadcast>("invite-broadcast");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        InviteBroadcast.instance = this;
 
         // Инициализация
         this._init();
@@ -150,6 +147,8 @@ export class InviteBroadcast {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "invite-broadcast",
                 url: `?broadcast-invite=${this.castId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
@@ -238,8 +237,6 @@ export class InviteBroadcast {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        InviteBroadcast.instance = null;
 
     }
 

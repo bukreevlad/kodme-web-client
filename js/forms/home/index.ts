@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -36,8 +37,6 @@ import { initRoutes } from "../../router/routes.js";
 // Form
 export class Home {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: Home | null = null;
 
     /** Настройки формы. */
     options: object;
@@ -68,12 +67,10 @@ export class Home {
         }
 
         // Проверяем, существует ли уже экземпляр
-        if (Home.instance) {
-            return Home.instance;
-        }
+        const opened = FormsRegistry.getOwner<Home>("home");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        Home.instance = this;
 
         // Инициализация
         this._init();
@@ -105,6 +102,8 @@ export class Home {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "home",
                 closeOnEsc: false,
                 closeOnOverlay: false,
                 closeOnSwipe: null,
@@ -234,8 +233,6 @@ export class Home {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        Home.instance = null;
 
     }
 
@@ -273,6 +270,10 @@ export class Home {
                         </div>
                         
                         <div class="form-container flex relative w-full h-full border border-[var(--border-color)] rounded-lg overflow-hidden"></div>
+
+                        <!-- Боковой контейнер сплит-режима: сюда монтируется вторая
+                             форма (например, чат трансляции); раскладку решает CSS -->
+                        <div class="form-container-side relative h-full border border-[var(--border-color)] rounded-lg overflow-hidden"></div>
                     </div>
                 </div>
                 <div data-audio-player-mini-wrap class="relative flex empty:hidden"></div>

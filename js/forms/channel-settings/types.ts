@@ -22,10 +22,10 @@ export interface ChannelSettingsRecord {
     link?: string | null;
 
     /** Канал публичный. */
-    is_public?: boolean;
+    visibility?: "public" | "private";
 
     /** Кто может публиковать. */
-    is_posting?: boolean;
+    posting_mode?: "all" | "admins";
 
     /** Разрешено комментирование. */
     is_commenting?: boolean;

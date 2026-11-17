@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -21,7 +22,6 @@ import { enableHandler } from "./handlers/enable.js";
 import { disableHandler } from "./handlers/disable.js";
 
 // Импортируем forms
-import { UserProfile } from "../user-profile/index.js";
 
 // Импортируем requests
 import { getNotifySettingsRequest } from "./requests/get_notify_settings.js";
@@ -56,8 +56,6 @@ export interface UserSettingNotificationsData {
 // Form
 export class UserSettingNotifications {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: UserSettingNotifications | null = null;
 
     /** Настройки формы. */
     options: UserSettingNotificationsOptions;
@@ -92,8 +90,7 @@ export class UserSettingNotifications {
         if (!data?.userId) throw new Error("Не передан: userId");
 
         // Поиск открытого профиля пользователя
-        const userProfileForm = UserProfile.instances.get(data.userId);
-        const insertInto = userProfileForm?.modal?.content || null;
+        const insertInto = FormsRegistry.get(`user-profile:${data.userId}`)?.content || null;
 
         // Устанавливаем настройки
         this.options = {
@@ -105,12 +102,10 @@ export class UserSettingNotifications {
         this.userId = data.userId;
 
         // Проверяем, существует ли уже экземпляр
-        if (UserSettingNotifications.instance) {
-            return UserSettingNotifications.instance;
-        }
+        const opened = FormsRegistry.getOwner<UserSettingNotifications>("user-setting-notifications");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        UserSettingNotifications.instance = this;
 
         // Инициализация
         this._init();
@@ -140,6 +135,8 @@ export class UserSettingNotifications {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "user-setting-notifications",
                 url: `?user-setting-notifications=${this.userId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -286,8 +283,6 @@ export class UserSettingNotifications {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        UserSettingNotifications.instance = null;
 
     }
 

@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 import { inputInsertText } from "../../../utils/helpers/input_insert_text.js";
 
@@ -30,7 +31,7 @@ export async function emojiHandler(form: SecretChat): Promise<void> {
         if (!form) return;
 
         // Панель уже открыта — ничего не делаем
-        const existing = Emoji.instance;
+        const existing = FormsRegistry.getOwner<Emoji>("emoji");
         if (existing) return;
 
         // Открываем форму emoji

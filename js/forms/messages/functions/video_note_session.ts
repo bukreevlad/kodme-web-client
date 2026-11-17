@@ -1,7 +1,7 @@
 // Импортируем сторонние пакеты
-import { v7 as Uuidv7 } from "uuid";
 
 // Импортируем utils
+import { v7 as Uuidv7 } from "uuid";
 import { Logger } from "../../../utils/logs/logger.js";
 import { VideoRecorder } from "../../../utils/video/video_note_recorder.js";
 import { Icons } from "../../../utils/icons.js";
@@ -66,6 +66,9 @@ export class VideoNoteSession {
     /** Флаг блокировки двойного запуска записи. */
     isStarting: boolean = false;
 
+    /** Защита от завершения запуска после отмены или закрытия формы. */
+    startToken = 0;
+
     /**
      * ***************************************************************************
      * Конструктор сессии записи.
@@ -109,6 +112,7 @@ export class VideoNoteSession {
 
         if (this.isStarting) return; // Блокировка двойного запуска
         this.isStarting = true;
+        const startToken = ++this.startToken;
 
         try {
 
@@ -122,8 +126,18 @@ export class VideoNoteSession {
             // Камера пишет в контейнер видео — без него стартовать не из чего
             if (!this.videoWrap) throw new Error("[video-note]: не найден контейнер видео");
 
-            await this.recorder.start(this.videoWrap);
+            // Панель должна быть видна и во время запроса разрешений/запуска
+            // камеры, а не только после первого события MediaRecorder.
             this.activateUI();
+            this.progress.setProcessing();
+            await this.recorder.start(this.videoWrap);
+            if (startToken !== this.startToken) {
+                this.recorder._cleanup();
+                return;
+            }
+            this.progress.stopProcessing();
+            if (this.recorder.isRecording) updateStateButtons(this.form);
+            else this.cancel();
 
         } catch (error) {
 
@@ -215,6 +229,8 @@ export class VideoNoteSession {
      */
     cancel(): void {
 
+        ++this.startToken;
+
         if (this.recorder) {
             this.recorder.onTimeUpdate = null; // Убираем связь
             this.recorder._cleanup();          // Важно, чтобы в рекордере был этот метод
@@ -303,10 +319,10 @@ export class VideoNoteSession {
             const tempMessage: MessageRecord = {
                 ...TEMP_MESSAGE,
                 id: Uuidv7(),
-                created_user_id: getSessionUserId() ?? undefined,
+                author_id: getSessionUserId() ?? undefined,
                 display_name: getSessionUserDisplayName(),
                 channel_id: this.form.channelId,
-                channel_type: channel.type,
+                channel_kind: channel.kind,
                 text: textarea.value,
                 reply_to_message_id: this.form.replyMessage?.id || null,
                 reply_to_message: this.form.replyMessage || null,

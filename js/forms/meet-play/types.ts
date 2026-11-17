@@ -76,12 +76,6 @@ export interface MeetParticipantItem extends StoreItem {
     /** Говорит ли участник сейчас (заполняется событием ActiveSpeakersChanged). */
     isSpeaking?: boolean;
 
-    /** Корневые DOM-элементы плиток этого участника (может быть несколько копий). */
-    __domElements__?: HTMLElement[];
-
-    /** Функция отписки плитки от точечного события обновления. */
-    __unsubscribeStore__?: (() => void) | null;
-
 }
 
 /**
@@ -151,7 +145,7 @@ export interface MeetInfo {
     created_at: string | string[];
 
     /** Id создателя конференции. */
-    created_user_id: string;
+    owner_id: string;
 
     /** Отображаемое имя создателя. */
     created_display_name: string | null;

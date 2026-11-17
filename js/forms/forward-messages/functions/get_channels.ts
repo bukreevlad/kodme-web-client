@@ -55,9 +55,9 @@ export async function getChannels(form: ForwardMessages): Promise<void> {
 
                 // Имеет ли право пересылать сюда сообщение
                 const canForwardInChat =
-                    [1, 5, 8].includes(channel.type ?? -1) ||
-                    channel.created_user_id === sessionUser.id ||
-                    (channel.is_posting && (channel.is_public || channel.is_subscribed));
+                    channel.kind === "dialog" || channel.kind === "favorite" ||
+                    channel.owner_id === sessionUser.id ||
+                    (channel.posting_mode === "all" && (channel.visibility === "public" || channel.is_subscribed));
 
                 // Добавляем В Store
                 if (canForwardInChat) {

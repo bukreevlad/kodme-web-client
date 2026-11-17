@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -43,8 +44,6 @@ export interface ThemesOptions {
 // Form
 export class Themes {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: Themes | null = null;
 
     /** Настройки формы. */
     options: ThemesOptions;
@@ -101,12 +100,10 @@ export class Themes {
         }
 
         // Проверяем, существует ли уже экземпляр
-        if (Themes.instance) {
-            return Themes.instance;
-        }
+        const opened = FormsRegistry.getOwner<Themes>("themes");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        Themes.instance = this;
 
         // Инициализация
         this._init();
@@ -141,6 +138,8 @@ export class Themes {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "themes",
                 url: `?themes`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -247,8 +246,6 @@ export class Themes {
         this._offScrollThemes?.();
         this._offScrollThemes = null;
 
-        // Удаляем экземпляр формы
-        Themes.instance = null;
 
     }
 

@@ -147,7 +147,7 @@ export class MessageList {
         // Если сообщение выпало из окна — ищем первое непрочитанное в окне
         if (!target) {
 
-            const lastViewedId = form.channel?.last_viewed_message_id;
+            const lastViewedId = form.channel?.last_read_id;
             const items = Array.from(list.querySelectorAll<HTMLElement>(".item[data-id]"));
 
             for (const element of items) {

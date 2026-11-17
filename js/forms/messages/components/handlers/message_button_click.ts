@@ -33,7 +33,7 @@ export async function messageButtonClickHandler(element: Element, button: Messag
             message_id: data.id,
             button_id: button.id,
             state: button.state,
-            bot_id: data.created_user_id
+            bot_id: data.author_id
         });
 
     } catch (error) {

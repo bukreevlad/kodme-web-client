@@ -9,8 +9,7 @@ import type { StoreAddOptions, StoreItem } from "../../utils/store.js";
  * ContactRecord - запись списка контактов (строка списка формы).
  *
  * Поля — только те, что реально читает код формы: строка списка, аватар,
- * подписи онлайна. Служебные ключи (__domElements__, __unsubscribeStore__)
- * живут здесь же, потому что их пишут и читают подписки стора.
+ * подписи онлайна.
  ***************************************************************************
  */
 export interface ContactRecord extends StoreItem {
@@ -29,12 +28,6 @@ export interface ContactRecord extends StoreItem {
 
     /** Момент последней активности (ISO-строка) — для «Был(а) …». */
     last_action_at?: string;
-
-    /** Отображённые копии строки (одна запись может попасть в список дважды). */
-    __domElements__?: HTMLElement[];
-
-    /** Отписка от точечного события обновления записи. */
-    __unsubscribeStore__?: (() => void) | null;
 
 }
 

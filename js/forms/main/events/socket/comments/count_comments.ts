@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../../../core/managers/forms_registry.js";
 import { Logger } from "../../../../../utils/logs/logger.js";
 
 // Импортируем forms
@@ -29,7 +30,7 @@ export async function applyCommentsCountDelta(entityId: string, channelId: strin
     // ---------- Стор открытого чата ----------
 
     // invariant: реестр форм сообщений ключуется id канала
-    const messagesForm = channelId ? Messages.instances.get(channelId) : undefined;
+    const messagesForm = channelId ? FormsRegistry.getOwner<Messages>(`messages:${channelId}`) : undefined;
     const post = messagesForm?.store.get(entityId);
 
     if (messagesForm && post) {
@@ -49,7 +50,9 @@ export async function applyCommentsCountDelta(entityId: string, channelId: strin
         if (stored) {
 
             const next = Math.max(0, (stored.count_comments ?? 0) + delta);
-            await messagesTable().put({ ...stored, count_comments: next });
+
+            // Патч: удалённое параллельно сообщение не «воскресает»
+            await messagesTable().update(entityId, { count_comments: next });
 
         }
 

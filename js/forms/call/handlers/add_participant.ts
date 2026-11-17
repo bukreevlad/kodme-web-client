@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 import { getErrorMessage } from "../../../utils/helpers/error_util.js";
 
@@ -44,7 +45,7 @@ export function addParticipantHandler(form: Call): void {
                 // Выбор сделан — форма поиска больше не нужна. Сама она при
                 // callback не закрывается (в отличие от обычного клика, где
                 // открывается профиль) и осталась бы висеть поверх звонка
-                Search.instance?.modal?.close();
+                FormsRegistry.getOwner<Search>("search")?.modal?.close();
 
                 // Отправляем приглашение
                 await invite(form, data);

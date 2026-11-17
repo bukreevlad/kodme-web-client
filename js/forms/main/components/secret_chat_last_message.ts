@@ -71,7 +71,7 @@ export function createSecretChatLastMessage(item: SecretChatItem): HTMLElement |
         if (statusIcon && !data.is_error_sending && data.created_user_id === getSessionUserId()) {
 
             // invariant: иконки check/checks входят в набор Icons
-            const lastViewedId = item.data.display_last_viewed_message_id;
+            const lastViewedId = item.data.display_last_read_id;
             if (lastViewedId != null && lastViewedId >= data.id) {
                 statusIcon.innerHTML = Icons.icon("checks", { classes: ["stroke-brand-600", "dark:stroke-brand-500"] })?.outerHTML ?? "";
             } else {

@@ -1,9 +1,6 @@
-// Импортируем config
-import { Socket } from "../../../../../config/socket.js";
-
 // Импортируем utils
+import { FormsRegistry } from "../../../../../core/managers/forms_registry.js";
 import { Logger } from "../../../../../utils/logs/logger.js";
-import { AsyncQueue } from "../../../../../utils/helpers/async_queue.js";
 import { getErrorName } from "../../../../../utils/helpers/error_util.js";
 
 // Импортируем forms
@@ -20,9 +17,6 @@ import { channelsTable, messagesTable, pendingMessagesTable } from "../../../db.
 // Импортируем типы
 import { isRecord } from "../../../types.js";
 import { t } from "../../../../../utils/i18n/index.js";
-
-// Очередь выполнения socket событий
-const asyncQueue = new AsyncQueue();
 
 /**
  * Нагрузка удаления канала: id самого канала либо id родителя (для тем).
@@ -48,119 +42,109 @@ function isChannelRemovePayload(value: unknown): value is ChannelRemovePayload {
 
 /**
  * ***************************************************************************
- * Подписка на удаление канала у пользователя: канал и его темы вычищаются
- * из локальной БД вместе с сообщениями, из сайдбара и открытых форм.
+ * Применяет событие удаления канала к локальным хранилищам и UI: канал и
+ * его темы вычищаются из локальной БД вместе с сообщениями, из сайдбара
+ * и открытых форм.
+ * @param data - Нагрузка события (id канала либо id его группы).
+ * @returns {void}
  * ***************************************************************************
  */
-export function subscribeChannelsRemove(): void {
+export async function applyChannelRemove(data: unknown): Promise<void> {
+    Logger.debug("[app][feed]::channel_removed", data);
 
-    // ***************************************************************************
-    // Удаление канала
-    // ***************************************************************************
-    Socket.client.on("[channel]: remove", (data, timestamp) => {
-        Logger.debug("[app][ws]::[channel]: remove", data, timestamp);
+    try {
 
-        // Сохраняем задачу в очереди и выполняем асинхронно
-        asyncQueue.enqueue(async () => {
+        // Нагрузка сокета типизирована как unknown: чистим только по id сущности
+        if (!isChannelRemovePayload(data)) return;
 
-            try {
+        // Запоминаем параметры
+        const entityId = data.id || data.channel_id;
+        if (!entityId) return;
 
-                // Нагрузка сокета типизирована как unknown: чистим только по id сущности
-                if (!isChannelRemovePayload(data)) return;
+        // Собираем все ID, которые нужно вычистить (канал + темы)
+        const idsToRemove = [entityId];
 
-                // Запоминаем параметры
-                const entityId = data.id || data.channel_id;
-                if (!entityId) return;
+        // Проверяем наличие сущности в IndexedDB
+        const entity = await channelsTable().get(entityId);
+        if (entity) {
 
-                // Собираем все ID, которые нужно вычистить (канал + темы)
-                const idsToRemove = [entityId];
+            // Если это группа — ищем темы
+            const childTopics = await channelsTable()
+                .where("parent_channel_id")
+                .equals(entityId)
+                .toArray();
 
-                // Проверяем наличие сущности в IndexedDB
-                const entity = await channelsTable().get(entityId);
-                if (entity) {
+            if (childTopics.length > 0) {
+                childTopics.forEach(topic => idsToRemove.push(topic.id));
+            }
 
-                    // Если это группа — ищем темы
-                    const childTopics = await channelsTable()
-                        .where("topic_for_group_id")
-                        .equals(entityId)
-                        .toArray();
+        }
 
-                    if (childTopics.length > 0) {
-                        childTopics.forEach(topic => idsToRemove.push(topic.id));
-                    }
+        // Массовая очистка сообщений (для всех найденных id)
+        for (const id of idsToRemove) {
 
-                }
+            // Удаляем основные сообщения
+            const msgKeys = await messagesTable()
+                .where("channel_id")
+                .equals(id)
+                .primaryKeys();
+            if (msgKeys.length > 0) await messagesTable().bulkDelete(msgKeys);
 
-                // Массовая очистка сообщений (для всех найденных id)
-                for (const id of idsToRemove) {
+            // Удаляем временные сообщения
+            const pendingKeys = await pendingMessagesTable()
+                .where("channel_id")
+                .equals(id)
+                .primaryKeys();
+            if (pendingKeys.length > 0) await pendingMessagesTable().bulkDelete(pendingKeys);
 
-                    // Удаляем основные сообщения
-                    const msgKeys = await messagesTable()
-                        .where("channel_id")
-                        .equals(id)
-                        .primaryKeys();
-                    if (msgKeys.length > 0) await messagesTable().bulkDelete(msgKeys);
+            // Если открыта форма сообщений для этого ID — чистим её Store
+            const messageForm = FormsRegistry.getOwner<Messages>(`messages:${id}`);
+            if (messageForm) {
+                if (messageForm.store) messageForm.store.removeAll();
+                messageForm.modal?.close();
+            }
 
-                    // Удаляем временные сообщения
-                    const pendingKeys = await pendingMessagesTable()
-                        .where("channel_id")
-                        .equals(id)
-                        .primaryKeys();
-                    if (pendingKeys.length > 0) await pendingMessagesTable().bulkDelete(pendingKeys);
+        }
 
-                    // Если открыта форма сообщений для этого ID — чистим её Store
-                    const messageForm = Messages.instances.get(id);
-                    if (messageForm) {
-                        if (messageForm.store) messageForm.store.removeAll();
-                        messageForm.modal?.close();
-                    }
+        // Удаление каналов из бд
+        await channelsTable().bulkDelete(idsToRemove);
 
-                }
+        // Очистка ui (сайдбар и формы тем)
+        // Main-инстанс создаётся при старте приложения — без него
+        // чистить нечего
+        const main = FormsRegistry.getOwner<Main>("main");
+        if (!main) return;
 
-                // Удаление каналов из бд
-                await channelsTable().bulkDelete(idsToRemove);
+        idsToRemove.forEach(id => {
 
-                // Очистка ui (сайдбар и формы тем)
-                // Main-инстанс создаётся при старте приложения — без него
-                // чистить нечего
-                const main = Main.instance;
-                if (!main) return;
+            // Удаляем из главного стора (сайдбар)
+            main.store.remove(id);
 
-                idsToRemove.forEach(id => {
-
-                    // Удаляем из главного стора (сайдбар)
-                    main.store.remove(id);
-
-                    // Если это была открытая форма топиков
-                    const groupTopicsForm = GroupTopics.instances.get(id);
-                    if (groupTopicsForm) {
-                        if (groupTopicsForm.store) groupTopicsForm.store.removeAll();
-                        groupTopicsForm.modal?.close();
-                    }
-
-                });
-
-                // Если удаленный объект сам был темой, уведомляем форму родительской группы
-                if (entity?.topic_for_group_id) {
-                    const parentGroupForm = GroupTopics.instances.get(entity.topic_for_group_id);
-                    if (parentGroupForm) {
-                        parentGroupForm.store.remove(entityId);
-                    }
-                }
-
-                Logger.debug(`[app][ws][channel:remove]: Полная зачистка завершена для ${idsToRemove.length} сущностей`);
-
-            } catch (error) {
-                Logger.error(error);
-
-                // Если ошибка была вызвана IndexedDB
-                if (getErrorName(error) === "QuotaExceededError" || getErrorName(error) === "ConstraintError") {
-                    Toast.error(t("forms.main.toasts.storage_write_failed"));
-                }
+            // Если это была открытая форма топиков
+            const groupTopicsForm = FormsRegistry.getOwner<GroupTopics>(`group-topics:${id}`);
+            if (groupTopicsForm) {
+                if (groupTopicsForm.store) groupTopicsForm.store.removeAll();
+                groupTopicsForm.modal?.close();
             }
 
         });
 
-    });
+        // Если удаленный объект сам был темой, уведомляем форму родительской группы
+        if (entity?.parent_channel_id) {
+            const parentGroupForm = FormsRegistry.getOwner<GroupTopics>(`group-topics:${entity.parent_channel_id}`);
+            if (parentGroupForm) {
+                parentGroupForm.store.remove(entityId);
+            }
+        }
 
+        Logger.debug(`[app][ws][channel:remove]: Полная зачистка завершена для ${idsToRemove.length} сущностей`);
+
+    } catch (error) {
+        Logger.error(error);
+
+        // Если ошибка была вызвана IndexedDB
+        if (getErrorName(error) === "QuotaExceededError" || getErrorName(error) === "ConstraintError") {
+            Toast.error(t("forms.main.toasts.storage_write_failed"));
+        }
+    }
 }

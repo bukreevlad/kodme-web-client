@@ -1,6 +1,5 @@
 // Импортируем utils
 import { IndexedDB } from "../../../../utils/indexed_db.js";
-import { cleanStoreData } from "../../../../utils/helpers/clean_store_data.js";
 import { toastError } from "../../../../utils/ui/toast_error.js";
 
 // Импортируем functions
@@ -84,14 +83,9 @@ export async function messageReactionClickHandler(message: MessageItem, reaction
  */
 async function syncToDB(messageId: string, reactions: MessageReaction[]): Promise<void> {
 
-    const entity = await IndexedDB.db?.table<MessageRecord, string>("messages").get(messageId);
-
-    // Сообщения нет в локальной базе — не страшно, догонит опрос
-    if (!entity) return;
-
-    entity.reactions = reactions;
-    // invariant: cleanStoreData возвращает копию записи сообщения без служебных ключей
-    await IndexedDB.db?.table<MessageRecord, string>("messages").put(cleanStoreData(entity) as MessageRecord);
+    // Патч: запись может отсутствовать или быть удалённой — ничего
+    // не создаём и не «воскрешаем»
+    await IndexedDB.db?.table<MessageRecord, string>("messages").update(messageId, { reactions });
 
 }
 

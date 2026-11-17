@@ -1,7 +1,6 @@
 // Импортируем utils
 import { Logger } from "../../../utils/logs/logger.js";
 import { IndexedDB } from "../../../utils/indexed_db.js";
-import { cleanStoreData } from "../../../utils/helpers/clean_store_data.js";
 import { getErrorMessage } from "../../../utils/helpers/error_util.js";
 
 // Импортируем requests
@@ -200,7 +199,6 @@ export class ReactionsUpdater {
                 if (this.isDestroyed) return;
 
                 const response = await getMessageReactionsRequest({
-                    channel_id: this.form.channelId,
                     message_ids: ids
                 });
 
@@ -253,13 +251,8 @@ async function applyReactions(form: Messages, reactionsById: Record<string, unkn
         // Перерисовываем реакции в DOM (метод навешивается в MessageItem)
         message.__updateReactions__?.(reactions);
 
-        // Обновляем IndexedDB
-        const entity = await IndexedDB.db?.table<MessageRecord, string>("messages").get(messageId);
-        if (entity) {
-            entity.reactions = reactions;
-            // invariant: cleanStoreData возвращает копию записи сообщения без служебных ключей
-            await IndexedDB.db?.table<MessageRecord, string>("messages").put(cleanStoreData(entity) as MessageRecord);
-        }
+        // Обновляем IndexedDB (патч: удалённое параллельно сообщение не «воскресает»)
+        await IndexedDB.db?.table<MessageRecord, string>("messages").update(messageId, { reactions });
 
     }
 

@@ -114,7 +114,7 @@ export async function contextMenuHandler(event: Event, form: Comments, data: Com
                 if (item) editCommentHandler(form, data);
             }
         };
-        if ((data.created_user_id === sessionUserId) && !isPending) {
+        if ((data.author_id === sessionUserId) && !isPending) {
             menuItems.push(edit);
         }
 
@@ -131,8 +131,8 @@ export async function contextMenuHandler(event: Event, form: Comments, data: Com
         // Удаление: автор комментария, автор поста, владелец/модератор
         // сообщества (сервер проверяет по приоритету — здесь лишь фильтруем
         // заведомо недоступное, точное право определит сервер)
-        const canDelete = data.created_user_id === sessionUserId
-            || form.post?.created_user_id === sessionUserId
+        const canDelete = data.author_id === sessionUserId
+            || form.post?.author_id === sessionUserId
             || Boolean(data.is_moderator);
 
         if (canDelete && !data.is_sending) {

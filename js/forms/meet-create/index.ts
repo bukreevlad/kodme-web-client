@@ -6,6 +6,7 @@ import { CDM_FORM_CLASSES, CDM_FORM_HEADER_CLASSES, CDM_FORM_CONTENT_CLASSES, CD
 
 // Импортируем utils
 import { Logger } from "../../utils/logs/logger.js";
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { Icons } from "../../utils/icons.js";
 
 // Импортируем components
@@ -15,7 +16,6 @@ import { Inputs } from "../../components/inputs.js";
 import { Toggle } from "../../components/toggle.js";
 
 // Импортируем forms
-import { Meets } from "../meets/index.js";
 
 // Импортируем handlers
 import { createHandler } from "./handlers/create.js";
@@ -34,8 +34,6 @@ export interface MeetCreateOptions {
 // Form
 export class MeetCreate {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: MeetCreate | null = null;
 
     // Каркас: шаблон, модалка, контент и instance скролла
     options: MeetCreateOptions;
@@ -55,7 +53,7 @@ export class MeetCreate {
 
         // Поиск открытой формы списка конференций: создание конференции
         // открывается внутри неё. Если список закрыт — левая колонка home
-        const insertInto: HTMLElement | null = Meets.instance?.modal?.content
+        const insertInto: HTMLElement | null = FormsRegistry.get("meets")?.content
             || document.querySelector(".cdm-form.home .left");
 
         // Устанавливаем настройки
@@ -71,12 +69,10 @@ export class MeetCreate {
         this.osListScrollInstance = null; // overlayScroll instance
 
         // Проверяем, существует ли уже экземпляр
-        if (MeetCreate.instance) {
-            return MeetCreate.instance;
-        }
+        const opened = FormsRegistry.getOwner<MeetCreate>("meet-create");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        MeetCreate.instance = this;
 
         // Инициализация
         this._init();
@@ -109,6 +105,8 @@ export class MeetCreate {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "meet-create",
                 url: `?meet-create`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -195,8 +193,6 @@ export class MeetCreate {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        MeetCreate.instance = null;
 
     }
 

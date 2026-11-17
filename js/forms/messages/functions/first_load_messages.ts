@@ -5,6 +5,9 @@ import Dexie from "dexie";
 import { Logger } from "../../../utils/logs/logger.js";
 import { IndexedDB } from "../../../utils/indexed_db.js";
 
+// Импортируем db
+import { putFullMessages } from "../../main/db.js";
+
 // Импортируем requests
 import { getMessagesHistoryRequest } from "../requests/get_messages_history.js";
 
@@ -43,7 +46,7 @@ export async function firstLoadMessages(form: Messages): Promise<void> {
 
     // Точка прокрутки: последнее прочитанное сообщение; isNeverRead —
     // канал ещё ни разу не читался (курсор не нужен, грузим начало)
-    const lastViewedId = form.channel.last_viewed_message_id;
+    const lastViewedId = form.channel.last_read_id;
     const isNeverRead = !lastViewedId || lastViewedId === ZERO_UUID || lastViewedId === ZERO_UUID_V7;
 
     // Список сообщений обязателен — без него нечего готовить
@@ -53,7 +56,7 @@ export async function firstLoadMessages(form: Messages): Promise<void> {
     try {
 
         Logger.debug(`[app][history]: === Открытие канала "${form.channel.display_name}" ===`);
-        Logger.debug(`[app][history]: last_viewed_message_id: ${lastViewedId}, isNeverRead: ${isNeverRead}`);
+        Logger.debug(`[app][history]: last_read_id: ${lastViewedId}, isNeverRead: ${isNeverRead}`);
 
         // Подготовка UI
         if (form.listScrollManager) form.listScrollManager.enabled = false;
@@ -92,13 +95,11 @@ export async function firstLoadMessages(form: Messages): Promise<void> {
                 // открыта — тогда и сохранять некуда)
                 if (form?.channel?.is_subscribed) {
 
-                    const db = IndexedDB.db;
-
                     if (messages.length > 0) {
 
                         // Сортируем по ID перед сохранением и рендером
                         messages.sort((a, b) => a.id.localeCompare(b.id));
-                        if (db) await db.table<MessageRecord, string>("messages").bulkPut(messages);
+                        await putFullMessages(messages);
 
                     } else if (form.channel.last_message) {
 
@@ -107,7 +108,7 @@ export async function firstLoadMessages(form: Messages): Promise<void> {
                         // invariant: сервер отдаёт last_message в метаданных канала
                         const lastMessage = form.channel.last_message as MessageRecord;
                         messages = [lastMessage];
-                        if (db) await db.table<MessageRecord, string>("messages").put(lastMessage);
+                        await putFullMessages([lastMessage]);
 
                     }
 
@@ -303,7 +304,7 @@ function _renderMessages(form: Messages, messages: MessageRecord[], isNeverRead:
     // Канал обязателен для маркера непрочитанных — без него не рисуем пачку
     const channel = form.channel;
     if (!channel) return;
-    const lastViewedId = channel.last_viewed_message_id;
+    const lastViewedId = channel.last_read_id;
 
     messages.forEach((message) => {
         // Фиксируем id сообщения, перед которым будет стоять линия непрочитанных.

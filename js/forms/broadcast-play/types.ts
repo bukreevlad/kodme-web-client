@@ -103,13 +103,13 @@ export interface BroadcastCast {
     chat_channel_id: string | null;
 
     /** Id автора трансляции. */
-    created_user_id: string;
+    owner_id: string;
 
     /** Ведёт ли трансляцию бот. */
     is_bot: boolean | null;
 
     /** Id создателя бота-автора (null — автор не бот). */
-    bot_created_user_id: string | null;
+    bot_owner_id: string | null;
 
     /** Отображаемое имя автора (имя+фамилия либо ссылка бота). */
     created_display_name: string | null;

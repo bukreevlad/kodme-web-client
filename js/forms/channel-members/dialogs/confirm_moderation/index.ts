@@ -1,0 +1,190 @@
+// Импортируем config
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
+import { CDM_MODAL_CLASSES, CDM_MODAL_CONTENT_CLASSES, CDM_MODAL_FOOTER_CLASSES, CDM_MODAL_HEADER_CLASSES } from "../../../../config/constants.js";
+
+// Импортируем utils
+import { Logger } from "../../../../utils/logs/logger.js";
+
+// Импортируем components
+import { Overlay } from "../../../../components/overlay/index.js";
+import { Buttons } from "../../../../components/buttons.js";
+
+import { t } from "../../../../utils/i18n/index.js";
+
+/**
+ * Настройки диалога подтверждения (подписи диалог берёт сам из локали).
+ */
+export interface ConfirmModerationDialogOptions {
+
+    /** Какое действие подтверждается. */
+    scenario: "clean" | "ban";
+
+    /** Куда вставить диалог. */
+    insertInto?: HTMLElement | null | undefined;
+
+    /** Callback подтверждения (true/false). */
+    callback?: ((response: boolean) => void) | null;
+
+}
+
+// Form
+export class ConfirmModerationDialog {
+
+
+    /** Настройки диалога. */
+    options: Required<ConfirmModerationDialogOptions>;
+
+    /** Шаблон диалога. */
+    tpl: HTMLElement | null = null;
+
+    /** Модальное окно диалога. */
+    modal: Overlay | null = null;
+
+    /**
+     * ***************************************************************************
+     * Диалог подтверждения действия модерации: подписи берёт сам из локали.
+     * @param data - Данные.
+     * @param data.scenario - Действие: clean — чистка сообщений, ban — бан.
+     * @param data.insertInto - Куда вставить диалог.
+     * @param data.callback - Callback подтверждения (true/false).
+     * ***************************************************************************
+     */
+    constructor({
+        scenario,
+        insertInto = null,
+        callback = null
+    }: ConfirmModerationDialogOptions) {
+
+        // Устанавливаем настройки
+        this.options = {
+            scenario,
+            insertInto,
+            callback
+        };
+
+        // Проверяем, существует ли уже экземпляр
+        const opened = FormsRegistry.getOwner<ConfirmModerationDialog>("channel-members-dialogs-confirm_moderation");
+        if (opened) return opened;
+
+        // Сохраняем ссылку на текущий экземпляр
+
+        // Инициализация
+        this._init();
+
+    }
+
+    // ***************************************************************************
+    // Инициализация
+    // ***************************************************************************
+    async _init(): Promise<void> {
+
+        // Открытие
+        await this._open();
+
+    }
+
+    // ***************************************************************************
+    // Открытие
+    // ***************************************************************************
+    async _open(): Promise<void> {
+
+        try {
+
+            // Шаблон формы
+            this.tpl = this._template();
+
+            // Модальное окно
+            this.modal = new Overlay(this.tpl, {
+                type: "modal",
+                owner: this,
+                id: "channel-members-dialogs-confirm_moderation",
+                insertInto: this.options.insertInto,
+                closeOnEsc: true,
+                closeOnOverlay: true,
+                onOpen: () => this._handlers(),
+                onBeforeClose: () => this._onBeforeClose()
+            });
+
+            // Открываем диалог
+            this.modal.open();
+
+        } catch (error) {
+            Logger.error(error);
+        }
+
+    }
+
+    // ***************************************************************************
+    // Обработчики
+    // ***************************************************************************
+    _handlers(): void {
+
+        try {
+
+            // Закрыть из шапки
+            let headerClose = this.tpl?.querySelector(":scope >.header [action-close]");
+            headerClose?.addEventListener("click", () => this.modal?.close());
+
+            // Подтвердить действие
+            let remove = this.tpl?.querySelector(":scope >.footer [action-remove]");
+            remove?.addEventListener("click", () => this.options.callback?.(true));
+
+            // Отмена
+            let close = this.tpl?.querySelector(":scope >.footer [action-close]");
+            close?.addEventListener("click", () => this.modal?.close());
+
+        } catch (error) {
+            Logger.error(error);
+        }
+
+    }
+
+    // ***************************************************************************
+    // Действия при закрытии диалога
+    // ***************************************************************************
+    _onBeforeClose(): void {
+
+
+    }
+
+    // ***************************************************************************
+    // Шаблон диалога
+    // ***************************************************************************
+    _template(): HTMLElement {
+
+        // Подписи сценария: чистка сообщений либо блокировка участника
+        let title = "";
+        let description = "";
+        let actionRemove = "";
+
+        if (this.options.scenario === "ban") {
+            title = t("forms.channel_members.dialogs.confirm_moderation.ban.title");
+            description = t("forms.channel_members.dialogs.confirm_moderation.ban.description");
+            actionRemove = t("forms.channel_members.dialogs.confirm_moderation.ban.action_remove");
+        } else {
+            title = t("forms.channel_members.dialogs.confirm_moderation.clean.title");
+            description = t("forms.channel_members.dialogs.confirm_moderation.clean.description");
+            actionRemove = t("forms.channel_members.dialogs.confirm_moderation.clean.action_remove");
+        }
+
+        return new DOMParser().parseFromString(`
+
+            <div class="cdm-modal channel-members-moderation-confirm flex flex-col p-0 gap-0 ${CDM_MODAL_CLASSES()}">
+                <div class="${CDM_MODAL_HEADER_CLASSES()}">
+                    <span class="flex flex-row gap-2 items-center font-semibold text-base">${title}</span>
+                    ${Buttons.transparent({ shape: "circle", attributes: ["action-close"], icon: "x" })}
+                </div>
+                <div class="${CDM_MODAL_CONTENT_CLASSES()}">
+                    <span class="text-secondary text-sm">${description}</span>
+                </div>
+                <div class="${CDM_MODAL_FOOTER_CLASSES()}">
+                    ${Buttons.create({ attributes: ["action-close"], classes: ["w-full"], text: t("forms.channel_members.dialogs.confirm_moderation.action_close") })}
+                    ${Buttons.danger({ attributes: ["action-remove"], classes: ["w-full"], text: actionRemove })}
+                </div>
+            </div>
+
+        `, "text/html").querySelector<HTMLElement>(".cdm-modal")!;
+
+    }
+
+}

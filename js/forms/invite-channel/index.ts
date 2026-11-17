@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -41,7 +42,7 @@ export interface InviteChannelData {
     channel_id: string;
 
     /** Тип канала (число из БД: 2 — группа, 3 — канал). */
-    channel_type?: string | number;
+    channel_kind?: string | number;
 
     /** Отображаемое имя канала. */
     display_name?: string;
@@ -86,8 +87,6 @@ function isAvatarImageDocument(value: unknown): value is AvatarImageDocument {
 // Form
 export class InviteChannel {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: InviteChannel | null = null;
 
     /** Настройки формы. */
     options: InviteChannelOptions;
@@ -128,12 +127,10 @@ export class InviteChannel {
         this.invite = { ...data, channel_id: data.channel_id };
 
         // Проверяем, существует ли уже экземпляр
-        if (InviteChannel.instance) {
-            return InviteChannel.instance;
-        }
+        const opened = FormsRegistry.getOwner<InviteChannel>("invite-channel");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        InviteChannel.instance = this;
 
         // Инициализация
         this._init();
@@ -165,6 +162,7 @@ export class InviteChannel {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
                 url: `?channel-invite=${this.invite.channel_id}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
@@ -238,7 +236,7 @@ export class InviteChannel {
             if (name) name.textContent = this.invite.display_name || "";
             if (about) about.textContent = this.invite.about || "";
             if (totalMembers) totalMembers.textContent = `${t("forms.invite_channel.members")}: ${this.invite.total_members}`;
-            if (channelType) channelType.textContent = this.invite.channel_type === 3 ? t("forms.invite_channel.channel") : t("forms.invite_channel.group");
+            if (channelType) channelType.textContent = this.invite.channel_kind === "channel" ? t("forms.invite_channel.channel") : t("forms.invite_channel.group");
 
             // Инициализируем элементы
             if (this.content) {
@@ -267,8 +265,6 @@ export class InviteChannel {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        InviteChannel.instance = null;
 
     }
 

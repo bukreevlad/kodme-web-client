@@ -6,6 +6,7 @@ import { CDM_FORM_CLASSES, CDM_FORM_HEADER_CLASSES, CDM_FORM_CONTENT_CLASSES } f
 
 // Импортируем utils
 import { Logger } from "../../utils/logs/logger.js";
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { Store } from "../../utils/store.js";
 
 // Импортируем core
@@ -27,7 +28,6 @@ import { createHandler } from "./handlers/create.js";
 import { onModeratorsScrollHandler } from "./handlers/on_moderators_scroll.js";
 
 // Импортируем forms
-import { ChannelProfile } from "../channel-profile/index.js";
 
 // Импортируем типы
 import type { GroupModeratorRecord } from "./types.js";
@@ -58,9 +58,6 @@ export interface GroupModeratorsManagerData {
 
 // Form
 export class GroupModeratorsManager {
-
-    // Реестр всех открытых форм GroupModeratorsManager: { channelId: instance }
-    static instances = new Map<string, GroupModeratorsManager>();
 
     // Настройки формы
     options: GroupModeratorsManagerOptions;
@@ -104,9 +101,8 @@ export class GroupModeratorsManager {
         // Если не передан channelId
         if (!data?.channelId) throw new Error("Не передан: channelId");
 
-        // Поиск открытого профиля канала
-        let channelProfileForm = ChannelProfile.instances.get(data.channelId);
-        let insertInto = channelProfileForm?.modal?.content || null;
+        // Точка монтирования — контент открытого профиля канала
+        let insertInto = FormsRegistry.get(`channel-profile:${data.channelId}`)?.content ?? null;
 
         // Устанавливаем настройки
         this.options = {
@@ -140,11 +136,10 @@ export class GroupModeratorsManager {
         this.store = new Store<GroupModeratorRecord>();
 
         // Получаем instance
-        let instance = GroupModeratorsManager.instances.get(data.channelId);
+        let instance = FormsRegistry.getOwner<GroupModeratorsManager>(`group-moderators-manager:${data.channelId}`);
         if (instance) return instance;
 
         // Регистрируем этот экземпляр формы
-        GroupModeratorsManager.instances.set(this.channelId, this);
 
         // Инициализация
         this._init();
@@ -177,6 +172,10 @@ export class GroupModeratorsManager {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: `group-moderators-manager:${this.channelId}`,
+                placement: "stack",
+                parent: FormsRegistry.getByContent(this.options.insertInto ?? null)?.id ?? null,
                 url: `?group-moderators-manager=${this.channelId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -282,7 +281,6 @@ export class GroupModeratorsManager {
         this._offScrollModerators = null;
 
         // Удаляем экземпляр формы из реестра
-        GroupModeratorsManager.instances.delete(this.channelId);
 
     }
 

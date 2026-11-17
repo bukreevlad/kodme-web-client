@@ -21,7 +21,7 @@ import type { MainFoldersManagerFolder } from "../types.js";
  * Создание строки папки в списке менеджера папок.
  *
  * Строка подписывается на `item::updated::<id>` локального стора формы и
- * держит ссылку на себя в `data.__domElements__`, чтобы стор удалил все
+ * регистрирует себя в реестре DOM-копий стора, чтобы стор удалил все
  * копии разом.
  * @param form - Форма-владелец строки.
  * @param data - Данные папки.
@@ -36,11 +36,8 @@ export function createFolderItem(form: MainFoldersManager, data: MainFoldersMana
     // Создаем DOM-элемент из шаблона
     const element = templateFolderItem();
 
-    // Записываем ссылку на dom элемент
-    if (!currentData.__domElements__) {
-        currentData.__domElements__ = [];
-    }
-    currentData.__domElements__.push(element);
+    // Регистрируем DOM-копию строки в реестре стора
+    form.store.registerDomElement(currentData.id, element);
 
     // Устанавливаем начальные данные
     setupFolderItem(element, currentData);
@@ -66,8 +63,8 @@ export function createFolderItem(form: MainFoldersManager, data: MainFoldersMana
 
     });
 
-    // Сохраняем функцию отписки в data, чтобы стор мог вызвать ее при удалении
-    currentData.__unsubscribeStore__ = unsubscribe;
+    // Запоминаем отписку в сторе — она вызовется при удалении элемента
+    form.store.addItemSubscription(currentData.id, unsubscribe);
 
     return element;
 

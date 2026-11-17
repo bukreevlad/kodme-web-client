@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { CDM_MODAL_CLASSES, CDM_MODAL_CONTENT_CLASSES, CDM_MODAL_FOOTER_CLASSES, CDM_MODAL_HEADER_CLASSES } from "../../../../config/constants.js";
 
 // Импортируем utils
@@ -29,8 +30,6 @@ export interface ConfirmModerationDialogOptions {
 // Form
 export class ConfirmModerationDialog {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: ConfirmModerationDialog | null = null;
 
     /** Настройки диалога. */
     options: Required<ConfirmModerationDialogOptions>;
@@ -65,12 +64,10 @@ export class ConfirmModerationDialog {
         };
 
         // Проверяем, существует ли уже экземпляр
-        if (ConfirmModerationDialog.instance) {
-            return ConfirmModerationDialog.instance;
-        }
+        const opened = FormsRegistry.getOwner<ConfirmModerationDialog>("messages-dialogs-confirm_moderation");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        ConfirmModerationDialog.instance = this;
 
         // Инициализация
         this._init();
@@ -100,6 +97,8 @@ export class ConfirmModerationDialog {
             // Модальное окно
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "messages-dialogs-confirm_moderation",
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
                 closeOnOverlay: true,
@@ -146,8 +145,6 @@ export class ConfirmModerationDialog {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        ConfirmModerationDialog.instance = null;
 
     }
 

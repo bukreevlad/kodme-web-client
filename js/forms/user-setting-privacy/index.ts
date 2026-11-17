@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -17,7 +18,6 @@ import { Toggle } from "../../components/toggle.js";
 import { saveHandler } from "./handlers/save.js";
 
 // Импортируем forms
-import { UserProfile } from "../user-profile/index.js";
 
 // Импортируем requests
 import { getPrivacySettingsRequest } from "./requests/get_privacy_settings.js";
@@ -49,8 +49,6 @@ export interface UserSettingPrivacyData {
 // Form
 export class UserSettingPrivacy {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: UserSettingPrivacy | null = null;
 
     /** Настройки формы. */
     options: UserSettingPrivacyOptions;
@@ -85,8 +83,7 @@ export class UserSettingPrivacy {
         if (!data?.userId) throw new Error("Не передан: userId");
 
         // Поиск открытого профиля пользователя
-        const userProfileForm = UserProfile.instances.get(data.userId);
-        const insertInto = userProfileForm?.modal?.content || null;
+        const insertInto = FormsRegistry.get(`user-profile:${data.userId}`)?.content || null;
 
         // Устанавливаем настройки
         this.options = {
@@ -98,9 +95,8 @@ export class UserSettingPrivacy {
         this.userId = data.userId;
 
         // Проверяем, существует ли уже экземпляр
-        if (UserSettingPrivacy.instance) {
-            return UserSettingPrivacy.instance;
-        }
+        const opened = FormsRegistry.getOwner<UserSettingPrivacy>("user-setting-privacy");
+        if (opened) return opened;
 
         // Инициализация
         this._init();
@@ -130,6 +126,8 @@ export class UserSettingPrivacy {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "user-setting-privacy",
                 url: `?user-setting-privacy=${this.userId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -235,8 +233,6 @@ export class UserSettingPrivacy {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        UserSettingPrivacy.instance = null;
 
     }
 

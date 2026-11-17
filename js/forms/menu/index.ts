@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -50,8 +51,6 @@ export interface MenuOptions {
 // Form
 export class Menu {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: Menu | null = null;
 
     /** Настройки формы. */
     options: MenuOptions;
@@ -98,12 +97,10 @@ export class Menu {
         this.store = new Store<MenuSessionItem>();
 
         // Проверяем, существует ли уже экземпляр
-        if (Menu.instance) {
-            return Menu.instance;
-        }
+        const opened = FormsRegistry.getOwner<Menu>("menu");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        Menu.instance = this;
 
         // Инициализация
         this._init();
@@ -136,6 +133,7 @@ export class Menu {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
                 url: `?menu`,
                 insertInto: this.options.insertInto,
                 closeOnOverlay: true,
@@ -303,8 +301,6 @@ export class Menu {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        Menu.instance = null;
 
     }
 

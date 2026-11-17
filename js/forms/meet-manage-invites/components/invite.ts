@@ -21,8 +21,8 @@ import { t } from "../../../utils/i18n/index.js";
  *
  * Отображает название и ссылку приглашения: клик по строке копирует ссылку
  * в буфер обмена, кнопка-корзина отзывает приглашение (с подтверждением).
- * Строка живёт в data.__domElements__ (для удаления копий при выгрузке
- * из стора) и подписывается на точечное событие обновления записи.
+ * Строка регистрируется в реестре DOM-копий стора (для удаления копий
+ * при выгрузке из стора) и подписывается на точечное событие обновления записи.
  *
  * Фабрика возвращает готовый DOM-элемент: `createInviteItem(form, data)`.
  *
@@ -43,11 +43,8 @@ export function createInviteItem(form: MeetManageInvites, data: MeetInviteRecord
     // при вставке пачки в начало списка (см. functions/get_invites.ts)
     if (data.id) element.setAttribute("data-id", data.id);
 
-    // Записываем ссылку на dom элемент
-    if (!current.__domElements__) {
-        current.__domElements__ = [];
-    }
-    current.__domElements__.push(element);
+    // Регистрируем DOM-копию строки в реестре стора
+    form.store.registerDomElement(current.id, element);
 
     // Устанавливаем начальные данные
     setup(current);
@@ -158,8 +155,8 @@ export function createInviteItem(form: MeetManageInvites, data: MeetInviteRecord
 
             });
 
-            // Сохраняем функцию отписки в data, чтобы стор мог вызвать ее при удалении
-            current.__unsubscribeStore__ = unsubscribe;
+            // Запоминаем отписку в сторе — она вызовется при удалении элемента
+            form.store.addItemSubscription(current.id, unsubscribe);
 
         } catch (error) {
             Logger.error(error);

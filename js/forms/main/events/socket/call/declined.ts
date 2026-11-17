@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../../../../core/managers/forms_registry.js";
 import { Socket } from "../../../../../config/socket.js";
 
 // Импортируем utils
@@ -55,7 +56,7 @@ export function subscribeCallDeclined(): void {
             // ---------- ФОРМА ИСХОДЯЩЕГО ----------
             // Звонок отклонили (последним) или отменили: форма звонящего
             // закрывается с предупреждением
-            const callForm = Call.instances.get(callId);
+            const callForm = FormsRegistry.getOwner<Call>(`call:${callId}`);
 
             if (callForm) {
 
@@ -72,7 +73,7 @@ export function subscribeCallDeclined(): void {
             // Звонок отменили, пока звонили мне: форма входящего закрывается
             // молча — предупреждение показал бы и так таймер, а здесь вина
             // на стороне звонившего
-            const incomingForm = CallIncoming.instances.get(callId);
+            const incomingForm = FormsRegistry.getOwner<CallIncoming>(`call-incoming:${callId}`);
             incomingForm?.modal?.close();
             // ---------- ФОРМА ВХОДЯЩЕГО ----------
 

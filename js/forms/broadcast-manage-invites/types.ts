@@ -11,8 +11,6 @@ export type InviteDirection = "prev" | "next";
  * BroadcastInvite - приглашение в хранилище формы (строка списка).
  *
  * Поля — только те, что реально читает код формы (название и ссылка строки).
- * Служебные ключи (__domElements__, __unsubscribeStore__) живут здесь же,
- * потому что их пишут и читают подписки стора.
  * ***************************************************************************
  */
 export interface BroadcastInvite extends StoreItem {
@@ -25,12 +23,6 @@ export interface BroadcastInvite extends StoreItem {
 
     /** Значение ссылки-приглашения. */
     link: string;
-
-    /** Отображённые копии строки (одно приглашение может попасть в список дважды). */
-    __domElements__?: HTMLElement[];
-
-    /** Отписка от точечного события обновления записи. */
-    __unsubscribeStore__?: (() => void) | null;
 
 }
 

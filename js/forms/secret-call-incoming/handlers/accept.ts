@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 
 // Импортируем components
@@ -40,7 +41,7 @@ export async function acceptCallHandler(form: SecretCallIncoming): Promise<void>
 
         // Модалка могла закрыться (взяли на другом устройстве) — тостить
         // имеет смысл только пока она открыта
-        if (!SecretCallIncoming.instances.has(form.callId)) return;
+        if (!FormsRegistry.getOwner<SecretCallIncoming>(`secret-call-incoming:${form.callId}`)) return;
         Toast.error(t("forms.secret_call.toasts.media_error"));
         form.modal?.close();
 

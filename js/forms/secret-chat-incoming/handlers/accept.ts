@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 
 // Импортируем components
@@ -40,7 +41,7 @@ export async function acceptChatHandler(form: SecretChatIncoming): Promise<void>
 
         // Модалка могла закрыться (приняли на другом устройстве) — тостить
         // имеет смысл только пока она открыта
-        if (!SecretChatIncoming.instances.has(form.chatId)) return;
+        if (!FormsRegistry.getOwner<SecretChatIncoming>(`secret-chat-incoming:${form.chatId}`)) return;
         Toast.error(t("forms.secret_chat.toasts.invite_error"));
         form.modal?.close();
 

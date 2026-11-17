@@ -40,9 +40,6 @@ export interface PasskeyListItem extends StoreItem {
     /** Время последнего использования (ISO-8601) или null. */
     last_used_at: string | null;
 
-    /** DOM-элементы списка (управляет Store при удалении). */
-    __domElements__?: HTMLElement[];
-
 }
 
 /**

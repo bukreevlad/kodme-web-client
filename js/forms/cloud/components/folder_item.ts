@@ -14,7 +14,7 @@ import { openSharedFolderHandler } from "../handlers/open_shared_folder.js";
 
 // Импортируем типы
 import { isCloudItem } from "../types.js";
-import type { CloudFolderEntry, CloudItem, CloudItemMode } from "../types.js";
+import { CloudItem, CloudItemMode } from "../types.js";
 import type { Store } from "../../../utils/store.js";
 import type { Cloud } from "../index.js";
 
@@ -62,11 +62,8 @@ export function createCloudFolderItem(
     // Создаем DOM-элемент из шаблона
     const element = template();
 
-    // Записываем ссылку на dom элемент
-    if (!current.__domElements__) {
-        current.__domElements__ = [];
-    }
-    current.__domElements__.push(element);
+    // Регистрируем DOM-копию строки в реестре стора
+    ownerStore.registerDomElement(current.id, element);
 
     // Устанавливаем начальные данные
     setup(current);
@@ -106,7 +103,10 @@ export function createCloudFolderItem(
             <div class="item flex flex-row gap-2 p-2 py-1 items-center bg-[var(--second-bg)] hover:bg-[var(--color-black)]/5 active:bg-[var(--color-black)]/10 dark:hover:bg-[var(--color-white)]/10 dark:active:bg-[var(--color-white)]/15 cursor-pointer rounded-lg">
                 <div class="flex flex-row gap-2 items-center w-full min-w-0">
                     <div data-icon class="flex items-center justify-center shrink-0 w-8 h-8 bg-[var(--color-yellow)]/10 text-[var(--color-yellow)] rounded-lg">${Icons.icon("folder", { settings: { size: 20 } })?.outerHTML}</div>
-                    <span data-name class="flex items-center text-sm truncate"></span>
+                    <div class="flex flex-col gap-0 min-w-0 flex-1">
+                        <span data-name class="text-sm truncate"></span>
+                        <span data-date class="text-xs text-muted truncate"></span>
+                    </div>
                 </div>
                 ${Buttons.transparent({ shape: "circle", attributes: ["action-menu"], icon: "dots" })}
             </div>
@@ -129,15 +129,35 @@ export function createCloudFolderItem(
 
             // Устанавливаем элементы
             const name = element.querySelector<HTMLElement>(":scope [data-name]");
+            const date = element.querySelector<HTMLElement>(":scope [data-date]");
 
             // Отображаем данные
             if (name) {
                 name.textContent = next.name ?? null;
             }
 
+            // Дата создания папки — под её именем
+            if (date) {
+                date.textContent = next.created_at ? formatDate(next.created_at) : "";
+            }
+
         } catch (error) {
             Logger.error(error);
         }
+
+    }
+
+    /**
+     * ***************************************************************************
+     * Форматировать дату создания по локали браузера.
+     * @param createdAt - Дата создания (ISO).
+     * @returns Отформатированная дата.
+     * ***************************************************************************
+     */
+    function formatDate(createdAt: string): string {
+
+        // Создаем дату и форматируем по локали браузера
+        return new Date(createdAt).toLocaleDateString();
 
     }
 

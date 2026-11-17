@@ -20,10 +20,10 @@ export interface ChannelSettingsSaveData {
     about: string;
 
     /** Публичный/Закрытый. */
-    is_public: boolean;
+    visibility: "public" | "private";
 
     /** Кто может написать. */
-    is_posting: boolean;
+    posting_mode: "all" | "admins";
 
     /** Разрешено комментирование. */
     is_commenting: boolean;

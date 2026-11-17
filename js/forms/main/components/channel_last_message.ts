@@ -1,4 +1,5 @@
 // Импортируем справочник типов файлов
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { isKind } from "../../../config/file_types.js";
 
 // Импортируем utils
@@ -40,8 +41,8 @@ export function createLastMessage(channel: ChannelItem): HTMLElement | null {
 
     try {
 
-        // Если это группа (type === 2), ищем самое последнее сообщение и суммируем непрочитанные
-        if (channel?.data?.type === 2) {
+        // Если это группа (kind === "group"), ищем самое последнее сообщение и суммируем непрочитанные
+        if (channel?.data?.kind === "group") {
 
             // Исходно считаем самым новым сообщение самой группы
             let newestMessage = channel?.data?.last_message;
@@ -52,8 +53,8 @@ export function createLastMessage(channel: ChannelItem): HTMLElement | null {
             let totalUnread = parseUnread(channel?.data?.total_unread_messages) || 0;
 
             // Поиск топиков этой группы в Store (главная форма может быть ещё не создана)
-            const storeItems: ChannelRecord[] = Main.instance?.store.getAll() ?? [];
-            const topics = storeItems.filter(item => item.topic_for_group_id === channel?.data?.id);
+            const storeItems: ChannelRecord[] = FormsRegistry.getOwner<Main>("main")?.store.getAll() ?? [];
+            const topics = storeItems.filter(item => item.parent_channel_id === channel?.data?.id);
 
             // Если топики найдены, суммируем непрочитанные и сравниваем даты сообщений
             if (topics.length > 0) {
@@ -157,9 +158,9 @@ function renderMessage(channel: ChannelItem, data: ChannelRecord): HTMLElement |
 
     // Если сообщение от текущего пользователя
     const itsYou = tpl.querySelector<HTMLElement>("[data-its-you]");
-    const itsMe = data?.last_message?.created_user_id === getSessionUserId() ? t("forms.main.components.channels.last_message.you") : "";
-    const type = data.type;
-    if (itsMe && type != null && [1, 2, 4].includes(type)) {
+    const itsMe = data?.last_message?.author_id === getSessionUserId() ? t("forms.main.components.channels.last_message.you") : "";
+    const kind = data.kind;
+    if (itsMe && kind != null && (kind === "dialog" || kind === "group" || kind === "topic")) {
 
         // Создаем элемент для безопасной вставки (textContent исключает XSS)
         const itsYouSpan = document.createElement("span");
@@ -168,7 +169,7 @@ function renderMessage(channel: ChannelItem, data: ChannelRecord): HTMLElement |
         itsYou?.appendChild(itsYouSpan);
 
     }
-    if (!itsMe && type != null && [2, 4].includes(type)) {
+    if (!itsMe && kind != null && (kind === "group" || kind === "topic")) {
 
         // Создаем элемент для безопасной вставки имени (textContent исключает XSS)
         const userNameSpan = document.createElement("span");
@@ -183,12 +184,12 @@ function renderMessage(channel: ChannelItem, data: ChannelRecord): HTMLElement |
 
     // Проверка статуса сообщения (диалог)
     if (!data?.last_message?.is_error_sending && !data?.last_message?.is_temporary) {
-        if (type === 1 && (getSessionUserId() === data?.last_message?.created_user_id)) {
+        if (kind === "dialog" && (getSessionUserId() === data?.last_message?.author_id)) {
 
             // Отсутствие id — «нет отметки прочтения»: сравнение делаем только
             // при lastViewedId != null; invariant: иконки check/checks входят
             // в набор Icons
-            const lastViewedId = data.display_last_viewed_message_id;
+            const lastViewedId = data.display_last_read_id;
             if (statusIcon) {
                 if (lastViewedId != null && lastViewedId >= data.last_message.id) {
                     statusIcon.innerHTML = Icons.icon("checks", { classes: ["stroke-brand-600", "dark:stroke-brand-500"] })?.outerHTML ?? "";

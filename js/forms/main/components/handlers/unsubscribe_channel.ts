@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { Logger } from "../../../../utils/logs/logger.js";
 import { IndexedDB } from "../../../../utils/indexed_db.js";
 
@@ -37,10 +38,10 @@ export async function unsubscribeChannelHandler(channel: ChannelItem): Promise<v
         const targetChannelId = channel.data.id;
 
         // Удаляем из Store (основной канал)
-        Main.instance?.store.remove(targetChannelId);
+        FormsRegistry.getOwner<Main>("main")?.store.remove(targetChannelId);
 
         // Закрываем форму
-        const messagesForm = Messages?.instances.get(targetChannelId);
+        const messagesForm = FormsRegistry.getOwner<Messages>(`messages:${targetChannelId}`);
         if (messagesForm) {
             messagesForm.modal?.close();
         }
@@ -55,7 +56,7 @@ export async function unsubscribeChannelHandler(channel: ChannelItem): Promise<v
 
                 // Находим все топики этой группы в БД
                 const topics = await channelsTable()
-                    .where("topic_for_group_id")
+                    .where("parent_channel_id")
                     .equals(targetChannelId)
                     .toArray();
 

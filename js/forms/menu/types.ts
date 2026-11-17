@@ -41,9 +41,6 @@ export interface SessionProfile {
  */
 export type MenuSessionItem = Pick<StoredSession, keyof StoredSession> & {
 
-    /** Отображённые копии строки (одна сессия может попасть в список дважды). */
-    __domElements__?: HTMLElement[];
-
 };
 
 /**

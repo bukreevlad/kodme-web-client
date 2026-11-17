@@ -121,7 +121,7 @@ export async function saveGridSettingsHandler(dialog: MeetGridSettings): Promise
         // Считаем здесь, а не ниже: от этого зависит, нужно ли вообще
         // трогать сервер — обычному участнику с гейтом (которого у него
         // в форме нет) снимать принудительный режим незачем
-        const isCreator = form.meet?.created_user_id === getSessionUserId();
+        const isCreator = form.meet?.owner_id === getSessionUserId();
 
         // Identity организатора в комнате. Рантайм берём у комнаты
         // (`localParticipant`), а на случай, если он ещё не готов, падаем

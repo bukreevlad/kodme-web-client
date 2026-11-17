@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 
 // Импортируем forms
@@ -18,8 +19,8 @@ export function createGroupHandler(form: Menu): void {
     try {
 
         // Открываем форму
-        if (GroupCreate.instance) {
-            GroupCreate.instance?.modal?.activate();
+        if (FormsRegistry.getOwner<GroupCreate>("group-create")) {
+            FormsRegistry.getOwner<GroupCreate>("group-create")?.modal?.activate();
         } else {
             new GroupCreate();
         }

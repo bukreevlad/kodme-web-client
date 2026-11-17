@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -14,7 +15,6 @@ import { Overlay } from "../../../../components/overlay/index.js";
 import { Buttons } from "../../../../components/buttons.js";
 
 // Импортируем forms
-import { BotProfile } from "../../../bot-profile/index.js";
 
 // Импортируем functions
 import { showApps } from "./functions/show_apps.js";
@@ -55,8 +55,6 @@ export interface BotAppsListData {
 // Form
 export class BotAppsList {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: BotAppsList | null = null;
 
     /** Настройки формы. */
     options: BotAppsListOptions;
@@ -98,8 +96,7 @@ export class BotAppsList {
         if (!data?.botId) throw new Error("Не передан: botId");
 
         // Поиск открытого профиля бота
-        let boProfileForm = BotProfile.instances.get(data.botId);
-        let insertInto = boProfileForm?.modal?.content || null;
+        let insertInto = FormsRegistry.get(`bot-profile:${data.botId}`)?.content || null;
 
         // Устанавливаем настройки
         this.options = {
@@ -111,12 +108,10 @@ export class BotAppsList {
         this.apps = data.apps || [];
 
         // Проверяем, существует ли уже экземпляр
-        if (BotAppsList.instance) {
-            return BotAppsList.instance;
-        }
+        const opened = FormsRegistry.getOwner<BotAppsList>("bot-profile-dialogs-apps-list");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        BotAppsList.instance = this;
 
         // Инициализация
         this._init();
@@ -151,6 +146,8 @@ export class BotAppsList {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "bot-profile-dialogs-apps-list",
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
                 closeOnOverlay: true,
@@ -227,8 +224,6 @@ export class BotAppsList {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        BotAppsList.instance = null;
 
     }
 

@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 
 // Импортируем forms
@@ -115,7 +116,7 @@ function actions(element: HTMLElement, data?: MessageData | null): void {
 
         // Если сообщество
         if (data.channel_id) {
-            let instance = Messages.instances.get(data.channel_id);
+            let instance = FormsRegistry.getOwner<Messages>(`messages:${data.channel_id}`);
             if (instance) {
                 instance?.modal?.activate();
             } else {
@@ -125,7 +126,7 @@ function actions(element: HTMLElement, data?: MessageData | null): void {
 
         // Если пользователь
         if (data.user_id) {
-            let instance = UserProfile.instances.get(data.user_id);
+            let instance = FormsRegistry.getOwner<UserProfile>(`user-profile:${data.user_id}`);
             if (instance) {
                 instance?.modal?.activate();
             } else {
@@ -140,7 +141,7 @@ function actions(element: HTMLElement, data?: MessageData | null): void {
 
         // Если бот
         if (data.bot_id) {
-            let instance = BotProfile.instances.get(data.bot_id);
+            let instance = FormsRegistry.getOwner<BotProfile>(`bot-profile:${data.bot_id}`);
             if (instance) {
                 instance?.modal?.activate();
             } else {

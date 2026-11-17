@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -6,7 +7,6 @@ import { CDM_MODAL_CLASSES, CDM_MODAL_CONTENT_CLASSES } from "../../config/const
 
 // Импортируем utils
 import { Logger } from "../../utils/logs/logger.js";
-import { Icons } from "../../utils/icons.js";
 
 // Импортируем components
 import { Overlay } from "../../components/overlay/index.js";
@@ -49,9 +49,6 @@ export interface BotMenuNode {
     /** Дочерние узлы — заполняется при построении дерева. */
     children?: BotMenuNode[];
 
-    /** Отображённые DOM-копии узла. */
-    __domElements__?: HTMLElement[];
-
 }
 
 /**
@@ -63,9 +60,6 @@ export interface BotMenuTree extends Array<BotMenuNode> {
 
     /** Подпись корневого элемента пути. */
     name?: string;
-
-    /** Отображённые DOM-копии корня. */
-    __domElements__?: HTMLElement[];
 
 }
 
@@ -85,9 +79,6 @@ export interface BotMenuBot {
 
     /** Команды и категории меню бота. */
     bot_commands?: BotMenuNode[];
-
-    /** Отображённые DOM-копии строки бота. */
-    __domElements__?: HTMLElement[];
 
 }
 
@@ -138,8 +129,6 @@ export interface BotMenuData {
 // Form
 export class BotMenu {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: BotMenu | null = null;
 
     /** Настройки формы. */
     options: BotMenuOptions;
@@ -197,7 +186,6 @@ export class BotMenu {
         // Если не передан bots
         if (!data?.bots) throw new Error("Не передан: bots");
 
-
         // Устанавливаем настройки
         this.options = {
             insertInto: data.options?.insertInto,
@@ -214,12 +202,10 @@ export class BotMenu {
         this.callback = data.callback || null;
 
         // Проверяем, существует ли уже экземпляр
-        if (BotMenu.instance) {
-            return BotMenu.instance;
-        }
+        const opened = FormsRegistry.getOwner<BotMenu>("bot-menu");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        BotMenu.instance = this;
 
         // Инициализация
         this._init();
@@ -249,6 +235,8 @@ export class BotMenu {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "popover",
+                owner: this,
+                id: "bot-menu",
                 fit: "shrink",
                 url: `?bot-menu`,
                 insertInto: this.options.insertInto,
@@ -369,8 +357,6 @@ export class BotMenu {
         }
 
     }
-
-
 
     // ***************************************************************************
     // Отображение меню бота
@@ -592,15 +578,11 @@ export class BotMenu {
 
     }
 
-
-
     // ***************************************************************************
     // Действия при закрытии формы
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        BotMenu.instance = null;
 
     }
 

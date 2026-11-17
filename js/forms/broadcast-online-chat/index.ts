@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -45,8 +46,6 @@ export interface BroadcastOnlineChatOptions {
 // Form
 export class BroadcastOnlineChat {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: BroadcastOnlineChat | null = null;
 
     // Переменные формы
     auth: string;
@@ -94,12 +93,10 @@ export class BroadcastOnlineChat {
         this.store = new Store<OnlineChatMessage>();
 
         // Проверяем, существует ли уже экземпляр
-        if (BroadcastOnlineChat.instance) {
-            return BroadcastOnlineChat.instance;
-        }
+        const opened = FormsRegistry.getOwner<BroadcastOnlineChat>("broadcast-online-chat");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        BroadcastOnlineChat.instance = this;
 
         // Инициализация
         this._init();
@@ -148,6 +145,8 @@ export class BroadcastOnlineChat {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "broadcast-online-chat",
                 insertInto: this.options.insertInto,
                 overlay: false,
                 onBeforeOpen: async () => await this._setup(),
@@ -210,8 +209,6 @@ export class BroadcastOnlineChat {
     // ***************************************************************************
     _onClose(): void {
 
-        // Удаляем экземпляр формы
-        BroadcastOnlineChat.instance = null;
 
     }
 

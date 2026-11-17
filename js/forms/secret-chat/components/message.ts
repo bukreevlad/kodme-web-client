@@ -84,11 +84,8 @@ export class SecretChatMessageItem {
         // Привязываем узлы шаблона один раз — дальше _setup их переиспользует
         this._bindNodes();
 
-        // Записываем ссылку на dom элемент
-        if (!this.data.__domElements__) {
-            this.data.__domElements__ = [];
-        }
-        this.data.__domElements__.push(this.element);
+        // Регистрируем DOM-копию строки в реестре стора
+        this.form.store.registerDomElement(this.data.id, this.element);
 
         // Устанавливаем начальные данные
         this._setup(this.data);
@@ -98,6 +95,12 @@ export class SecretChatMessageItem {
 
         // Подписываем на обновление
         this._subscribeToUpdates();
+
+        // Запоминаем отписку в сторе — она вызовется при удалении элемента.
+        // Отписка ленивая: переподписка строки подхватывается автоматически
+        this.form.store.addItemSubscription(this.data.id, () => {
+            if (this.unsubscribe.updated) this.unsubscribe.updated();
+        });
 
         // Функция вызова редактирования сообщения
         this.data.__editMessage__ = () => editMessageHandler(this);
@@ -426,11 +429,6 @@ export class SecretChatMessageItem {
                 this.update(data as SecretChatMessageData);
 
             });
-
-            // Сохраняем объединенную функцию отписки для внешнего вызова
-            this.data.__unsubscribeStore__ = () => {
-                if (this.unsubscribe.updated) this.unsubscribe.updated();
-            };
 
         } catch (error) {
             Logger.error(error);

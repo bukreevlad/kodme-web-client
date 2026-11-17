@@ -19,6 +19,7 @@ import { saveAttachRequest } from "../requests/save_attach.js";
 
 // Импортируем типы
 import { isRecord } from "../../main/types.js";
+import type { CreateCommentAttachment } from "../requests/create_comment.js";
 import type { CommentRecord } from "../types.js";
 import type { Comments } from "../index.js";
 import { I18n, t } from "../../../utils/i18n/index.js";
@@ -36,60 +37,6 @@ type ProgressCancellable = HTMLElement & {
 
 /** Формы, у которых цикл очереди уже запущен (защита от двойного цикла). */
 const sendingForms = new WeakSet<Comments>();
-
-/** Ожидания ack по локальному id комментария (снимает зависшие пуш-обработчики). */
-const ackPromises = new Map<string, Promise<void>>();
-
-/**
- * Ожидание ack (структура копии PendingAck из types.ts — резолв-хук).
- */
-interface PendingAckLike {
-    resolve: () => void;
-}
-
-/**
- * ***************************************************************************
- * Регистрация ожидания ack исходящего комментария.
- *
- * Обработчик пуша `[comment]: new` сверяет эхо с pending-очередью и
- * может дождаться исхода отправки, прежде чем решать, дубль это или нет.
- * @param form - Экземпляр формы.
- * @param id - Локальный id комментария.
- * @returns Объект ожидания (resolve вызывается в finally цикла).
- * ***************************************************************************
- */
-export function registerPendingAck(form: Comments, id: string): PendingAckLike {
-
-    // Резолв присваивается синхронно в конструкторе Promise — до первого
-    // вызова resolve гарантированно заполнен
-    let resolveAck: () => void = () => { };
-    const pendingAck: PendingAckLike = {
-        resolve: () => resolveAck()
-    };
-
-    // Промис разрешается в finally цикла — до закрытия формы его не дождаться
-    const promise = new Promise<void>((resolve) => {
-        resolveAck = resolve;
-    });
-
-    if (!form.pendingAcks) form.pendingAcks = new Map();
-    form.pendingAcks.set(id, pendingAck);
-    ackPromises.set(id, promise);
-
-    return pendingAck;
-
-}
-
-/**
- * ***************************************************************************
- * Дождаться исхода всех текущих отправок формы (успех либо ошибка).
- * @param form - Экземпляр формы.
- * @returns Promise с результатами всех ожиданий.
- * ***************************************************************************
- */
-export function awaitPendingAcks(form: Comments): Promise<unknown> {
-    return Promise.allSettled([...ackPromises.values()]);
-}
 
 /**
  * ***************************************************************************
@@ -125,16 +72,15 @@ export async function sendingComments(form: Comments): Promise<void> {
 
             const localId = comment.id;
 
-            // Регистрируем ожидание ack (пуш-обработчики Этапа 7 ждут исхода)
-            const pendingAck = registerPendingAck(form, localId);
-
             try {
+
+                // Мап вложений для payload запроса (запись очереди хранит полные данные)
+                const requestAttachments: Record<string, CreateCommentAttachment> = {};
 
                 // Шаг Загрузка вложений на сервер (если есть)
                 if (Attachments.isNotEmpty(comment.attachments)) {
                     Logger.debug(`[app][comments]: Загрузка файлов комментария с id:${localId} на сервер.`);
 
-                    const finalAttachments: AttachmentsMap = {};
                     const commentStore = form.store.get(localId);
 
                     // invariant: запись очереди создаётся локально — вложения в ней
@@ -329,16 +275,9 @@ export async function sendingComments(form: Comments): Promise<void> {
                                 Toast.info(t("forms.comments.toasts.sent_without_preview"), { position: "bottom-center" });
                             }
 
-                            // Сохраняем данные для финальной отправки комментария:
-                            // локальную метадату переносим в мап ack'а, серверная
-                            // гидратация придёт эхом [comment]: new и заменит
-                            // запись целиком
-                            finalAttachments[getUploadUrl.data.document_id] = {
-                                document_id: getUploadUrl.data.document_id,
-                                file_name: attach.name,
-                                // spread вместо «metadata: ...»: поле обязуется
-                                // только когда метадата есть (exactOptionalPropertyTypes)
-                                ...(attach.metadata ? { metadata: attach.metadata } : {})
+                            // Сохраняем вложение для payload финальной отправки
+                            requestAttachments[getUploadUrl.data.document_id] = {
+                                file_name: attach.name ?? ""
                             };
 
                             // Запоминаем соответствие «локальный файл → документ»
@@ -408,9 +347,6 @@ export async function sendingComments(form: Comments): Promise<void> {
                     }
                     // ---------- ПРОВЕРКА ПОЛНОТЫ НАБОРА ----------
 
-                    // Обновляем структуру вложений перед отправкой
-                    comment.attachments = finalAttachments;
-
                 }
 
                 // Шаг Отправка готового комментария на сервер
@@ -421,8 +357,9 @@ export async function sendingComments(form: Comments): Promise<void> {
                     entity_type: "message",
                     text: comment.text ?? "",
                     reply_to_comment_id: comment.reply_to_comment_id ?? null,
-                    // invariant: запись из очереди — локальная, вложения всегда мап
-                    attachments: Attachments.isNotEmpty(comment.attachments) ? comment.attachments as Record<string, unknown> : null
+                    attachments: Object.keys(requestAttachments).length > 0 ? requestAttachments : null,
+                    // Локальный id записи = клиентский ключ идемпотентности
+                    random_id: comment.id
                 });
 
                 // ID комментария, присвоенный сервером
@@ -545,15 +482,6 @@ export async function sendingComments(form: Comments): Promise<void> {
                 // комментарию без связи достанется тот же отказ. Валидационные
                 // и ошибки обработки медиа — нет.
                 if (!isValidationError && !isMediaError) break;
-
-            } finally {
-
-                // Ack обработан (успех или ошибка) — освобождаем ожидающий пуш
-                pendingAck.resolve();
-                form.pendingAcks?.delete(localId);
-
-                // Чистим модульную карту промисов (живёт под теми же ключами)
-                ackPromises.delete(localId);
 
             }
         }

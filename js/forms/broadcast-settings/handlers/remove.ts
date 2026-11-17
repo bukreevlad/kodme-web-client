@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 import { getErrorMessage } from "../../../utils/helpers/error_util.js";
 
@@ -71,13 +72,13 @@ export async function removeHandler(form: BroadcastSettings): Promise<void> {
                     form.modal?.close();
 
                     // Поиск формы проигрывания
-                    let broadcastPlayForm = BroadcastPlay.instances.get(form.castId);
+                    let broadcastPlayForm = FormsRegistry.getOwner<BroadcastPlay>(`broadcast-play:${form.castId}`);
                     if (broadcastPlayForm) {
                         broadcastPlayForm?.modal?.close();
                     }
 
                     // Поиск формы списка трансляций
-                    let broadcastsForm = Broadcasts.instance;
+                    let broadcastsForm = FormsRegistry.getOwner<Broadcasts>("broadcasts");
                     if (broadcastsForm) {
                         broadcastsForm?.store?.remove(form.castId);
                     }

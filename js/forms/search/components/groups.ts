@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 import { I18n } from "../../../utils/i18n/index.js";
 
@@ -39,14 +40,6 @@ export function createGroupItem(form: Search, data: SearchRecord): HTMLElement {
     // Проставляем id элементу: по нему ScrollManager ищет якорь скролла
     // при вставке пачки в начало списка (см. functions/load_section.ts)
     if (data.id) element.setAttribute("data-id", data.id);
-
-    // Регистрируем копию элемента в записи: по ней `item::removed` ищет
-    // все отображённые копии (одна запись может попасть в список дважды —
-    // например, при гонке двух одинаковых страниц)
-    if (!data.__domElements__) {
-        data.__domElements__ = [];
-    }
-    data.__domElements__.push(element);
 
     // Устанавливаем начальные данные
     setup(data);
@@ -134,7 +127,7 @@ export function createGroupItem(form: Search, data: SearchRecord): HTMLElement {
         // Открыть сообщество, поднимая уже открытое: повторный клик не должен
         // плодить вторую форму
         element.addEventListener("click", () => {
-            const instance = Messages.instances.get(data.id);
+            const instance = FormsRegistry.getOwner<Messages>(`messages:${data.id}`);
             if (instance) {
                 instance?.modal?.activate();
             } else {

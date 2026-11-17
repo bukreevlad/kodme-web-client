@@ -6,6 +6,7 @@ import { CDM_FORM_CLASSES, CDM_FORM_HEADER_CLASSES, CDM_FORM_CONTENT_CLASSES } f
 
 // Импортируем utils
 import { Logger } from "../../utils/logs/logger.js";
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { Store } from "../../utils/store.js";
 
 // Импортируем core
@@ -23,7 +24,6 @@ import { EmptyState } from "../../components/empty_state.js";
 import { subscribeStoreEvents } from "./events/store/store_events.js";
 
 // Импортируем forms
-import { ChannelProfile } from "../channel-profile/index.js";
 import { ChannelInviteCreate } from "../channel-invite-create/index.js";
 
 // Импортируем handlers
@@ -59,9 +59,6 @@ export interface ChannelManageInvitesData {
 // Form
 export class ChannelManageInvites {
 
-    // Реестр всех открытых форм ChannelManageInvites: { channelId: instance }
-    static instances = new Map<string, ChannelManageInvites>();
-
     /**
      * ***************************************************************************
      * Форма управления приглашениями канала.
@@ -76,9 +73,8 @@ export class ChannelManageInvites {
         // Если не передан channelId
         if (!data?.channelId) throw new Error("Не передан: channelId");
 
-        // Поиск открытого профиля канала
-        let channelProfileForm = ChannelProfile.instances.get(data.channelId);
-        let insertInto = channelProfileForm?.modal?.content || null;
+        // Точка монтирования — контент открытого профиля канала
+        let insertInto = FormsRegistry.get(`channel-profile:${data.channelId}`)?.content ?? null;
 
         // Устанавливаем настройки
         this.options = {
@@ -112,11 +108,10 @@ export class ChannelManageInvites {
         this.store = new Store<ChannelInvite>();
 
         // Получаем instance
-        let instance = ChannelManageInvites.instances.get(data.channelId);
+        let instance = FormsRegistry.getOwner<ChannelManageInvites>(`channel-manage-invites:${data.channelId}`);
         if (instance) return instance;
 
         // Регистрируем этот экземпляр формы
-        ChannelManageInvites.instances.set(this.channelId, this);
 
         // Инициализация
         this._init();
@@ -183,6 +178,10 @@ export class ChannelManageInvites {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: `channel-manage-invites:${this.channelId}`,
+                placement: "stack",
+                parent: FormsRegistry.getByContent(this.options.insertInto ?? null)?.id ?? null,
                 url: `?channel-manage-invites=${this.channelId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -288,7 +287,6 @@ export class ChannelManageInvites {
         this._offScrollInvites = null;
 
         // Удаляем экземпляр формы из реестра
-        ChannelManageInvites.instances.delete(this.channelId);
 
     }
 

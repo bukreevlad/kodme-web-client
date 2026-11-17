@@ -1,6 +1,5 @@
 // Импортируем events
 import { subscribeItemAdded } from "./item_added.js";
-import { subscribeItemRemoved } from "./item_removed.js";
 
 // Импортируем типы
 import type { UserSettingDecorations } from "../../index.js";
@@ -13,7 +12,7 @@ import type { UserSettingDecorations } from "../../index.js";
  */
 export function subscribeStoreEvents(form: UserSettingDecorations): void {
 
+    // DOM-копии строк стор снимает сам при удалении элементов
     subscribeItemAdded(form);
-    subscribeItemRemoved(form);
 
 }

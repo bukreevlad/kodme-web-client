@@ -60,7 +60,7 @@ export async function menuHandler(event: Event, form: BroadcastPlay): Promise<vo
 
         // settings — только создатель трансляции. Владелец бота-создателя
         // сюда не попадает: трансляциями бота управляет только бот
-        if (form.cast?.created_user_id === sessionUser.id) {
+        if (form.cast?.owner_id === sessionUser.id) {
             menuItems.push(settings);
         }
 

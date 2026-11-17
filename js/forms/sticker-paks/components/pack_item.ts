@@ -128,8 +128,8 @@ export function createStickerPakItem(form: StickerPaks, data: StickerPakItem): H
 
             });
 
-            // Сохраняем функцию отписки в data, чтобы форма могла вызвать её при удалении
-            currentData.__unsubscribeStore__ = unsubscribe;
+            // Запоминаем отписку в сторе — она вызовется при удалении элемента
+            form.store.addItemSubscription(currentData.id, unsubscribe);
 
         } catch (error) {
             Logger.error("[app][sticker-paks][pack-item][subscribe]:", error);
@@ -137,11 +137,8 @@ export function createStickerPakItem(form: StickerPaks, data: StickerPakItem): H
 
     };
 
-    // Записываем ссылку на DOM-элемент в данные
-    if (!currentData.__domElements__) {
-        currentData.__domElements__ = [];
-    }
-    currentData.__domElements__.push(element);
+    // Регистрируем DOM-копию строки в реестре стора
+    form.store.registerDomElement(currentData.id, element);
 
     // Устанавливаем начальные данные
     setup(currentData);

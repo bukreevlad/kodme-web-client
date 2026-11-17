@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -65,7 +66,6 @@ export interface MeetScreenSettingsState {
 export class MeetScreenSettings {
 
     /** Единственный экземпляр формы. */
-    static instance: MeetScreenSettings | null = null;
 
     /** Форма конференции, в которую вложена эта форма. */
     meetPlayForm: MeetPlay | null = null;
@@ -103,8 +103,8 @@ export class MeetScreenSettings {
         if (!data?.meetId) throw new Error("Не передан: meetId");
 
         // Поиск открытого окна конференции
-        this.meetPlayForm = MeetPlay.instances.get(data.meetId) ?? null;
-        let insertInto = this.meetPlayForm?.modal?.content || null;
+        this.meetPlayForm = FormsRegistry.getOwner<MeetPlay>(`meet-play:${data.meetId}`) ?? null;
+        let insertInto = FormsRegistry.get(`meet-play:${data.meetId}`)?.content || null;
 
         // Устанавливаем настройки
         this.options = {
@@ -130,12 +130,10 @@ export class MeetScreenSettings {
         };
 
         // Проверяем, существует ли уже экземпляр
-        if (MeetScreenSettings.instance) {
-            return MeetScreenSettings.instance;
-        }
+        const opened = FormsRegistry.getOwner<MeetScreenSettings>("meet-screen-settings");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        MeetScreenSettings.instance = this;
 
         // Инициализация
         this._init();
@@ -177,6 +175,8 @@ export class MeetScreenSettings {
             // Форма настроек
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "meet-screen-settings",
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
                 closeOnOverlay: false,
@@ -286,8 +286,6 @@ export class MeetScreenSettings {
      */
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        MeetScreenSettings.instance = null;
 
     }
 

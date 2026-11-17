@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { CDM_FORM_CLASSES, CDM_FORM_HEADER_CLASSES, CDM_FORM_CONTENT_CLASSES, CDM_FORM_SECTION_CLASSES } from "../../config/constants.js";
 
 // Импортируем utils
@@ -13,7 +14,7 @@ import { Inputs } from "../../components/inputs.js";
 import { createHandler } from "./handlers/create.js";
 
 // Импортируем типы
-import type { Cloud } from "../cloud/index.js";
+
 import { t } from "../../utils/i18n/index.js";
 
 /**
@@ -31,9 +32,6 @@ export interface CreateFolderOptions {
  */
 export interface CreateFolderData {
 
-    /** Экземпляр формы облака. */
-    form: Cloud;
-
     /** Настройки диалога. */
     options?: CreateFolderOptions;
 
@@ -42,26 +40,21 @@ export interface CreateFolderData {
 // Form
 export class CreateFolder {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: CreateFolder | null = null;
 
     /**
      * ***************************************************************************
      * Форма создания папки.
      * @param data - Данные.
-     * @param data.form - Экземпляр формы облака.
      * @param data.options - Настройки формы.
      * ***************************************************************************
      */
     constructor(data: CreateFolderData) {
 
-        // Если не передан form
-        if (!data?.form) throw new Error("Не передан: form");
-
-        // Устанавливаем настройки. Форма живёт в левой колонке home —
-        // как и group-create, а не поверх всего документа
+        // Устанавливаем настройки: диалог открывается в открытой форме
+        // облака, а не в левой колонке home
+        let insertInto = FormsRegistry.get("cloud")?.content || null;
         this.options = {
-            insertInto: document.querySelector(".cdm-form.home .left"),
+            insertInto: insertInto || data.options?.insertInto || document.querySelector(".cdm-form.home .left"),
             ...data?.options
         }
 
@@ -69,16 +62,11 @@ export class CreateFolder {
         this.tpl = null;
         this.modal = null;
 
-        // Переменные формы
-        this.form = data.form;
-
         // Проверяем, существует ли уже экземпляр
-        if (CreateFolder.instance) {
-            return CreateFolder.instance;
-        }
+        const opened = FormsRegistry.getOwner<CreateFolder>("cloud-folder-create");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        CreateFolder.instance = this;
 
         // Инициализация
         this._init();
@@ -91,9 +79,6 @@ export class CreateFolder {
     // Каркас: шаблон и модалка
     tpl: HTMLElement | null = null;
     modal: Overlay | null = null;
-
-    // Экземпляр формы облака
-    form: Cloud;
 
     // ***************************************************************************
     // Инициализация
@@ -120,6 +105,8 @@ export class CreateFolder {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "cloud-folder-create",
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
                 closeOnOverlay: false,
@@ -184,8 +171,6 @@ export class CreateFolder {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        CreateFolder.instance = null;
 
     }
 

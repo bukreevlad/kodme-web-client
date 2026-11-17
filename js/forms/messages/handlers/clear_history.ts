@@ -30,8 +30,8 @@ export async function clearHistoryHandler(form: Messages): Promise<void> {
 
         // Устанавливаем параметры
         const currentChannelId = form.channelId;
-        const channelType = form.channel?.type;
-        const isDialog = [1, 8].includes(channelType ?? -1);
+        const channelKind = form.channel?.kind;
+        const isDialog = channelKind === "dialog";
 
         // Отображаем диалог
         new ClearHistory({

@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -13,7 +14,6 @@ import { Buttons } from "../../../../components/buttons.js";
 import { Inputs } from "../../../../components/inputs.js";
 
 // Импортируем forms
-import { BotProfile } from "../../../bot-profile/index.js";
 
 // Импортируем handlers
 import { copyHandler } from "./handlers/copy.js";
@@ -51,8 +51,6 @@ export interface ExportBotCommandsData {
 // Form
 export class ExportBotCommands {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: ExportBotCommands | null = null;
 
     /**
      * ***************************************************************************
@@ -70,8 +68,7 @@ export class ExportBotCommands {
         if (!data?.botId) throw new Error("Не передан: botId");
 
         // Поиск открытого профиля пользователя
-        let boProfileForm = BotProfile.instances.get(data.botId);
-        let insertInto = boProfileForm?.modal?.content || null;
+        let insertInto = FormsRegistry.get(`bot-profile:${data.botId}`)?.content || null;
 
         // Устанавливаем настройки
         this.options = {
@@ -89,12 +86,10 @@ export class ExportBotCommands {
         this.commands = JSON.stringify(data.commands);
 
         // Проверяем, существует ли уже экземпляр
-        if (ExportBotCommands.instance) {
-            return ExportBotCommands.instance;
-        }
+        const opened = FormsRegistry.getOwner<ExportBotCommands>("bot-settings-dialogs-export_json");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        ExportBotCommands.instance = this;
 
         // Инициализация
         this._init();
@@ -136,6 +131,8 @@ export class ExportBotCommands {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "bot-settings-dialogs-export_json",
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
                 closeOnOverlay: true,
@@ -222,8 +219,6 @@ export class ExportBotCommands {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        ExportBotCommands.instance = null;
 
     }
 

@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { GestureController } from "../../utils/gesture_controller.js";
 import { CacheManager } from "../../utils/cache_manager.js";
 import { Logger } from "../../utils/logs/logger.js";
@@ -85,8 +86,6 @@ interface CropperElements {
  */
 export class ImageCropper {
 
-    // Переменная для хранения единственного экземпляра
-    static instance: ImageCropper | null = null;
 
     /** Ссылка на изображение. */
     imageUrl: string;
@@ -159,12 +158,10 @@ export class ImageCropper {
         };
 
         // Проверяем, существует ли уже экземпляр
-        if (ImageCropper.instance) {
-            return ImageCropper.instance;
-        }
+        const opened = FormsRegistry.getOwner<ImageCropper>("image-cropper");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        ImageCropper.instance = this;
 
         // Инициализация
         this._init();
@@ -193,6 +190,8 @@ export class ImageCropper {
             // Создаем модальное окно через единый класс Overlay
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "image-cropper",
                 url: `?image-cropper`,
                 insertInto: this.options.insertInto,
                 closeOnOverlay: this.options.closeOnOverlay,
@@ -287,8 +286,6 @@ export class ImageCropper {
 
         this.elements = {};
 
-        // Сбрасываем Singleton
-        ImageCropper.instance = null;
 
     }
 

@@ -10,9 +10,6 @@ import type { Answer } from "../../../types/domain.js";
  */
 export interface GetMessageReactionsData {
 
-    /** Id канала (клиент передаёт его, хотя сервер читает только message_ids). */
-    channel_id?: string;
-
     /** Массив Id сообщений. */
     message_ids: string[];
 

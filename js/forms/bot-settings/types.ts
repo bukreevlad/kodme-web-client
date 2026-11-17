@@ -28,9 +28,6 @@ export interface BotMenuRecord {
     /** Текст команды (наличие отличает команду от категории). */
     command?: string;
 
-    /** Отображённые копии элемента списка меню. */
-    __domElements__?: HTMLElement[];
-
 }
 
 /**
@@ -51,9 +48,6 @@ export interface BotPathCrumb {
 
     /** Название крошки. */
     name?: string;
-
-    /** Отображённые копии элемента крошки. */
-    __domElements__?: HTMLElement[];
 
 }
 
@@ -76,9 +70,6 @@ export interface BotAppRecord extends StoreItem {
 
     /** Описание приложения. */
     about: string | null;
-
-    /** Отображённые копии строки приложения. */
-    __domElements__?: HTMLElement[];
 
 }
 
@@ -146,7 +137,7 @@ export interface BotSettingsProfile {
     bio: string | null;
 
     /** Владелец бота. */
-    bot_created_user_id: string;
+    bot_owner_id: string;
 
     /** Публичное имя бота (left join — бот может быть без ссылки). */
     link: string | null;

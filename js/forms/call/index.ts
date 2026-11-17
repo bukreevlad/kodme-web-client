@@ -6,6 +6,7 @@ import { CDM_FORM_CLASSES, CDM_FORM_CONTENT_CLASSES } from "../../config/constan
 
 // Импортируем utils
 import { Logger } from "../../utils/logs/logger.js";
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { Store } from "../../utils/store.js";
 import type { GestureController } from "../../utils/gesture_controller.js";
 
@@ -132,9 +133,6 @@ export interface CallEndOptions {
  * ***************************************************************************
  */
 export class Call {
-
-    // Реестр всех открытых форм Call: { callId | userId: instance }
-    static instances = new Map<string, Call>();
 
     /** Настройки формы. */
     options: CallOptions;
@@ -290,10 +288,8 @@ export class Call {
         this.token = data.token || null;
 
         // Регистрируем этот экземпляр формы
-        const instance = Call.instances.get(key);
+        const instance = FormsRegistry.getOwner<Call>(`call:${key}`);
         if (instance) return instance;
-
-        Call.instances.set(this.key, this);
 
         // Инициализация
         this._init();
@@ -352,6 +348,10 @@ export class Call {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: `call:${this.key}`,
+                placement: "workspace",
+                workspace: `call:${this.callId || this.userId}`,
                 url: `?call=${this.callId || this.userId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -512,16 +512,10 @@ export class Call {
      */
     async _onOpen(): Promise<void> {
 
-        // ---------- СИСТЕМА ----------
-        window.dispatchEvent(new CustomEvent("[app][form]::opened", {
-            detail: {
-                id: this.modal?.options.id,
-                data: {
-                    instance: this,
-                    title: this.displayName || t("forms.call.title")
-                }
-            }
-        }));
+        // Пилюля рабочего места: заголовки живут в записи реестра
+        if (this.modal) if (this.modal) FormsRegistry.update(this.modal.options.id, {
+            title: this.displayName || t("forms.call.title")
+        });
         // ---------- СИСТЕМА ----------
 
         // Включаем обработчики
@@ -726,12 +720,6 @@ export class Call {
             // ---------- ИЗВЕЩЕНИЕ СЕРВЕРА ----------
 
             // Удаляем экземпляр формы из реестра
-            Call.instances.delete(this.key);
-
-            // Сообщаем системе, что форма закрыта
-            window.dispatchEvent(new CustomEvent("[app][form]::closed", {
-                detail: { id: this.modal?.options?.id }
-            }));
 
         } catch (error) {
             Logger.error("[app][call]: Ошибка при закрытии формы звонка", error);

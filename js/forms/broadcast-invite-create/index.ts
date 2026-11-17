@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -19,7 +20,7 @@ import { createHandler } from "./handlers/create.js";
 import { switchIsNumberUsersHandler } from "./handlers/switch-is-number-users.js";
 
 // Импортируем forms
-import { BroadcastSettings } from "../broadcast-settings/index.js";
+
 import { t } from "../../utils/i18n/index.js";
 
 /**
@@ -48,9 +49,6 @@ export interface BroadcastInviteCreateOptions {
 // Form
 export class BroadcastInviteCreate {
 
-    // Реестр всех открытых форм BroadcastInviteCreate: { castId: instance }
-    static instances = new Map<string, BroadcastInviteCreate>();
-
     // Переменные формы
     castId: string;
 
@@ -76,8 +74,7 @@ export class BroadcastInviteCreate {
         if (!data?.castId) throw new Error("Не передан: castId");
 
         // Поиск открытого окна настроек трансляции
-        let broadcastSettingsForm = BroadcastSettings.instances.get(data.castId);
-        let insertInto = broadcastSettingsForm?.modal?.content || null;
+        let insertInto = FormsRegistry.get(`broadcast-settings:${data.castId}`)?.content || null;
 
         // Устанавливаем настройки
         this.options = {
@@ -95,11 +92,10 @@ export class BroadcastInviteCreate {
         this.castId = data.castId;
 
         // Получаем instance
-        let instance = BroadcastInviteCreate.instances.get(data.castId);
+        let instance = FormsRegistry.getOwner<BroadcastInviteCreate>(`broadcast-invite-create:${data.castId}`);
         if (instance) return instance;
 
         // Регистрируем этот экземпляр формы
-        BroadcastInviteCreate.instances.set(this.castId, this);
 
         // Инициализация
         this._init();
@@ -132,6 +128,8 @@ export class BroadcastInviteCreate {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: `broadcast-invite-create:${this.castId}`,
                 url: `?broadcast-invite-create=${this.castId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -223,7 +221,6 @@ export class BroadcastInviteCreate {
     _onBeforeClose(): void {
 
         // Удаляем экземпляр формы из реестра
-        BroadcastInviteCreate.instances.delete(this.castId);
 
     }
 

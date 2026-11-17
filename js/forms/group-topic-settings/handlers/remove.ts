@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 import { getErrorMessage } from "../../../utils/helpers/error_util.js";
 
@@ -69,17 +70,10 @@ export async function removeHandler(form: GroupTopicSettings): Promise<void> {
                     // Закрываем форму
                     form.modal?.close();
 
-                    // Поиск формы сообщений (тема открывается как канал)
-                    let messagesForm = Messages.instances.get(form.channelId);
-                    if (messagesForm) {
-                        messagesForm?.modal?.close();
-                    }
-
-                    // Поиск формы профиля канала
-                    let channelProfileForm = ChannelProfile.instances.get(form.channelId);
-                    if (channelProfileForm) {
-                        channelProfileForm?.modal?.close();
-                    }
+                    // Закрываем чат темы (тема открывается как канал)
+                    // и профиль канала под этой формой
+                    FormsRegistry.closeLayer(`messages:${form.channelId}`);
+                    FormsRegistry.closeLayer(`channel-profile:${form.channelId}`);
 
                 }
             }

@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../../../../core/managers/forms_registry.js";
 import { Socket } from "../../../../../config/socket.js";
 
 // Импортируем utils
@@ -60,7 +61,7 @@ export function subscribeBroadcastUpdate(): void {
                 if (!isBroadcastUpdatePayload(data)) return;
 
                 // Обновляем данне трансляции в списке
-                const broadcastsForm = Broadcasts.instance;
+                const broadcastsForm = FormsRegistry.getOwner<Broadcasts>("broadcasts");
                 if (broadcastsForm) {
 
                     // Получаем Store и стрим
@@ -81,7 +82,7 @@ export function subscribeBroadcastUpdate(): void {
                 }
 
                 // Обновляем данне трансляции если она открыта
-                const broadcastPlayForm = BroadcastPlay.instances.get(data.id);
+                const broadcastPlayForm = FormsRegistry.getOwner<BroadcastPlay>(`broadcast-play:${data.id}`);
                 if (broadcastPlayForm) {
 
                     // Получаем стрим

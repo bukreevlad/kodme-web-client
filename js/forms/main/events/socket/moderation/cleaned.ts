@@ -1,9 +1,6 @@
-// Импортируем config
-import { Socket } from "../../../../../config/socket.js";
-
 // Импортируем utils
+import { FormsRegistry } from "../../../../../core/managers/forms_registry.js";
 import { Logger } from "../../../../../utils/logs/logger.js";
-import { AsyncQueue } from "../../../../../utils/helpers/async_queue.js";
 import { getErrorName } from "../../../../../utils/helpers/error_util.js";
 
 // Импортируем forms
@@ -66,141 +63,126 @@ function isModerationCleanedPayload(value: unknown): value is ModerationCleanedP
 
 /**
  * ***************************************************************************
- * Подписка на чистку сообщений участника: записи автора вычищаются из
- * локальной БД, у канала обновляется pts и последнее сообщение (в БД,
- * сайдбаре и открытой форме).
- * @param asyncQueue - Общая очередь сообщений модерации.
+ * Применяет событие чистки сообщений участника к локальным хранилищам и UI:
+ * записи автора вычищаются из локальной БД, у канала обновляется последнее
+ * сообщение (в БД, сайдбаре и открытой форме).
+ * @param data - Нагрузка события (id канала и id участника).
+ * @returns {void}
  * ***************************************************************************
  */
-export function subscribeModerationCleaned(asyncQueue: AsyncQueue): void {
+export async function applyModerationCleaned(data: unknown): Promise<void> {
+    Logger.debug("[app][feed]::messages_cleaned", data);
 
-    // ***************************************************************************
-    // Чистим сообщения автора
-    // ***************************************************************************
-    Socket.client.on("[moderation]: cleaned", (data, timestamp) => {
-        Logger.debug("[app][ws]::[moderation]: cleaned", data, timestamp);
+    try {
 
-        // Сохраняем задачу в очереди и выполняем асинхронно
-        asyncQueue.enqueue(async () => {
+        // Нагрузка сокета типизирована как unknown: работаем только с известной структурой
+        if (!isModerationCleanedPayload(data)) return;
 
-            try {
+        // Удаляем в IndexedDB сообщения автора канала
+        await messagesTable()
+            .where("channel_id")
+            .equals(data.channel_id)
+            .and(message => message.author_id === data.user_id)
+            .delete();
 
-                // Нагрузка сокета типизирована как unknown: работаем только с известной структурой
-                if (!isModerationCleanedPayload(data)) return;
+        // ======================================
 
-                // Удаляем в IndexedDB сообщения автора канала
-                await messagesTable()
+        // Получаем канал в IndexedDB
+        const channelDB = await channelsTable().get(data.channel_id);
+        if (channelDB) {
+
+            // Если последнее сообщение принадлежало удалённому автору
+            if (channelDB.last_message?.author_id === data.user_id) {
+
+                // Запрашиваем последнее сообщение из канала
+                const lastMessageDB = await messagesTable()
                     .where("channel_id")
                     .equals(data.channel_id)
-                    .and(message => message.created_user_id === data.user_id)
-                    .delete();
+                    .reverse()
+                    .first();
 
-                // ======================================
-
-                // Получаем канал в IndexedDB
-                const channelDB = await channelsTable().get(data.channel_id);
-                if (channelDB) {
-
-                    // Обновляем счетчик PTS: сервер шлёт bigint строкой,
-                    // стор и типы хранят число (отсутствие pts не трогаем)
-                    if (data.pts !== undefined) {
-                        channelDB.last_pts = Number(data.pts);
-                    }
-
-                    // Если последнее сообщение принадлежало удалённому автору
-                    if (channelDB.last_message?.created_user_id === data.user_id) {
-
-                        // Запрашиваем последнее сообщение из канала
-                        const lastMessageDB = await messagesTable()
-                            .where("channel_id")
-                            .equals(data.channel_id)
-                            .reverse()
-                            .first();
-
-                        if (lastMessageDB) {
-                            channelDB.last_message = lastMessageDB;
-                            channelDB.last_message_id = lastMessageDB.id;
-                        } else {
-                            channelDB.last_message = null;
-                            channelDB.last_message_id = null;
-                        }
-
-                    }
-
-                    // Записываем в IndexedDB
-                    await channelsTable().put(channelDB);
-
+                if (lastMessageDB) {
+                    channelDB.last_message = lastMessageDB;
+                    channelDB.last_message_id = lastMessageDB.id;
+                } else {
+                    channelDB.last_message = null;
+                    channelDB.last_message_id = null;
                 }
 
-                // ======================================
-
-                // Убираем сообщения автора из открытой формы
-                const form = Messages.instances.get(data.channel_id);
-                if (form) {
-                    for (const [id, item] of form.store.items) {
-                        if (item.created_user_id === data.user_id) {
-                            form.store.remove(id);
-                        }
-                    }
-                }
-
-                // ======================================
-
-                // Обновляем данные в сайдбаре (Main-инстанс создаётся при
-                // старте приложения — без него обновить стор не получится)
-                const mainForm = Main.instance;
-                if (!mainForm) return;
-
-                const channelStore = mainForm.store.get(data.channel_id);
-
-                // Если последнее сообщение в сайдбаре принадлежало удалённому автору
-                if (channelStore && channelStore.last_message?.created_user_id === data.user_id) {
-
-                    // Запрашиваем последнее сообщение из канала
-                    const lastMessageDB = await messagesTable()
-                        .where("channel_id")
-                        .equals(data.channel_id)
-                        .reverse()
-                        .first();
-
-                    if (lastMessageDB) {
-                        channelStore.last_message = lastMessageDB;
-                        channelStore.last_message_id = lastMessageDB.id;
-                    } else {
-                        channelStore.last_message = null;
-                        channelStore.last_message_id = null;
-                    }
-
-                    // Обновляем данные в Store
-                    mainForm.store.update(channelStore.id, channelStore);
-
-                }
-
-                // ======================================
-                // Визуальная сортировка каналов
-                // ======================================
-
-                const foldersTabs = mainForm.foldersTabs;
-                const currentIdFolder = foldersTabs?.currentId;
-                const currentPane = currentIdFolder != null ? foldersTabs?.getPane(currentIdFolder) : undefined;
-                const currentList = currentPane?.querySelector<HTMLElement>("[data-list]") ?? null;
-
-                // Вызываем визуальную сортировку каналов в папках
-                sortChatListVisually(currentList, mainForm.store);
-
-                // ======================================
-
-            } catch (error) {
-                Logger.error(error);
-
-                // Если ошибка была вызвана IndexedDB
-                if (getErrorName(error) === "QuotaExceededError" || getErrorName(error) === "ConstraintError") {
-                    Toast.error(t("forms.main.toasts.storage_write_failed"));
-                }
             }
 
-        });
+            // Патч: удалённый параллельно канал не «воскресает»
+            await channelsTable().update(channelDB.id, {
+                last_message_id: channelDB.last_message_id,
+                last_message: channelDB.last_message
+            });
 
-    });
+        }
 
+        // ======================================
+
+        // Убираем сообщения автора из открытой формы
+        const form = FormsRegistry.getOwner<Messages>(`messages:${data.channel_id}`);
+        if (form) {
+            for (const [id, item] of form.store.items) {
+                if (item.author_id === data.user_id) {
+                    form.store.remove(id);
+                }
+            }
+        }
+
+        // ======================================
+
+        // Обновляем данные в сайдбаре (Main-инстанс создаётся при
+        // старте приложения — без него обновить стор не получится)
+        const mainForm = FormsRegistry.getOwner<Main>("main");
+        if (!mainForm) return;
+
+        const channelStore = mainForm.store.get(data.channel_id);
+
+        // Если последнее сообщение в сайдбаре принадлежало удалённому автору
+        if (channelStore && channelStore.last_message?.author_id === data.user_id) {
+
+            // Запрашиваем последнее сообщение из канала
+            const lastMessageDB = await messagesTable()
+                .where("channel_id")
+                .equals(data.channel_id)
+                .reverse()
+                .first();
+
+            if (lastMessageDB) {
+                channelStore.last_message = lastMessageDB;
+                channelStore.last_message_id = lastMessageDB.id;
+            } else {
+                channelStore.last_message = null;
+                channelStore.last_message_id = null;
+            }
+
+            // Обновляем данные в Store
+            mainForm.store.update(channelStore.id, channelStore);
+
+        }
+
+        // ======================================
+        // Визуальная сортировка каналов
+        // ======================================
+
+        const foldersTabs = mainForm.foldersTabs;
+        const currentIdFolder = foldersTabs?.currentId;
+        const currentPane = currentIdFolder != null ? foldersTabs?.getPane(currentIdFolder) : undefined;
+        const currentList = currentPane?.querySelector<HTMLElement>("[data-list]") ?? null;
+
+        // Вызываем визуальную сортировку каналов в папках
+        sortChatListVisually(currentList, mainForm.store);
+
+        // ======================================
+
+    } catch (error) {
+        Logger.error(error);
+
+        // Если ошибка была вызвана IndexedDB
+        if (getErrorName(error) === "QuotaExceededError" || getErrorName(error) === "ConstraintError") {
+            Toast.error(t("forms.main.toasts.storage_write_failed"));
+        }
+    }
 }

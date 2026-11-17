@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -38,9 +39,6 @@ export interface StickerPakOptions {
 
 // Form
 export class StickerPak {
-
-    // Реестр открытых форм по id пака: один пак — одна форма
-    static instances = new Map<string, StickerPak>();
 
     /** Настройки формы. */
     options: StickerPakOptions;
@@ -98,13 +96,12 @@ export class StickerPak {
         this.pakId = data.pakId;
 
         // Проверяем, открыт ли уже этот пак
-        const existing = StickerPak.instances.get(this.pakId);
+        const existing = FormsRegistry.getOwner<StickerPak>(`sticker-pak:${this.pakId}`);
         if (existing) {
             return existing;
         }
 
         // Сохраняем ссылку в реестр
-        StickerPak.instances.set(this.pakId, this);
 
         // Инициализация
         this._init();
@@ -136,6 +133,8 @@ export class StickerPak {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: `sticker-pak:${this.pakId}`,
                 url: `?stickers&paks=${this.pakId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -234,7 +233,6 @@ export class StickerPak {
         this.uploadController = null;
 
         // Удаляем экземпляр из реестра
-        StickerPak.instances.delete(this.pakId);
 
     }
 

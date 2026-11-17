@@ -27,28 +27,11 @@ export function subscribeItemRemoved(form: SecretChat): (() => void) | null {
 
             if (!isSecretChatMessageRecord(data)) return;
 
-            // Гасим точечные подписки компонента строки (item::updated::<id>):
-            // без этого подписка держала бы удалённую строку в памяти
-            data.__unsubscribeStore__?.();
-            delete data.__unsubscribeStore__;
-
-            // Проверяем наличие массива элементов
-            if (data.__domElements__ && Array.isArray(data.__domElements__)) {
-                data.__domElements__.forEach(element => {
-                    if (element && typeof element.remove === "function") {
-
-                        // Обязательно отключаем Observer, чтобы не вызвать лишних срабатываний
-                        form.observer?.unobserve(element);
-
-                        // Удаляем элемент
-                        element.remove();
-                    }
-                });
-                Logger.debug(`Успешно удалено копий элемента: ${data.__domElements__.length}`);
-
-                // Очищаем массив, чтобы не копить утечки памяти
-                data.__domElements__ = [];
-            }
+            // Обязательно отключаем Observer, чтобы не вызвать лишних
+            // срабатываний (DOM-копии и подписки стор снимет сам после события)
+            form.store.getDomElements(data.id).forEach(element => {
+                form.observer?.unobserve(element);
+            });
 
             // Удаление сообщения могло оставить "сиротские" разделители:
             // планируем пересборку окна (разделители + маркер + якорь)

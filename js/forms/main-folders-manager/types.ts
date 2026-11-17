@@ -26,12 +26,6 @@ export interface MainFoldersManagerFolder extends StoreItem {
     /** Сумма непрочитанных сообщений в папке (обогащение из IndexedDB). */
     unread_count?: number;
 
-    /** Отрисованные копии строки (каждая копия добавляет свой DOM). */
-    __domElements__?: HTMLElement[];
-
-    /** Отписка компонента строки от точечного события обновления. */
-    __unsubscribeStore__?: (() => void) | null;
-
 }
 
 /**

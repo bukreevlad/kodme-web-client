@@ -21,6 +21,7 @@ import { saveAttachRequest } from "../requests/save_attach.js";
 // Импортируем типы
 import { isRecord } from "../../main/types.js";
 import type { AttachmentsRaw } from "../../../utils/messages/attachments.js";
+import type { CreateMessageAttachment } from "../requests/create_message.js";
 import type { MessageRecord } from "../types.js";
 import type { Messages } from "../index.js";
 import { I18n, t } from "../../../utils/i18n/index.js";
@@ -36,32 +37,14 @@ type ProgressCancellable = HTMLElement & {
 
 };
 
-/** Ожидание ack одного исходящего сообщения. */
-interface PendingAckGateway {
-
-    /** Промис завершения ack — ждёт его обработчик эха `[message]: new`. */
-    promise: Promise<void>;
-
-    /** Разрешить ожидание ack (снимает блокировку пуша). */
-    resolve: () => void;
-
-}
-
 /**
  * Формы, у которых цикл обработки очереди уже выполняется.
  *
  * Флаг form-scoped: глобальный блокировал отправку во всех открытых чатах
- * (Messages.instances может содержать несколько форм одновременно).
+ * (в реестре может быть несколько открытых чатов).
  * Хранится здесь, а не на форме: у экземпляра Messages нет поля isSending.
  */
 const sendingForms = new WeakSet<Messages>();
-
-/**
- * Промисы ожидания ack по локальному id исходящего.
- * Ключ — UUIDv7, уникален между формами; карта на форме хранит только
- * резолвер (контракт PendingAck), промис читается по ключам формы.
- */
-const ackPromises = new Map<string, Promise<void>>();
 
 /**
  * Коды валидационных отказов сервера: сообщение помечается ошибкой (можно
@@ -131,72 +114,6 @@ const UPLOAD_LOCALE: Record<string, string> = {
 
 /**
  * ***************************************************************************
- * Зарегистрировать ожидание ack-ответа сервера по исходящему сообщению.
- * Обработчик пуша `[message]: new` по этому ожиданию детерминированно
- * дожидается ответа именно по нашему сообщению.
- * @param form - Экземпляр формы сообщений.
- * @param localId - Локальный id исходящего сообщения.
- * @returns Объект с промисом и функцией `resolve()`.
- * ***************************************************************************
- */
-function registerPendingAck(form: Messages, localId: string): PendingAckGateway {
-
-    // Карта живёт на форме: у каждой формы свой набор исходящих
-    if (!form.pendingAcks) form.pendingAcks = new Map();
-
-    // Создаём «шлюз»: промис резолвится, когда ack обработан (успех или ошибка)
-    let resolveAck: () => void = () => {};
-    const promise = new Promise<void>(res => { resolveAck = () => res(); });
-
-    // Карта формы хранит только резолвер (контракт PendingAck);
-    // промис ждёт в модульной карте — по нему работает awaitPendingAcks.
-    const gateway = { promise, resolve: () => resolveAck() };
-    form.pendingAcks.set(localId, gateway);
-    ackPromises.set(localId, promise);
-
-    return gateway;
-
-}
-
-/**
- * ***************************************************************************
- * Дождаться обработки ответов сервера по всем исходящим сообщениям формы.
- * Вызывается из обработчика `[message]: new`, когда эхо собственной отправки
- * пришло раньше ответа и в Store ещё нет сообщения с server id.
- * @param form - Экземпляр формы сообщений.
- * @param timeoutMs - Предохранительный таймаут (страховка от зависшего ack).
- * @returns Promise<void>
- * ***************************************************************************
- */
-export async function awaitPendingAcks(form: Messages, timeoutMs = 1500): Promise<void> {
-
-    // Нет набора — отправка не идёт, ждать нечего
-    const acks = form?.pendingAcks;
-    if (!acks || acks.size === 0) return;
-
-    // Собираем все ожидания этой формы (ключ формы = локальный id исходящего)
-    const waits = Array.from(acks.keys())
-        .map(localId => ackPromises.get(localId))
-        .filter((promise): promise is Promise<void> => promise !== undefined);
-
-    // Страховка: если ack «завис» (ответ не пришёл вовсе), не блокируем рендер навсегда
-    let timerId: ReturnType<typeof setTimeout> | null = null;
-    const timeout = new Promise<void>(resolve => {
-        timerId = setTimeout(() => resolve(), timeoutMs);
-    });
-
-    try {
-        await Promise.race([Promise.allSettled(waits), timeout]);
-    } finally {
-        // Без таймера останавливать нечего (здесь его всегда успевает создать
-        // синхронный executor выше, guard лишь закрывает тип)
-        if (timerId != null) clearTimeout(timerId);
-    }
-
-}
-
-/**
- * ***************************************************************************
  * Основная функция обработки очереди сообщений (pending_messages).
  * Выполняет загрузку файлов на S3, подтверждение обработки и отправку сообщения.
  * @param form - Объект формы, содержащий store и контекст канала.
@@ -207,7 +124,7 @@ export async function sendingMessages(form: Messages): Promise<void> {
 
     // Проверка флага: если цикл этой формы уже выполняется — не запускаем новый.
     // Флаг form-scoped (см. sendingForms): глобальный блокировал отправку
-    // во всех открытых чатах (Messages.instances может содержать несколько форм).
+    // во всех открытых чатах (в реестре может быть несколько открытых чатов).
     if (sendingForms.has(form)) {
         return;
     }
@@ -235,11 +152,10 @@ export async function sendingMessages(form: Messages): Promise<void> {
             // Локальный ID сообщения (из IndexedDB)
             const localId = message.id;
 
-            // Регистрируем ожидание ack: обработчик пуша `[message]: new`
-            // дождётся именно ответа по этому сообщению, а не угадывает тайминг
-            const pendingAck = registerPendingAck(form, localId);
-
             try {
+
+                // Мап вложений для payload запроса (запись очереди хранит полные данные)
+                const requestAttachments: Record<string, CreateMessageAttachment> = {};
 
                 // Если у сообщения есть файлы, требующие загрузки.
                 // Проверяем через нормализатор: attachments — объект-мап по
@@ -247,7 +163,6 @@ export async function sendingMessages(form: Messages): Promise<void> {
                 if (Attachments.isNotEmpty(message?.attachments)) {
                     Logger.debug(`[app][messages]: Загрузка файлов сообщения с id:${localId} на сервер.`);
 
-                    const finalAttachments: AttachmentsMap = {};
                     const messageStore = form.store.get(localId);
 
                     // invariant: запись очереди создаётся локально — вложения в ней
@@ -470,9 +385,9 @@ export async function sendingMessages(form: Messages): Promise<void> {
                                 Toast.info(t("forms.messages.toasts.sent_without_preview"), { position: "bottom-center" });
                             }
 
-                            // Сохраняем данные для финальной отправки сообщения
-                            finalAttachments[getUploadUrl.data.document_id] = {
-                                file_name: attach.name
+                            // Сохраняем вложение для payload финальной отправки
+                            requestAttachments[getUploadUrl.data.document_id] = {
+                                file_name: attach.name ?? ""
                             };
 
                             // Запоминаем соответствие «локальный файл → документ»
@@ -537,12 +452,10 @@ export async function sendingMessages(form: Messages): Promise<void> {
                         // Помечаем сообщение ошибкой (пользователь увидит статус
                         // и сможет повторить), но очередь не останавливаем
                         const db = IndexedDB.db;
-                        const failed = db ? await db.table<MessageRecord, string>("pending_messages").get(localId) : undefined;
-                        if (failed && db) {
-                            failed.is_error_sending = true;
-                            await db.table<MessageRecord, string>("pending_messages").put(failed);
-                            form.store.update(localId, failed);
+                        if (db) {
+                            await db.table<MessageRecord, string>("pending_messages").update(localId, { is_error_sending: true });
                         }
+                        form.store.update(localId, { is_error_sending: true });
 
                         Toast.warning(t("forms.messages.toasts.uploading_failed"), { position: "bottom-center" });
 
@@ -550,32 +463,46 @@ export async function sendingMessages(form: Messages): Promise<void> {
 
                     }
 
-                    // Обновляем структуру вложений перед отправкой (заменяем локальные данные на серверные ID)
-                    message.attachments = finalAttachments;
-
                 }
 
                 // Шаг Отправка готового сообщения на сервер
                 Logger.debug(`[app][messages]: Отправка сообщения на сервер с id:${localId}.`);
-                const response = await createMessageRequest(message);
+                const response = await createMessageRequest({
+                    // invariant: запись очереди создаётся локально — у неё всегда
+                    // задан канал (его же открывает форма)
+                    channel_id: message.channel_id ?? form.channelId,
+                    text: message.text ?? "",
+                    reply_to_message_id: typeof message.reply_to_message_id === "string" ? message.reply_to_message_id : null,
+                    attachments: requestAttachments,
+                    sticker_document_id: message.sticker_document_id ?? null,
+                    // Локальный id записи = клиентский ключ идемпотентности
+                    random_id: message.id
+                });
 
                 // ID сообщения, присвоенный сервером
                 const serverId = response.data.message_id;
                 Logger.debug(`[app][messages]: Сервер вернул serverId: ${serverId} для сообщения c localId: ${localId}. Начинаем replaceId.`);
 
-                // Синхронизация: заменяем локальный ID на серверный в Store и IndexedDB.
-                // Если эхо `[message]: new` пришло раньше ответа и уже вставило сообщение
-                // под serverId — удаляем локальную копию и снимаем pending-флаги у серверной,
-                // чтобы в DOM не осталось дубликата.
+                // Подтверждение сервера: снимаем флаги ожидания — запись живёт
+                // до прихода полного сообщения и повторно не отправляется
+                const db = IndexedDB.db;
+                if (db) {
+                    await db.table<MessageRecord, string>("pending_messages").update(localId, {
+                        is_pending: false,
+                        is_temporary: false
+                    });
+                }
+
+                // Синхронизация: заменяем локальный ID на серверный. Если эхо
+                // уже переименовало запись — удаляем локальную копию (без дубля)
+                // Патч собираем заранее: поле is_error_sending не входит в контракт
+                // записей стора (читается через индексную сигнатуру), поэтому
+                // литерал прямо в вызове update был бы избыточным свойством.
+                const syncFlags = { is_pending: false, is_temporary: false, is_error_sending: false };
+
                 if (form.store.get(serverId)) {
 
                     form.store.remove(localId);
-
-                    // Патч собираем заранее: поле is_error_sending не входит в контракт
-                    // записей стора (читается через индексную сигнатуру), поэтому
-                    // литерал прямо в вызове update был бы избыточным свойством.
-                    const syncFlags = { is_pending: false, is_temporary: false, is_error_sending: false };
-                    form.store.update(serverId, syncFlags);
                     Logger.debug(`[app][messages]: Эхо пришло раньше ответа. Удалена локальная копия ${localId}, оставлена серверная ${serverId}.`);
 
                 } else {
@@ -585,24 +512,8 @@ export async function sendingMessages(form: Messages): Promise<void> {
 
                 }
 
-                // Сообщение обработано сервером, больше не ждём его эхо
-                form.pendingIds?.delete(localId);
-
-                message.id = serverId;
-
-                // Сообщение доставлено: снимаем локальные флаги, чтобы после перезагрузки
-                // приложения оно не отображалось как "отправляющееся"
-                message.is_pending = false;
-                message.is_temporary = false;
-
-                // Записываем сообщение в IndexedDB (база открыта раньше
-                // работы с формами — guard лишь закрывает тип)
-                const db = IndexedDB.db;
-                if (db) await db.table<MessageRecord, string>("messages").put(message);
-                Logger.debug(`[app][messages]: Сообщение сохраненно в IndexedDB под serverId: ${serverId}.`);
-
-                // Удаляем сообщение из очереди исходящих
-                await removePendingMessage(localId);
+                // Подтверждённое сообщение сразу выглядит отправленным
+                form.store.update(serverId, syncFlags);
 
             } catch (error) {
 
@@ -630,12 +541,10 @@ export async function sendingMessages(form: Messages): Promise<void> {
 
                 // В случае технической ошибки помечаем сообщение для отображения статуса "Ошибка"
                 const db = IndexedDB.db;
-                const pendingMessage = db ? await db.table<MessageRecord, string>("pending_messages").get(localId) : undefined;
-                if (pendingMessage && db) {
-                    pendingMessage.is_error_sending = true;
-                    await db.table<MessageRecord, string>("pending_messages").put(pendingMessage);
-                    form.store.update(localId, pendingMessage);
+                if (db) {
+                    await db.table<MessageRecord, string>("pending_messages").update(localId, { is_error_sending: true });
                 }
+                form.store.update(localId, { is_error_sending: true });
 
                 // Отказ в загрузке: показываем точную причину (например,
                 // «слишком большой»), а не общий текст
@@ -675,16 +584,6 @@ export async function sendingMessages(form: Messages): Promise<void> {
                     || (info.code != null && MEDIA_ERRORS.has(info.code));
 
                 if (!isValidationError && !isMediaError) break;
-
-            } finally {
-
-                // Ack обработан (успех или ошибка) — освобождаем ожидающий пуш.
-                // Если бы забыли, обработчик `[message]: new` ждал бы до таймаута.
-                pendingAck.resolve();
-                form.pendingAcks?.delete(localId);
-
-                // Чистим модульную карту промисов (живёт под теми же ключами)
-                ackPromises.delete(localId);
 
             }
         }
@@ -737,14 +636,16 @@ async function removeAttachPendingMessage(messageId: string, fileId: string): Pr
     // объект-мап по fileId, массив возможен только в ответе сервера
     if (message && message.attachments && !Array.isArray(message.attachments)) {
         delete message.attachments[fileId];
-        await db.table<MessageRecord, string>("pending_messages").put(message);
+        await db.table<MessageRecord, string>("pending_messages").update(messageId, { attachments: message.attachments });
         Logger.debug(`[app][messages]: Файл ${fileId} удален из вложений сообщения ${messageId}.`);
     }
 }
 
 /**
  * ***************************************************************************
- * Получает первое доступное сообщение из очереди, которое не помечено как ошибочное.
+ * Получает первое доступное сообщение из очереди: не помечено ошибочным и
+ * ещё не подтверждено сервером (подтверждённые записи снимают is_pending —
+ * повторная отправка им не нужна).
  * @returns Запись очереди либо null, когда очередь пуста.
  * ***************************************************************************
  */
@@ -753,7 +654,7 @@ async function getNextPendingMessage(): Promise<MessageRecord | null> {
     if (!db) return null;
     // .first() отдаёт undefined для пустой очереди — нормализуем к null
     return (await db.table<MessageRecord, string>("pending_messages")
-        .filter((msg: MessageRecord) => !msg.is_error_sending)
+        .filter((msg: MessageRecord) => !msg.is_error_sending && msg.is_pending === true)
         .first()) ?? null;
 }
 

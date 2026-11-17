@@ -610,17 +610,54 @@
                 "stopped"
               ]
             },
-            "CALL_INCOMING": {
+            "CALL_in_ringing": {
               "string": "Incoming call",
-              "array": "incoming call"
+              "array": [
+                "incoming",
+                "call"
+              ]
             },
-            "CALL_ENDED": {
-              "string": "Call ended",
-              "array": "ended"
+            "CALL_out_ringing": {
+              "string": "Outgoing call",
+              "array": [
+                "outgoing",
+                "call"
+              ]
             },
-            "CALL_MISSED": {
+            "CALL_in_finished": {
+              "string": "Incoming call · {{duration}}",
+              "array": [
+                "incoming",
+                "call"
+              ]
+            },
+            "CALL_out_finished": {
+              "string": "Outgoing call · {{duration}}",
+              "array": [
+                "outgoing",
+                "call"
+              ]
+            },
+            "CALL_missed": {
               "string": "Missed call",
-              "array": "missed call"
+              "array": [
+                "missed",
+                "call"
+              ]
+            },
+            "CALL_declined": {
+              "string": "Declined call",
+              "array": [
+                "declined",
+                "call"
+              ]
+            },
+            "CALL_canceled": {
+              "string": "Canceled call",
+              "array": [
+                "canceled",
+                "call"
+              ]
             },
             "USER_ROLE_CHANGED_TO_USER_IN_GROUP": {
               "string": "{{user_name}} is no longer a moderator",
@@ -656,6 +693,7 @@
       },
       "context_menu": {
         "profile": "Profile",
+        "members": "Members",
         "user_profile": "User profile",
         "call": "Call",
         "enable_notify": "Turn sound on",
@@ -1442,7 +1480,9 @@
       "commenting": "Commenting",
       "commenting_desc": "Allow commenting on community posts.",
       "all_posting": "All members",
+      "posting_all_desc": "Any community member will be able to post messages.",
       "admin_posting": "Administrator only",
+      "posting_admin_desc": "Only the administrator and moderators with posting permission will be able to post.",
       "enabled": "Enabled",
       "disabled": "Disabled",
       "opened": "Open",
@@ -1554,7 +1594,9 @@
       "can_posting": "Who can post?",
       "can_posting_desc": "Whether all members or only the administrator can post in the group.",
       "all_posting": "All members",
+      "posting_all_desc": "Any group member will be able to post messages.",
       "admin_posting": "Administrator only",
+      "posting_admin_desc": "Only the administrator and moderators with posting permission will be able to post.",
       "remove": " Delete",
       "remove_desc": "Permanently delete the group.",
       "toasts": {
@@ -1700,7 +1742,9 @@
       "can_posting": "Who can post?",
       "can_posting_desc": "Whether all members or only the administrator can post in the topic.",
       "all_posting": "All members",
+      "posting_all_desc": "Any topic member will be able to post messages.",
       "admin_posting": "Administrator only",
+      "posting_admin_desc": "Only the administrator and moderators with posting permission will be able to post.",
       "toasts": {
         "success_save": "Settings saved",
         "success_avatar": "Avatar saved",
@@ -1917,7 +1961,9 @@
       "commenting": "Commenting",
       "commenting_desc": "Allow commenting on community posts.",
       "all_posting": "All members",
+      "posting_all_desc": "Any community member will be able to post messages.",
       "admin_posting": "Administrator only",
+      "posting_admin_desc": "Only the administrator and moderators with posting permission will be able to post.",
       "enabled": "Enabled",
       "disabled": "Disabled",
       "opened": "Open",
@@ -2288,7 +2334,9 @@
       "can_posting": "Who can post?",
       "can_posting_desc": "Whether all members or only the administrator can post in the group.",
       "all_posting": "All members",
+      "posting_all_desc": "Any group member will be able to post messages.",
       "admin_posting": "Administrator only",
+      "posting_admin_desc": "Only the administrator and moderators with posting permission will be able to post.",
       "toasts": {
         "success_create": "Group created successfully",
         "name_required": "Enter the group name",
@@ -2306,6 +2354,8 @@
       "user_all_post_remove_desc": "Lets the moderator delete all messages of the chosen user",
       "block_user": "Block user",
       "block_user_desc": "The moderator can block a user in the group",
+      "post_messages": "Posting messages",
+      "post_messages_desc": "Lets the moderator post in a channel where only an administrator can post",
       "add": "Add",
       "close": "Cancel",
       "enabled": "Enabled",
@@ -2322,6 +2372,8 @@
       "user_all_post_remove_desc": "Lets the moderator delete all messages of the chosen user",
       "block_user": "Block user",
       "block_user_desc": "The moderator can block a user in the group",
+      "post_messages": "Posting messages",
+      "post_messages_desc": "Lets the moderator post in a channel where only an administrator can post",
       "add": "Add",
       "close": "Cancel",
       "save": "Save",
@@ -2379,7 +2431,9 @@
       "can_posting": "Who can post?",
       "can_posting_desc": "Whether all members or only the administrator can post in the topic.",
       "all_posting": "All members",
+      "posting_all_desc": "Any topic member will be able to post messages.",
       "admin_posting": "Administrator only",
+      "posting_admin_desc": "Only the administrator and moderators with posting permission will be able to post.",
       "toasts": {
         "success_create": "Group topic created successfully",
         "name_required": "Enter the topic name",
@@ -2527,7 +2581,8 @@
       },
       "empty": {
         "title": "No conferences yet",
-        "desc": "New conferences will appear here"
+        "desc": "New conferences will appear here",
+        "create": "Create a conference"
       },
       "toasts": {
         "load_error": "Failed to load the conferences"
@@ -2594,6 +2649,47 @@
         "error_style": "Check the theme's CSS styles",
         "name_invalid": "Invalid name",
         "error": "Failed to save the theme"
+      }
+    },
+    "channel_members": {
+      "title": "Members",
+      "empty": {
+        "title": "No members yet",
+        "desc": "The list will appear once someone subscribes"
+      },
+      "toasts": {
+        "load_error": "Failed to load members",
+        "clean_success": "Member's messages deleted",
+        "ban_success": "Member banned",
+        "unban_success": "Ban lifted",
+        "cannot_clean": "This member's messages can't be deleted",
+        "cannot_ban": "This member can't be banned"
+      },
+      "context_menu": {
+        "clean_user": "Delete all messages by author",
+        "ban_user": "Ban member",
+        "unban_user": "Unban member"
+      },
+      "components": {
+        "member": {
+          "moderator": "Moderator",
+          "blocked": "Banned"
+        }
+      },
+      "dialogs": {
+        "confirm_moderation": {
+          "action_close": "Cancel",
+          "clean": {
+            "title": "Delete all messages by this author?",
+            "description": "This member's messages will be deleted for everyone. This action cannot be undone.",
+            "action_remove": "Delete"
+          },
+          "ban": {
+            "title": "Ban member?",
+            "description": "The member will be removed from the channel and won't be able to post there.",
+            "action_remove": "Ban"
+          }
+        }
       }
     },
     "themes": {

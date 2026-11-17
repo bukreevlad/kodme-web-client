@@ -37,7 +37,7 @@ export interface InviteInfoData {
     channel_id?: string;
 
     /** Тип канала (строка из БД: "channel"/"group"). */
-    channel_type?: string;
+    channel_kind?: string;
 
     /** Отображаемое имя канала. */
     display_name?: string;

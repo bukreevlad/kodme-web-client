@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -23,7 +24,7 @@ import { EmptyState } from "../../components/empty_state.js";
 import { subscribeStoreEvents } from "./events/store/store_events.js";
 
 // Импортируем forms
-import { MeetSettings } from "../meet-settings/index.js";
+
 import { MeetInviteCreate } from "../meet-invite-create/index.js";
 
 // Импортируем handlers
@@ -58,9 +59,6 @@ export interface MeetManageInvitesData {
 
 // Form
 export class MeetManageInvites {
-
-    // Реестр всех открытых форм MeetManageInvites: { meetId: instance }
-    static instances = new Map<string, MeetManageInvites>();
 
     // Переменные формы
     meetId: string;
@@ -109,8 +107,7 @@ export class MeetManageInvites {
         if (!data?.meetId) throw new Error("Не передан: meetId");
 
         // Поиск открытого окна настроек конференции
-        let meetSettingsForm = MeetSettings.instances.get(data.meetId);
-        let insertInto = meetSettingsForm?.modal?.content || null;
+        let insertInto = FormsRegistry.get(`meet-settings:${data.meetId}`)?.content || null;
 
         // Устанавливаем настройки
         this.options = {
@@ -145,10 +142,8 @@ export class MeetManageInvites {
 
         // Регистрируем этот экземпляр формы
         // Проверяем, существует ли уже экземпляр
-        let instance = MeetManageInvites.instances.get(data.meetId);
+        let instance = FormsRegistry.getOwner<MeetManageInvites>(`meet-manage-invites:${data.meetId}`);
         if (instance) return instance;
-
-        MeetManageInvites.instances.set(this.meetId, this);
 
         // Инициализация
         this._init();
@@ -181,6 +176,8 @@ export class MeetManageInvites {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: `meet-manage-invites:${this.meetId}`,
                 url: `?meet-manage-invites=${this.meetId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -286,7 +283,6 @@ export class MeetManageInvites {
         this._offScrollInvites = null;
 
         // Удаляем экземпляр формы из реестра
-        MeetManageInvites.instances.delete(this.meetId);
 
     }
 

@@ -31,13 +31,9 @@ export interface SessionUserData {
 }
 
 /**
- * Элемент списка сессий в Store формы: сессия из localStorage плюс
- * ссылки на DOM-копии элемента (для удаления при выгрузке из Store).
+ * Элемент списка сессий в Store формы: сессия из localStorage.
  */
-export type SessionItemData = Pick<StoredSession, keyof StoredSession> & {
-    /** DOM-копии элемента списка (для удаления при выгрузке из Store). */
-    __domElements__?: HTMLElement[];
-};
+export type SessionItemData = Pick<StoredSession, keyof StoredSession>;
 
 /**
  * Guard: похож ли payload события Store на элемент списка сессий.
@@ -83,11 +79,8 @@ export class UserSessionItem {
         // Создаем DOM-элемент из шаблона
         this.element = this._template();
 
-        // Записываем ссылку на dom элемент
-        if (!this.data.__domElements__) {
-            this.data.__domElements__ = [];
-        }
-        this.data.__domElements__.push(this.element);
+        // Регистрируем DOM-копию строки в реестре стора
+        this.form.store.registerDomElement(this.data.id, this.element);
 
         // Устанавливаем начальные данные
         this._setup(this.data);

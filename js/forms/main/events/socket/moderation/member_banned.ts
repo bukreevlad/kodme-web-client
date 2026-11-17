@@ -1,9 +1,5 @@
-// Импортируем config
-import { Socket } from "../../../../../config/socket.js";
-
 // Импортируем utils
 import { Logger } from "../../../../../utils/logs/logger.js";
-import { AsyncQueue } from "../../../../../utils/helpers/async_queue.js";
 
 // Импортируем db
 import { messagesTable } from "../../../db.js";
@@ -39,43 +35,32 @@ function isModerationMemberPayload(value: unknown): value is ModerationMemberPay
 
 /**
  * ***************************************************************************
- * Подписка на блокировку участника: состояние бана автора обновляется
- * в локальных сообщениях канала (для показа пункта «Разблокировать»).
+ * Применяет событие блокировки участника к локальным хранилищам: состояние
+ * бана автора обновляется в локальных сообщениях канала (для показа пункта
+ * «Разблокировать»).
  *
- * Самой жертве сервер дополнительно шлёт [channel]: remove] — канал у неё
- * вычищает существующий обработчик удаления канала.
- * @param asyncQueue - Общая очередь сообщений модерации.
+ * Самой жертве сервер дополнительно шлёт событие удаления канала
+ * (`[channel]: remove`) — канал у неё вычищает applyChannelRemove.
+ * @param data - Нагрузка события (id канала и id участника).
+ * @returns {void}
  * ***************************************************************************
  */
-export function subscribeModerationMemberBanned(asyncQueue: AsyncQueue): void {
+export async function applyMemberBanned(data: unknown): Promise<void> {
+    Logger.debug("[app][feed]::member_banned", data);
 
-    // ***************************************************************************
-    // Помечаем сообщения автора забаненными
-    // ***************************************************************************
-    Socket.client.on("[moderation]: member banned", (data, timestamp) => {
-        Logger.debug("[app][ws]::[moderation]: member banned", data, timestamp);
+    try {
 
-        // Сохраняем задачу в очереди и выполняем асинхронно
-        asyncQueue.enqueue(async () => {
+        // Нагрузка сокета типизирована как unknown: работаем только с известной структурой
+        if (!isModerationMemberPayload(data)) return;
 
-            try {
+        // Обновляем состояние бана в локальных сообщениях автора
+        await messagesTable()
+            .where("channel_id")
+            .equals(data.channel_id)
+            .and(message => message.author_id === data.user_id)
+            .modify({ author_is_blocked: true });
 
-                // Нагрузка сокета типизирована как unknown: работаем только с известной структурой
-                if (!isModerationMemberPayload(data)) return;
-
-                // Обновляем состояние бана в локальных сообщениях автора
-                await messagesTable()
-                    .where("channel_id")
-                    .equals(data.channel_id)
-                    .and(message => message.created_user_id === data.user_id)
-                    .modify({ author_is_blocked: true });
-
-            } catch (error) {
-                Logger.error(error);
-            }
-
-        });
-
-    });
-
+    } catch (error) {
+        Logger.error(error);
+    }
 }

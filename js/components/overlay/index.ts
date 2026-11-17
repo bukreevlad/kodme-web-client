@@ -1,5 +1,5 @@
 // Импортируем utils
-import { LayerStack } from "../../utils/layer_stack.js";
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { Navigation } from "../../utils/navigation.js";
 
 // Импортируем capabilities
@@ -301,7 +301,7 @@ export class Overlay implements OverlayLike {
 
         // Реагирует только самый верхний слой: одновременно открыто несколько
         // оверлеев, и одно нажатие не должно обрабатываться всеми сразу.
-        if (!LayerStack.isTop(this)) return;
+        if (!FormsRegistry.isTop(this)) return;
 
         // Пока идёт анимация закрытия — повторно не реагируем
         if (this.isClosing) return;
@@ -459,6 +459,21 @@ export class Overlay implements OverlayLike {
             this._focusReturnTarget = active instanceof HTMLElement ? active : null;
         }
 
+        // Регистрируем слой в едином реестре открытых форм сразу: запись
+        // живёт с момента открытия — формы обновляют её (заголовки пиуль и
+        // т.п.) ещё в onBeforeOpen. Wrap добавится после монтирования
+        FormsRegistry.register({
+            id: this.options.id,
+            instance: this,
+            owner: this.options.owner ?? null,
+            wrap: this.wrap,
+            placement: this.options.placement ?? (this.type === "form" ? "attached" : "dialog"),
+            container: this.options.insertInto ?? null,
+            parent: this.options.parent ?? FormsRegistry.getByContent(this.options.insertInto ?? null)?.id ?? null,
+            workspace: this.options.workspace ?? null,
+            url: this.options.url ?? null
+        });
+
         // BEFORE OPEN: Выполняем действие до начала открытия
         const onBeforeOpenResult = await this.options.onBeforeOpen();
 
@@ -489,8 +504,9 @@ export class Overlay implements OverlayLike {
             this.options.insertInto.appendChild(wrap);
         }
 
-        // Регистрируем слой: он смонтирован и теперь самый верхний
-        LayerStack.push(this);
+        // Слой смонтирован: запись реестра получает контейнер и контент
+        // (контент — точка монтирования вложенных форм)
+        FormsRegistry.update(this.options.id, { wrap: this.wrap, content: this.content });
 
         // Анимации появления
         this._playOpenAnimations();
@@ -548,8 +564,15 @@ export class Overlay implements OverlayLike {
         if (this.isClosing) return;
         this.isClosing = true;
 
-        // Снимаем слой со стека сразу, чтобы он перестал реагировать на Escape
-        LayerStack.remove(this);
+        // Вложенные формы живут в контенте слоя — закрываются вместе с ним
+        FormsRegistry.children(this.options.id).forEach((child) => {
+            if ("close" in child.instance && typeof child.instance.close === "function") {
+                void child.instance.close();
+            }
+        });
+
+        // Снимаем слой с реестра сразу, чтобы он перестал реагировать на Escape
+        FormsRegistry.unregister(this);
 
         // Выполняем действие перед удалением из DOM
         await this.options.onBeforeClose();
@@ -616,7 +639,7 @@ export class Overlay implements OverlayLike {
 
         // 2. Поднимаем слой: переключение таба выводит оверлей на передний план,
         //    и Escape должен закрывать именно его, а не тот, что смонтирован позже
-        LayerStack.raise(this);
+        FormsRegistry.raise(this);
 
         // 3. Обновляем навигацию (поднимаем в стеке и меняем URL)
         if (this.options.url) {

@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -42,8 +43,6 @@ export interface ContactsOptions {
 // Form
 export class Contacts {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: Contacts | null = null;
 
     /**
      * ***************************************************************************
@@ -82,12 +81,10 @@ export class Contacts {
         this.store = new Store<ContactRecord>();
 
         // Проверяем, существует ли уже экземпляр
-        if (Contacts.instance) {
-            return Contacts.instance;
-        }
+        const opened = FormsRegistry.getOwner<Contacts>("contacts");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        Contacts.instance = this;
 
         // Инициализация
         this._init();
@@ -151,6 +148,8 @@ export class Contacts {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "contacts",
                 url: `?contacts`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -246,8 +245,6 @@ export class Contacts {
         // Очищаем хранилище
         this.store?.removeAll();
 
-        // Удаляем экземпляр формы
-        Contacts.instance = null;
 
     }
 

@@ -9,7 +9,7 @@ import type { ChannelRecord } from "../types.js";
 /**
  * Данные запроса страницы списка чатов пользователя.
  */
-export interface GetUserConverstionData {
+export interface GetConversationsData {
 
     /** Направление загрузки страницы. */
     direction: "prev" | "next";
@@ -33,9 +33,9 @@ export interface GetUserConverstionData {
  * @throws Ошибка сокета/таймаута пробрасывается без изменений.
  * ***************************************************************************
  */
-export async function getUserConverstionRequest(data: GetUserConverstionData): Promise<Answer<ChannelRecord[]>> {
+export async function getConversationsRequest(data: GetConversationsData): Promise<Answer<ChannelRecord[]>> {
 
     return await Socket.client.timeout(SOCKET_REQUEST_TIMEOUT)
-        .emitWithAck<ChannelRecord[]>("[channel]: get user conversations", data);
+        .emitWithAck<ChannelRecord[]>("[channel]: get conversations", data);
 
 }

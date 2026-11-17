@@ -14,8 +14,8 @@ import type { BotAppsList } from "../index.js";
  * Создание DOM-элемента строки приложения бота.
  *
  * Был классом-фабрикой (constructor возвращал элемент) — переведён в
- * функцию по канону миграции. Элемент живёт в data.__domElements__ (для
- * удаления копий при выгрузке из стора).
+ * функцию по канону миграции. Элемент регистрируется в реестре DOM-копий
+ * стора (для удаления копий при выгрузке из стора).
  * @param form - Экземпляр диалога приложений.
  * @param data - Данные приложения.
  * @returns DOM-элемент строки приложения.
@@ -67,11 +67,8 @@ export function createAppItem(form: BotAppsList, data: BotAppItem): HTMLElement 
 
     };
 
-    // Записываем ссылку на DOM-элемент в данные
-    if (!currentData.__domElements__) {
-        currentData.__domElements__ = [];
-    }
-    currentData.__domElements__.push(element);
+    // Регистрируем DOM-копию строки в реестре стора
+    form.store.registerDomElement(currentData.id, element);
 
     // Устанавливаем начальные данные
     setup(currentData);

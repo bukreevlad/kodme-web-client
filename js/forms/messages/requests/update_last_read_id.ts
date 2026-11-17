@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Socket } from "../../../config/socket.js";
 import { SOCKET_REQUEST_TIMEOUT } from "../../../config/constants.js";
 
@@ -46,9 +47,7 @@ export async function updateLastViewedMessageIdRequest(data: UpdateLastViewedDat
     // Отправляем на сервер. Ошибку НЕ проглатываем: её логирует и показывает
     // вызывающий код (бэтчер) — так пользователь увидит причину.
     await Socket.client.timeout(SOCKET_REQUEST_TIMEOUT).emitWithAck("[channel-member]: update last viewed message", {
-        channel_id: data.id,
-        message_id: data.message_id,
-        total_unread_messages: data.total_unread_messages
+        message_id: data.message_id
     });
 
     // Локальные данные: обновляем всегда, даже если сервер ответил ошибкой —
@@ -71,25 +70,30 @@ async function syncLocalState(data: UpdateLastViewedData): Promise<void> {
 
     if (entityDB) {
 
-        entityDB.last_viewed_message_id = data.message_id;
+        entityDB.last_read_id = data.message_id;
         entityDB.total_unread_messages = data.total_unread_messages;
-        await IndexedDB.db?.table("channels").put(entityDB);
+
+        // Патч: удалённый параллельно канал не «воскресает»
+        await IndexedDB.db?.table("channels").update(entityDB.id, {
+            last_read_id: entityDB.last_read_id,
+            total_unread_messages: entityDB.total_unread_messages
+        });
 
         // Тема группы: уменьшаем счётчик у самой группы и убираем бейдж в списке тем
-        if (entityDB.topic_for_group_id) {
+        if (entityDB.parent_channel_id) {
 
             // Минусуем счетчик у ГРУППЫ
-            const parentStore = Main.instance?.store?.get(entityDB.topic_for_group_id);
+            const parentStore = FormsRegistry.getOwner<Main>("main")?.store?.get(entityDB.parent_channel_id);
             if (parentStore) {
                 // Поле типизировано как string | number — приводим к строке
                 // перед parseInt
                 const current = parseInt(String(parentStore.total_unread_messages)) || 0;
                 parentStore.total_unread_messages = current > 0 ? current - 1 : "";
-                Main.instance?.store.update(parentStore.id, parentStore);
+                FormsRegistry.getOwner<Main>("main")?.store.update(parentStore.id, parentStore);
             }
 
             // Обновляем саму ТЕМУ в списке тем (чтобы бадж исчез)
-            const groupTopicsForm = GroupTopics.instances.get(entityDB.topic_for_group_id);
+            const groupTopicsForm = FormsRegistry.getOwner<GroupTopics>(`group-topics:${entityDB.parent_channel_id}`);
             if (groupTopicsForm) {
                 groupTopicsForm.store.update(data.id, entityDB);
             }
@@ -99,15 +103,17 @@ async function syncLocalState(data: UpdateLastViewedData): Promise<void> {
     }
 
     // Счётчик в Store главного экрана
-    const channelStore = Main.instance?.store?.get(data.id);
+    const channelStore = FormsRegistry.getOwner<Main>("main")?.store?.get(data.id);
     if (channelStore) {
 
-        channelStore.last_viewed_message_id = data.message_id;
+        channelStore.last_read_id = data.message_id;
         channelStore.total_unread_messages = data.total_unread_messages;
-        Main.instance?.store.update(channelStore.id, channelStore);
+        FormsRegistry.getOwner<Main>("main")?.store.update(channelStore.id, channelStore);
 
         // Обновляем бейджи непрочитанных на вкладках папок
-        if (Main.instance) updateFolderUnread(Main.instance);
+        const main = FormsRegistry.getOwner<Main>("main");
+
+        if (main) updateFolderUnread(main);
 
     }
 

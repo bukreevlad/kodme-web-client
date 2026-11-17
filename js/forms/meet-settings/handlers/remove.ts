@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 import { getErrorMessage } from "../../../utils/helpers/error_util.js";
 
@@ -70,17 +71,11 @@ export async function removeHandler(form: MeetSettings): Promise<void> {
                     // Закрываем форму
                     form.modal?.close();
 
-                    // Поиск формы проигрывания
-                    let meetPlayForm = MeetPlay.instances.get(form.meetId);
-                    if (meetPlayForm) {
-                        meetPlayForm?.modal?.close();
-                    }
+                    // Закрываем окно проигрывания конференции
+                    FormsRegistry.closeLayer(`meet-play:${form.meetId}`);
 
-                    // Поиск формы списка конференций
-                    let meetsForm = Meets.instance;
-                    if (meetsForm) {
-                        meetsForm?.store?.remove(form.meetId);
-                    }
+                    // Убираем конференцию из списка
+                    FormsRegistry.getOwner<Meets>("meets")?.store?.remove(form.meetId);
 
                 }
             }

@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -27,8 +28,6 @@ import { t } from "../../../../utils/i18n/index.js";
  */
 export class PlaylistDialog {
 
-    // Переменная для хранения единственного экземпляра диалога
-    static instance: PlaylistDialog | null = null;
 
     /** Ссылка на форму полноэкранного плеера. */
     form: AudioPlayer | null;
@@ -63,12 +62,10 @@ export class PlaylistDialog {
         this.manager = form.manager;
 
         // Проверяем, существует ли уже экземпляр
-        if (PlaylistDialog.instance) {
-            return PlaylistDialog.instance;
-        }
+        const opened = FormsRegistry.getOwner<PlaylistDialog>("audio-player-dialogs-playlist");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        PlaylistDialog.instance = this;
 
         // Инициализация
         this._init();
@@ -100,6 +97,8 @@ export class PlaylistDialog {
             // Модальное окно
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "audio-player-dialogs-playlist",
                 closeOnEsc: true,
                 closeOnOverlay: true,
                 onBeforeOpen: async () => await this._onBeforeOpen(),
@@ -282,8 +281,6 @@ export class PlaylistDialog {
         this.tpl = null;
         this.modal = null;
 
-        // Удаляем глобальный экземпляр
-        PlaylistDialog.instance = null;
 
     }
 

@@ -1,5 +1,6 @@
 // Импортируем utils
-import { Logger } from "../../../utils/logs/logger.js";
+
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { toastError } from "../../../utils/ui/toast_error.js";
 
 // Импортируем requests
@@ -50,7 +51,7 @@ export async function goToMessage(form: ChannelProfile, messageId: string): Prom
     try {
 
         // Берём открытую форму чата канала: профиль чаще всего открывают поверх неё
-        let chat = Messages.instances.get(form.channelId);
+        let chat = FormsRegistry.getOwner<Messages>(`messages:${form.channelId}`);
 
         // Чата может не быть (профиль открывали из списка чатов) — открываем:
         // конструктор-синглтон вернёт уже существующий инстанс, если чат
@@ -72,7 +73,7 @@ export async function goToMessage(form: ChannelProfile, messageId: string): Prom
 
         // Если чат «закрылся», пока ждали первую отрисовку (например, группа
         // с темами открыла вместо него список тем) — переходить некуда
-        if (Messages.instances.get(form.channelId) !== messagesForm) return;
+        if (FormsRegistry.getOwner<Messages>(`messages:${form.channelId}`) !== messagesForm) return;
 
         // Данные целевого сообщения: если оно уже в окне чата — берём их из
         // стора, и переход ограничится подсветкой и прокруткой
@@ -206,7 +207,7 @@ function waitForFirstRender(chat: Messages): Promise<void> {
         // Периодическая проверка реестра нужна для «мёртвого» открытия:
         // форма группы с темами снимает себя из реестра до первой отрисовки
         const aliveCheck = setInterval(() => {
-            if (Messages.instances.get(chat.channelId) !== chat) finish();
+            if (FormsRegistry.getOwner<Messages>(`messages:${chat.channelId}`) !== chat) finish();
         }, ALIVE_CHECK_INTERVAL);
 
         // Таймаут снимает промис при молчащей сети либо пустом канале

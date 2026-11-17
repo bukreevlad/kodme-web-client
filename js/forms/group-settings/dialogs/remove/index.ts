@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -12,7 +13,7 @@ import { Overlay } from "../../../../components/overlay/index.js";
 import { Buttons } from "../../../../components/buttons.js";
 
 // Импортируем forms
-import { GroupSettings } from "../../../group-settings/index.js";
+
 import { t } from "../../../../utils/i18n/index.js";
 
 /**
@@ -44,8 +45,6 @@ export interface RemoveGroupData {
 // Form
 export class RemoveGroup {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: RemoveGroup | null = null;
 
     // Переменные формы
     channelId: string;
@@ -74,8 +73,7 @@ export class RemoveGroup {
         if (!data?.channelId) throw new Error("Не передан: channelId");
 
         // Поиск открытого профиля группы
-        let groupSettingsForm = GroupSettings.instances.get(data.channelId);
-        let insertInto = groupSettingsForm?.modal?.content || null;
+        let insertInto = FormsRegistry.get(`group-settings:${data.channelId}`)?.content || null;
 
         // Устанавливаем настройки
         this.options = {
@@ -94,12 +92,10 @@ export class RemoveGroup {
         this.callback = data.callback;
 
         // Проверяем, существует ли уже экземпляр
-        if (RemoveGroup.instance) {
-            return RemoveGroup.instance;
-        }
+        const opened = FormsRegistry.getOwner<RemoveGroup>("group-settings-dialogs-remove");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        RemoveGroup.instance = this;
 
         // Инициализация
         this._init();
@@ -129,6 +125,8 @@ export class RemoveGroup {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "group-settings-dialogs-remove",
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
                 closeOnOverlay: true,
@@ -216,8 +214,6 @@ export class RemoveGroup {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        RemoveGroup.instance = null;
 
     }
 

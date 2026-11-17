@@ -35,9 +35,6 @@ export interface BotAppItem extends StoreItem {
     /** Название приложения. */
     name: string;
 
-    /** Отображённые копии элемента в списке приложений. */
-    __domElements__?: HTMLElement[];
-
 }
 
 /**
@@ -58,7 +55,7 @@ export interface BotInfo {
     bio: string | null;
 
     /** Id пользователя, создавшего бота (владелец видит «Настройки»). */
-    bot_created_user_id: string;
+    bot_owner_id: string;
 
     /** Публичная ссылка бота (null — ссылка ещё не выдана). */
     link: string | null;

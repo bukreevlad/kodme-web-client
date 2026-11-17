@@ -70,7 +70,7 @@ export class IndexedDB {
 
         // Определяем схему БД
         db.version(5).stores({
-            channels: `&id, last_message_id, display_user_id, type, topic_for_group_id, [display_user_id+type]`,
+            channels: `&id, last_message_id, display_user_id, type, parent_channel_id, [display_user_id+type]`,
             messages: `&id, channel_id, [channel_id+id]`,
             pending_messages: `&id, channel_id, [channel_id+id]`,
 
@@ -82,6 +82,18 @@ export class IndexedDB {
             secret_chats: `&id, peer_user_id, peer_device_id, status, created_at, last_message_at`,
             secret_messages: `&id, chat_id, [chat_id+created_at], status`,
             secret_files: `&id, message_id, chat_id`,
+        });
+
+        // Виды каналов под новым контрактом: индексы type → kind
+        db.version(7).stores({
+            channels: `&id, last_message_id, display_user_id, kind, parent_channel_id, [display_user_id+kind]`,
+        });
+
+        // Личная лента событий: meta — служебные значения (последний upid),
+        // pending_user_updates — записки-намерения (зеркало pending_updates)
+        db.version(8).stores({
+            meta: `&key`,
+            pending_user_updates: `&id, timestamp`,
         });
 
         // Открываем БД и обрабатываем Promise

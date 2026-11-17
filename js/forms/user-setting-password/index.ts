@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -18,7 +19,7 @@ import { Toggle } from "../../components/toggle.js";
 import { saveHandler } from "./handlers/save.js";
 
 // Импортируем forms
-import { UserProfile } from "../user-profile/index.js";
+
 import { t } from "../../utils/i18n/index.js";
 
 /**
@@ -47,8 +48,6 @@ export interface UserSettingPasswordData {
 // Form
 export class UserSettingPassword {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: UserSettingPassword | null = null;
 
     /** Настройки формы. */
     options: UserSettingPasswordOptions;
@@ -83,8 +82,7 @@ export class UserSettingPassword {
         if (!data?.userId) throw new Error("Не передан: userId");
 
         // Поиск открытого профиля пользователя
-        const userProfileForm = UserProfile.instances.get(data.userId);
-        const insertInto = userProfileForm?.modal?.content || null;
+        const insertInto = FormsRegistry.get(`user-profile:${data.userId}`)?.content || null;
 
         // Устанавливаем настройки
         this.options = {
@@ -96,12 +94,10 @@ export class UserSettingPassword {
         this.userId = data.userId;
 
         // Проверяем, существует ли уже экземпляр
-        if (UserSettingPassword.instance) {
-            return UserSettingPassword.instance;
-        }
+        const opened = FormsRegistry.getOwner<UserSettingPassword>("user-setting-password");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        UserSettingPassword.instance = this;
 
         // Инициализация
         this._init();
@@ -133,6 +129,8 @@ export class UserSettingPassword {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "user-setting-password",
                 url: `?user-setting-password=${this.userId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -219,8 +217,6 @@ export class UserSettingPassword {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        UserSettingPassword.instance = null;
 
     }
 

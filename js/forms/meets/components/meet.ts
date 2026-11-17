@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 import { CacheManager } from "../../../utils/cache_manager.js";
 import { getThumbnailSizeQuery } from "../../../utils/helpers/get_thumbnail_size_query.js";
@@ -38,11 +39,8 @@ export function createMeetItem(form: Meets, data: MeetRecord): HTMLElement {
     // при вставке пачки в начало списка (см. functions/get_meets.ts)
     if (data.id) element.setAttribute("data-id", data.id);
 
-    // Записываем ссылку на dom элемент
-    if (!current.__domElements__) {
-        current.__domElements__ = [];
-    }
-    current.__domElements__.push(element);
+    // Регистрируем DOM-копию строки в реестре стора
+    form.store.registerDomElement(current.id, element);
 
     // Устанавливаем начальные данные
     setup(current);
@@ -153,7 +151,7 @@ export function createMeetItem(form: Meets, data: MeetRecord): HTMLElement {
         // Открыть конференцию
         element.addEventListener("click", () => {
 
-            let instance = MeetPlay.instances.get(current.id);
+            let instance = FormsRegistry.getOwner<MeetPlay>(`meet-play:${current.id}`);
             if (instance) {
                 instance.modal?.activate();
             } else {
@@ -187,8 +185,8 @@ export function createMeetItem(form: Meets, data: MeetRecord): HTMLElement {
 
             });
 
-            // Сохраняем функцию отписки в data, чтобы Main мог вызвать ее при удалении
-            current.__unsubscribeStore__ = unsubscribe;
+            // Запоминаем отписку в сторе — она вызовется при удалении элемента
+            form.store.addItemSubscription(current.id, unsubscribe);
 
         } catch (error) {
             Logger.error(error);

@@ -56,7 +56,7 @@ export async function openFileActions(event: MouseEvent, item: CloudFileItemHand
             menuItems.push({
                 text: t("forms.cloud.actions.share"),
                 iconName: "share",
-                onClick: () => new CreateShareLink({ form: item.form, item: item.data })
+                onClick: () => new CreateShareLink({ item: item.data })
             });
 
             // ================================
@@ -64,7 +64,7 @@ export async function openFileActions(event: MouseEvent, item: CloudFileItemHand
             menuItems.push({
                 text: t("forms.cloud.actions.links"),
                 iconName: "link",
-                onClick: () => new ShareLinks({ form: item.form, item: item.data })
+                onClick: () => new ShareLinks({ item: item.data })
             });
         }
 

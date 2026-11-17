@@ -3,12 +3,11 @@ import { Logger } from "../../../utils/logs/logger.js";
 import { IsMobile } from "../../../utils/helpers/is_mobile.js";
 
 // Импортируем managers
-import { TabsManager } from "../../../core/managers/form_tabs_manager.js";
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 
 // Импортируем типы
 import { isWindowGeometryOverlay } from "../types.js";
 import type { BotApp } from "../index.js";
-import type { FormTabData } from "../../../core/managers/form_tabs_manager.js";
 import { t } from "../../../utils/i18n/index.js";
 
 /**
@@ -59,17 +58,16 @@ export async function maximizeHandler(form: BotApp): Promise<void> {
             modal.classList.add("min-w-full", "min-h-full", "rounded-none");
         }
 
-        // Окно развёрнуто — добавляем таб напрямую: событие [app][form]::opened
-        // означает реальное открытие формы, а форма открыта давно
+        // Окно развёрнуто — включаем пикулю рабочего места напрямую:
+        // событие открытия формы не шлём, форма открыта давно
         form.maximized = true;
 
-        const tabData: FormTabData = {
-            instance: form,
-            subtitle: t("forms.bot_app.webapp_subtitle")
-        };
-        if (form.initData) tabData.title = form.initData.name;
-
-        TabsManager.addTab(form.modal.options.id, tabData);
+        FormsRegistry.update(form.modal.options.id, {
+            title: form.initData?.name ?? null,
+            subtitle: t("forms.bot_app.webapp_subtitle"),
+            placement: "workspace",
+            workspace: form.modal.options.id
+        });
 
     } catch (error) {
         Logger.error(error);

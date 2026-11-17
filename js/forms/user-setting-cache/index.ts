@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -23,7 +24,7 @@ import { clearDatabase } from "./functions/clear_database.js";
 import { clearDatabaseTable } from "./functions/clear_database_table.js";
 
 // Импортируем forms
-import { UserProfile } from "../user-profile/index.js";
+
 import { t } from "../../utils/i18n/index.js";
 
 /**
@@ -56,8 +57,6 @@ export interface UserSettingCacheData {
  */
 export class UserSettingCache {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: UserSettingCache | null = null;
 
     /** Настройки формы. */
     options: UserSettingCacheOptions;
@@ -95,8 +94,7 @@ export class UserSettingCache {
         if (!data?.userId) throw new Error("Не передан: userId");
 
         // Поиск открытого профиля пользователя
-        let userProfileForm = UserProfile.instances.get(data.userId);
-        let insertInto = userProfileForm?.modal?.content || null;
+        let insertInto = FormsRegistry.get(`user-profile:${data.userId}`)?.content || null;
 
         // Устанавливаем настройки
         this.options = {
@@ -109,12 +107,10 @@ export class UserSettingCache {
         this.sessionId = LocalStorage.sessionId;
 
         // Проверяем, существует ли уже экземпляр
-        if (UserSettingCache.instance) {
-            return UserSettingCache.instance;
-        }
+        const opened = FormsRegistry.getOwner<UserSettingCache>("user-setting-cache");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        UserSettingCache.instance = this;
 
         // Инициализация
         this._init();
@@ -143,6 +139,8 @@ export class UserSettingCache {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "user-setting-cache",
                 url: `?user-setting-cache=${this.userId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -206,8 +204,6 @@ export class UserSettingCache {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        UserSettingCache.instance = null;
 
     }
 

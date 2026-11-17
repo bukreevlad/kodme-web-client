@@ -52,7 +52,7 @@ export async function applyRoomState(form: MeetPlay, metadata?: string | null): 
         // Исключение делается в СОСТОЯНИИ, а не в отрисовке, иначе правило
         // продолжало бы действовать на всех остальных: у участника на плитке
         // организатора появлялись бы иконки запретов и красная обводка
-        const state = applyExempt(rawState, form.meet?.created_user_id);
+        const state = applyExempt(rawState, form.meet?.owner_id);
 
         // Итоговое состояние держим целиком: блокировка участника — это
         // правило комнаты плюс его личное отступление, и взять только одну

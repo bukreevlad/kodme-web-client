@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 import { inputInsertText } from "../../../utils/helpers/input_insert_text.js";
 
@@ -33,7 +34,7 @@ export async function emojiHandler(form: Messages, focus?: EmojiFocusSticker | n
 
         // Панель уже открыта: с фокусом переоткрываем её под текущий чат
         // (обработчики и якорь пересоздаются), без фокуса ничего не делаем
-        const existing = Emoji.instance;
+        const existing = FormsRegistry.getOwner<Emoji>("emoji");
         if (existing) {
             if (!focus) return;
             await existing.modal?.close();

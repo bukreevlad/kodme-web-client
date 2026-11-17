@@ -6,8 +6,9 @@ import { CDM_FORM_CLASSES, CDM_FORM_HEADER_CLASSES, CDM_FORM_CONTENT_CLASSES } f
 
 // Импортируем utils
 import { Logger } from "../../utils/logs/logger.js";
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { LocalStorage } from "../../utils/local_storage.js";
-import { Icons } from "../../utils/icons.js";
+
 import { t } from "../../utils/i18n/index.js";
 
 // Импортируем components
@@ -53,9 +54,6 @@ export interface BotProfileData {
 // Form
 export class BotProfile {
 
-    // Реестр всех открытых форм BotProfile: { botId: instance }
-    static instances = new Map<string, BotProfile>();
-
     /** Настройки формы. */
     options: BotProfileOptions;
 
@@ -100,11 +98,10 @@ export class BotProfile {
         this.botId = data.botId;
 
         // Получаем instance
-        let instance = BotProfile.instances.get(data.botId);
+        let instance = FormsRegistry.getOwner<BotProfile>(`bot-profile:${data.botId}`);
         if (instance) return instance;
 
         // Регистрируем этот экземпляр формы
-        BotProfile.instances.set(this.botId, this);
 
         // Инициализация
         this._init();
@@ -134,6 +131,10 @@ export class BotProfile {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: `bot-profile:${this.botId}`,
+                placement: "workspace",
+                workspace: `bot-profile:${this.botId}`,
                 url: `?bot-profile=${this.botId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
@@ -234,7 +235,7 @@ export class BotProfile {
             bio.textContent = this.profile.bio;
 
             // Если это не текущий пользователь
-            if (sessionUser.id !== this.profile.bot_created_user_id) {
+            if (sessionUser.id !== this.profile.bot_owner_id) {
                 settings.classList.add("hidden");
             }
 
@@ -248,17 +249,11 @@ export class BotProfile {
 
             // ==================================
 
-            // Сообщаем системе, что форма открыта
-            window.dispatchEvent(new CustomEvent("[app][form]::opened", {
-                detail: {
-                    id: this.modal?.options.id,
-                    data: {
-                        instance: this,
-                        title: this.profile.link,
-                        subtitle: t("forms.bot_profile.subtitle")
-                    }
-                }
-            }));
+            // Пилюля рабочего места: заголовки живут в записи реестра
+            if (this.modal) FormsRegistry.update(this.modal.options.id, {
+                title: this.profile.link,
+                subtitle: t("forms.bot_profile.subtitle")
+            });
 
             // ==================================
 
@@ -283,12 +278,6 @@ export class BotProfile {
     _onBeforeClose(): void {
 
         // Удаляем экземпляр формы из реестра
-        BotProfile.instances.delete(this.botId);
-
-        // Сообщаем системе, что форма закрыта
-        window.dispatchEvent(new CustomEvent("[app][form]::closed", {
-            detail: { id: this.modal?.options.id }
-        }));
 
     }
 

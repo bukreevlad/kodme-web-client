@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 import { getErrorMessage, getErrorStatus } from "../../../utils/helpers/error_util.js";
 
@@ -64,7 +65,7 @@ export async function disableTotpConfirmHandler(form: UserSettingSecurity, code:
         if (response.status) {
 
             // Закрываем диалог отключения
-            TotpDisableDialog.instance?.modal?.close();
+            FormsRegistry.getOwner<TotpDisableDialog>("user-setting-security-dialogs-totp_disable")?.modal?.close();
 
             // Toast: TOTP отключён
             Toast.success(t("forms.user_setting_security.toasts.totp_disabled"));

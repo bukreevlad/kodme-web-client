@@ -1,4 +1,5 @@
 // Импортируем хелперы и формы
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { Logger } from "../../utils/logs/logger.js";
 import { LocalStorage } from "../../utils/local_storage.js";
 import { Messages } from "../../forms/messages/index.js";
@@ -151,15 +152,15 @@ export class ActivityStatusManager {
     triggerUIUpdate(channelId: string) {
 
         // Обновляем форму сообщений, если она открыта и канал загружен
-        const messagesForm = Messages.instances.get(channelId);
+        const messagesForm = FormsRegistry.getOwner<Messages>(`messages:${channelId}`);
         if (messagesForm && messagesForm.channel && typeof messagesForm._update === "function") {
             messagesForm._update(messagesForm.channel);
         }
 
         // Обновляем элемент в списке каналов (сайдбаре) через глобальный Store/Main
-        const channelStore = Main.instance?.store?.get(channelId);
+        const channelStore = FormsRegistry.getOwner<Main>("main")?.store?.get(channelId);
         if (channelStore) {
-            Main.instance?.store?.update(channelStore.id, channelStore);
+            FormsRegistry.getOwner<Main>("main")?.store?.update(channelStore.id, channelStore);
         }
 
     }
@@ -240,7 +241,7 @@ export class ActivityStatusManager {
         }
 
         // К подзаголовку формы
-        const messagesForm = Messages.instances.get(channelId);
+        const messagesForm = FormsRegistry.getOwner<Messages>(`messages:${channelId}`);
         if (messagesForm?.subtitle) {
             messagesForm.subtitle.textContent = finalString;
             messagesForm.subtitle.classList.add("text-[var(--color-brand)]", "dark:text-[var(--color-brand)]");
@@ -248,8 +249,7 @@ export class ActivityStatusManager {
         }
 
         // К списку каналов вместо последнего сообщения
-        const channelStore = Main.instance?.store?.get(channelId);
-        const channelElements = channelStore?.__domElements__;
+        const channelElements = FormsRegistry.getOwner<Main>("main")?.store?.getDomElements(channelId);
 
         // Если Dom элементы найдены
         if (channelElements && channelElements.length > 0) {

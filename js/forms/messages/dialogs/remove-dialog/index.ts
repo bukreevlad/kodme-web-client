@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -62,8 +63,6 @@ export interface RemoveDialogData {
 // Form
 export class RemoveDialog {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: RemoveDialog | null = null;
 
     /**
      * ***************************************************************************
@@ -78,7 +77,7 @@ export class RemoveDialog {
     constructor(data: RemoveDialogData) {
 
         // Поиск открытой формы сообщений
-        let messageForm = Messages.instances?.get(data.channelId);
+        let messageForm = FormsRegistry.getOwner<Messages>(`messages:${data.channelId}`);
         let insertInto = messageForm?.modal?.content || null;
 
         // Устанавливаем настройки
@@ -98,12 +97,10 @@ export class RemoveDialog {
         this.forAllCheckbox = data?.forAllCheckbox || false;
 
         // Проверяем, существует ли уже экземпляр
-        if (RemoveDialog.instance) {
-            return RemoveDialog.instance;
-        }
+        const opened = FormsRegistry.getOwner<RemoveDialog>("messages-dialogs-remove-dialog");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        RemoveDialog.instance = this;
 
         // Инициализация
         this._init();
@@ -149,6 +146,8 @@ export class RemoveDialog {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "messages-dialogs-remove-dialog",
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
                 closeOnOverlay: true,
@@ -240,8 +239,6 @@ export class RemoveDialog {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        RemoveDialog.instance = null;
 
     }
 

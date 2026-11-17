@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 
 // Импортируем components
@@ -32,7 +33,7 @@ export async function switchCameraHandler(form: SecretCall): Promise<void> {
         Logger.error("[app][secret-call]: ошибка переключения камеры:", error);
 
         // Форма могла закрыться — тостить уже некому
-        if (SecretCall.instance !== form) return;
+        if (FormsRegistry.getOwner<SecretCall>("secret-call") !== form) return;
         Toast.error(t("forms.secret_call.toasts.camera_error"));
 
     }

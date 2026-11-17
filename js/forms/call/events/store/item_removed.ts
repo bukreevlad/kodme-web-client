@@ -10,7 +10,8 @@ import type { Call } from "../../index.js";
 
 /**
  * ***************************************************************************
- * Удаление карточки участника из DOM и освобождение её ресурсов.
+ * Освобождение ресурсов карточки участника при её удалении (DOM-копии
+ * карточки стор снимает сам).
  *
  * Тело обработчика обязано выполняться ВНУТРИ подписки на `item::removed` и
  * работать с `data` из события — это данные конкретного участника. Если
@@ -32,14 +33,6 @@ export function subscribeItemRemoved(form: Call): void {
             // Guard: payload события — элемент списка участников
             if (!isCallParticipantData(data)) return;
 
-            // ---------- UNSUBSCRIBE ----------
-            // Снимаем точечную подписку карточки на обновления
-            if (typeof data.__unsubscribeStore__ === "function") {
-                data.__unsubscribeStore__();
-                data.__unsubscribeStore__ = null;
-            }
-            // ---------- UNSUBSCRIBE ----------
-
             // ---------- RESOURCES ----------
             // Гасим плееры и аудио: иначе голос вышедшего участника
             // останется звучать в документе
@@ -51,23 +44,9 @@ export function subscribeItemRemoved(form: Call): void {
             data.__component__ = null;
             // ---------- RESOURCES ----------
 
-            // ---------- DOM ----------
-            // Убираем все DOM-элементы карточки (их может быть несколько копий)
-            if (Array.isArray(data.__domElements__)) {
-
-                data.__domElements__.forEach(element => {
-                    if (element && typeof element.remove === "function") element.remove();
-                });
-
-                // Очищаем массив, чтобы не копить утечки памяти
-                data.__domElements__ = [];
-
-            }
-
             // Своя плашка могла остаться пустой — применяем общее правило
             // видимости (см. functions/self_view.ts)
             syncSelfTileVisibility(form);
-            // ---------- DOM ----------
 
         });
 

@@ -6,8 +6,6 @@ import type { StoreItem } from "../../utils/store.js";
  * OnlineChatMessage - сообщение онлайн-чата трансляции в хранилище формы.
  *
  * Поля — только те, что реально читает код формы (имя автора и текст строки).
- * Служебные ключи (__domElements__) живут здесь же, потому что их пишет
- * подписка стора на добавление записей.
  * ***************************************************************************
  */
 export interface OnlineChatMessage extends StoreItem {
@@ -16,16 +14,13 @@ export interface OnlineChatMessage extends StoreItem {
     id: string;
 
     /** Id автора (из него считается цвет имени). */
-    created_user_id: string;
+    author_id: string;
 
     /** Отображаемое имя автора. */
     display_name: string;
 
     /** Текст сообщения. */
     text: string;
-
-    /** Отображённые копии строки (одно сообщение может попасть в список дважды). */
-    __domElements__?: HTMLElement[];
 
 }
 

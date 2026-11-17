@@ -80,10 +80,8 @@ export class VoiceItem {
         if (data?.id) this.element.setAttribute("data-id", String(data.id));
 
         // Записываем ссылки для внешних манипуляций
-        if (!this.data.__domElements__) {
-            this.data.__domElements__ = [];
-        }
-        this.data.__domElements__.push(this.element);
+        // Регистрируем DOM-копию строки в реестре стора секции
+        this.form.audioNoteStore.registerDomElement(this.data.id, this.element);
         this.data.__update__ = (data) => this.update(data);
         this.data.__getData__ = () => this.getData();
 

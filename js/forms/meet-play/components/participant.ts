@@ -98,11 +98,8 @@ export class ParticipantItem {
         // плитки по крупной и полосе, не заглядывая в хранилище
         this.element.dataset.identity = data?.participant?.identity || String(data?.id || "");
 
-        // Записываем ссылку на dom элемент
-        if (!this.data.__domElements__) {
-            this.data.__domElements__ = [];
-        }
-        this.data.__domElements__.push(this.element);
+        // Регистрируем DOM-копию строки в реестре стора
+        this.form.store.registerDomElement(this.data.id, this.element);
 
         // Быстрые ссылки на элементы
         this.videoSlot = this.element.querySelector(":scope [data-video]");
@@ -261,7 +258,7 @@ export class ParticipantItem {
             // и только на чужой плитке: себя удалить
             // сервер всё равно не даст (CANNOT_REMOVE_OWNER).
             if (this.removeButton) {
-                const isViewerCreator = this.form?.meet?.created_user_id === getSessionUserId();
+                const isViewerCreator = this.form?.meet?.owner_id === getSessionUserId();
 
                 this.removeButton.classList.toggle("hidden", !isViewerCreator || isLocal);
             }
@@ -458,8 +455,8 @@ export class ParticipantItem {
 
             });
 
-            // Сохраняем функцию отписки в data, чтобы Main мог вызвать ее при удалении
-            this.data.__unsubscribeStore__ = unsubscribe;
+            // Запоминаем отписку в сторе — она вызовется при удалении элемента
+            this.form.store.addItemSubscription(this.data.id, unsubscribe);
 
         } catch (error) {
             Logger.error(error);

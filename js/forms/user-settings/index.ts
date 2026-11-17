@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -22,7 +23,7 @@ import { exitSessionHandler } from "./handlers/exit_session.js";
 import { logoutSessionHandler } from "./handlers/logout_session.js";
 
 // Импортируем forms
-import { UserProfile } from "../user-profile/index.js";
+
 import { UserSettingEmail } from "../user-setting-email/index.js";
 import { UserSettingLink } from "../user-setting-link/index.js";
 import { UserSettingLanguage } from "../user-setting-language/index.js";
@@ -64,8 +65,6 @@ export interface UserSettingsData {
 // Form
 export class UserSettings {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: UserSettings | null = null;
 
     /** Настройки формы. */
     options: UserSettingsOptions;
@@ -103,8 +102,7 @@ export class UserSettings {
         if (!data?.userId) throw new Error("Не передан: userId");
 
         // Поиск открытого профиля пользователя
-        const userProfileForm = UserProfile.instances.get(data.userId);
-        const insertInto = userProfileForm?.modal?.content || null;
+        const insertInto = FormsRegistry.get(`user-profile:${data.userId}`)?.content || null;
 
         // Устанавливаем настройки
         this.options = {
@@ -116,12 +114,10 @@ export class UserSettings {
         this.userId = data.userId;
 
         // Проверяем, существует ли уже экземпляр
-        if (UserSettings.instance) {
-            return UserSettings.instance;
-        }
+        const opened = FormsRegistry.getOwner<UserSettings>("user-settings");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        UserSettings.instance = this;
 
         // Инициализация
         this._init();
@@ -154,6 +150,9 @@ export class UserSettings {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: `user-settings:${this.userId}`,
+                placement: "stack",
                 url: `?user-setting=${this.userId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -323,8 +322,6 @@ export class UserSettings {
     // ***************************************************************************
     async _onBeforeClose(): Promise<void> {
 
-        // Удаляем экземпляр формы
-        UserSettings.instance = null;
 
     }
 

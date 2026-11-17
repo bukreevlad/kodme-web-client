@@ -74,14 +74,8 @@ export interface SecretChatMessageRecord extends StoreItem {
     /** Флаг «не отправлено» — ошибка доставки (локальное состояние). */
     is_error_sending?: boolean;
 
-    /** Отображённые копии сообщения. */
-    __domElements__?: HTMLElement[];
-
     /** Вызвать редактирование сообщения (навешивает компонент строки). */
     __editMessage__?: () => void;
-
-    /** Отписка компонента от точечных событий Store (снимает событие удаления). */
-    __unsubscribeStore__?: () => void;
 
 }
 

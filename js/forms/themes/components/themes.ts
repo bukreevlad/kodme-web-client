@@ -1,8 +1,8 @@
 // Импортируем utils
+import { Themes as AppThemes } from "../../../utils/themes.js";
 import { Logger } from "../../../utils/logs/logger.js";
 import { Icons } from "../../../utils/icons.js";
 import { LocalStorage } from "../../../utils/local_storage.js";
-import { Themes as AppThemes } from "../../../utils/themes.js";
 
 // Импортируем forms
 import { ThemeEdit } from "../../theme-edit/index.js";
@@ -18,9 +18,9 @@ import type { StoreEventName } from "../../../utils/store.js";
  * Создание DOM-элемента строки темы оформления.
  *
  * Был классом-фабрикой (constructor возвращал элемент) — переведён в
- * функцию по канону миграции. Элемент живёт в data.__domElements__ (для
- * удаления копий при выгрузке из стора) и подписывается на точечное
- * событие обновления `item::updated::<id>`.
+ * функцию по канону миграции. Элемент регистрируется в реестре DOM-копий
+ * стора (для удаления копий при выгрузке из стора) и подписывается на
+ * точечное событие обновления `item::updated::<id>`.
  * @param form - Экземпляр формы.
  * @param data - Данные элемента.
  * @returns DOM-элемент строки темы.
@@ -63,7 +63,7 @@ export function createThemeItem(form: Themes, data: ThemeListItem): HTMLElement 
             if (author) author.textContent = itemData.author_name;
 
             // Если не текущий пользователь — убираем кнопку редактирования
-            if (itemData.created_user_id !== sessionUser.id) {
+            if (itemData.author_id !== sessionUser.id) {
                 edit?.remove();
             }
 
@@ -117,8 +117,8 @@ export function createThemeItem(form: Themes, data: ThemeListItem): HTMLElement 
 
             });
 
-            // Сохраняем функцию отписки в data, чтобы форма могла вызвать её при удалении
-            currentData.__unsubscribeStore__ = unsubscribe;
+            // Запоминаем отписку в сторе — она вызовется при удалении элемента
+            form.store.addItemSubscription(currentData.id, unsubscribe);
 
         } catch (error) {
             Logger.error(error);
@@ -126,11 +126,8 @@ export function createThemeItem(form: Themes, data: ThemeListItem): HTMLElement 
 
     };
 
-    // Записываем ссылку на DOM-элемент в данные
-    if (!currentData.__domElements__) {
-        currentData.__domElements__ = [];
-    }
-    currentData.__domElements__.push(element);
+    // Регистрируем DOM-копию строки в реестре стора
+    form.store.registerDomElement(currentData.id, element);
 
     // Устанавливаем начальные данные
     setup(currentData);

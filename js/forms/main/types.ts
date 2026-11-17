@@ -5,6 +5,7 @@ import type { StoreAddOptions, StoreItem } from "../../utils/store.js";
 import type { AvatarImageDocument } from "../../components/avatars.js";
 
 // Импортируем типы
+import type { ChannelKind, SystemActionPayload } from "../../types/domain.js";
 import type { SecretFileRef } from "../../utils/secret_chats/secret_frames.js";
 import type { SecretMessageType } from "../../types/secret_chats.js";
 
@@ -17,9 +18,8 @@ import type { SecretMessageType } from "../../types/secret_chats.js";
  * ровно столько, сколько читает и пишет эта форма: серверная строка шире, а
  * лишнее в тип не выносится, чтобы не врать о контракте.
  *
- * Служебные ключи (__domElements__, __unsubscribeStore__, __updateStatusRead__)
- * пишут компоненты строк и подписки стора — они объявлены здесь же (как в
- * других формах, см. js/forms/themes/types.ts).
+ * Служебный ключ (__updateStatusRead__) пишут компоненты строк — он
+ * объявлен здесь же.
  * ***************************************************************************
  */
 
@@ -128,14 +128,11 @@ export interface MessageRecord extends StoreItem {
     /** Id канала-владельца. */
     channel_id: string;
 
-    /** Контрольная точка синхронизации канала (серверный PTS). */
-    pts?: number;
-
     /** Время создания (ISO-строка). */
     created_at?: string;
 
     /** Id автора. */
-    created_user_id?: string | undefined;
+    author_id?: string | undefined;
 
     /** Отображаемое имя автора. */
     display_name?: string;
@@ -144,10 +141,19 @@ export interface MessageRecord extends StoreItem {
     text?: string | null | undefined;
 
     /** Тип системного действия (задан — сообщение системное). */
-    action_type?: number | null;
+    action_type?: string | null;
+
+    /** Полезные данные системного действия (статус звонка и т.п.). */
+    action_payload?: SystemActionPayload | null;
 
     /** Вложения. */
     attachments?: ChannelAttachment[] | null;
+
+    /**
+     * Клиентский ключ идемпотентности (поле объекта с сервера: ключ,
+     * с которым сообщение отправлено).
+     */
+    random_id?: string | null;
 
     /** Сообщение ещё не подтверждено ответом сервера. */
     is_pending?: boolean;
@@ -161,8 +167,8 @@ export interface MessageRecord extends StoreItem {
     /** Число комментариев под постом (заполняется сервером для type = 3). */
     count_comments?: number;
 
-    /** Разрешено ли комментирование поста (для type = 3). */
-    is_commenting?: boolean;
+    /** Личный флаг комментирования поста (null — наследует настройку канала). */
+    is_commenting?: boolean | null;
 
     /** Служебная подписка строки сообщения на обновление статуса прочтения. */
     __updateStatusRead__?: () => void;
@@ -175,8 +181,8 @@ export interface ChannelRecord extends StoreItem {
     /** Id канала (UUID v7). */
     id: string;
 
-    /** Тип: 1 диалог, 2 группа, 3 канал, 4 тема, 5 избранное, 6 конференция, 7 трансляция, 8 диалог с ботом. */
-    type?: number;
+    /** Вид канала. */
+    kind?: ChannelKind;
 
     /** Секретный чат (локальная запись из secret_chats, а не канал сервера). */
     is_secret_chat?: boolean;
@@ -193,8 +199,8 @@ export interface ChannelRecord extends StoreItem {
     /** Аватар канала (документ файла). */
     avatar?: AvatarImageDocument | null;
 
-    /** Уведомления канала включены. */
-    is_notifications?: boolean;
+    /** Подписка на уведомления (null — подписки нет). */
+    notifications?: { mode: "all" | "none" | "mentions" } | null;
 
     /** Пользователь подписан на канал. */
     is_subscribed?: boolean;
@@ -211,63 +217,49 @@ export interface ChannelRecord extends StoreItem {
     /** Id последнего сообщения. */
     last_message_id?: string | null;
 
-    /** Контрольная точка синхронизации (для догоняющих обновлений). */
-    last_pts?: number | undefined;
+    /** Id первого сообщения (нижняя граница истории). */
+    first_message_id?: string | null;
 
-    /** Текущий PTS канала. */
-    pts?: number;
+    /** Последняя применённая точка ленты событий канала (для догонки). */
+    last_pts?: number | undefined;
 
     /** Счётчик непрочитанных: сервер присылает строкой, клиент пишет числом. */
     total_unread_messages?: string | number;
 
-    /** Id последнего сообщения, прочитанного собеседником. */
-    last_viewed_message_id?: string | null;
+    /** Позиция прочитанного текущим пользователем. */
+    last_read_id?: string | null;
 
-    /** Id последнего просмотренного сообщения (для отметок прочтения). */
-    display_last_viewed_message_id?: string | null;
+    /** Позиция прочитанного собеседником (для отметок прочтения). */
+    display_last_read_id?: string | null;
 
     /** Id папок, в которые добавлен канал. */
     main_folders_ids?: string[];
 
     /** Id родительской группы (заполнен у тем). */
-    topic_for_group_id?: string | null;
+    parent_channel_id?: string | null;
+
+    /** Id владельца канала (для проверки прав модерации). */
+    owner_id?: string;
+
+    /** Id владельца родительской группы — для тем его права равны правам владельца темы. */
+    parent_owner_id?: string | null;
+
+    /** Текущий пользователь — модератор канала. */
+    is_moderator?: boolean;
+
+    /** Разрешено ли модератору удалять все сообщения участника. */
+    can_clean_messages?: boolean;
+
+    /** Разрешено ли модератору блокировать участников. */
+    can_restrict_members?: boolean;
+
+    /** Разрешено ли модератору писать в сущности с «Только администратор». */
+    can_posting_messages?: boolean;
 
     /** Темы группы (приходят в списке чатов; в IndexedDB не сохраняются). */
     topics?: ChannelRecord[];
 
-    /** Отображённые копии строки канала (по одной на открытую папку). */
-    __domElements__?: HTMLElement[];
-
-    /** Отписка компонента строки от точечного события обновления. */
-    __unsubscribeStore__?: () => void;
-
 }
-
-/** Удалённое сообщение: сервер отдаёт только метаданные для зачистки. */
-export interface DeletedUpdateItem {
-
-    /** Id сообщения. */
-    id: string;
-
-    /** Id канала. */
-    channel_id: string;
-
-    /** Флаг удаления. */
-    is_deleted: true;
-
-    /** Время последнего редактирования. */
-    edited_at: string | null;
-
-    /** PTS канала после события. */
-    pts: number;
-
-}
-
-/**
- * Элемент догоняющих обновлений: сервер возвращает либо новое/изменённое
- * сообщение, либо отметку об удалении (дискриминатор — `is_deleted`).
- */
-export type ChannelUpdateItem = DeletedUpdateItem | (MessageRecord & { is_deleted?: false });
 
 /**
  * Опции добавления элемента в стор.
@@ -282,19 +274,6 @@ export interface AddPageOptions extends StoreAddOptions {
     /** Направление вставки страницы. */
     direction?: "prev" | "next";
 
-}
-
-/**
- * Элемент — отметка об удалении сообщения (дискриминатор `is_deleted`).
- *
- * Сужение через `if (item.is_deleted)` не работает: MessageRecord
- * наследует индексную сигнатуру StoreItem, и TypeScript перестаёт
- * считать поле дискриминатором union'а — поэтому ветвление идёт guard'ом.
- * @param value - Проверяемое значение.
- * @returns true, если значение — метаданные удалённого сообщения.
- */
-export function isDeletedUpdate(value: unknown): value is DeletedUpdateItem {
-    return isRecord(value) && value.is_deleted === true;
 }
 
 /**

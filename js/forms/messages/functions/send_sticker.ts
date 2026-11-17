@@ -1,4 +1,7 @@
+// Импортируем сторонние пакеты
+
 // Импортируем utils
+import { v7 as Uuidv7 } from "uuid";
 import { Logger } from "../../../utils/logs/logger.js";
 import { toastError } from "../../../utils/ui/toast_error.js";
 
@@ -26,10 +29,12 @@ export async function sendSticker(form: Messages, sticker: StickerItem): Promise
 
     try {
 
-        // Запрос отправки (ошибки сервера сокет пробрасывает reject'ом)
+        // Запрос отправки (ошибки сервера сокет пробрасывает reject'ом);
+        // random_id — ключ идемпотентности на случай повтора
         await sendStickerRequest({
             channel_id: form.channelId,
-            sticker_document_id: sticker.document_id
+            sticker_document_id: sticker.document_id,
+            random_id: Uuidv7()
         });
 
     } catch (error) {

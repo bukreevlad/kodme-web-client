@@ -14,9 +14,7 @@ export type ThemePaginationDirection = "prev" | "next";
  * ThemeListItem - тема в хранилище списка формы тем.
  *
  * Поля — только те, что реально читает форма: строка списка (название,
- * автор) и владелец темы (кнопка «Редактировать»). Служебные ключи
- * (__domElements__, __unsubscribeStore__) живут здесь же: их пишут
- * компонент строки и подписки стора.
+ * автор) и владелец темы (кнопка «Редактировать»).
  ***************************************************************************
  */
 export interface ThemeListItem extends StoreItem {
@@ -31,16 +29,10 @@ export interface ThemeListItem extends StoreItem {
     style: string;
 
     /** Id автора темы. */
-    created_user_id: string;
+    author_id: string;
 
     /** Имя автора (имя + фамилия, склеенные сервером; null без профиля). */
     author_name: string | null;
-
-    /** Отображённые копии элемента (тема может попасть в список дважды). */
-    __domElements__?: HTMLElement[];
-
-    /** Отписка от события обновления элемента в сторе (снимает компонент). */
-    __unsubscribeStore__?: () => void;
 
 }
 

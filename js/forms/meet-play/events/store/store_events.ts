@@ -1,6 +1,5 @@
 // Импортируем events
 import { subscribeItemAdded } from "./item_added.js";
-import { subscribeItemRemoved } from "./item_removed.js";
 
 // Импортируем типы
 import type { MeetPlay } from "../../index.js";
@@ -15,7 +14,7 @@ import type { MeetPlay } from "../../index.js";
  */
 export function subscribeStoreEvents(form: MeetPlay): void {
 
+    // DOM-копии и подписки карточек стор снимает сам при удалении элементов
     subscribeItemAdded(form);
-    subscribeItemRemoved(form);
 
 }

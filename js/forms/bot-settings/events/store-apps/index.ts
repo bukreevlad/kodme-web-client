@@ -1,6 +1,5 @@
 // Импортируем events
 import { subscribeItemAdded } from "./item_added.js";
-import { subscribeItemRemoved } from "./item_removed.js";
 
 // Импортируем типы
 import type { BotSettings } from "../../index.js";
@@ -14,7 +13,7 @@ import type { BotSettings } from "../../index.js";
  */
 export function subscribeStoreEvents(form: BotSettings): void {
 
+    // DOM-копии строк стор снимает сам при удалении элементов
     subscribeItemAdded(form);
-    subscribeItemRemoved(form);
 
 }

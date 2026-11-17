@@ -109,8 +109,8 @@ function actions(element: HTMLElement, form: SecretChatMessageItem["form"], data
         event.stopPropagation();
 
         // Ищем DOM-копии оригинала в окне чата
-        const domElements = form.store.get(data.id)?.__domElements__;
-        if (!domElements?.length) return;
+        const domElements = form.store.getDomElements(data.id);
+        if (!domElements.length) return;
 
         // Подсвечиваем все копии и скроллим к первой
         domElements.forEach(el => {

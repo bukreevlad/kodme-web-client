@@ -1,7 +1,7 @@
 // Импортируем сторонние пакеты
-import { v7 as Uuidv7 } from "uuid";
 
 // Импортируем utils
+import { v7 as Uuidv7 } from "uuid";
 import { Logger } from "../../../utils/logs/logger.js";
 import { toastError } from "../../../utils/ui/toast_error.js";
 import { CacheManager } from "../../../utils/cache_manager.js";

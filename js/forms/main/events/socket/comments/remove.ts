@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../../../../core/managers/forms_registry.js";
 import { Socket } from "../../../../../config/socket.js";
 
 // Импортируем utils
@@ -82,7 +83,7 @@ export function subscribeCommentsRemove(asyncQueue: AsyncQueue): void {
 
                 // Строка в открытой форме ветки заменяется заглушкой
                 // (запись могла выпасть из окна — тогда удалять нечего)
-                const form = Comments.instances.get(data.entity_id);
+                const form = FormsRegistry.getOwner<Comments>(`comments:${data.entity_id}`);
                 if (form) markCommentRemoved(form, data.id);
 
             } catch (error) {

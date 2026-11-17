@@ -29,7 +29,7 @@ export async function saveHandler(form: ChannelSettings): Promise<void> {
     let name = tpl.querySelector<HTMLInputElement>(`:scope >.content [name="name"]`);
     let about = tpl.querySelector<HTMLInputElement>(`:scope >.content [name="about"]`);
     let isPublic = tpl.querySelector<HTMLInputElement>(`:scope >.content [name="is-public"]`);
-    let isPosting = tpl.querySelector<HTMLInputElement>(`:scope >.content [name="is-posting"]`);
+    let isPosting = tpl.querySelector<HTMLInputElement>(`:scope >.content [name="is-posting"]:checked`);
     let isCommenting = tpl.querySelector<HTMLInputElement>(`:scope >.content [name="is-commenting"]`);
 
     // Поля обязаны входить в шаблон — иначе сохранять и подсвечивать нечего
@@ -42,8 +42,8 @@ export async function saveHandler(form: ChannelSettings): Promise<void> {
             channel_id: form.channelId,
             name: name.value,
             about: about.value,
-            is_public: isPublic.checked,
-            is_posting: isPosting.checked,
+            visibility: isPublic.checked ? "public" : "private",
+            posting_mode: isPosting.value === "true" ? "all" : "admins",
             is_commenting: isCommenting.checked
         });
 

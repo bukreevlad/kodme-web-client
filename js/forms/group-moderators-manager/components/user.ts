@@ -22,7 +22,7 @@ import { t } from "../../../utils/i18n/index.js";
  * MODERATOR_ITEM - строка модератора в списке менеджера модераторов группы.
  *
  * Строка подписывается на `item::updated::<id>` локального стора формы и
- * держит ссылку на себя в `data.__domElements__`, чтобы стор удалил все
+ * регистрирует себя в реестре DOM-копий стора, чтобы стор удалил все
  * копии разом. Клик по строке открывает диалог настроек модератора.
  * ***************************************************************************
  */
@@ -53,11 +53,8 @@ export class ModeratorItem {
         // Создаем DOM-элемент из шаблона
         this.element = this._template();
 
-        // Записываем ссылку на dom элемент
-        if (!this.data.__domElements__) {
-            this.data.__domElements__ = [];
-        }
-        this.data.__domElements__.push(this.element);
+        // Регистрируем DOM-копию строки в реестре стора
+        this.form.store.registerDomElement(this.data.id, this.element);
 
         // Устанавливаем начальные данные
         this._setup(this.data);
@@ -206,8 +203,8 @@ export class ModeratorItem {
 
             });
 
-            // Сохраняем функцию отписки в data, чтобы стор мог вызвать её при удалении
-            this.data.__unsubscribeStore__ = unsubscribe;
+            // Запоминаем отписку в сторе — она вызовется при удалении элемента
+            this.form.store.addItemSubscription(this.data.id, unsubscribe);
 
         } catch (error) {
             Logger.error(error);

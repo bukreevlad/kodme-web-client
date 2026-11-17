@@ -1,7 +1,7 @@
 // Импортируем сторонние пакеты
-import { v7 as Uuidv7 } from "uuid";
 
 // Импортируем utils
+import { v7 as Uuidv7 } from "uuid";
 import { getSessionUserId, getSessionUserDisplayName } from "../../main/functions/session_identity.js";
 
 // Импортируем типы
@@ -31,14 +31,17 @@ export function createDraftComment(
     replyToCommentId: string | null = null
 ): CommentRecord {
 
+    // Локальный id комментария: он же уходит в запросе как random_id (ключ идемпотентности)
+    const id = Uuidv7();
+
     return {
-        id: Uuidv7(),
+        id,
         entity_id: form.postId,
         entity_type: "message",
-        created_user_id: getSessionUserId() ?? undefined,
+        author_id: getSessionUserId() ?? undefined,
         display_name: getSessionUserDisplayName(),
         channel_id: form.channelId,
-        channel_type: 3,
+        channel_kind: "channel",
         text: text,
         created_at: new Date().toISOString(),
         edited_at: null,

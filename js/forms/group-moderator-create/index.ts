@@ -6,6 +6,7 @@ import { CDM_FORM_CLASSES, CDM_FORM_HEADER_CLASSES, CDM_FORM_CONTENT_CLASSES, CD
 
 // Импортируем utils
 import { Logger } from "../../utils/logs/logger.js";
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { Icons } from "../../utils/icons.js";
 
 // Импортируем components
@@ -15,7 +16,6 @@ import { Buttons } from "../../components/buttons.js";
 import { Toggle } from "../../components/toggle.js";
 
 // Импортируем forms
-import { GroupModeratorsManager } from "../group-moderators-manager/index.js";
 
 // Импортируем handlers
 import { addModeratorHandler } from "./handlers/add.js";
@@ -77,8 +77,6 @@ export interface GroupAddModeratorData {
 // Form
 export class GroupAddModerator {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: GroupAddModerator | null = null;
 
     /**
      * ***************************************************************************
@@ -92,10 +90,8 @@ export class GroupAddModerator {
      */
     constructor(data: GroupAddModeratorData) {
 
-        // Поиск открытого менеджера модераторов: форма добавления
-        // открывается внутри него. Если менеджер закрыт — левая колонка home
-        const insertInto: HTMLElement | null = GroupModeratorsManager.instances.get(data.channelId)?.modal?.content
-            || document.querySelector(".cdm-form.home .left");
+        const insertInto: HTMLElement | null = FormsRegistry.get(`group-moderators-manager:${data.channelId}`)?.content
+            ?? document.querySelector<HTMLElement>(".cdm-form.home .left");
 
         // Устанавливаем настройки
         this.options = {
@@ -114,12 +110,10 @@ export class GroupAddModerator {
         this.channelId = data.channelId;
 
         // Проверяем, существует ли уже экземпляр
-        if (GroupAddModerator.instance) {
-            return GroupAddModerator.instance;
-        }
+        const opened = FormsRegistry.getOwner<GroupAddModerator>("group-moderator-create");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        GroupAddModerator.instance = this;
 
         // Инициализация
         this._init();
@@ -165,6 +159,10 @@ export class GroupAddModerator {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: `group-moderator-create:${this.channelId}`,
+                placement: "stack",
+                parent: FormsRegistry.getByContent(this.options.insertInto ?? null)?.id ?? null,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
                 closeOnOverlay: false,
@@ -272,8 +270,6 @@ export class GroupAddModerator {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        GroupAddModerator.instance = null;
 
     }
 
@@ -355,6 +351,26 @@ export class GroupAddModerator {
                             </div>
                             ${Toggle.switch({
                                 name: "can-restrict-members",
+                                checked: false,
+                                toggleText: {
+                                    on: t("forms.group_moderator_add.enabled"),
+                                    off: t("forms.group_moderator_add.disabled")
+                                }
+                            })}
+                        </div>
+
+                        <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
+                            <div class="flex flex-col gap-1">
+                                <span class="flex flex-row gap-2 items-center font-semibold">
+                                    <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
+                                        ${Icons.icon("message", { settings: { size: 20 } })?.outerHTML ?? ""}
+                                    </span>
+                                    ${t("forms.group_moderator_add.post_messages")}
+                                </span>
+                                <span class="text-sm text-secondary">${t("forms.group_moderator_add.post_messages_desc")}</span>
+                            </div>
+                            ${Toggle.switch({
+                                name: "can-posting-messages",
                                 checked: false,
                                 toggleText: {
                                     on: t("forms.group_moderator_add.enabled"),

@@ -6,6 +6,7 @@ import { CDM_FORM_CLASSES, CDM_FORM_HEADER_CLASSES, CDM_FORM_CONTENT_CLASSES, CD
 
 // Импортируем utils
 import { Logger } from "../../utils/logs/logger.js";
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { Icons } from "../../utils/icons.js";
 
 // Импортируем components
@@ -15,7 +16,6 @@ import { Inputs } from "../../components/inputs.js";
 import { Toggle } from "../../components/toggle.js";
 
 // Импортируем forms
-import { Broadcasts } from "../broadcasts/index.js";
 
 // Импортируем handlers
 import { createHandler } from "./handlers/create.js";
@@ -34,8 +34,6 @@ export interface BroadcastCreateOptions {
 // Form
 export class BroadcastCreate {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: BroadcastCreate | null = null;
 
     // Настройки формы
     options: BroadcastCreateOptions;
@@ -57,7 +55,7 @@ export class BroadcastCreate {
 
         // Поиск открытой формы списка трансляций: создание трансляции
         // открывается внутри неё. Если список закрыт — левая колонка home
-        const insertInto: HTMLElement | null = Broadcasts.instance?.modal?.content
+        const insertInto: HTMLElement | null = FormsRegistry.get("broadcasts")?.content
             || document.querySelector(".cdm-form.home .left");
 
         // Устанавливаем настройки
@@ -73,12 +71,10 @@ export class BroadcastCreate {
         this.osListScrollInstance = null; // overlayScroll instance
 
         // Проверяем, существует ли уже экземпляр
-        if (BroadcastCreate.instance) {
-            return BroadcastCreate.instance;
-        }
+        const opened = FormsRegistry.getOwner<BroadcastCreate>("broadcast-create");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        BroadcastCreate.instance = this;
 
         // Инициализация
         this._init();
@@ -111,6 +107,8 @@ export class BroadcastCreate {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "broadcast-create",
                 url: `?broadcast-create`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -197,8 +195,6 @@ export class BroadcastCreate {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        BroadcastCreate.instance = null;
 
     }
 

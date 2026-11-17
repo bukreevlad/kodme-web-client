@@ -1,5 +1,6 @@
 // Импортируем utils
 import type { StoreItem, StoreAddOptions } from "../../utils/store.js";
+import type { ChannelKind } from "../../types/domain.js";
 import type { AttachmentsRaw } from "../../utils/messages/attachments.js";
 
 // Импортируем components (только типы)
@@ -72,7 +73,7 @@ export interface CommentRecord extends StoreItem {
     entity_type?: string;
 
     /** Id автора комментария. */
-    created_user_id?: string | undefined;
+    author_id?: string | undefined;
 
     /** Отображаемое имя автора. */
     display_name?: string;
@@ -93,7 +94,7 @@ export interface CommentRecord extends StoreItem {
     channel_id?: string;
 
     /** Тип канала (3 — сообщество). */
-    channel_type?: number;
+    channel_kind?: ChannelKind;
 
     /** Текущий пользователь — модератор канала. */
     is_moderator?: boolean;
@@ -144,16 +145,6 @@ export interface CommentsFormData {
 
     /** Настройки формы. */
     options?: CommentsFormOptions;
-
-}
-
-/**
- * Ожидание ack исходящего комментария (освобождается при закрытии формы).
- */
-export interface PendingAck {
-
-    /** Разрешить ожидание ack (снимает зависший промис пуша). */
-    resolve?: () => void;
 
 }
 

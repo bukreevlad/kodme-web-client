@@ -8,8 +8,8 @@ import type { ForwardMessages } from "./index.js";
  * ForwardChannelRecord - канал в списке пересылки (строка из IndexedDB
  * главной формы).
  *
- * Поля created_user_id/is_posting/is_public приходят от сервера целиком
- * (спред ответа "[channel]: get user conversations" при сохранении в
+ * Поля owner_id/posting_mode/visibility приходят от сервера целиком
+ * (спред ответа "[channel]: get conversations" при сохранении в
  * IndexedDB) и нужны форме для предфильтра «куда разрешено пересылать»:
  * они объявлены здесь, потому что базовый ChannelRecord их не читает.
  * ***************************************************************************
@@ -17,13 +17,13 @@ import type { ForwardMessages } from "./index.js";
 export interface ForwardChannelRecord extends ChannelRecord {
 
     /** Id создателя канала. */
-    created_user_id?: string;
+    owner_id?: string;
 
     /** Могут ли писать все участники сущности. */
-    is_posting?: boolean;
+    posting_mode?: "all" | "admins";
 
     /** Публичная ли сущность. */
-    is_public?: boolean;
+    visibility?: "public" | "private";
 
 }
 

@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 import { Icons } from "../../../utils/icons.js";
 import { GestureController } from "../../../utils/gesture_controller.js";
@@ -27,7 +28,7 @@ import { I18n, t } from "../../../utils/i18n/index.js";
  *
  * Одна запись канала может дать несколько строк (общая папка + папки
  * пользователя): каждая строка подписывается на `item::updated::<id>`
- * своего стора и держит ссылку на себя в `data.__domElements__`, чтобы
+ * своего стора и регистрирует себя в реестре DOM-копий стора, чтобы
  * стор удалил все копии разом. В DOM строка вставляется через её
  * поле `element`.
  * ***************************************************************************
@@ -65,11 +66,8 @@ export class ChannelItem {
         // Создаем DOM-элемент из шаблона
         this.element = this._template();
 
-        // Инициализируем массив, если его еще нет, и добавляем текущий DOM-элемент
-        if (!this.data.__domElements__) {
-            this.data.__domElements__ = [];
-        }
-        this.data.__domElements__.push(this.element);
+        // Регистрируем DOM-копию строки в реестре стора
+        this.form.store.registerDomElement(this.data.id, this.element);
 
         // Устанавливаем начальные данные
         this._setup(this.data);
@@ -142,7 +140,7 @@ export class ChannelItem {
 
             // Определяем id аватара: у диалогов — пользователь, иначе — канал
             // (type опционален — null в includes не попадает)
-            const isDialog = this.data.type != null && [1, 8].includes(this.data.type);
+            const isDialog = this.data.kind === "dialog";
             const avatarId = isDialog ? this.data.display_user_id : this.data.id;
 
             // Аватар
@@ -152,11 +150,11 @@ export class ChannelItem {
                 name: this.data.display_name,
                 image: this.data?.avatar,
                 size: "xl",
-                wrapClasses: [this.data.type === 2 ? "rounded-xl" : "rounded-full"]
+                wrapClasses: [this.data.kind === "group" ? "rounded-xl" : "rounded-full"]
             });
 
             // Если это избранное
-            if (this.data.type === 5) {
+            if (this.data.kind === "favorite") {
                 avatarEl.setIcon("bookmark");
 
                 // Название
@@ -174,7 +172,7 @@ export class ChannelItem {
             }
 
             // Если уведомления выключены
-            if (!this.data.is_notifications) {
+            if (this.data.notifications?.mode !== "all") {
                 const icon = Icons.icon("BellOff");
                 if (icon) name.append(icon);
             }
@@ -196,7 +194,7 @@ export class ChannelItem {
         // Открыть канал
         this.element.addEventListener("click", () => {
 
-            const instance = Messages.instances.get(this.data.id);
+            const instance = FormsRegistry.getOwner<Messages>(`messages:${this.data.id}`);
             if (instance) {
                 instance.modal?.activate();
             } else {
@@ -225,14 +223,14 @@ export class ChannelItem {
         this._setup(data);
 
         // Если обновляется тема группы
-        if (data?.type === 4) {
+        if (data?.kind === "topic") {
 
             // Поиск Store
             const store = this.form.store;
 
             // Получаем группу и обновляем её (id группы опционален в записи
             // темы — без него искать в сторе нечего)
-            const topicForGroupId = data.topic_for_group_id;
+            const topicForGroupId = data.parent_channel_id;
             const group = topicForGroupId != null ? store.get(topicForGroupId) : undefined;
             if (group) store.update(group.id, group);
 
@@ -285,8 +283,8 @@ export class ChannelItem {
 
             });
 
-            // Сохраняем функцию отписки в data, чтобы Main мог вызвать ее при удалении
-            this.data.__unsubscribeStore__ = unsubscribe;
+            // Запоминаем отписку в сторе — она вызовется при удалении элемента
+            this.form.store.addItemSubscription(this.data.id, unsubscribe);
 
         } catch (error) {
             Logger.error(error);

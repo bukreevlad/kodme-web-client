@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -14,7 +15,6 @@ import { Buttons } from "../../components/buttons.js";
 import { Inputs } from "../../components/inputs.js";
 
 // Импортируем forms
-import { BotProfile } from "../bot-profile/index.js";
 
 // Импортируем handlers
 import { addHandler } from "./handlers/add.js";
@@ -52,8 +52,6 @@ export interface AddBotCategoryData {
 // Form
 export class AddBotCategory {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: AddBotCategory | null = null;
 
     /**
      * ***************************************************************************
@@ -73,7 +71,7 @@ export class AddBotCategory {
         // Поиск открытого профиля бота: дочерняя форма (приложение, команда,
         // категория, ссылка) должна открыться внутри него. Если профиль
         // закрыт — остаётся левая колонка home
-        const insertInto: HTMLElement | null = BotProfile.instances.get(data.botId)?.modal?.content
+        const insertInto: HTMLElement | null = FormsRegistry.get(`bot-profile:${data.botId}`)?.content
             || document.querySelector(".cdm-form.home .left");
 
         // Устанавливаем настройки
@@ -92,12 +90,10 @@ export class AddBotCategory {
         this.callback = data.callback;
 
         // Проверяем, существует ли уже экземпляр
-        if (AddBotCategory.instance) {
-            return AddBotCategory.instance;
-        }
+        const opened = FormsRegistry.getOwner<AddBotCategory>("bot-category-create");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        AddBotCategory.instance = this;
 
         // Инициализация
         this._init();
@@ -142,6 +138,8 @@ export class AddBotCategory {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "bot-category-create",
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
                 closeOnOverlay: false,
@@ -225,8 +223,6 @@ export class AddBotCategory {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        AddBotCategory.instance = null;
 
     }
 

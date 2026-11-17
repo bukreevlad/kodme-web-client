@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { Logger } from "../../../../utils/logs/logger.js";
 
 // Импортируем components
@@ -70,7 +71,7 @@ export async function moveToFolderHandler(channel: ChannelItem): Promise<void> {
 
                                 // Обновляем данные канала (добавляем папку)
                                 channel.data.main_folders_ids?.push(folder.id);
-                                Main.instance?.store.update(channel.data.id, channel.data);
+                                FormsRegistry.getOwner<Main>("main")?.store.update(channel.data.id, channel.data);
 
                                 // Обновляем IndexedDB
                                 await channelsTable().update(channel.data.id, {
@@ -81,7 +82,9 @@ export async function moveToFolderHandler(channel: ChannelItem): Promise<void> {
                                 addChannelToFolderPane(folder.id, channel.data);
 
                                 // Обновляем бейджи непрочитанных на вкладках папок
-                                if (Main.instance) updateFolderUnread(Main.instance);
+                                const main = FormsRegistry.getOwner<Main>("main");
+
+                                if (main) updateFolderUnread(main);
 
                                 // Toast
                                 Toast.success(t("forms.main.components.channels.context_menu.toasts.success_move_to_folder"), {
@@ -105,7 +108,7 @@ export async function moveToFolderHandler(channel: ChannelItem): Promise<void> {
                                 // Обновляем данные канала (убираем папку)
                                 const filteredFolders = (channel.data.main_folders_ids || []).filter(f => f !== folder.id);
                                 channel.data.main_folders_ids = filteredFolders || [];
-                                Main.instance?.store.update(channel.data.id, channel.data);
+                                FormsRegistry.getOwner<Main>("main")?.store.update(channel.data.id, channel.data);
 
                                 // Обновляем IndexedDB
                                 await channelsTable().update(channel.data.id, {
@@ -116,7 +119,9 @@ export async function moveToFolderHandler(channel: ChannelItem): Promise<void> {
                                 removeChannelFromFolderPane(folder.id, channel.data);
 
                                 // Обновляем бейджи непрочитанных на вкладках папок
-                                if (Main.instance) updateFolderUnread(Main.instance);
+                                const main = FormsRegistry.getOwner<Main>("main");
+
+                                if (main) updateFolderUnread(main);
 
                                 // Toast
                                 Toast.success(t("forms.main.components.channels.context_menu.toasts.success_unmove_from_folder"), {
@@ -157,7 +162,7 @@ export async function moveToFolderHandler(channel: ChannelItem): Promise<void> {
 function addChannelToFolderPane(folderId: string, data: ChannelRecord): void {
 
     // Главная форма и её стор — источник строки; без них вставлять нечего
-    const main = Main.instance;
+    const main = FormsRegistry.getOwner<Main>("main");
     const store = main?.store;
     if (!main || !store) return;
 
@@ -189,23 +194,14 @@ function addChannelToFolderPane(folderId: string, data: ChannelRecord): void {
 function removeChannelFromFolderPane(folderId: string, data: ChannelRecord): void {
 
     // Панель папки и её список
-    const pane = Main.instance?.foldersTabs?.getPane(folderId);
+    const pane = FormsRegistry.getOwner<Main>("main")?.foldersTabs?.getPane(folderId);
     const list = pane?.querySelector<HTMLElement>("[data-list]");
 
     // Строка канала в списке папки
     const row = list?.querySelector<HTMLElement>(`[data-id="${data.id}"]`);
     if (!row) return;
 
-    // Удаляем строку из панели
-    row.remove();
-
-    // Чистим ссылку на DOM-копию, чтобы не копить утечки памяти
-    const domElements = data.__domElements__;
-    if (Array.isArray(domElements)) {
-        const index = domElements.indexOf(row);
-        if (index !== -1) {
-            domElements.splice(index, 1);
-        }
-    }
+    // Снимаем DOM-копию: стор убирает элемент и чистит свой реестр
+    FormsRegistry.getOwner<Main>("main")?.store.removeDomElement(data.id, row);
 
 }

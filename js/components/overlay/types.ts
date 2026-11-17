@@ -2,6 +2,7 @@
 import type { AnimationPreset } from "../../config/animations.js";
 import type { FitMode } from "../../utils/dom/anchored_positioner.js";
 import type { MoveAndResizeController } from "../../utils/move_and_resize_controller.js";
+import type { FormPlacement } from "../../core/managers/forms_registry.js";
 
 /**
  * ***************************************************************************
@@ -69,6 +70,14 @@ export interface ResolvedOverlayOptions {
     url?: string | null;
     /** Куда монтировать обёртку (по умолчанию `document.body`). */
     insertInto?: HTMLElement | null | undefined;
+    /** Роль слоя в системе открытых форм (см. core/managers/forms_registry.ts). */
+    placement?: FormPlacement;
+    /** Id записи-родителя в реестре открытых форм (для вложенных форм и панелей). */
+    parent?: string | null;
+    /** Id рабочего места, которому принадлежит слой. */
+    workspace?: string | null;
+    /** Форма-владелец слоя (экземпляр формы для запросов к ней). */
+    owner?: object | null;
     /** Закрывать ли по Escape (только верхний слой). */
     closeOnEsc?: boolean | undefined;
     /** Закрывать ли по клику на оверлей. */
@@ -135,6 +144,14 @@ export interface OverlayOptions {
     url?: string | null;
     /** Куда монтировать обёртку. */
     insertInto?: HTMLElement | null | undefined;
+    /** Роль слоя в системе открытых форм (см. core/managers/forms_registry.ts). */
+    placement?: FormPlacement;
+    /** Id записи-родителя в реестре открытых форм (для вложенных форм и панелей). */
+    parent?: string | null;
+    /** Id рабочего места, которому принадлежит слой. */
+    workspace?: string | null;
+    /** Форма-владелец слоя (экземпляр формы для запросов к ней). */
+    owner?: object | null;
     /** Закрывать ли по Escape. */
     closeOnEsc?: boolean | undefined;
     /** Закрывать ли по клику на оверлей. */

@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -30,7 +31,6 @@ import { disableTotpHandler } from "./handlers/disable_totp.js";
 import { addPasskeyHandler } from "./handlers/add_passkey.js";
 
 // Импортируем forms
-import { UserProfile } from "../user-profile/index.js";
 
 // Импортируем типы
 import type { PasskeyListItem, TotpStatusData } from "./types.js";
@@ -62,8 +62,6 @@ export interface UserSettingSecurityData {
 // Form
 export class UserSettingSecurity {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: UserSettingSecurity | null = null;
 
     /** Настройки формы. */
     options: UserSettingSecurityOptions;
@@ -112,8 +110,7 @@ export class UserSettingSecurity {
         if (!data?.userId) throw new Error("Не передан: userId");
 
         // Поиск открытого профиля пользователя
-        const userProfileForm = UserProfile.instances.get(data.userId);
-        const insertInto = userProfileForm?.modal?.content || null;
+        const insertInto = FormsRegistry.get(`user-profile:${data.userId}`)?.content || null;
 
         // Устанавливаем настройки
         this.options = {
@@ -125,12 +122,10 @@ export class UserSettingSecurity {
         this.userId = data.userId;
 
         // Проверяем, существует ли уже экземпляр
-        if (UserSettingSecurity.instance) {
-            return UserSettingSecurity.instance;
-        }
+        const opened = FormsRegistry.getOwner<UserSettingSecurity>("user-setting-security");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        UserSettingSecurity.instance = this;
 
         // Инициализация
         this._init();
@@ -163,6 +158,8 @@ export class UserSettingSecurity {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "user-setting-security",
                 url: `?user-setting-security=${this.userId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -273,8 +270,6 @@ export class UserSettingSecurity {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        UserSettingSecurity.instance = null;
 
     }
 

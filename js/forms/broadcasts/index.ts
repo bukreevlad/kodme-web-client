@@ -6,6 +6,7 @@ import { CDM_FORM_CLASSES, CDM_FORM_HEADER_CLASSES, CDM_FORM_CONTENT_CLASSES } f
 
 // Импортируем utils
 import { Logger } from "../../utils/logs/logger.js";
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { Store } from "../../utils/store.js";
 
 // Импортируем core
@@ -57,8 +58,6 @@ export interface BroadcastsData {
 // Form
 export class Broadcasts {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: Broadcasts | null = null;
 
     /**
      * ***************************************************************************
@@ -103,12 +102,10 @@ export class Broadcasts {
         this.store = new Store<BroadcastCast>();
 
         // Проверяем, существует ли уже экземпляр
-        if (Broadcasts.instance) {
-            return Broadcasts.instance;
-        }
+        const opened = FormsRegistry.getOwner<Broadcasts>("broadcasts");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        Broadcasts.instance = this;
 
         // Инициализация
         this._init();
@@ -178,6 +175,10 @@ export class Broadcasts {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "broadcasts",
+                placement: "workspace",
+                workspace: "broadcasts",
                 url: `?broadcasts`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -263,16 +264,10 @@ export class Broadcasts {
             // Блок пустого состояния списка
             this.empty = this.tpl.querySelector(":scope >.content [data-empty]");
 
-            // Сообщаем системе, что форма открыта
-            window.dispatchEvent(new CustomEvent("[app][form]::opened", {
-                detail: {
-                    id: this.modal?.options.id,
-                    data: {
-                        instance: this,
-                        title: t("forms.broadcasts.title")
-                    }
-                }
-            }));
+            // Пилюля рабочего места: заголовки живут в записи реестра
+            if (this.modal) FormsRegistry.update(this.modal.options.id, {
+                title: t("forms.broadcasts.title")
+            });
 
             // Получаем трансляции
             await getCasts(this);
@@ -304,13 +299,7 @@ export class Broadcasts {
         // Очищаем хранилище
         this.store?.removeAll();
 
-        // Удаляем экземпляр формы
-        Broadcasts.instance = null;
 
-        // Сообщаем системе, что форма закрыта
-        window.dispatchEvent(new CustomEvent("[app][form]::closed", {
-            detail: { id: this.modal?.options.id }
-        }));
 
     }
 

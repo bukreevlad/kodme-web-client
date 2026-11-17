@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -84,7 +85,6 @@ export interface MeetGridSettingsState {
 export class MeetGridSettings {
 
     /** Единственный экземпляр формы. */
-    static instance: MeetGridSettings | null = null;
 
     /** Форма конференции, в которую вложена эта форма. */
     meetPlayForm: MeetPlay | null = null;
@@ -128,8 +128,8 @@ export class MeetGridSettings {
         if (!data?.meetId) throw new Error("Не передан: meetId");
 
         // Поиск открытого окна конференции
-        this.meetPlayForm = MeetPlay.instances.get(data.meetId) ?? null;
-        const insertInto = this.meetPlayForm?.modal?.content || null;
+        this.meetPlayForm = FormsRegistry.getOwner<MeetPlay>(`meet-play:${data.meetId}`) ?? null;
+        const insertInto = FormsRegistry.get(`meet-play:${data.meetId}`)?.content || null;
 
         // Устанавливаем настройки
         this.options = {
@@ -141,7 +141,7 @@ export class MeetGridSettings {
         this.meetId = data.meetId;
 
         // Принудительный режим доступен только создателю конференции
-        this.isCreator = this.meetPlayForm?.meet?.created_user_id === getSessionUserId();
+        this.isCreator = this.meetPlayForm?.meet?.owner_id === getSessionUserId();
 
         // Identity организатора в комнате LiveKit — она же user_id. Нужна,
         // чтобы сравнить её с принудительным фокусом из metadata: правило
@@ -165,12 +165,10 @@ export class MeetGridSettings {
         };
 
         // Проверяем, существует ли уже экземпляр
-        if (MeetGridSettings.instance) {
-            return MeetGridSettings.instance;
-        }
+        const opened = FormsRegistry.getOwner<MeetGridSettings>("meet-grid-settings");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        MeetGridSettings.instance = this;
 
         // Инициализация
         this._init();
@@ -212,6 +210,8 @@ export class MeetGridSettings {
             // Форма настроек
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "meet-grid-settings",
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
                 closeOnOverlay: false,
@@ -432,8 +432,6 @@ export class MeetGridSettings {
      */
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        MeetGridSettings.instance = null;
 
     }
 

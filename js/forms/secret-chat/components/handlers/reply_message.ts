@@ -21,9 +21,7 @@ export async function replyMessageHandler(message: SecretChatMessageItem): Promi
 
         // Копия записи без служебных __...__-полей (чистая цитата)
         const cleanData: SecretChatMessageRecord = { ...message.data };
-        delete cleanData.__domElements__;
         delete cleanData.__editMessage__;
-        delete cleanData.__unsubscribeStore__;
 
         // Записываем сообщение на которое отвечаем
         message.form.replyMessage = cleanData;

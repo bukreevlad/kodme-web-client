@@ -31,10 +31,8 @@ export function createChatBackgroundItem(form: UserSettingDecorations, data: Cha
     if (!element) throw new Error("Не найден шаблон: .item");
 
     // Записываем ссылку на dom элемент (для удаления копий при item::removed)
-    if (!data.__domElements__) {
-        data.__domElements__ = [];
-    }
-    data.__domElements__.push(element);
+    // Регистрируем DOM-копию строки в реестре стора
+    form.store.registerDomElement(data.id, element);
 
     // Устанавливаем начальные данные
     _setup(element, data);

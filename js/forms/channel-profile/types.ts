@@ -47,7 +47,7 @@ export interface ChannelSectionItemMetadata extends MediaItemMetadata {
 
 /**
  * Запись секции профиля канала — ответ сервера плюс служебные поля
- * компонентов строк (`__domElements__`, `__update__` и т.д.).
+ * компонентов строк (`__update__`, `__getData__` и т.д.).
  */
 export interface ChannelSectionItemData extends StoreItem {
 
@@ -104,17 +104,11 @@ export interface ChannelSectionItemData extends StoreItem {
     /** Метаданные записи. */
     metadata?: ChannelSectionItemMetadata;
 
-    /** Отображённые DOM-элементы строки (снимает subscribe_section). */
-    __domElements__?: Element[];
-
     /** Точечное обновление строки (навешивает компонент). */
     __update__?: (data: ChannelSectionItemData) => void;
 
     /** Получение актуальных данных строки (навешивает компонент). */
     __getData__?: () => ChannelSectionItemData;
-
-    /** Отписка от точечного события Store (снимает teardown через removeAll). */
-    __unsubscribeStore__?: Unsubscribe | null;
 
     /** Отписка компонента от глобальных событий (аудиоплейер). */
     __destroy__?: Unsubscribe | null;

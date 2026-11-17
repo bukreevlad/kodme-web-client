@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../../../../core/managers/forms_registry.js";
 import { Socket } from "../../../../../config/socket.js";
 
 // Импортируем utils
@@ -63,31 +64,25 @@ export function subscribeUpdateParticipantViewedMessage(): void {
                 // Нагрузка сокета типизирована как unknown: работаем только с известной структурой
                 if (!isParticipantViewedPayload(data)) return;
 
-                // Получаем из IndexedDB
-                const channelIndexedDB = await channelsTable().get(data.channel_id);
-
-                // Обновляем данные (записи может не быть — событие могло
-                // прийти раньше загрузки канала, как в update_last_viewed_message)
-                if (channelIndexedDB) {
-                    channelIndexedDB.display_last_viewed_message_id = data.message_id;
-                    await channelsTable().put(channelIndexedDB);
-                }
+                // Патчим отметку собеседника (записи может не быть — событие могло
+                // прийти раньше загрузки канала; удалённый канал не «воскресает»)
+                await channelsTable().update(data.channel_id, { display_last_read_id: data.message_id });
 
                 // =====================================
 
                 // Получаем канал из Store
-                const channelStore = Main.instance?.store.get(data.channel_id);
+                const channelStore = FormsRegistry.getOwner<Main>("main")?.store.get(data.channel_id);
 
                 // Обновляем данные
                 if (channelStore) {
-                    channelStore.display_last_viewed_message_id = data.message_id;
-                    Main.instance?.store.update(data.channel_id, channelStore);
+                    channelStore.display_last_read_id = data.message_id;
+                    FormsRegistry.getOwner<Main>("main")?.store.update(data.channel_id, channelStore);
                 }
 
                 // =====================================
 
                 // Получаем все сообщения из Store
-                const messageForm = Messages.instances.get(data.channel_id);
+                const messageForm = FormsRegistry.getOwner<Messages>(`messages:${data.channel_id}`);
                 if (messageForm) {
 
                     // Все сообщения

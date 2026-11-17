@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -48,9 +49,6 @@ export interface GroupTopicsOptions {
 
 // Form
 export class GroupTopics {
-
-    // Реестр всех открытых форм GroupTopics: { channelId: instance }
-    static instances = new Map<string, GroupTopics>();
 
     // Настройки формы
     options: GroupTopicsOptions;
@@ -112,11 +110,10 @@ export class GroupTopics {
         this.storeUnsubs = [];
 
         // Получаем instance
-        let instance = GroupTopics.instances.get(data.channel.id);
+        let instance = FormsRegistry.getOwner<GroupTopics>(`group-topics:${data.channel.id}`);
         if (instance) return instance;
 
         // Регистрируем этот экземпляр формы
-        GroupTopics.instances.set(data.channel.id, this);
 
         // Инициализация
         this._init();
@@ -153,6 +150,8 @@ export class GroupTopics {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: `group-topics:${this.channel.id}`,
                 url: `?group-topics=${this.channel?.id}`,
                 insertInto: this.options.insertInto,
                 closeOnSwipe: { direction: "right" },
@@ -269,7 +268,6 @@ export class GroupTopics {
         this.store?.removeAll();
 
         // Удаляем экземпляр формы из реестра
-        GroupTopics.instances.delete(this.channel.id);
 
     }
 

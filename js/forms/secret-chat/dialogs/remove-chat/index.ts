@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -48,8 +49,6 @@ export interface RemoveChatData {
 // Form
 export class RemoveChat {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: RemoveChat | null = null;
 
     /**
      * ***************************************************************************
@@ -64,7 +63,7 @@ export class RemoveChat {
     constructor(data: RemoveChatData) {
 
         // Поиск открытой формы секретного чата
-        let chatForm = SecretChat.instances?.get(data.chatId);
+        let chatForm = FormsRegistry.getOwner<SecretChat>(`secret-chat:${data.chatId}`);
         let insertInto = chatForm?.modal?.content || null;
 
         // Устанавливаем настройки
@@ -83,12 +82,10 @@ export class RemoveChat {
         this.callback = data.callback;
 
         // Проверяем, существует ли уже экземпляр
-        if (RemoveChat.instance) {
-            return RemoveChat.instance;
-        }
+        const opened = FormsRegistry.getOwner<RemoveChat>("secret-chat-dialogs-remove-chat");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        RemoveChat.instance = this;
 
         // Инициализация
         this._init();
@@ -133,6 +130,8 @@ export class RemoveChat {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "secret-chat-dialogs-remove-chat",
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
                 closeOnOverlay: true,
@@ -220,8 +219,6 @@ export class RemoveChat {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        RemoveChat.instance = null;
 
     }
 

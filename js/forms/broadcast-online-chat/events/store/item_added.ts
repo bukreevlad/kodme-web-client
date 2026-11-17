@@ -29,6 +29,9 @@ export function subscribeItemAdded(form: BroadcastOnlineChat): void {
             // Создаем DOM-элемент
             let item = createMessageItem(data);
 
+            // Регистрируем DOM-копию строки в реестре стора
+            form.store.registerDomElement(data.id, item);
+
             // Добавляем в список
             form.list?.appendChild(item);
 

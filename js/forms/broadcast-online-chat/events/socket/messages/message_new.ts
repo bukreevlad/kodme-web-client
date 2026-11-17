@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../../../../core/managers/forms_registry.js";
 import { Socket } from "../../../../../config/socket.js";
 
 // Импортируем utils
@@ -27,7 +28,7 @@ export function subscribeMessageNew(): void {
         try {
 
             // Получаем instance формы
-            let form = BroadcastOnlineChat.instance;
+            let form = FormsRegistry.getOwner<BroadcastOnlineChat>("broadcast-online-chat");
             if (form) {
 
                 // Стор шлёт payload как unknown — сверяемся guard'ом.

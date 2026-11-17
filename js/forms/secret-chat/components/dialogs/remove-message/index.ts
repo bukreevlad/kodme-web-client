@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../../../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -49,7 +50,6 @@ export interface RemoveMessageDialogData {
 export class RemoveMessage {
 
     /** Единственный экземпляр формы (Singleton). */
-    static instance: RemoveMessage | null = null;
 
     /** Настройки формы. */
     options: { insertInto?: HTMLElement | null | undefined };
@@ -79,7 +79,7 @@ export class RemoveMessage {
 
         // Поиск открытой формы секретного чата (id чата опционален —
         // без него искать по реестру нечего)
-        let chatForm = data.chatId != null ? SecretChat.instances.get(data.chatId) : undefined;
+        let chatForm = data.chatId != null ? FormsRegistry.getOwner<SecretChat>(`secret-chat:${data.chatId}`) : undefined;
         let insertInto = chatForm?.modal?.content || null;
 
         // Устанавливаем настройки
@@ -92,12 +92,10 @@ export class RemoveMessage {
         this.callback = data.callback;
 
         // Проверяем, существует ли уже экземпляр
-        if (RemoveMessage.instance) {
-            return RemoveMessage.instance;
-        }
+        const opened = FormsRegistry.getOwner<RemoveMessage>("secret-chat-components-dialogs-remove-message");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        RemoveMessage.instance = this;
 
         // Инициализация
         this._init();
@@ -129,6 +127,8 @@ export class RemoveMessage {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "secret-chat-components-dialogs-remove-message",
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
                 closeOnOverlay: true,
@@ -216,8 +216,6 @@ export class RemoveMessage {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        RemoveMessage.instance = null;
 
     }
 

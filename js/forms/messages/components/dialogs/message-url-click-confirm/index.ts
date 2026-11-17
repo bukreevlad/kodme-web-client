@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../../../../core/managers/forms_registry.js";
 import { CDM_MODAL_CLASSES, CDM_MODAL_CONTENT_CLASSES, CDM_MODAL_FOOTER_CLASSES, CDM_MODAL_HEADER_CLASSES } from "../../../../../config/constants.js";
 
 // Импортируем utils
@@ -36,7 +37,6 @@ export interface MessageUrlClickConfirmData {
 export class MessageUrlClickConfirm {
 
     /** Единственный экземпляр формы (Singleton). */
-    static instance: MessageUrlClickConfirm | null = null;
 
     /** Настройки формы. */
     options: { insertInto?: HTMLElement | null };
@@ -70,12 +70,10 @@ export class MessageUrlClickConfirm {
         this.url = data.url;
 
         // Проверяем, существует ли уже экземпляр
-        if (MessageUrlClickConfirm.instance) {
-            return MessageUrlClickConfirm.instance;
-        }
+        const opened = FormsRegistry.getOwner<MessageUrlClickConfirm>("messages-components-dialogs-message-url-click-confirm");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        MessageUrlClickConfirm.instance = this;
 
         // Инициализация
         this._init();
@@ -107,6 +105,8 @@ export class MessageUrlClickConfirm {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "messages-components-dialogs-message-url-click-confirm",
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
                 closeOnOverlay: true,
@@ -180,8 +180,6 @@ export class MessageUrlClickConfirm {
     // ***************************************************************************
     _onClose(): void {
 
-        // Удаляем экземпляр формы
-        MessageUrlClickConfirm.instance = null;
 
     }
 

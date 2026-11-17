@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -31,8 +32,6 @@ export interface ChannelCreateOptions {
 // Form
 export class ChannelCreate {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: ChannelCreate | null = null;
 
     /**
      * ***************************************************************************
@@ -56,12 +55,10 @@ export class ChannelCreate {
         this.osListScrollInstance = null; // overlayScroll instance
 
         // Проверяем, существует ли уже экземпляр
-        if (ChannelCreate.instance) {
-            return ChannelCreate.instance;
-        }
+        const opened = FormsRegistry.getOwner<ChannelCreate>("channel-create");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        ChannelCreate.instance = this;
 
         // Инициализация
         this._init();
@@ -103,6 +100,8 @@ export class ChannelCreate {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "channel-create",
                 url: `?channel-create`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -189,8 +188,6 @@ export class ChannelCreate {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        ChannelCreate.instance = null;
 
     }
 
@@ -274,14 +271,10 @@ export class ChannelCreate {
                                 ${t("forms.channel_create.can_posting")}
                             </span>
                             <span class="text-sm text-secondary">${t("forms.channel_create.can_posting_desc")}</span>
-                            ${Toggle.switch({
-                                name: "is-posting",
-                                checked: false,
-                                toggleText: {
-                                    on: t("forms.channel_create.all_posting"),
-                                    off: t("forms.channel_create.admin_posting")
-                                }
-                            })}
+                            ${Toggle.cardGroup([
+            { name: "is-posting", value: "true", checked: false, text: t("forms.channel_create.all_posting"), description: t("forms.channel_create.posting_all_desc") },
+            { name: "is-posting", value: "false", checked: true, text: t("forms.channel_create.admin_posting"), description: t("forms.channel_create.posting_admin_desc") }
+        ])}
                         </div>
 
                         <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">

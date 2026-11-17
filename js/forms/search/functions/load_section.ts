@@ -6,7 +6,6 @@ import { Logger } from "../../../utils/logs/logger.js";
 import { toastError } from "../../../utils/ui/toast_error.js";
 
 // Импортируем config формы
-import { SECTIONS } from "../config/sections.js";
 
 // Импортируем requests
 import { sectionRequest } from "../requests/index.js";

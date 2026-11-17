@@ -23,7 +23,7 @@ export function updateFolderUnread(form: Main): void {
         const channels = form.store.getAll();
 
         // Темы групп (учитываются через свою группу, а не отдельно)
-        const topics = channels.filter(channel => channel.topic_for_group_id);
+        const topics = channels.filter(channel => channel.parent_channel_id);
 
         /**
          * Считаем непрочитанные сообщения канала, как в списке:
@@ -35,9 +35,9 @@ export function updateFolderUnread(form: Main): void {
             let total = parseUnread(channel.total_unread_messages) || 0;
 
             // Если это группа — прибавляем непрочитанные её тем
-            if (channel.type === 2) {
+            if (channel.kind === "group") {
                 topics.forEach(topic => {
-                    if (topic.topic_for_group_id === channel.id) {
+                    if (topic.parent_channel_id === channel.id) {
                         total += parseUnread(topic.total_unread_messages) || 0;
                     }
                 });
@@ -59,7 +59,7 @@ export function updateFolderUnread(form: Main): void {
             channels.forEach(channel => {
 
                 // Темы не считаем отдельно — они входят в свою группу
-                if (channel.topic_for_group_id) return;
+                if (channel.parent_channel_id) return;
 
                 // Для папки «Все» учитываем все каналы
                 if (folderId !== "all") {

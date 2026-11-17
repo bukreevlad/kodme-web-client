@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -20,9 +21,13 @@ import { MainFolderCreate } from "../main-folder-create/index.js";
 import { getConversations } from "./functions/get_conversations.js";
 import { getChannels } from "./functions/get_channels.js";
 import { getUpdates } from "./functions/get_updates.js";
+import { getUserUpdates } from "./functions/get_user_updates.js";
 import { showMainFolders } from "./functions/show_main_folders.js";
 import { updateFolderUnread } from "./functions/update_folder_unread.js";
 import { getSessionOrganisationName } from "./functions/session_identity.js";
+
+// Импортируем db
+import { channelsTable } from "./db.js";
 
 // Импортируем handlers
 import { menuHandler } from "./handlers/menu.js";
@@ -54,15 +59,13 @@ interface MainOptions {
  * ***************************************************************************
  * MAIN - главная форма: список папок и каналов пользователя.
  *
- * Синглтон: единственный экземпляр лежит в Main.instance, повторный
+ * Синглтон: единственный экземпляр живёт в реестре открытых форм, повторный
  * конструктор возвращает его же. Данные списка живут в Store<ChannelRecord>,
  * локальная копия каналов — в IndexedDB (см. db.ts).
  * ***************************************************************************
  */
 export class Main {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: Main | null = null;
 
     /**
      * ***************************************************************************
@@ -87,12 +90,10 @@ export class Main {
         this.store = new Store<ChannelRecord>();
 
         // Проверяем, существует ли уже экземпляр
-        if (Main.instance) {
-            return Main.instance;
-        }
+        const opened = FormsRegistry.getOwner<Main>("main");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        Main.instance = this;
 
         // Инициализация
         this._init();
@@ -188,6 +189,8 @@ export class Main {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "main",
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
                 closeOnOverlay: false,
@@ -324,18 +327,26 @@ export class Main {
     }
 
     // ***************************************************************************
-    // Вызываем полное обновление списка каналов
-    // И получаем пропущенные обновления
+    // Синхронизация списка каналов и пропущенных событий
+    //
+    // Список бесед получаем только при холодном старте (локальная БД пуста):
+    // дальше он живёт событиями ленты, а обычный старт и переподключение
+    // обслуживаются догонкой по pts.
     // ***************************************************************************
     async _getUpdates(): Promise<void> {
 
         // Устанавливаем статус
         this.appStatus?.setStatus({ text: t("forms.main.updating") });
 
-        // Делаем запрос на сервер getUserConverstion
-        await getConversations(this);
+        // Холодный старт: локальной истории каналов нет — получаем полный список
+        const localChannelsCount = await channelsTable().count();
+        if (localChannelsCount === 0) await getConversations(this);
 
-        // Получаем обновления для каналов
+        // Личная лента: появление/исчезновение каналов (сначала она — новые
+        // каналы должны появиться в хранилище раньше канальной догонки)
+        await getUserUpdates(this);
+
+        // Получаем пропущенные события для каналов
         await getUpdates(this);
 
         // Обновляем бейджи непрочитанных на вкладках папок
@@ -354,8 +365,6 @@ export class Main {
         // Очищаем хранилище
         this.store?.removeAll();
 
-        // Удаляем экземпляр формы
-        Main.instance = null;
 
     }
 
@@ -374,19 +383,11 @@ export class Main {
         new GestureController(this.tpl, {
             ignore,
             swipe: {
-                directions: ["left", "right"],
-                onStart: () => { },
-                onMove: (dx) => {
-                    if (dx > 0) {
-
-                        // Если достигли точки
-                        if (dx > 80) {
-                            menuHandler();
-                        }
-
-                    }
-                },
-                onEnd: () => { }
+                commitDistance: 60,
+                directions: ["right"],
+                onCommit: () => {
+                    menuHandler();
+                }
             }
         });
 

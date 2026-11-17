@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -27,7 +28,7 @@ import { removeAllOtherDevicesHandler } from "./handlers/remove_other_devices.js
 import { onDevicesScrollHandler } from "./handlers/on_devices_scroll.js";
 
 // Импортируем forms
-import { UserProfile } from "../user-profile/index.js";
+
 import { UserSettingLoginWithQRCode } from "../user-setting-login-qrcode/index.js";
 
 // Импортируем типы
@@ -60,8 +61,6 @@ export interface UserSettingDevicesData {
 // Form
 export class UserSettingDevices {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: UserSettingDevices | null = null;
 
     /** Настройки формы. */
     options: UserSettingDevicesOptions;
@@ -113,8 +112,7 @@ export class UserSettingDevices {
         if (!data?.userId) throw new Error("Не передан: userId");
 
         // Поиск открытого профиля пользователя
-        let userProfileForm = UserProfile.instances.get(data.userId);
-        let insertInto = userProfileForm?.modal?.content || null;
+        let insertInto = FormsRegistry.get(`user-profile:${data.userId}`)?.content || null;
 
         // Устанавливаем настройки
         this.options = {
@@ -138,12 +136,10 @@ export class UserSettingDevices {
         this.store = new Store<SessionListItem>();
 
         // Проверяем, существует ли уже экземпляр
-        if (UserSettingDevices.instance) {
-            return UserSettingDevices.instance;
-        }
+        const opened = FormsRegistry.getOwner<UserSettingDevices>("user-setting-devices");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        UserSettingDevices.instance = this;
 
         // Инициализация
         this._init();
@@ -176,6 +172,8 @@ export class UserSettingDevices {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "user-setting-devices",
                 url: `?user-setting-devices=${this.userId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -286,8 +284,6 @@ export class UserSettingDevices {
         this._offScrollDevices?.();
         this._offScrollDevices = null;
 
-        // Удаляем экземпляр формы
-        UserSettingDevices.instance = null;
 
     }
 

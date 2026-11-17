@@ -94,10 +94,6 @@ export function subscribeItemAdded(form: Messages): (() => void) | null {
         // иначе после закрытия чата подписка жила вечно и держала форму в памяти.
         const unsubscribe = form.store.on("item::added", (data, options) => {
 
-            // Исходящие (pending) сообщения запоминаем отдельно: по ним ожидаем эхо от сервера,
-            // чтобы не создать дубликат при гонке ack↔echo в [message]: new
-            if (isMessageRecord(data) && data.is_pending) form.pendingIds?.add(data.id);
-
             // Запоминаем якорь ДО изменения DOM (один раз на пачку)
             if (!form._listSyncScheduled) {
                 form.listScrollManager?.saveAnchor();

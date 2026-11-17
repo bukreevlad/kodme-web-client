@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../../../../core/managers/forms_registry.js";
 import { Socket } from "../../../../../config/socket.js";
 
 // Импортируем utils
@@ -90,7 +91,7 @@ export function subscribeCommentsUpdatePostCommenting(asyncQueue: AsyncQueue): v
 
                 // invariant: реестр форм сообщений ключуется id канала; пост
                 // мог выпасть из окна ленты — тогда обновлять нечего
-                const messagesForm = Messages.instances.get(data.channel_id);
+                const messagesForm = FormsRegistry.getOwner<Messages>(`messages:${data.channel_id}`);
                 if (messagesForm?.store.get(data.message_id)) {
 
                     // item::updated перерисует строку поста
@@ -102,11 +103,9 @@ export function subscribeCommentsUpdatePostCommenting(asyncQueue: AsyncQueue): v
 
                 try {
 
-                    // Получаем закэшированный пост (может отсутствовать)
-                    const stored = await messagesTable().get(data.message_id);
-                    if (stored) {
-                        await messagesTable().put({ ...stored, is_commenting: data.is_commenting });
-                    }
+                    // Патч: запись отсутствует или удалена параллельно —
+                    // ничего не создаём и не «воскрешаем»
+                    await messagesTable().update(data.message_id, { is_commenting: data.is_commenting });
 
                 } catch (error) {
 
@@ -119,7 +118,7 @@ export function subscribeCommentsUpdatePostCommenting(asyncQueue: AsyncQueue): v
 
                 // Id поста-владельца равен message_id; entity_id приходит как
                 // страховка в контракте
-                const form = Comments.instances.get(data.entity_id ?? data.message_id);
+                const form = FormsRegistry.getOwner<Comments>(`comments:${data.entity_id ?? data.message_id}`);
                 if (form) setCommentingAllowed(form, data.is_commenting);
 
             } catch (error) {

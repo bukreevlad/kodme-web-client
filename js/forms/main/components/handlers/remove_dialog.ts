@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { Logger } from "../../../../utils/logs/logger.js";
 import { IndexedDB } from "../../../../utils/indexed_db.js";
 
@@ -36,8 +37,8 @@ export async function removeDialogHandler(channel: ChannelItem): Promise<void> {
 
         // Устанавливаем параметры
         const currentChannelId = channel.data.id;
-        const channelType = channel.data.type;
-        const isDialog = [1, 8].includes(channelType ?? -1);
+        const channelKind = channel.data.kind;
+        const isDialog = channelKind === "dialog";
 
         // Отображаем диалог
         new RemoveDialog({
@@ -54,13 +55,13 @@ export async function removeDialogHandler(channel: ChannelItem): Promise<void> {
 
                 // Поиск открытой формы диалога
                 // Закрываем форму
-                const messagesForm = Messages?.instances?.get(currentChannelId);
+                const messagesForm = FormsRegistry.getOwner<Messages>(`messages:${currentChannelId}`);
                 if (messagesForm) {
                     messagesForm?.modal?.close();
                 }
 
                 // Удаляем из списка Store
-                Main?.instance?.store?.remove(currentChannelId);
+                FormsRegistry.getOwner<Main>("main")?.store?.remove(currentChannelId);
 
                 // Очищаем локальную БД (IndexedDB)
                 IndexedDB.enqueue(async () => {

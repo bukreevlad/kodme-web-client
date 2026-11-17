@@ -33,8 +33,7 @@ export interface CastThumbnail {
  * BroadcastCast - трансляция в хранилище формы (карточка списка).
  *
  * Поля — только те, что реально читает код формы: карточка списка и
- * сокет-обновление. Служебные ключи (__domElements__, __unsubscribeStore__)
- * живут здесь же, потому что их пишут и читают подписки стора.
+ * сокет-обновление.
  ***************************************************************************
  */
 export interface BroadcastCast extends StoreItem {
@@ -53,12 +52,6 @@ export interface BroadcastCast extends StoreItem {
 
     /** Документ обложки трансляции. */
     thumbnail?: CastThumbnail | null;
-
-    /** Отображённые копии карточки (одна запись может попасть в список дважды). */
-    __domElements__?: HTMLElement[];
-
-    /** Отписка от точечного события обновления записи. */
-    __unsubscribeStore__?: (() => void) | null;
 
 }
 

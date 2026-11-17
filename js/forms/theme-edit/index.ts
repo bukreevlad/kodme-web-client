@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { CDM_FORM_CLASSES, CDM_FORM_HEADER_CLASSES, CDM_FORM_CONTENT_CLASSES, CDM_FORM_SECTION_CLASSES } from "../../config/constants.js";
 
 // Импортируем utils
@@ -47,9 +48,6 @@ export interface ThemeEditData {
 // Form
 export class ThemeEdit {
 
-    // Реестр всех открытых форм ThemeEdit: { themeId: instance }
-    static instances = new Map<string, ThemeEdit>();
-
     /** Настройки формы. */
     options: ThemeEditOptions;
 
@@ -95,11 +93,10 @@ export class ThemeEdit {
         this.themeId = data.themeId;
 
         // Получаем instance
-        let instance = ThemeEdit.instances.get(data.themeId);
+        let instance = FormsRegistry.getOwner<ThemeEdit>(`theme-edit:${data.themeId}`);
         if (instance) return instance;
 
         // Регистрируем этот экземпляр формы
-        ThemeEdit.instances.set(this.themeId, this);
 
         // Инициализация
         this._init();
@@ -129,6 +126,8 @@ export class ThemeEdit {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: `theme-edit:${this.themeId}`,
                 url: `?theme-edit=${this.themeId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -246,7 +245,6 @@ export class ThemeEdit {
     _onBeforeClose(): void {
 
         // Удаляем экземпляр формы из реестра
-        ThemeEdit.instances.delete(this.themeId);
 
     }
 

@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { CDM_FORM_CLASSES, CDM_FORM_HEADER_CLASSES, CDM_FORM_CONTENT_CLASSES, CDM_FORM_SECTION_CLASSES } from "../../config/constants.js";
 
 // Импортируем utils
@@ -28,8 +29,6 @@ export interface ThemeCreateOptions {
 // Form
 export class ThemeCreate {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: ThemeCreate | null = null;
 
     /** Настройки формы. */
     options: ThemeCreateOptions;
@@ -62,12 +61,10 @@ export class ThemeCreate {
         }
 
         // Проверяем, существует ли уже экземпляр
-        if (ThemeCreate.instance) {
-            return ThemeCreate.instance;
-        }
+        const opened = FormsRegistry.getOwner<ThemeCreate>("theme-create");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        ThemeCreate.instance = this;
 
         // Инициализация
         this._init();
@@ -97,6 +94,8 @@ export class ThemeCreate {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "theme-create",
                 url: `?theme-create`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -178,8 +177,6 @@ export class ThemeCreate {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        ThemeCreate.instance = null;
 
     }
 

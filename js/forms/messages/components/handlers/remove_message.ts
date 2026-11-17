@@ -35,19 +35,19 @@ export async function removeMessageHandler(message: MessageItem): Promise<void> 
 
         // Устанавливаем параметры
         const sessionUserId = getSessionUserId();
-        const channelType = message.data.channel_type;
+        const channelKind = message.data.channel_kind;
 
         // Чаты с выбором «удалить только у себя / для всех»: личные диалоги,
         // диалоги с ботом, группы, темы, чаты конференций и трансляций.
         // В сообществах (тип 3) и избранном (тип 5) выбора нет — удаление
         // всегда «для всех»
-        const isChat = [1, 2, 4, 6, 7, 8].includes(channelType ?? -1);
+        const isChat = channelKind != null && channelKind !== "channel" && channelKind !== "favorite";
 
         // Имеет ли право удалять "Для всех" (правила доступа сервера)
         const canDeleteForAllInChat =
-            [1, 8].includes(channelType ?? -1) ||
-            message.data.created_user_id === sessionUserId ||
-            message.form.channel?.created_user_id === sessionUserId ||
+            channelKind === "dialog" ||
+            message.data.author_id === sessionUserId ||
+            message.form.channel?.owner_id === sessionUserId ||
             (message.form.channel?.is_moderator && message.form.channel?.can_deleted_message);
 
         // Показывать ли чекбокс "Удалить для всех"

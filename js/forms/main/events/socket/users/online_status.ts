@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../../../../core/managers/forms_registry.js";
 import { Socket } from "../../../../../config/socket.js";
 
 // Импортируем utils
@@ -52,15 +53,15 @@ export function subscribeOnlineStatus(): void {
             if (!isOnlineStatusPayload(data)) return;
 
             // Получаем каналы из Main.Store
-            const channels = Main.instance?.store.getAll();
+            const channels = FormsRegistry.getOwner<Main>("main")?.store.getAll();
 
             // Проходим по каналам
             channels?.forEach(channel => {
 
                 // Если это диалог
-                if (channel.type === 1 && channel.display_user_id === data.user_id) {
+                if (channel.kind === "dialog" && channel.display_user_id === data.user_id) {
                     channel.display_user_is_online = data.status === "online" ? true : false;
-                    Main.instance?.store.update(channel.id, channel);
+                    FormsRegistry.getOwner<Main>("main")?.store.update(channel.id, channel);
                 }
 
             });

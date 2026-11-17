@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -57,8 +58,6 @@ export interface ForwardMessagesData {
 // Form
 export class ForwardMessages {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: ForwardMessages | null = null;
 
     // Каркас: шаблон, модалка, контент и instance скролла
     options: ForwardMessagesOptions;
@@ -107,12 +106,10 @@ export class ForwardMessages {
         this.store = new Store<ForwardChannelRecord>();
 
         // Проверяем, существует ли уже экземпляр
-        if (ForwardMessages.instance) {
-            return ForwardMessages.instance;
-        }
+        const opened = FormsRegistry.getOwner<ForwardMessages>("forward-messages");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        ForwardMessages.instance = this;
 
         // Инициализация
         this._init();
@@ -147,6 +144,8 @@ export class ForwardMessages {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "forward-messages",
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
                 closeOnOverlay: true,
@@ -228,8 +227,6 @@ export class ForwardMessages {
     // *************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        ForwardMessages.instance = null;
 
     }
 

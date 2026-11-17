@@ -1,5 +1,6 @@
-// Ключи для удаления
-const KEYS_TO_REMOVE: string[] = [
+// Служебные ключи записей (DOM-состояние, хуки компонентов, загрузки):
+// не сохраняются в IndexedDB и не переносятся между записями в Store.update
+export const KEYS_TO_REMOVE: string[] = [
     '__domElement__',
     '__domElements__',
     '__unsubscribeStore__',
@@ -7,7 +8,12 @@ const KEYS_TO_REMOVE: string[] = [
     '__updateReactions__',
     '__update__',
     '__editMessage__',
-    '__getData__'
+    '__getData__',
+    '__destroy__',
+    '__component__',
+    '__uploader__',
+    '__progressInstances__',
+    '__onCancel__'
 ];
 
 /**

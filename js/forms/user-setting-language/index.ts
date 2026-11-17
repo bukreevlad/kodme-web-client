@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -13,7 +14,6 @@ import { Overlay } from "../../components/overlay/index.js";
 import { Buttons } from "../../components/buttons.js";
 
 // Импортируем forms
-import { UserSettings } from "../user-settings/index.js";
 
 // Импортируем functions
 import { renderLanguages } from "./functions/render_languages.js";
@@ -34,8 +34,6 @@ export interface UserSettingLanguageData {
 // Form
 export class UserSettingLanguage {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: UserSettingLanguage | null = null;
 
     /** Id пользователя. */
     userId: string;
@@ -69,18 +67,16 @@ export class UserSettingLanguage {
         if (!data?.userId) throw new Error("Не передан: userId");
 
         // Поиск открытых настроек: форма языка открывается внутри них
-        this.insertInto = UserSettings.instance?.modal?.content || null;
+        this.insertInto = FormsRegistry.get(`user-settings:${data.userId}`)?.content ?? null;
 
         // Устанавливаем настройки
         this.userId = data.userId;
 
         // Проверяем, существует ли уже экземпляр
-        if (UserSettingLanguage.instance) {
-            return UserSettingLanguage.instance;
-        }
+        const opened = FormsRegistry.getOwner<UserSettingLanguage>("user-setting-language");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        UserSettingLanguage.instance = this;
 
         // Инициализация
         this._init();
@@ -110,6 +106,8 @@ export class UserSettingLanguage {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "user-setting-language",
                 url: `?user-setting-language=${this.userId}`,
                 insertInto: this.insertInto,
                 closeOnEsc: false,
@@ -199,8 +197,6 @@ export class UserSettingLanguage {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        UserSettingLanguage.instance = null;
 
     }
 

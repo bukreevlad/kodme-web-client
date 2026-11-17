@@ -1,6 +1,5 @@
 // Импортируем events
 import { subscribeItemAdded } from "./item_added.js";
-import { subscribeItemRemoved } from "./item_removed.js";
 import { subscribeChannelItemUpdated } from "./channel_item_updated.js";
 
 // Импортируем типы
@@ -16,9 +15,9 @@ import type { GroupTopics } from "../../index.js";
 export function subscribeStoreEvents(form: GroupTopics): Array<() => void> {
 
     // Локальные подписки формы уходят вместе с её хранилищем — отписывать
-    // нечего; глобальный стор требует явной отписки
+    // нечего (DOM-копии строк стор снимает сам); глобальный стор требует
+    // явной отписки
     subscribeItemAdded(form);
-    subscribeItemRemoved(form);
 
     // Подписка на глобальный стор живёт вне формы — сохраняем отписку.
     // Без стора отписываться нечего, список остаётся пустым

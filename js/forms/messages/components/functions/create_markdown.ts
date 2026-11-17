@@ -1,7 +1,7 @@
 // Импортируем сторонние пакеты
+import type { MarkdownIt as MarkdownItInstance } from "markdown-it";
 import hljs from "highlight.js/lib/common";
 import MarkdownIt from "markdown-it";
-import type { MarkdownIt as MarkdownItInstance } from "markdown-it";
 
 // Импортируем config
 import { MARKDOWN_RULES_DISABLED_FOR_USER } from "../../../../config/constants.js";

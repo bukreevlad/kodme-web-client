@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 
 // Импортируем forms
@@ -23,7 +24,7 @@ export async function callHandler(form: UserProfile): Promise<void> {
     try {
 
         // Открываем форму звонка (или поднимаем уже открытую)
-        let instance = Call.instances.get(form.userId);
+        let instance = FormsRegistry.getOwner<Call>(`call:${form.userId}`);
         if (instance) {
             instance?.modal?.activate();
         } else {

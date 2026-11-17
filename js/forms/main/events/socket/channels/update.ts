@@ -1,9 +1,7 @@
-// Импортируем config
-import { Socket } from "../../../../../config/socket.js";
-
 // Импортируем utils
+import { FormsRegistry } from "../../../../../core/managers/forms_registry.js";
+import { isChannelRecord as isMessagesChannelRecord } from "../../../../messages/types.js";
 import { Logger } from "../../../../../utils/logs/logger.js";
-import { AsyncQueue } from "../../../../../utils/helpers/async_queue.js";
 import { getErrorName } from "../../../../../utils/helpers/error_util.js";
 
 // Импортируем forms
@@ -12,7 +10,6 @@ import { GroupTopics } from "../../../../group-topics/index.js";
 import { Messages } from "../../../../messages/index.js";
 
 // Импортируем типы соседней формы (только для передачи канала в неё)
-import { isChannelRecord as isMessagesChannelRecord } from "../../../../messages/types.js";
 
 // Импортируем components
 import { Toast } from "../../../../../components/toast.js";
@@ -25,76 +22,63 @@ import { isChannelWithTopics } from "../../../types.js";
 import type { ChannelRecord } from "../../../types.js";
 import { t } from "../../../../../utils/i18n/index.js";
 
-// Очередь выполнения socket событий
-const asyncQueue = new AsyncQueue();
-
 /**
  * ***************************************************************************
- * Подписка на обновление канала: запись мержится поверх текущей в локальной
- * БД, после чего обновляются сайдбар и открытые формы (диалог, темы).
+ * Применяет событие обновления канала к локальным хранилищам и UI: запись
+ * мержится поверх текущей в локальной БД, после чего обновляются сайдбар
+ * и открытые формы (диалог, темы).
+ * @param data - Нагрузка события (запись канала).
+ * @returns {void}
  * ***************************************************************************
  */
-export function subscribeChannelsUpdate(): void {
+export async function applyChannelUpdate(data: unknown): Promise<void> {
+    Logger.debug("[app][feed]::channel_updated", data);
 
-    // ***************************************************************************
-    // Обновление канала
-    // ***************************************************************************
-    Socket.client.on("[channel]: update", (data, timestamp) => {
-        Logger.debug("[app][ws]::[channel]: update", data, timestamp);
+    try {
 
-        // Сохраняем задачу в очереди и выполняем асинхронно
-        asyncQueue.enqueue(async () => {
+        // Нагрузка сокета типизирована как unknown: мержим только запись канала
+        if (!isChannelWithTopics(data)) return;
 
-            try {
+        // Чистим входящие данные (вырезаем topics, если они там есть)
+        const updateData = { ...data };
+        delete updateData.topics;
 
-                // Нагрузка сокета типизирована как unknown: мержим только запись канала
-                if (!isChannelWithTopics(data)) return;
+        // Подготавливаем данные для IndexedDB
+        const cleanUpdate = cleanChannel(updateData);
 
-                // Чистим входящие данные (вырезаем topics, если они там есть)
-                const updateData = { ...data };
-                delete updateData.topics;
+        // Получаем текущее состояние из БД
+        const currentEntity = await channelsTable().get(data.id);
+        if (!currentEntity) return;
 
-                // Подготавливаем данные для IndexedDB
-                const cleanUpdate = cleanChannel(updateData);
+        // Смержим данные (патч: удалённый параллельно канал не «воскресает»)
+        const updatedEntity: ChannelRecord = { ...currentEntity, ...cleanUpdate };
+        await channelsTable().update(data.id, cleanUpdate);
 
-                // Получаем текущее состояние из БД
-                const currentEntity = await channelsTable().get(data.id);
-                if (!currentEntity) return;
+        // Обновляем в Main.store, если сущность там есть (каналы/группы)
+        if (FormsRegistry.getOwner<Main>("main")?.store.get(updatedEntity.id)) {
+            FormsRegistry.getOwner<Main>("main")?.store.update(updatedEntity.id, updatedEntity);
+        }
 
-                // Смержим данные и сохраним
-                const updatedEntity: ChannelRecord = { ...currentEntity, ...cleanUpdate };
-                await channelsTable().put(updatedEntity);
+        // Если канал открыт: форма сообщений типизирует канал
+        // по-своему (обязательные type и display_name) — сверяем
+        // структуру их guard'ом перед передачей
+        const messagesForm = FormsRegistry.getOwner<Messages>(`messages:${updatedEntity.id}`);
+        if (messagesForm && isMessagesChannelRecord(updatedEntity)) {
+            messagesForm._update(updatedEntity);
+        }
 
-                // Обновляем в Main.store, если сущность там есть (каналы/группы)
-                if (Main.instance?.store.get(updatedEntity.id)) {
-                    Main.instance?.store.update(updatedEntity.id, updatedEntity);
-                }
+        // Если это тема группы — обновляем её в GroupTopics
+        if (updatedEntity.parent_channel_id) {
+            const groupTopicsForm = FormsRegistry.getOwner<GroupTopics>(`group-topics:${updatedEntity.parent_channel_id}`);
+            if (groupTopicsForm) groupTopicsForm.store.update(updatedEntity.id, updatedEntity);
+        }
 
-                // Если канал открыт: форма сообщений типизирует канал
-                // по-своему (обязательные type и display_name) — сверяем
-                // структуру их guard'ом перед передачей
-                const messagesForm = Messages.instances.get(updatedEntity.id);
-                if (messagesForm && isMessagesChannelRecord(updatedEntity)) {
-                    messagesForm._update(updatedEntity);
-                }
+    } catch (error) {
+        Logger.error(error);
 
-                // Если это тема группы — обновляем её в GroupTopics
-                if (updatedEntity.topic_for_group_id) {
-                    const groupTopicsForm = GroupTopics.instances.get(updatedEntity.topic_for_group_id);
-                    if (groupTopicsForm) groupTopicsForm.store.update(updatedEntity.id, updatedEntity);
-                }
-
-            } catch (error) {
-                Logger.error(error);
-
-                // Если ошибка была вызвана IndexedDB
-                if (getErrorName(error) === "QuotaExceededError" || getErrorName(error) === "ConstraintError") {
-                    Toast.error(t("forms.main.toasts.storage_write_failed"));
-                }
-            }
-
-        });
-
-    });
-
+        // Если ошибка была вызвана IndexedDB
+        if (getErrorName(error) === "QuotaExceededError" || getErrorName(error) === "ConstraintError") {
+            Toast.error(t("forms.main.toasts.storage_write_failed"));
+        }
+    }
 }

@@ -27,7 +27,7 @@ export async function cleanUserMessagesHandler(message: MessageItem): Promise<vo
 
         // Канал и автор есть у сообщения (пункт меню показывается только при них)
         const channel_id = message.data.channel_id;
-        const user_id = message.data.created_user_id;
+        const user_id = message.data.author_id;
         if (!channel_id || !user_id) return;
 
         // Диалог подтверждения (подписи берёт сам)

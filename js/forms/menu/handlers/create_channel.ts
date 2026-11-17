@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 
 // Импортируем forms
@@ -18,8 +19,8 @@ export function createChannelHandler(form: Menu): void {
     try {
 
         // Открываем форму
-        if (ChannelCreate.instance) {
-            ChannelCreate.instance?.modal?.activate();
+        if (FormsRegistry.getOwner<ChannelCreate>("channel-create")) {
+            FormsRegistry.getOwner<ChannelCreate>("channel-create")?.modal?.activate();
         } else {
             new ChannelCreate();
         }

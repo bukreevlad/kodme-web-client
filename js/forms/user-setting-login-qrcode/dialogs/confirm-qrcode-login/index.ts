@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { CDM_MODAL_CLASSES, CDM_MODAL_FOOTER_CLASSES, CDM_MODAL_HEADER_CLASSES } from "../../../../config/constants.js";
 
 // Импортируем utils
@@ -45,8 +46,6 @@ export interface ConfirmQRCodeLoginData {
 // Form
 export class ConfirmQRCodeLogin {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: ConfirmQRCodeLogin | null = null;
 
     /** Настройки диалога. */
     options: ConfirmQRCodeLoginOptions;
@@ -84,12 +83,10 @@ export class ConfirmQRCodeLogin {
         this.scannedResult = data.scannedResult;
 
         // Проверяем, существует ли уже экземпляр
-        if (ConfirmQRCodeLogin.instance) {
-            return ConfirmQRCodeLogin.instance;
-        }
+        const opened = FormsRegistry.getOwner<ConfirmQRCodeLogin>("user-setting-login-qrcode-dialogs-confirm-qrcode-login");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        ConfirmQRCodeLogin.instance = this;
 
         // Инициализация
         this._init();
@@ -119,6 +116,8 @@ export class ConfirmQRCodeLogin {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "user-setting-login-qrcode-dialogs-confirm-qrcode-login",
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
                 closeOnOverlay: false,
@@ -196,8 +195,6 @@ export class ConfirmQRCodeLogin {
     // ***************************************************************************
     _onClose(): void {
 
-        // Удаляем экземпляр формы
-        ConfirmQRCodeLogin.instance = null;
 
     }
 

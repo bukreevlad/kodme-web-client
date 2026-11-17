@@ -6,6 +6,7 @@ import { CDM_FORM_CLASSES, CDM_FORM_HEADER_CLASSES, CDM_FORM_CONTENT_CLASSES, CD
 
 // Импортируем utils
 import { Logger } from "../../utils/logs/logger.js";
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { Icons } from "../../utils/icons.js";
 
 // Импортируем components
@@ -25,7 +26,6 @@ import { removeHandler } from "./handlers/remove.js";
 import { getSettingsRequest } from "./requests/get_settings.js";
 
 // Импортируем forms
-import { ChannelProfile } from "../channel-profile/index.js";
 import { ChannelManageInvites } from "../channel-manage-invites/index.js";
 import { GroupSettingLink } from "../group-setting-link/index.js";
 import { GroupTopicsManager } from "../group-topics-manager/index.js";
@@ -61,9 +61,6 @@ export interface GroupSettingsOptions {
 // Form
 export class GroupSettings {
 
-    // Реестр всех открытых форм GroupSettings: { channelId: instance }
-    static instances = new Map<string, GroupSettings>();
-
     // Переменные формы
     channelId: string;
     settings: GroupSettingsRecord | null;
@@ -90,9 +87,8 @@ export class GroupSettings {
         // Если не передан channelId
         if (!data?.channelId) throw new Error("Не передан: channelId");
 
-        // Поиск открытого профиля канала
-        let channelProfileForm = ChannelProfile.instances.get(data.channelId);
-        let insertInto = channelProfileForm?.modal?.content || null;
+        // Точка монтирования — контент открытого профиля канала
+        let insertInto = FormsRegistry.get(`channel-profile:${data.channelId}`)?.content ?? null;
 
         // Устанавливаем настройки
         this.options = {
@@ -112,11 +108,10 @@ export class GroupSettings {
         this.avatar = null;
 
         // Получаем instance
-        let instance = GroupSettings.instances.get(data.channelId);
+        let instance = FormsRegistry.getOwner<GroupSettings>(`group-settings:${data.channelId}`);
         if (instance) return instance;
 
         // Регистрируем этот экземпляр формы
-        GroupSettings.instances.set(this.channelId, this);
 
         // Инициализация
         this._init();
@@ -149,6 +144,10 @@ export class GroupSettings {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: `group-settings:${this.channelId}`,
+                placement: "stack",
+                parent: FormsRegistry.getByContent(this.options.insertInto ?? null)?.id ?? null,
                 url: `?group-settings=${this.channelId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -310,15 +309,14 @@ export class GroupSettings {
         link.textContent = data.link || t("forms.group_settings.not_select");
 
         // Приватность
-        if (data.is_public) {
+        if (data.visibility === "public") {
             isPublic.click();
             switchIsPublicHandler(this);
         }
 
-        // Кто может написать
-        if (data.is_posting) {
-            isPosting.click();
-        }
+        // Кто может публиковать: кликаем карточку с нужным значением
+        const isPostingValue = this.tpl.querySelector<HTMLInputElement>(`:scope >.content [name="is-posting"][value="${data.posting_mode === 'all'}"]`);
+        isPostingValue?.click();
 
     }
 
@@ -328,7 +326,6 @@ export class GroupSettings {
     _onBeforeClose(): void {
 
         // Удаляем экземпляр формы из реестра
-        GroupSettings.instances.delete(this.channelId);
 
     }
 
@@ -409,14 +406,10 @@ export class GroupSettings {
                                 ${t("forms.group_settings.can_posting")}
                             </span>
                             <span class="text-sm text-secondary">${t("forms.group_settings.can_posting_desc")}</span>
-                            ${Toggle.switch({
-            name: "is-posting",
-            checked: false,
-            toggleText: {
-                on: t("forms.group_settings.all_posting"),
-                off: t("forms.group_settings.admin_posting")
-            }
-        })}
+                            ${Toggle.cardGroup([
+            { name: "is-posting", value: "true", checked: false, text: t("forms.group_settings.all_posting"), description: t("forms.group_settings.posting_all_desc") },
+            { name: "is-posting", value: "false", checked: true, text: t("forms.group_settings.admin_posting"), description: t("forms.group_settings.posting_admin_desc") }
+        ])}
                         </div>
 
                         <div data-invites class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">

@@ -5,6 +5,9 @@ import Dexie from "dexie";
 import { Logger } from "../../../utils/logs/logger.js";
 import { IndexedDB } from "../../../utils/indexed_db.js";
 
+// Импортируем db
+import { putFullMessages } from "../../main/db.js";
+
 // Импортируем requests
 import { getMessagesHistoryRequest } from "../requests/get_messages_history.js";
 
@@ -63,7 +66,8 @@ export async function messageHistory(form: Messages, options: MessageHistoryOpti
         // --- ТЕЛЕГРАМ ЛОГИКА ПРОВЕРКИ ГРАНИЦ ---
 
         // 1. Если скроллим ВВЕРХ и уже достигли самого первого сообщения канала
-        if (options.direction === "prev" && channel.first_message_id === cursorId) {
+        // (сравнение UUIDv7 корректно работает через <=, как и для последнего ниже)
+        if (options.direction === "prev" && channel.first_message_id != null && cursorId <= channel.first_message_id) {
             form.isMessagesLoading = false;
             return 0;
         }
@@ -127,28 +131,32 @@ export async function messageHistory(form: Messages, options: MessageHistoryOpti
                 // И это вызовет проблемы, что сообщения не обновляются
                 // Сохраняем только для участника
                 if (db && channel.is_subscribed) {
-                    await db.table<MessageRecord, string>("messages").bulkPut(messages).catch((e: unknown) => Logger.error(e));
+                    await putFullMessages(messages).catch((e: unknown) => Logger.error(e));
                 }
 
                 if (options.direction === "prev") messages.reverse();
             } else {
-                // ВАЖНО: Если сервер вернул 0 сообщений при скролле ВНИЗ,
-                // значит наш мета-указатель last_message_id был неактуален.
-                // Приравниваем его к текущему курсору, чтобы больше не "долбить" сервер.
+                // ВАЖНО: Если сервер вернул 0 сообщений — история в эту сторону
+                // закончилась. Приравниваем мета-границу к текущему курсору,
+                // чтобы больше не "долбить" сервер одним и тем же запросом.
                 if (options.direction === "next") {
                     Logger.warn("[app][messages][history]: End of stream reached. Sealing channel.");
                     channel.last_message_id = cursorId;
+                } else {
+                    Logger.warn("[app][messages][history]: Start of stream reached. Sealing channel.");
+                    channel.first_message_id = cursorId;
                 }
             }
         }
 
         // --- 3. ОТРИСОВКА ---
+        let addedCount = 0;
         if (messages.length > 0) {
-            processAndAddMessages(form, messages, options.direction);
+            addedCount = processAndAddMessages(form, messages, options.direction);
         }
 
-        // Возвращаем количество добавленных сообщений (для проверки заполнения экрана)
-        return messages.length;
+        // Возвращаем число добавленных сообщений (для проверки заполнения экрана)
+        return addedCount;
 
     } catch (error) {
         Logger.error("Ошибка загрузки истории:", error);
@@ -167,10 +175,13 @@ export async function messageHistory(form: Messages, options: MessageHistoryOpti
  * @param form - Экземпляр формы.
  * @param messages - Сообщения пачки.
  * @param direction - Направление вставки ["prev" | "next"].
- * @returns void
+ * @returns Число фактически добавленных сообщений (дубли не считаются).
  * ***************************************************************************
  */
-function processAndAddMessages(form: Messages, messages: MessageRecord[], direction: MessagesDirection): void {
+function processAndAddMessages(form: Messages, messages: MessageRecord[], direction: MessagesDirection): number {
+
+    // Счётчик фактически добавленных (дубли, наоборот, тормозят добивку экрана)
+    let addedCount = 0;
 
     if (direction === "prev") {
 
@@ -180,6 +191,7 @@ function processAndAddMessages(form: Messages, messages: MessageRecord[], direct
             if (!current) continue;
             if (form.store.get(current.id)) continue; // Защита от дублей (WebSocket sync)
             form.store.add(current, options);
+            addedCount++;
         }
 
     } else {
@@ -188,7 +200,11 @@ function processAndAddMessages(form: Messages, messages: MessageRecord[], direct
         messages.forEach((current) => {
             if (form.store.get(current.id)) return; // Защита от дублей
             form.store.add(current, options);
+            addedCount++;
         });
 
     }
+
+    return addedCount;
+
 }

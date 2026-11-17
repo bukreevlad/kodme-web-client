@@ -1,8 +1,9 @@
 // Импортируем config
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { getLimits } from "../../../config/limits.js";
 
 // Импортируем utils
-import { Logger } from "../../../utils/logs/logger.js";
+
 import { toastError } from "../../../utils/ui/toast_error.js";
 
 // Импортируем components
@@ -80,7 +81,7 @@ export async function stickerPakCreateHandler(form: StickerPakCreate): Promise<v
         if (!response?.data?.id) return;
 
         // Добавляем пак в список (если открыт) — плашка встанет в конец
-        StickerPaks.instance?.store.add(response.data);
+        FormsRegistry.getOwner<StickerPaks>("sticker-paks")?.store.add(response.data);
 
         // Открываем содержимое нового пака
         new StickerPak({ pakId: response.data.id });

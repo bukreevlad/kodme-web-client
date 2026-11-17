@@ -159,7 +159,7 @@ export async function mapSecretChatRow(chat: SecretChatRecord): Promise<ChannelR
         last_secret_message: lastMessage,
         last_message_id: lastMessage?.id ?? null,
         total_unread_messages: unread,
-        display_last_viewed_message_id: displayLastViewedId
+        display_last_read_id: displayLastViewedId
     };
 
 }

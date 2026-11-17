@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { Logger } from "../../utils/logs/logger.js";
 
 // Импортируем config
@@ -33,9 +34,6 @@ import { t } from "../../utils/i18n/index.js";
  * ***************************************************************************
  */
 export class CallIncoming {
-
-    // Реестр всех открытых форм CallIncoming: { callId: instance }
-    static instances = new Map<string, CallIncoming>();
 
     /** Настройки формы. */
     options: CallIncomingData["options"];
@@ -89,11 +87,10 @@ export class CallIncoming {
         this.avatar = toCallAvatar(data.avatar);
 
         // Получаем instance: один и тот же звонок не должен звать дважды
-        const instance = CallIncoming.instances.get(data.callId);
+        const instance = FormsRegistry.getOwner<CallIncoming>(`call-incoming:${data.callId}`);
         if (instance) return instance;
 
         // Регистрируем этот экземпляр формы
-        CallIncoming.instances.set(this.callId, this);
 
         // Инициализация
         this._init();
@@ -137,6 +134,8 @@ export class CallIncoming {
             // Модальное окно
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: `call-incoming:${this.callId}`,
                 url: `?callId=${this.callId}`,
                 closeOnEsc: false,
                 closeOnOverlay: false,
@@ -271,12 +270,6 @@ export class CallIncoming {
             stopRingTimer(this);
 
             // Удаляем экземпляр формы из реестра
-            CallIncoming.instances.delete(this.callId);
-
-            // Сообщаем системе, что форма закрыта
-            window.dispatchEvent(new CustomEvent("[app][form]::closed", {
-                detail: { id: this.modal?.options?.id }
-            }));
 
         } catch (error) {
             Logger.error(error);

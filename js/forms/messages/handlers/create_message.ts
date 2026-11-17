@@ -1,7 +1,7 @@
 // Импортируем сторонние пакеты
-import { v7 as Uuidv7 } from "uuid";
 
 // Импортируем utils
+import { v7 as Uuidv7 } from "uuid";
 import { LocalStorage } from "../../../utils/local_storage.js";
 import { IndexedDB } from "../../../utils/indexed_db.js";
 import { cleanStoreData } from "../../../utils/helpers/clean_store_data.js";
@@ -76,14 +76,17 @@ export async function createMessageHandler(form: Messages): Promise<void> {
         // invariant: user хранится как unknown на границе localStorage; форма читает id/имя
         const sessionUser = session.user as SessionProfile;
 
+        // Локальный id сообщения: он же уходит в запросе как random_id (ключ идемпотентности)
+        const localId = form.tempMessage?.id || Uuidv7();
+
         // Создаем временное сообщение
         let message: MessageRecord = {
             ...TEMP_MESSAGE,
-            id: form.tempMessage?.id || Uuidv7(),
-            created_user_id: sessionUser.id,
+            id: localId,
+            author_id: sessionUser.id,
             display_name: sessionUser.display_name,
             channel_id: form.channelId,
-            channel_type: form.channel.type,
+            channel_kind: form.channel.kind,
             text: text,
             reply_to_message_id: form.replyMessage ? form.replyMessage.id : null,
             reply_to_message: form.replyMessage ? form.replyMessage : null,

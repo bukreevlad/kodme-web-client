@@ -115,11 +115,8 @@ export class MessageItem {
         // Привязываем узлы шаблона один раз — дальше _setup их переиспользует
         this._bindNodes();
 
-        // Записываем ссылку на dom элемент
-        if (!this.data.__domElements__) {
-            this.data.__domElements__ = [];
-        }
-        this.data.__domElements__.push(this.element);
+        // Регистрируем DOM-копию строки в реестре стора
+        this.form.store.registerDomElement(this.data.id, this.element);
 
         // Устанавливаем начальные данные
         this._setup(this.data);
@@ -129,6 +126,13 @@ export class MessageItem {
 
         // Подписываем на обновление
         this._subscribeToUpdates();
+
+        // Запоминаем отписку в сторе — она вызовется при удалении элемента.
+        // Отписка ленивая: переподписка при смене id подхватывается автоматически
+        this.form.store.addItemSubscription(this.data.id, () => {
+            if (this.unsubscribe.updated) this.unsubscribe.updated();
+            if (this.unsubscribe.idChanged) this.unsubscribe.idChanged();
+        });
 
         // Функция для обновления статуса сообщения (прочитано)
         this.data.__updateStatusRead__ = () => this._updateStatusRead();
@@ -268,12 +272,12 @@ export class MessageItem {
             // закешированы в конструкторе, а удалённый узел ломал повторные
             // перерисовки (повторный querySelector находил null и _setup
             // молча срывался, из-за чего сообщение не сбрасывало статус)
-            if ([1, 5, 8].includes(channel.type)) {
+            if (channel.kind === "dialog" || channel.kind === "favorite") {
                 this.isTitle = false;
                 this.title?.classList.add("hidden");
             }
             // Отображение элементов в зависимости от канала
-            if ([1, 3, 5, 8].includes(channel.type)) {
+            if (channel.kind === "dialog" || channel.kind === "channel" || channel.kind === "favorite") {
                 this.isAvatar = false;
                 this.avatar?.classList.add("hidden");
             }
@@ -285,7 +289,7 @@ export class MessageItem {
             if (this.isAvatar) {
                 new Avatars({
                     element: this.avatar,
-                    id: data.channel_type === 1 ? data.channel_id : data.created_user_id,
+                    id: data.channel_kind === "dialog" ? data.channel_id : data.author_id,
                     name: data.display_name,
                     image: data.avatar,
                     size: "xs"
@@ -299,7 +303,7 @@ export class MessageItem {
             }
 
             // Если модератор или владелец
-            if (data.is_moderator && (getSessionUserId() !== this.data.created_user_id)) {
+            if (data.is_moderator && (getSessionUserId() !== this.data.author_id)) {
                 this.displayType.textContent = t("forms.messages.components.messages.moderator_badge");
             }
 
@@ -378,8 +382,8 @@ export class MessageItem {
             buttonWrap && this.buttons.appendChild(buttonWrap);
 
             // Если это группа, тема или диалог и сообщение пользователя
-            if ([1, 2, 4, 6, 7, 8].includes(channel.type)) {
-                if (data.created_user_id === getSessionUserId()) {
+            if (channel.kind != null && channel.kind !== "channel" && channel.kind !== "favorite") {
+                if (data.author_id === getSessionUserId()) {
                     this.presentation.classList.add("justify-end");
                 }
             }
@@ -388,10 +392,10 @@ export class MessageItem {
             if (!this.data?.is_error_sending && !this.data.is_temporary) {
 
                 // Если это диалог
-                if (channel.type === 1 && (getSessionUserId() === this.data.created_user_id)) {
+                if (channel.kind === "dialog" && (getSessionUserId() === this.data.author_id)) {
 
                     // Последнее просмотренное сообщение собеседника
-                    const displayLastViewedId = channel.display_last_viewed_message_id;
+                    const displayLastViewedId = channel.display_last_read_id;
 
                     // invariant: иконки check/checks входят в набор Icons —
                     // prepend не принимает null
@@ -428,13 +432,10 @@ export class MessageItem {
                 this.element.classList.remove("error");
             }
 
-            // Служебный блок комментариев показываем только у постов сообществ
-            // (канал type = 3) и только у отправленных сообщений: у temp-записи
-            // id на сервере ещё нет, комментариев к ней быть не может.
-            // toggle, а не add: _setup вызывается при каждой перерисовке, и
-            // после эха сервера сообщение становится постоянным (channel_type = 3)
-            // — блок обязан снова показаться
-            const isCommentsVisible = data.channel_type === 3 && !data.is_temporary;
+            // Служебный блок комментариев: посты сообществ, отправленные и с
+            // разрешённым комментированием (null — пост наследует канал)
+            const isCommentingAllowed = channel.is_commenting !== false && data.is_commenting !== false;
+            const isCommentsVisible = data.channel_kind === "channel" && !data.is_temporary && isCommentingAllowed;
             this.comments?.classList.toggle("hidden", !isCommentsVisible);
 
             // Заполняем счётчик и подпись комментариев (склонение по числу)
@@ -492,7 +493,7 @@ export class MessageItem {
     _actions(): void {
 
         // Открытие формы комментариев по клику на строку комментариев.
-        // Строка рисуется только для постов сообществ (channel_type = 3),
+        // Строка рисуется только для постов сообществ (channel_kind = "channel"),
         // поэтому отдельной проверки здесь не требуется
         this.comments?.addEventListener("click", (event) => {
 
@@ -630,12 +631,6 @@ export class MessageItem {
 
             });
 
-            // Сохраняем объединенную функцию отписки для внешнего вызова из Main (групповой деструктор элементов)
-            this.data.__unsubscribeStore__ = () => {
-                if (this.unsubscribe.updated) this.unsubscribe.updated();
-                if (this.unsubscribe.idChanged) this.unsubscribe.idChanged();
-            };
-
         } catch (error) {
             Logger.error(error);
         }
@@ -658,11 +653,11 @@ export class MessageItem {
         if (!channel) return;
 
         // Проверка статуса сообщения
-        if (channel.type === 1 && (getSessionUserId() === this.data.created_user_id)) {
+        if (channel.kind === "dialog" && (getSessionUserId() === this.data.author_id)) {
 
             // При отсутствии id сравнение пропускаем (проверка явная):
             // invariant: иконки check/checks входят в набор Icons
-            const lastViewedId = channel.display_last_viewed_message_id;
+            const lastViewedId = channel.display_last_read_id;
             if (lastViewedId != null && lastViewedId < this.data.id) {
                 this.statusIcon.prepend(Icons.icon("check")!);
             } else {
@@ -707,7 +702,12 @@ export function createMessageItem(form: Messages, data: MessageData): HTMLElemen
     if (data?.action_type) {
 
         // Уходим в системное сообщение
-        return createSystemMessage(data);
+        const element = createSystemMessage(data);
+
+        // Регистрируем DOM-копию в реестре стора — стор снимет её при удалении
+        form.store.registerDomElement(data.id, element);
+
+        return element;
 
     }
 

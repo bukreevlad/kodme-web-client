@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -40,8 +41,6 @@ export interface MainFolderCreateData {
 // Form
 export class MainFolderCreate {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: MainFolderCreate | null = null;
 
     /** Настройки формы. */
     options: MainFolderCreateOptions;
@@ -75,12 +74,10 @@ export class MainFolderCreate {
         }
 
         // Проверяем, существует ли уже экземпляр
-        if (MainFolderCreate.instance) {
-            return MainFolderCreate.instance;
-        }
+        const opened = FormsRegistry.getOwner<MainFolderCreate>("main-folder-create");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        MainFolderCreate.instance = this;
 
         // Инициализация
         this._init();
@@ -110,6 +107,8 @@ export class MainFolderCreate {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "main-folder-create",
                 url: `?main-folder-create`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -203,8 +202,6 @@ export class MainFolderCreate {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        MainFolderCreate.instance = null;
 
     }
 

@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -25,7 +26,7 @@ import { addAppHandler } from "./handlers/add_app.js";
 import { getBotSettingsRequest } from "./requests/get_bot_settings.js";
 
 // Импортируем forms
-import { BotProfile } from "../bot-profile/index.js";
+
 import { BotSettingLink } from "../bot-setting-link/index.js";
 
 // Импортируем functions
@@ -66,8 +67,6 @@ export interface BotSettingsData {
 // Form
 export class BotSettings {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: BotSettings | null = null;
 
     /**
      * ***************************************************************************
@@ -84,8 +83,7 @@ export class BotSettings {
         if (!data?.botId) throw new Error("Не передан: botId");
 
         // Поиск открытого профиля бота
-        let botProfileForm = BotProfile.instances.get(data.botId);
-        let insertInto = botProfileForm?.modal?.content || null;
+        let insertInto = FormsRegistry.get(`bot-profile:${data.botId}`)?.content || null;
 
         // Устанавливаем настройки
         this.options = {
@@ -111,12 +109,10 @@ export class BotSettings {
         this.storeApps = new Store<BotAppRecord>();
 
         // Проверяем, существует ли уже экземпляр
-        if (BotSettings.instance) {
-            return BotSettings.instance;
-        }
+        const opened = FormsRegistry.getOwner<BotSettings>("bot-settings");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        BotSettings.instance = this;
 
         // Инициализация
         this._init();
@@ -176,6 +172,8 @@ export class BotSettings {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "bot-settings",
                 url: `?bot-settings=${this.botId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -336,8 +334,6 @@ export class BotSettings {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        BotSettings.instance = null;
 
     }
 

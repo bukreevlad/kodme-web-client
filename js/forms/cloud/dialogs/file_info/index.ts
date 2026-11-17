@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { CDM_MODAL_CLASSES, CDM_MODAL_FOOTER_CLASSES, CDM_MODAL_HEADER_CLASSES } from "../../../../config/constants.js";
 
 // Импортируем utils
@@ -19,6 +20,8 @@ import type { DownloadFileData } from "../../handlers/download_file.js";
 
 // Импортируем functions
 import { getFileIcon } from "../../functions/file_icon.js";
+
+// Импортируем forms
 
 // Импортируем типы
 import type { CloudFilePayload, CloudSharedItem, CloudSharedOwner } from "../../types.js";
@@ -59,8 +62,6 @@ export interface CloudFileInfoData {
 // Form
 export class CloudFileInfo {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: CloudFileInfo | null = null;
 
     /**
      * ***************************************************************************
@@ -78,9 +79,12 @@ export class CloudFileInfo {
         // Если не передан link и нет готовых данных файла
         if (!data?.link && !data?.file) throw new Error("Не передан: link или file");
 
-        // Устанавливаем настройки
+        // Устанавливаем настройки: диалог открывается в открытой форме облака
+        // (при открытии из ссылки сообщения формы может не быть — тогда
+        // поверх документа)
+        let insertInto = FormsRegistry.get("cloud")?.content || null;
         this.options = {
-            insertInto: document.body,
+            insertInto: insertInto || data.options?.insertInto || document.body,
             ...data?.options
         }
 
@@ -95,12 +99,10 @@ export class CloudFileInfo {
         this.owner = data.owner || null;
 
         // Проверяем, существует ли уже экземпляр
-        if (CloudFileInfo.instance) {
-            return CloudFileInfo.instance;
-        }
+        const opened = FormsRegistry.getOwner<CloudFileInfo>("cloud-dialogs-file_info");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        CloudFileInfo.instance = this;
 
         // Инициализация
         this._init();
@@ -146,6 +148,8 @@ export class CloudFileInfo {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "cloud-dialogs-file_info",
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
                 closeOnOverlay: true,
@@ -326,8 +330,6 @@ export class CloudFileInfo {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        CloudFileInfo.instance = null;
 
     }
 

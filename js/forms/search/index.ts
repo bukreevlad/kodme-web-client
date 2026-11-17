@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -72,8 +73,6 @@ export interface SearchData {
 // Form
 export class Search {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: Search | null = null;
 
     /**
      * ***************************************************************************
@@ -130,7 +129,8 @@ export class Search {
         // проверок эквиваленто «не загружено / данных больше нет неизвестно»
 
         // Форма уже открыта
-        if (Search.instance) {
+        const opened = FormsRegistry.getOwner<Search>("search");
+        if (opened) {
 
             // Определяем, куда просят открыть форму. null означает «по умолчанию»
             const target = data?.options?.insertInto ||
@@ -141,11 +141,10 @@ export class Search {
             // на живую searchType/allowSearchType — вкладки к этому моменту уже
             // собраны и скрытие применено. Поэтому в обоих случаях закрываем старую
             // форму и создаём новую (см. B1 чеклиста).
-            const current = Search.instance.options?.insertInto;
+            const current = opened.options?.insertInto;
             const needsRebuild = current !== target || data?.searchType || data?.allowSearchType;
             if (needsRebuild) {
-                Search.instance.modal?.close();
-                Search.instance = null;
+                opened.modal?.close();
 
             } else {
 
@@ -155,19 +154,18 @@ export class Search {
                 // Применяется только callback: searchType/allowSearchType уже
                 // зашиты в собранные вкладки, поэтому их смена требует пересборки
                 // (см. условие выше).
-                if (data?.callback) Search.instance.callback = data.callback;
+                if (data?.callback) opened.callback = data.callback;
 
                 // Возвращаем форму на передний план (кнопка «Поиск» в шапке,
                 // пока форма уже открыта, иначе не делает ничего — см. B2)
-                Search.instance.modal?.activate?.();
-                return Search.instance;
+                opened.modal?.activate?.();
+                return opened;
 
             }
 
         }
 
         // Сохраняем ссылку на текущий экземпляр
-        Search.instance = this;
 
         // Инициализация
         this._init();
@@ -275,6 +273,8 @@ export class Search {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "search",
                 url: `?search`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -290,11 +290,6 @@ export class Search {
         } catch (error) {
 
             Logger.error("[app][search][open]:", error);
-
-            // Откатываем регистрацию экземпляра. Иначе Search.instance остался бы
-            // у недостроенной формы, и все следующие new Search() возвращали бы
-            // её — форма перестала бы открываться до перезагрузки страницы
-            Search.instance = null;
 
         }
 
@@ -495,8 +490,7 @@ export class Search {
 
         // Снимаем регистрацию, только если экземпляр всё ещё наш: иначе
         // закрывающаяся старая форма снесла бы регистрацию новой
-        if (Search.instance === this) {
-            Search.instance = null;
+        if (FormsRegistry.getOwner<Search>("search") === this) {
         }
 
     }

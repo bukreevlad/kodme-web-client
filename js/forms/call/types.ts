@@ -66,10 +66,9 @@ export interface CallTileFraction {
 /**
  * Данные участника звонка в хранилище формы.
  *
- * Поля `__domElements__` / `__component__` / `__unsubscribeStore__`
- * обслуживают жизненный цикл карточки: копии DOM-элементов, саму карточку
- * (для освобождения плееров и аудио) и подписку на точечное событие
- * обновления (снимается при удалении элемента из стора).
+ * Поле `__component__` обслуживает жизненный цикл карточки: ссылка на
+ * карточку нужна, чтобы освободить плееры и аудио при удалении элемента
+ * из стора.
  */
 export interface CallParticipantData extends StoreItem {
 
@@ -79,14 +78,8 @@ export interface CallParticipantData extends StoreItem {
     /** Участник LiveKit (локальный либо удалённый). */
     participant?: LocalParticipant | RemoteParticipant;
 
-    /** Отображённые копии карточки в DOM (плашка «я» либо список). */
-    __domElements__?: HTMLElement[];
-
     /** Экземпляр карточки участника (для destroy при удалении). */
     __component__?: ParticipantItem | null;
-
-    /** Подписка на обновление карточки (снимается при удалении). */
-    __unsubscribeStore__?: (() => void) | null;
 
 }
 

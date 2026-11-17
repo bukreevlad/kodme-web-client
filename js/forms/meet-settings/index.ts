@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -27,7 +28,7 @@ import { getMeetSettingsRequest } from "./requests/get_meet_settings.js";
 
 // Импортируем forms
 import { MeetManageInvites } from "../meet-manage-invites/index.js";
-import { MeetPlay } from "../meet-play/index.js";
+
 import { t } from "../../utils/i18n/index.js";
 
 /**
@@ -55,9 +56,6 @@ export interface MeetSettingsData {
 
 // Form
 export class MeetSettings {
-
-    // Реестр всех открытых форм MeetSettings: { meetId: instance }
-    static instances = new Map<string, MeetSettings>();
 
     // Переменные формы
     meetId: string;
@@ -88,8 +86,7 @@ export class MeetSettings {
         if (!data?.meetId) throw new Error("Не передан: meetId");
 
         // Поиск открытого окна конференции
-        let meetPlayForm = MeetPlay.instances.get(data.meetId);
-        let insertInto = meetPlayForm?.modal?.content || null;
+        let insertInto = FormsRegistry.get(`meet-play:${data.meetId}`)?.content || null;
 
         // Устанавливаем настройки
         this.options = {
@@ -110,10 +107,8 @@ export class MeetSettings {
 
         // Регистрируем этот экземпляр формы
         // Проверяем, существует ли уже экземпляр
-        let instance = MeetSettings.instances.get(data.meetId);
+        let instance = FormsRegistry.getOwner<MeetSettings>(`meet-settings:${data.meetId}`);
         if (instance) return instance;
-
-        MeetSettings.instances.set(this.meetId, this);
 
         // Инициализация
         this._init();
@@ -146,6 +141,9 @@ export class MeetSettings {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: `meet-settings:${this.meetId}`,
+                placement: "stack",
                 url: `?meet-settings=${this.meetId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -304,7 +302,6 @@ export class MeetSettings {
     _onBeforeClose(): void {
 
         // Удаляем экземпляр формы из реестра
-        MeetSettings.instances.delete(this.meetId);
 
     }
 

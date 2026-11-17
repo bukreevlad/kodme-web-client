@@ -1,6 +1,7 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
-import { toastError } from "../../../utils/ui/toast_error.js";
+
 import { SecretChatsManager } from "../../../core/managers/secret_chats_manager.js";
 
 // Импортируем components
@@ -115,7 +116,7 @@ export async function sendingMessages(form: SecretChat): Promise<void> {
             for (const file of task.files) {
 
                 // Форма закрыта во время отправки — останавливаем очередь
-                if (SecretChat.instances.get(form.chatId) !== form) return;
+                if (FormsRegistry.getOwner<SecretChat>(`secret-chat:${form.chatId}`) !== form) return;
 
                 try {
 
@@ -137,7 +138,7 @@ export async function sendingMessages(form: SecretChat): Promise<void> {
                     Logger.error(`[app][secret-chat][sending][${file.fileId}]:`, error);
 
                     // Форма могла закрыться — тостить уже некому
-                    if (SecretChat.instances.get(form.chatId) !== form) return;
+                    if (FormsRegistry.getOwner<SecretChat>(`secret-chat:${form.chatId}`) !== form) return;
 
                     Toast.warning(t("forms.secret_chat.toasts.uploading_failed"), { position: "bottom-center" });
                     return;
@@ -195,7 +196,7 @@ function waitForConnection(form: SecretChat): Promise<void> {
         });
 
         timer = setInterval(() => {
-            if (SecretChat.instances.get(form.chatId) === form) return;
+            if (FormsRegistry.getOwner<SecretChat>(`secret-chat:${form.chatId}`) === form) return;
             if (timer) clearInterval(timer);
             unsubscribe();
             reject(new Error("Форма закрыта до установки соединения"));

@@ -49,11 +49,8 @@ export function createCloudAvailableItem(form: Cloud, data: CloudAvailableLink):
     // Создаем DOM-элемент из шаблона
     const element = template();
 
-    // Записываем ссылку на dom элемент
-    if (!current.__domElements__) {
-        current.__domElements__ = [];
-    }
-    current.__domElements__.push(element);
+    // Регистрируем DOM-копию строки в реестре стора
+    form.availableStore.registerDomElement(current.id, element);
 
     // Устанавливаем начальные данные
     setup(current);

@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { CDM_MODAL_CLASSES, CDM_MODAL_CONTENT_CLASSES, CDM_MODAL_FOOTER_CLASSES, CDM_MODAL_HEADER_CLASSES } from "../../../../config/constants.js";
 
 // Импортируем utils
@@ -26,8 +27,6 @@ export interface GroupRemoveModeratorDialogOptions {
 // Form
 export class GroupRemoveModeratorDialog {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: GroupRemoveModeratorDialog | null = null;
 
     /** Настройки диалога. */
     options: Required<GroupRemoveModeratorDialogOptions>;
@@ -58,12 +57,10 @@ export class GroupRemoveModeratorDialog {
         };
 
         // Проверяем, существует ли уже экземпляр
-        if (GroupRemoveModeratorDialog.instance) {
-            return GroupRemoveModeratorDialog.instance;
-        }
+        const opened = FormsRegistry.getOwner<GroupRemoveModeratorDialog>("group-moderators-manager-dialogs-remove");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        GroupRemoveModeratorDialog.instance = this;
 
         // Инициализация
         this._init();
@@ -93,6 +90,8 @@ export class GroupRemoveModeratorDialog {
             // Модальное окно
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "group-moderators-manager-dialogs-remove",
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
                 closeOnOverlay: true,
@@ -139,8 +138,6 @@ export class GroupRemoveModeratorDialog {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        GroupRemoveModeratorDialog.instance = null;
 
     }
 

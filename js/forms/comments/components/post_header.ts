@@ -85,7 +85,7 @@ function fillCard(card: HTMLElement, post: MessageData): void {
     // Аватар: id поста даёт стабильный цвет/документ для карточки
     Avatars.create({
         element: avatarElement,
-        id: post.created_user_id ?? post.id,
+        id: post.author_id ?? post.id,
         name: post.display_name ?? "",
         image: post.avatar ?? null,
         size: "sm",

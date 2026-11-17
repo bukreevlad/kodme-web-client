@@ -118,7 +118,7 @@ function fillItem(form: Comments, item: HTMLElement, data: CommentRecord): void 
     // Аватар: id автора даёт стабильный цвет/документ
     Avatars.create({
         element: avatarElement,
-        id: data.created_user_id ?? data.id,
+        id: data.author_id ?? data.id,
         name: data.display_name ?? "",
         image: data.avatar ?? null,
         size: "sm",
@@ -176,7 +176,7 @@ function fillItem(form: Comments, item: HTMLElement, data: CommentRecord): void 
     // для комментариев «свои справа» — принятый дизайн)
     const presentation = item.querySelector<HTMLElement>(":scope .presentation");
     if (presentation) {
-        presentation.classList.toggle("justify-end", data.created_user_id === getSessionUserId());
+        presentation.classList.toggle("justify-end", data.author_id === getSessionUserId());
     }
 
     // Только эмодзи (1-3) — крупный кегль и прозрачный пузырь: та же

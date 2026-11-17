@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -6,7 +7,6 @@ import { CDM_MODAL_CLASSES, CDM_MODAL_CONTENT_CLASSES, CDM_MODAL_FOOTER_CLASSES,
 
 // Импортируем utils
 import { Logger } from "../../../../utils/logs/logger.js";
-import { Icons } from "../../../../utils/icons.js";
 
 // Импортируем components
 import { Overlay } from "../../../../components/overlay/index.js";
@@ -14,7 +14,6 @@ import { Buttons } from "../../../../components/buttons.js";
 import { Inputs } from "../../../../components/inputs.js";
 
 // Импортируем forms
-import { BotProfile } from "../../../bot-profile/index.js";
 
 // Импортируем handlers
 import { importHandler } from "./handlers/import.js";
@@ -49,8 +48,6 @@ export interface ImportBotCommandsData {
 // Form
 export class ImportBotCommands {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: ImportBotCommands | null = null;
 
     /**
      * ***************************************************************************
@@ -68,8 +65,7 @@ export class ImportBotCommands {
         if (!data?.botId) throw new Error("Не передан: botId");
 
         // Поиск открытого профиля пользователя
-        let boProfileForm = BotProfile.instances.get(data.botId);
-        let insertInto = boProfileForm?.modal?.content || null;
+        let insertInto = FormsRegistry.get(`bot-profile:${data.botId}`)?.content || null;
 
         // Устанавливаем настройки
         this.options = {
@@ -87,12 +83,10 @@ export class ImportBotCommands {
         this.callback = data.callback;
 
         // Проверяем, существует ли уже экземпляр
-        if (ImportBotCommands.instance) {
-            return ImportBotCommands.instance;
-        }
+        const opened = FormsRegistry.getOwner<ImportBotCommands>("bot-settings-dialogs-import_json");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        ImportBotCommands.instance = this;
 
         // Инициализация
         this._init();
@@ -136,6 +130,8 @@ export class ImportBotCommands {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "bot-settings-dialogs-import_json",
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
                 closeOnOverlay: true,
@@ -212,8 +208,6 @@ export class ImportBotCommands {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        ImportBotCommands.instance = null;
 
     }
 

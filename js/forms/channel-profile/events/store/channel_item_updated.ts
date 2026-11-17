@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { Logger } from "../../../../utils/logs/logger.js";
 
 // Импортируем forms
@@ -29,7 +30,7 @@ export function subscribeChannelItemUpdated(form: ChannelProfile): Unsubscribe |
     if (!form || !form.channelId) return null;
 
     // Синглтон главной формы — источник подписки; без него отписываться не на что
-    const store = Main.instance?.store;
+    const store = FormsRegistry.getOwner<Main>("main")?.store;
     if (!store) return null;
 
     try {

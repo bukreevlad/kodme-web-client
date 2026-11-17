@@ -28,11 +28,10 @@ export interface GoPointMessageHost {
 }
 
 // Вспомогательная функция для скролла и подсветки всех копий сообщения
-function highlightElements(reply: MessageRecord): void {
-    if (!reply || !reply.__domElements__ || !Array.isArray(reply.__domElements__)) return;
+function highlightElements(form: Messages, reply: MessageRecord): void {
+    const elements = form.store.getDomElements(reply.id);
 
-    reply.__domElements__.forEach((element, index) => {
-        if (!element) return;
+    elements.forEach((element, index) => {
 
         // Прокручиваем экран только к первому найденному элементу
         if (index === 0) {
@@ -65,7 +64,7 @@ export async function goPointMessageHistory(reply: GoPointMessageHost): Promise<
 
         // Если ответ найден в текущем сторе
         if (message) {
-            highlightElements(message);
+            highlightElements(reply.form, message);
         } else {
 
             // Переход к сообщению — действие в контексте канала:
@@ -112,7 +111,7 @@ export async function goPointMessageHistory(reply: GoPointMessageHost): Promise<
             let updatedReply = reply.form.store.get(reply.data.id);
 
             if (updatedReply) {
-                highlightElements(updatedReply);
+                highlightElements(reply.form, updatedReply);
             }
 
         }

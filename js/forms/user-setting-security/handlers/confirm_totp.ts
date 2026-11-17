@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 import { getErrorMessage, getErrorStatus } from "../../../utils/helpers/error_util.js";
 
@@ -42,7 +43,7 @@ export async function confirmTotpHandler(form: UserSettingSecurity, code: string
         if (response.status) {
 
             // Закрываем диалог настройки
-            TotpSetupDialog.instance?.modal?.close();
+            FormsRegistry.getOwner<TotpSetupDialog>("user-totp-setup")?.modal?.close();
 
             // Toast: TOTP включён
             Toast.success(t("forms.user_setting_security.toasts.totp_enabled"));

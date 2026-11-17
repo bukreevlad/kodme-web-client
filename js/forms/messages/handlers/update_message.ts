@@ -1,6 +1,5 @@
 // Импортируем utils
 import { IndexedDB } from "../../../utils/indexed_db.js";
-import { cleanStoreData } from "../../../utils/helpers/clean_store_data.js";
 import { canSend } from "../../../utils/validation/message_validator.js";
 import { toastError } from "../../../utils/ui/toast_error.js";
 
@@ -69,9 +68,6 @@ export async function updateMessageHandler(form: Messages): Promise<void> {
             text: text
         }
 
-        // Очистка данных для IndexedDB
-        let cleanData = cleanStoreData(updatedMessage);
-
         // Делаем запрос на сервер
         await updateMessageRequest({
             message_id: editedMessage.id,
@@ -84,10 +80,11 @@ export async function updateMessageHandler(form: Messages): Promise<void> {
         if (form.editContainer) form.editContainer.innerHTML = "";
         if (form.replyContainer) form.replyContainer.innerHTML = "";
 
-        // Обновляем данные в IndexedDB (без базы пропускаем — изменения
-        // уже применены к Store формы)
+        // Патчим текст в IndexedDB (удалённое параллельно сообщение
+        // не «воскресает»). Без базы пропускаем — изменения уже
+        // применены к Store формы
         const db = IndexedDB.db;
-        if (db) await db.table("messages").put(cleanData);
+        if (db && updatedMessage.id != null) await db.table("messages").update(updatedMessage.id, { text });
 
         // Обновляем сообщение в Store (без id записи не найти)
         if (updatedMessage.id != null) form.store.update(updatedMessage.id, updatedMessage);

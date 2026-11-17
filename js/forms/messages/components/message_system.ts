@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 import { DurationFormatter } from "../../../utils/date/duration_formatter.js";
 
@@ -9,6 +10,7 @@ import { BroadcastPlay } from "../../broadcast-play/index.js";
 
 // Импортируем типы
 import type { MessageData, SystemMessagesLocale } from "./types.js";
+import { parseSystemMessage, resolveSystemLocaleKey } from "./parse_system_message.js";
 import { I18n } from "../../../utils/i18n/index.js";
 
 /**
@@ -40,12 +42,6 @@ export function createSystemMessage(data: MessageData): HTMLElement {
 
     // Создаем DOM-элемент из шаблона
     const element = template();
-
-    // Отображаем элемент (для обновления/удаления по Store)
-    if (!data.__domElements__) {
-        data.__domElements__ = [];
-    }
-    data.__domElements__.push(element);
 
     // Устанавливаем начальные данные
     setup(element, data);
@@ -122,7 +118,7 @@ function openProfile(userId?: string, isBot?: boolean): void {
     if (!userId) return;
 
     if (isBot) {
-        const instance = BotProfile.instances.get(userId);
+        const instance = FormsRegistry.getOwner<BotProfile>(`bot-profile:${userId}`);
 
         if (instance) {
             instance?.modal?.activate();
@@ -133,7 +129,7 @@ function openProfile(userId?: string, isBot?: boolean): void {
         return;
     }
 
-    const instance = UserProfile.instances.get(userId);
+    const instance = FormsRegistry.getOwner<UserProfile>(`user-profile:${userId}`);
 
     if (instance) {
         instance?.modal?.activate();
@@ -153,7 +149,7 @@ function openBroadcast(castId?: string): void {
     // Без id трансляцию не открыть (раньше конструктор форм падал с «Не передан»)
     if (!castId) return;
 
-    const instance = BroadcastPlay.instances.get(castId);
+    const instance = FormsRegistry.getOwner<BroadcastPlay>(`broadcast-play:${castId}`);
     if (instance) {
         instance?.modal?.activate();
     } else {
@@ -179,7 +175,10 @@ function parseTemplateMessage(data: MessageData): Element | null {
 
     // Быстрый доступ к локализации
     const locales: SystemMessagesLocale = I18n.tree.forms.messages.components.messages.system_messages;
-    const messageLocale = locales[action]?.array;
+
+    // Ключ шаблона: у звонка он зависит от статуса и направления
+    const localeKey = resolveSystemLocaleKey(data);
+    const messageLocale = locales[localeKey]?.array;
 
     // Если локализация не найдена
     if (!messageLocale) return null;
@@ -236,35 +235,12 @@ function parseTemplateMessage(data: MessageData): Element | null {
             };
         },
 
-        CALL_INCOMING: () => ({
+        // Звонок: одно сообщение на звонок, статус и направление учтены в
+        // ключе шаблона, длительность подставляет парсер системных сообщений
+        CALL: () => ({
             html: `<div data-template class="flex flex-row gap-1">
-                    <span data-link class="underline cursor-pointer">${payload.display_name || payload.user_name}</span>
-                    <span>${messageLocale}</span>
-                   </div>`,
-            bindEvents: (tpl) => tpl.querySelector("[data-link]")?.addEventListener("click", () => openProfile(payload.user_id, false))
-        }),
-
-        CALL_ENDED: () => {
-
-            // Длительность звонка берём из отметки приёма: до неё разговор
-            // не начинался, а отсчёт от старта включал бы ещё и прозвон
-            const durationInMs = Date.parse(payload.ended_at ?? "") - Date.parse(payload.accepted_at ?? "");
-            const duration = new DurationFormatter(durationInMs).getFormattedDuration({ includeSeconds: true, includeDays: false });
-
-            return {
-                html: `<div data-template class="flex flex-row gap-1">
-                        <span>${messageLocale}</span>
-                        <span data-link class="underline cursor-pointer">${payload.user_name || payload.display_name}</span>
-                        <span>${duration}</span>
-                       </div>`,
-                bindEvents: (tpl) => tpl.querySelector("[data-link]")?.addEventListener("click", () => openProfile(payload.user_id, false))
-            };
-        },
-
-        CALL_MISSED: () => ({
-            html: `<div data-template class="flex flex-row gap-1">
-                    <span>${messageLocale}</span>
-                    <span data-link class="underline cursor-pointer">${payload.user_name || payload.display_name}</span>
+                    <span>${parseSystemMessage(data, locales)}</span>
+                    <span data-link class="underline cursor-pointer">${payload.display_name || payload.user_name || ""}</span>
                    </div>`,
             bindEvents: (tpl) => tpl.querySelector("[data-link]")?.addEventListener("click", () => openProfile(payload.user_id, false))
         })

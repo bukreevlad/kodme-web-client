@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -12,7 +13,7 @@ import { Overlay } from "../../../../components/overlay/index.js";
 import { Buttons } from "../../../../components/buttons.js";
 
 // Импортируем forms
-import { BroadcastSettings } from "../../../broadcast-settings/index.js";
+
 import { t } from "../../../../utils/i18n/index.js";
 
 /**
@@ -44,8 +45,6 @@ export interface RemoveCastData {
 // Form
 export class RemoveCast {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: RemoveCast | null = null;
 
     // Переменные формы
     castId: string;
@@ -74,8 +73,7 @@ export class RemoveCast {
         if (!data?.castId) throw new Error("Не передан: castId");
 
         // Поиск открытой формы настроек трансляции
-        let castSettingsForm = BroadcastSettings.instances.get(data.castId);
-        let insertInto = castSettingsForm?.modal?.content || null;
+        let insertInto = FormsRegistry.get(`broadcast-settings:${data.castId}`)?.content || null;
 
         // Устанавливаем настройки
         this.options = {
@@ -94,12 +92,10 @@ export class RemoveCast {
         this.callback = data.callback;
 
         // Проверяем, существует ли уже экземпляр
-        if (RemoveCast.instance) {
-            return RemoveCast.instance;
-        }
+        const opened = FormsRegistry.getOwner<RemoveCast>("broadcast-settings-dialogs-remove");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        RemoveCast.instance = this;
 
         // Инициализация
         this._init();
@@ -129,6 +125,8 @@ export class RemoveCast {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "broadcast-settings-dialogs-remove",
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
                 closeOnOverlay: true,
@@ -216,8 +214,6 @@ export class RemoveCast {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        RemoveCast.instance = null;
 
     }
 

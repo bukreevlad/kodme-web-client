@@ -81,6 +81,95 @@
     --tab-close-hover: color-mix(in srgb, var(--color-white) 12%, transparent);
 }
 
+/* ================================================================== */
+/* Сплит-режим средней колонки: вторая форма (чат) справа от основной  */
+/*                                                                     */
+/* Переключатель — состояние DOM: в боковой контейнер появилась форма  */
+/* (`:has(> .form-container-side:not(:empty))`) — колонка делится надвое, */
+/* форма удалилась — колонка схлопывается сама. JS-состояние не нужно. */
+/* Обе формы остаются полноценными .cdm-form со своими заголовками и   */
+/* одинаковой высотой (общая grid-строка).                             */
+/* ================================================================== */
+
+/* Средняя колонка — grid всегда: переключение числа колонок ниже
+   анимируется (grid-template-columns интерполируется браузерами).
+   Строки закреплены явно: на узких экранах панель вкладок скрыта
+   (max-lg:hidden), и без явных строк форма уезжала в auto-строку и
+   схлопывалась до нуля */
+.cdm-form.home >.content >.middle {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
+    transition: grid-template-columns 250ms ease;
+}
+
+.cdm-form.home >.content >.middle >.tab-container {
+    grid-row: 1;
+    grid-column: 1 / -1;
+}
+
+.cdm-form.home >.content >.middle >.form-container {
+    grid-row: 2;
+    grid-column: 1;
+}
+
+/* Боковой контейнер: без формы не занимает места (display: none),
+   в сплите — вторая колонка второй строки */
+.cdm-form.home >.content >.middle >.form-container-side {
+    grid-row: 2;
+    grid-column: 2;
+    display: none;
+}
+
+/* Форма в боковом контейнере: колонка делится, пока панель видима
+   (скрытая панель не должна сжимать другую форму) */
+.cdm-form.home >.content >.middle:has(> .form-container-side:not(:empty):not(.is-hidden)) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 38%);
+}
+
+.cdm-form.home >.content >.middle >.form-container-side:not(:empty) {
+    display: flex;
+}
+
+/* ------------------------------------------------------------------ */
+/* Узкое окно (< 1024px): боковая форма выскакивает поверх основной    */
+/* ------------------------------------------------------------------ */
+@media only screen and (max-width: 1023px) {
+
+    /* Одна строка на всё: панель вкладок скрыта, зазор между строками
+       не нужен, форма занимает колонку целиком */
+    .cdm-form.home >.content >.middle {
+        grid-template-rows: minmax(0, 1fr);
+    }
+
+    .cdm-form.home >.content >.middle >.form-container {
+        grid-row: 1;
+    }
+
+    /* Колонка снова одна: панель-оверлей не должна сжимать основную */
+    .cdm-form.home >.content >.middle:has(> .form-container-side:not(:empty):not(.is-hidden)) {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    /* Боковая форма накрывает среднюю колонку целиком (как на мобильных:
+       чат поверх трансляции). Размещение — на всю сетку: базовое
+       grid-column: 2 в одноколоночной сетке дало бы вырожденную
+       область и нулевую ширину */
+    .cdm-form.home >.content >.middle >.form-container-side:not(:empty):not(.is-hidden) {
+        grid-row: 1 / -1;
+        grid-column: 1 / -1;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        /* Выше обёрток форм (CDM_Z_INDEX.FORM = z-100), ниже диалогов
+           (z-1010): панель накрывает форму-владельца целиком */
+        z-index: 500;
+    }
+
+}
+
 /* --------------------------------------------------------------- */
 /* При разрешении экрана меньше 1023px */
 /* --------------------------------------------------------------- */

@@ -3,7 +3,6 @@ import Bowser from "bowser";
 
 // Импортируем utils
 import { Logger } from "../../../utils/logs/logger.js";
-import { Icons } from "../../../utils/icons.js";
 
 // Импортируем functions
 import { getDeviceIcon } from "../functions/get_device_icon.js";
@@ -44,10 +43,8 @@ export function createSessionItem(form: UserSettingDevices, data: SessionListIte
     const element = template();
 
     // Записываем ссылку на dom элемент (для удаления копий при item::removed)
-    if (!current.__domElements__) {
-        current.__domElements__ = [];
-    }
-    current.__domElements__.push(element);
+    // Регистрируем DOM-копию строки в реестре стора
+    form.store.registerDomElement(current.id, element);
 
     // Устанавливаем начальные данные
     setup(current);

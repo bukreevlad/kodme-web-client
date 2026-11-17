@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { CDM_MODAL_CLASSES, CDM_MODAL_CONTENT_CLASSES, CDM_MODAL_FOOTER_CLASSES, CDM_MODAL_HEADER_CLASSES } from "../../../../config/constants.js";
 
 // Импортируем utils
@@ -26,8 +27,6 @@ export interface ConfirmInviteDialogOptions {
 // Form
 export class ConfirmInviteDialog {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: ConfirmInviteDialog | null = null;
 
     /** Настройки диалога. */
     options: Required<ConfirmInviteDialogOptions>;
@@ -58,12 +57,10 @@ export class ConfirmInviteDialog {
         };
 
         // Проверяем, существует ли уже экземпляр
-        if (ConfirmInviteDialog.instance) {
-            return ConfirmInviteDialog.instance;
-        }
+        const opened = FormsRegistry.getOwner<ConfirmInviteDialog>("meet-manage-invites-dialogs-confirm");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        ConfirmInviteDialog.instance = this;
 
         // Инициализация
         this._init();
@@ -93,6 +90,8 @@ export class ConfirmInviteDialog {
             // Модальное окно
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "meet-manage-invites-dialogs-confirm",
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
                 closeOnOverlay: true,
@@ -139,8 +138,6 @@ export class ConfirmInviteDialog {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        ConfirmInviteDialog.instance = null;
 
     }
 

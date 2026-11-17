@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../../../../core/managers/forms_registry.js";
 import { Socket } from "../../../../../config/socket.js";
 
 // Импортируем utils
@@ -67,13 +68,13 @@ export function subscribeCallIncoming(): void {
             // ---------- УЖЕ ОТКРЫТА ----------
             // Глубокая ссылка из push-уведомления могла открыть эту же форму
             // раньше, чем дошло WS-событие: дубль не нужен, форма уже звонит
-            if (CallIncoming.instances.has(data?.call_id)) return;
+            if (FormsRegistry.hasAny(`call-incoming:${data?.call_id}`)) return;
             // ---------- УЖЕ ОТКРЫТА ----------
 
             // ---------- ЗАНЯТОСТЬ ----------
             // Пользователь уже говорит по звонку (свой или входящий) —
             // новую форму не открываем, а сообщаем, кто звонил
-            if (Call.instances.size > 0 || CallIncoming.instances.size > 0) {
+            if (FormsRegistry.hasAny("call:") || FormsRegistry.hasAny("call-incoming:")) {
 
                 // Toast
                 Toast.warning(

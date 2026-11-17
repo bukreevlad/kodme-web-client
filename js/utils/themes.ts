@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../core/managers/forms_registry.js";
 import { LocalStorage, StoredTheme } from "./local_storage.js";
 import { Logger } from "./logs/logger.js";
 import { PlatformBridge } from "./platform.bridge.js";
@@ -320,7 +321,7 @@ export class Themes {
     static updateAllBotWebAppForms(): void {
 
         // Получаем все формы
-        let forms = Array.from(BotApp?.instances?.values());
+        let forms = FormsRegistry.getOwners<BotApp>("bot-app:");
         if (forms && forms.length > 0) {
             forms.forEach(form => {
                 form?.bridge?.sendThemeUpdate();

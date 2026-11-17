@@ -1,6 +1,5 @@
 // Импортируем events
 import { subscribeItemAdded } from "./item_added.js";
-import { subscribeItemRemoved } from "./item_removed.js";
 
 // Импортируем типы
 import type { Main } from "../../index.js";
@@ -14,14 +13,14 @@ export class StoreEvents {
 
     /**
      * ***************************************************************************
-     * Подписаться на события добавления и удаления каналов.
+     * Подписаться на события добавления каналов.
      * @param form - Экземпляр формы.
      * ***************************************************************************
      */
     static init(form: Main): void {
 
+        // DOM-копии строк стор снимает сам при удалении элементов
         subscribeItemAdded(form);
-        subscribeItemRemoved(form);
 
     }
 

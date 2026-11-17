@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 
 // Импортируем forms
@@ -18,8 +19,8 @@ export function contactsHandler(form: Menu): void {
     try {
 
         // Открываем форму
-        if (Contacts.instance) {
-            Contacts.instance?.modal?.activate();
+        if (FormsRegistry.getOwner<Contacts>("contacts")) {
+            FormsRegistry.getOwner<Contacts>("contacts")?.modal?.activate();
         } else {
             new Contacts();
         }

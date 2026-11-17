@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 import { getErrorMessage } from "../../../utils/helpers/error_util.js";
 
@@ -39,7 +40,7 @@ export async function createChatHandler(form: UserProfile): Promise<void> {
         Toast.success(t("forms.user_profile.toasts.dialog_created"));
 
         // Открываем форму
-        let instance = Messages.instances.get(channelId);
+        let instance = FormsRegistry.getOwner<Messages>(`messages:${channelId}`);
         if (instance) {
             instance?.modal?.activate();
         } else {

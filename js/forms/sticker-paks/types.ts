@@ -26,9 +26,7 @@ export interface StickerPreviewItem {
  *
  * Поля — только те, что реально читает форма: строка списка (название,
  * автор, превью 2×2) и флаги видимости (`is_author` / `is_member`) для
- * контекстного меню. Служебные ключи (`__domElements__`,
- * `__unsubscribeStore__`) живут здесь же: их пишут компонент строки
- * и подписки стора.
+ * контекстного меню.
  ***************************************************************************
  */
 export interface StickerPakItem extends StoreItem {
@@ -46,7 +44,7 @@ export interface StickerPakItem extends StoreItem {
     is_public: boolean;
 
     /** Id автора пака. */
-    created_user_id: string;
+    owner_id: string;
 
     /** Дата создания (ISO). */
     created_at: string;
@@ -65,12 +63,6 @@ export interface StickerPakItem extends StoreItem {
 
     /** Превью: первые 4 стикера пака (сетка 2×2). */
     preview: StickerPreviewItem[];
-
-    /** Отображённые копии элемента (пак может попасть в список дважды). */
-    __domElements__?: HTMLElement[];
-
-    /** Отписка от события обновления элемента в сторе (снимает компонент). */
-    __unsubscribeStore__?: () => void;
 
 }
 

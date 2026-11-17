@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -19,7 +20,7 @@ import { createHandler } from "./handlers/create.js";
 import { switchIsNumberUsersHandler } from "./handlers/switch-is-number-users.js";
 
 // Импортируем forms
-import { MeetSettings } from "../meet-settings/index.js";
+
 import { t } from "../../utils/i18n/index.js";
 
 /**
@@ -48,9 +49,6 @@ export interface MeetInviteCreateData {
 // Form
 export class MeetInviteCreate {
 
-    // Реестр всех открытых форм MeetInviteCreate: { meetId: instance }
-    static instances = new Map<string, MeetInviteCreate>();
-
     // Переменные формы
     meetId: string;
 
@@ -76,8 +74,7 @@ export class MeetInviteCreate {
         if (!data?.meetId) throw new Error("Не передан: meetId");
 
         // Поиск открытого окна настроек конференции
-        let meetSettingsForm = MeetSettings.instances.get(data.meetId);
-        let insertInto = meetSettingsForm?.modal?.content || null;
+        let insertInto = FormsRegistry.get(`meet-settings:${data.meetId}`)?.content || null;
 
         // Устанавливаем настройки
         this.options = {
@@ -96,10 +93,8 @@ export class MeetInviteCreate {
 
         // Регистрируем этот экземпляр формы
         // Проверяем, существует ли уже экземпляр
-        let instance = MeetInviteCreate.instances.get(data.meetId);
+        let instance = FormsRegistry.getOwner<MeetInviteCreate>(`meet-invite-create:${data.meetId}`);
         if (instance) return instance;
-
-        MeetInviteCreate.instances.set(this.meetId, this);
 
         // Инициализация
         this._init();
@@ -129,6 +124,8 @@ export class MeetInviteCreate {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: `meet-invite-create:${this.meetId}`,
                 url: `?meet-invite-create=${this.meetId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -217,7 +214,6 @@ export class MeetInviteCreate {
     _onBeforeClose(): void {
 
         // Удаляем экземпляр формы
-        MeetInviteCreate.instances.delete(this.meetId);
 
     }
 

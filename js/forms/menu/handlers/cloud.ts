@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 
 // Импортируем forms
@@ -18,8 +19,8 @@ export async function cloudHandler(form: Menu): Promise<void> {
     try {
 
         // Открываем форму
-        if (Cloud.instance) {
-            Cloud.instance?.modal?.activate();
+        if (FormsRegistry.getOwner<Cloud>("cloud")) {
+            FormsRegistry.getOwner<Cloud>("cloud")?.modal?.activate();
         } else {
             new Cloud();
         }

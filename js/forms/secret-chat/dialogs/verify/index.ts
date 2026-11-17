@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { CDM_MODAL_CLASSES, CDM_MODAL_CONTENT_CLASSES, CDM_MODAL_FOOTER_CLASSES, CDM_MODAL_HEADER_CLASSES } from "../../../../config/constants.js";
 
 // Импортируем utils
@@ -55,8 +56,6 @@ export interface VerifyChatData {
  */
 export class VerifyChat {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: VerifyChat | null = null;
 
     /**
      * ***************************************************************************
@@ -69,7 +68,7 @@ export class VerifyChat {
     constructor(data: VerifyChatData) {
 
         // Поиск открытой формы секретного чата (диалог живёт поверх неё)
-        let chatForm = SecretChat.instances?.get(data.chatId);
+        let chatForm = FormsRegistry.getOwner<SecretChat>(`secret-chat:${data.chatId}`);
         let insertInto = chatForm?.modal?.content || null;
 
         // Устанавливаем настройки
@@ -86,12 +85,10 @@ export class VerifyChat {
         this.chatId = data.chatId;
 
         // Проверяем, существует ли уже экземпляр
-        if (VerifyChat.instance) {
-            return VerifyChat.instance;
-        }
+        const opened = FormsRegistry.getOwner<VerifyChat>("secret-chat-dialogs-verify");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        VerifyChat.instance = this;
 
         // Инициализация
         this._init();
@@ -134,6 +131,8 @@ export class VerifyChat {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "secret-chat-dialogs-verify",
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
                 closeOnOverlay: true,
@@ -272,8 +271,6 @@ export class VerifyChat {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        VerifyChat.instance = null;
 
     }
 

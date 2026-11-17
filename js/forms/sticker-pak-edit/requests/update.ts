@@ -42,7 +42,7 @@ export interface UpdatePakResult {
     is_public: boolean;
 
     /** Id автора пака. */
-    created_user_id: string;
+    owner_id: string;
 
     /** Дата создания (ISO). */
     created_at: string;

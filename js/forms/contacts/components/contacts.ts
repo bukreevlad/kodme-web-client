@@ -36,11 +36,8 @@ export function createContactItem(form: Contacts, data: ContactRecord): HTMLElem
     // Создаем DOM-элемент из шаблона
     const element = template();
 
-    // Записываем ссылку на dom элемент
-    if (!current.__domElements__) {
-        current.__domElements__ = [];
-    }
-    current.__domElements__.push(element);
+    // Регистрируем DOM-копию строки в реестре стора
+    form.store.registerDomElement(current.id, element);
 
     // Устанавливаем начальные данные
     setup(current);
@@ -173,8 +170,8 @@ export function createContactItem(form: Contacts, data: ContactRecord): HTMLElem
                 update(payload);
             });
 
-            // Сохраняем функцию отписки в data, чтобы форма могла вызвать её при удалении
-            current.__unsubscribeStore__ = unsubscribe;
+            // Запоминаем отписку в сторе — она вызовется при удалении элемента
+            form.store.addItemSubscription(current.id, unsubscribe);
 
         } catch (error) {
             Logger.error(error);

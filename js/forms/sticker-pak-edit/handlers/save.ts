@@ -1,8 +1,9 @@
 // Импортируем config
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { getLimits } from "../../../config/limits.js";
 
 // Импортируем utils
-import { Logger } from "../../../utils/logs/logger.js";
+
 import { toastError } from "../../../utils/ui/toast_error.js";
 
 // Импортируем components
@@ -84,7 +85,7 @@ export async function stickerPakSaveHandler(form: StickerPakEdit): Promise<void>
         Toast.success(t("forms.sticker_pak_edit.toasts.success"));
 
         // Обновляем плашку пака в списке (если открыт) — перерисуется по событию
-        const listForm = StickerPaks.instance;
+        const listForm = FormsRegistry.getOwner<StickerPaks>("sticker-paks");
         const item = listForm?.store.get(form.pakId);
         if (listForm && item) {
             listForm.store.update(form.pakId, {
@@ -96,7 +97,7 @@ export async function stickerPakSaveHandler(form: StickerPakEdit): Promise<void>
         }
 
         // Обновляем открытую форму содержимого этого же пака
-        const contentForm = StickerPak.instances.get(form.pakId);
+        const contentForm = FormsRegistry.getOwner<StickerPak>(`sticker-pak:${form.pakId}`);
         if (contentForm?.pak) {
             contentForm.pak.name = nameValue;
             contentForm.pak.about = aboutValue;

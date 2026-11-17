@@ -1,7 +1,7 @@
 // Импортируем сторонние пакеты
-import { v7 as Uuidv7 } from "uuid";
 
 // Импортируем config
+import { v7 as Uuidv7 } from "uuid";
 import { TEMP_MESSAGE } from "../../../config/constants.js";
 
 // Импортируем utils
@@ -179,10 +179,10 @@ export async function importAttaches(form: Messages, files: File[]): Promise<voi
             const tempMessage: MessageRecord = {
                 ...TEMP_MESSAGE,
                 id: Uuidv7(),
-                created_user_id: getSessionUserId() ?? undefined,
+                author_id: getSessionUserId() ?? undefined,
                 display_name: getSessionUserDisplayName(),
                 channel_id: form.channelId,
-                channel_type: form.channel?.type,
+                channel_kind: form.channel?.kind,
                 text: form.textarea?.value,
                 reply_to_message_id: form.replyMessage ? form.replyMessage.id : null,
                 reply_to_message: form.replyMessage ? form.replyMessage : null,

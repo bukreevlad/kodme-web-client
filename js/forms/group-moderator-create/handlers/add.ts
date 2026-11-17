@@ -27,6 +27,7 @@ export async function addModeratorHandler(form: GroupAddModerator): Promise<bool
         let canDeletedMessage = form.tpl?.querySelector<HTMLInputElement>(`:scope >.content [name="can-deleted-message"]`);
         let canCleanMessages = form.tpl?.querySelector<HTMLInputElement>(`:scope >.content [name="can-clean-messages"]`);
         let canRestrictMembers = form.tpl?.querySelector<HTMLInputElement>(`:scope >.content [name="can-restrict-members"]`);
+        let canPostingMessages = form.tpl?.querySelector<HTMLInputElement>(`:scope >.content [name="can-posting-messages"]`);
 
         // Делаем запрос на сервер
         let response = await addModeratorRequest({
@@ -38,6 +39,7 @@ export async function addModeratorHandler(form: GroupAddModerator): Promise<bool
             can_restrict_members: canRestrictMembers?.checked ?? false,
             can_invite_users: false,
             can_pin_messages: false,
+            can_posting_messages: canPostingMessages?.checked ?? false,
         });
 
         // Проверка ответа

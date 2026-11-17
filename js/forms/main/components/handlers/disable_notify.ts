@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { Logger } from "../../../../utils/logs/logger.js";
 
 // Импортируем components
@@ -28,8 +29,8 @@ export async function disableNotifyHandler(channel: ChannelItem): Promise<void> 
         await disableNotifyRequest({ channel_id: channel.data.id });
 
         // Обновляем данные
-        channel.data.is_notifications = false;
-        Main.instance?.store.update(channel.data.id, channel.data);
+        channel.data.notifications = { mode: "none" };
+        FormsRegistry.getOwner<Main>("main")?.store.update(channel.data.id, channel.data);
 
         // Toast
         Toast.success(t("forms.main.components.channels.context_menu.toasts.success_disable_notify"), {

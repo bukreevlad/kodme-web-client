@@ -204,27 +204,6 @@ export class Sessions {
 
         // ---------------------------------------------------
 
-        // Подписываемся на событие удаление элемента
-        this.store.on('item::removed', (data) => {
-
-            // Guard: payload события — элемент списка сессий
-            if (!isSessionItemData(data)) return;
-
-            // Проверяем наличие массива элементов
-            if (data.__domElements__ && Array.isArray(data.__domElements__)) {
-                data.__domElements__.forEach(element => {
-                    if (element && typeof element.remove === 'function') {
-                        element.remove();
-                    }
-                });
-                Logger.debug(`Успешно удалено копий элемента: ${data.__domElements__.length}`);
-
-                // Очищаем массив, чтобы не копить утечки памяти
-                data.__domElements__ = [];
-            }
-
-        });
-
     }
 
     // ***************************************************************************

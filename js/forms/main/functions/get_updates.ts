@@ -1,35 +1,42 @@
 // Импортируем сторонние пакеты
-import { v7 as uuidv7 } from "uuid";
 
 // Импортируем utils
+import { v7 as uuidv7 } from "uuid";
 import { Logger } from "../../../utils/logs/logger.js";
 import { getErrorName } from "../../../utils/helpers/error_util.js";
+import { isChannelUnavailable } from "../../../utils/helpers/channel_unavailable.js";
 
 // Импортируем components
 import { Toast } from "../../../components/toast.js";
 
-// Импортируем forms
-import { Messages } from "../../messages/index.js";
-
 // Импортируем requests
 import { getUpdatesRequest } from "../requests/get_updates.js";
+import { getChannelInfoRequest } from "../../channel-profile/requests/get_channel_info.js";
+
+// Импортируем functions
+import { applyChannelFeedEvent } from "./apply_feed_event.js";
+
+// Импортируем events (апплайеры событий к локальным хранилищам и UI)
+import { applyChannelRemove } from "../events/socket/channels/remove.js";
 
 // Импортируем db
 import { channelsTable, messagesTable, pendingUpdatesTable } from "../db.js";
 
 // Импортируем типы
-import { isDeletedUpdate } from "../types.js";
+import { isChannelRecord } from "../types.js";
+import type { ChannelFeedEvent } from "../../../types/domain.js";
+import type { ChannelRecord } from "../types.js";
 import type { Main } from "../index.js";
-import type { ChannelUpdateItem } from "../types.js";
 import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
- * Глобальный обработчик обновлений (поканальная PTS-логика).
+ * Глобальный обработчик догоняющих обновлений (лента событий канала).
  *
- * Пакет применяется отказоустойчиво: запись о намерении ложится в БД
- * до применения и удаляется после. Если сервер отдал полный лимит —
- * запускается следующая итерация.
+ * Сервер отдаёт события ленты того же формата, что и живой толчок
+ * `[channel]: feed`, и они применяются тем же аплайером. Пакет применяется
+ * отказоустойчиво: запись о намерении ложится в БД до применения и удаляется
+ * после. Если сервер отдал полный лимит — запускается следующая итерация.
  * @param form - Экземпляр формы.
  * ***************************************************************************
  */
@@ -66,11 +73,18 @@ export async function getUpdates(form: Main): Promise<void> {
         if (response.status && response.data) {
 
             // Устанавливаем параметры
-            const { items, has_more } = response.data;
+            const { items, has_more, too_long } = response.data;
+
+            // Каналы с отрезанной точкой перечитываем целиком
+            if (too_long && too_long.length > 0) {
+                for (const channelId of too_long) {
+                    await refreshChannelSnapshot(form, channelId);
+                }
+            }
 
             // Если есть данные
             if (items && items.length > 0) {
-                Logger.debug(`[app][GetUpdates]: Получено ${items.length} обновлений.`);
+                Logger.debug(`[app][GetUpdates]: Получено ${items.length} событий.`);
 
                 // Создаем запись о намерении применить пакет (для отказоустойчивости)
                 const pendingId = uuidv7();
@@ -80,14 +94,14 @@ export async function getUpdates(form: Main): Promise<void> {
                     timestamp: Date.now()
                 });
 
-                // Применяем обновления и обновляем pts каналов
-                await applyUpdates(form, items);
+                // Применяем события (единый аплайер с живым толчком)
+                await applyUpdates(items);
 
                 // Удаляем запись о намерении после успешного применения
                 await pendingUpdatesTable().delete(pendingId);
 
             } else {
-                Logger.debug(`[app][GetUpdates]: Новых сообщений во всех каналах нет.`);
+                Logger.debug(`[app][GetUpdates]: Новых событий во всех каналах нет.`);
             }
 
             // Рекурсия (если сервер отдал полный лимит — возможно, есть еще данные)
@@ -110,88 +124,55 @@ export async function getUpdates(form: Main): Promise<void> {
 
 /**
  * ***************************************************************************
- * Применение обновлений и актуализация PTS для каждого канала.
- * @param form - Экземпляр формы.
- * @param updates - Пакет обновлений (новые/изменённые и удалённые сообщения).
+ * Применить пакет событий ленты (каждое — через общий аплайер).
+ * @param events - Пакет событий ленты (в порядке возрастания pts).
  * ***************************************************************************
  */
-async function applyUpdates(form: Main, updates: ChannelUpdateItem[]): Promise<void> {
+async function applyUpdates(events: ChannelFeedEvent[]): Promise<void> {
 
-    // Группируем обновления по каналам, чтобы знать, какой последний PTS выставить каждому
-    const channelLatestPts: Record<string, number> = {};
-
-    // Проходим по обновлениям
-    for (const item of updates) {
+    for (const event of events) {
         try {
-
-            // Запоминаем максимальный PTS для конкретного канала из этой пачки
-            // (у части обновлений pts нет — тогда канал не трогаем)
-            const latestPts = channelLatestPts[item.channel_id];
-            if (item.pts != null && (!latestPts || item.pts > latestPts)) {
-                channelLatestPts[item.channel_id] = item.pts;
-            }
-
-            // Если удалено
-            if (isDeletedUpdate(item)) {
-                Logger.debug(`[app][GetUpdates]: [DELETE] Сообщение ${item.id} (Канал: ${item.channel_id})`);
-                await messagesTable().delete(item.id);
-
-                // Если форма этого канала открыта - удаляем из UI
-                const activeForm = Messages.instances.get(item.channel_id);
-                if (activeForm) activeForm.store.remove(item.id);
-
-                // Если новое или обновлено (guard сузил до MessageRecord-части)
-            } else {
-                Logger.debug(`[app][GetUpdates]: [NEW/UPDATE] Сообщение ${item.id} (Канал: ${item.channel_id}, PTS: ${item.pts})`);
-
-                // Сохраняем сообщение в локальную БД
-                await messagesTable().put(item);
-
-                // Обновляем ui (списки каналов и превью)
-                // При условии если это новое сообщение
-                const channelInStore = form.store.get(item.channel_id);
-                if (channelInStore) {
-
-                    // Проверяем: это новое сообщение или редактирование текущего последнего?
-                    const isNewMessage = !channelInStore.last_message_id || item.id > channelInStore.last_message_id;
-                    const isEditOfLast = item.id === channelInStore.last_message_id;
-
-                    if (isNewMessage || isEditOfLast) {
-
-                        // Обновляем превью только если сообщение новее текущего
-                        // или если отредактировали то, которое и так было последним
-                        form.store.update(item.channel_id, {
-                            ...channelInStore,
-                            last_message: item,
-                            last_message_id: item.id,
-                            last_pts: item.pts // Обновляем PTS в любом случае
-                        });
-
-                    } else {
-
-                        // Это редактирование старого сообщения (глубоко в истории).
-                        // Мы просто фиксируем новый PTS, чтобы синхронизация шла дальше,
-                        // но превью чата в списке не меняем.
-                        form.store.update(item.channel_id, {
-                            ...channelInStore,
-                            last_pts: item.pts
-                        });
-                        Logger.debug(`[sync]: Отредактировано старое сообщение. Превью не меняем.`);
-
-                    }
-
-                }
-            }
+            await applyChannelFeedEvent(event, false);
         } catch (err) {
-            Logger.error(`[app][GetUpdates]: Ошибка обработки элемента ${item.id}:`, err);
+            Logger.error(`[app][GetUpdates]: Ошибка обработки события ${event.type} (Канал: ${event.channel_id}):`, err);
         }
     }
 
-    // Финальный шаг: записываем новые pts в таблицу каналов
-    // Это гарантирует, что следующий GetUpdates уйдет с правильными точками отсчета
-    for (const [channelId, newPts] of Object.entries(channelLatestPts)) {
-        await channelsTable().update(channelId, { last_pts: newPts });
-        Logger.debug(`[app][GetUpdates]: PTS канала ${channelId} обновлен в БД до ${newPts}`);
+}
+
+/**
+ * ***************************************************************************
+ * Перечитать канал целиком (снапшот после too_long).
+ *
+ * Точка отрезана лентой — локальная история устарела, поэтому она чистится:
+ * форма перечитает историю при открытии. Если канала больше нет (или
+ * доступ закрыт) — ленивое обнаружение: канал убирается из хранилищ.
+ * @param form - Экземпляр формы.
+ * @param channelId - Id канала.
+ * ***************************************************************************
+ */
+async function refreshChannelSnapshot(form: Main, channelId: string): Promise<void> {
+
+    try {
+
+        // Данные канала (запрос привязан к пользователю: права, непрочитанные, pts)
+        const response = await getChannelInfoRequest({ channel_id: channelId });
+        if (!response.status || !isChannelRecord(response.data)) return;
+
+        // Кладём канал в локальные хранилища
+        const channel: ChannelRecord = response.data;
+        await channelsTable().put(channel);
+        form.store.update(channelId, channel);
+
+        // Чистим устаревшую историю канала
+        await messagesTable().where("channel_id").equals(channelId).delete();
+        Logger.debug(`[app][GetUpdates]: [SNAPSHOT] Канал ${channelId} перечитан, история очищена`);
+
+    } catch (error) {
+        Logger.error(`[app][GetUpdates]: [SNAPSHOT] Канал ${channelId} не перечитан:`, error);
+
+        // Ленивое обнаружение: канала нет или доступ закрыт — убираем его
+        if (isChannelUnavailable(error)) await applyChannelRemove({ channel_id: channelId });
     }
 
 }
@@ -213,7 +194,7 @@ async function processPendingUpdates(form: Main): Promise<void> {
 
         // Проходим и применяем обновления
         for (const pkg of pendingList) {
-            await applyUpdates(form, pkg.data);
+            await applyUpdates(pkg.data);
             await pendingUpdatesTable().delete(pkg.id);
         }
 

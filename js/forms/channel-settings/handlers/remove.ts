@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 import { getErrorMessage } from "../../../utils/helpers/error_util.js";
 
@@ -71,13 +72,13 @@ export async function removeHandler(form: ChannelSettings): Promise<void> {
                     form.modal?.close();
 
                     // Поиск формы сообщений
-                    let messagesForm = Messages.instances.get(form.channelId);
+                    let messagesForm = FormsRegistry.getOwner<Messages>(`messages:${form.channelId}`);
                     if (messagesForm) {
                         messagesForm?.modal?.close();
                     }
 
                     // Поиск формы профиля канала
-                    let channelProfileForm = ChannelProfile.instances.get(form.channelId);
+                    let channelProfileForm = FormsRegistry.getOwner<ChannelProfile>(`channel-profile:${form.channelId}`);
                     if (channelProfileForm) {
                         channelProfileForm?.modal?.close();
                     }

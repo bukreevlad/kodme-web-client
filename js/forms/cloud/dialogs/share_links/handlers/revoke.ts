@@ -1,5 +1,9 @@
 // Импортируем handlers формы
+import { FormsRegistry } from "../../../../../core/managers/forms_registry.js";
 import { removeShareLinkHandler } from "../../../handlers/remove_share_link.js";
+
+// Импортируем forms
+import { Cloud } from "../../../index.js";
 
 // Импортируем типы
 import type { CloudShareLinkRow } from "../../../types.js";
@@ -16,7 +20,11 @@ import type { ShareLinks } from "../index.js";
  */
 export async function revokeHandler(dialog: ShareLinks, link: CloudShareLinkRow): Promise<void> {
 
+    // Форма облака нужна обработчику отзыва для обновления списка
+    const cloud = FormsRegistry.getOwner<Cloud>("cloud");
+    if (!cloud) return;
+
     // Отзываем ссылку (диалог обновится автоматически)
-    await removeShareLinkHandler(dialog.form, link);
+    await removeShareLinkHandler(cloud, link);
 
 }

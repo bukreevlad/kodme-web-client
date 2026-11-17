@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { Logger } from "../../../../utils/logs/logger.js";
 import { SecretChatsManager } from "../../../../core/managers/secret_chats_manager.js";
 
@@ -40,7 +41,7 @@ export class SecretChatEvents {
             updateSecretChatRow(form, chatId).then(() => {
 
                 // Main-инстанс мог закрыться, пока шло обновление строки
-                const main = Main.instance;
+                const main = FormsRegistry.getOwner<Main>("main");
                 if (!main) return;
 
                 // Обновляем бейджи непрочитанных на вкладках папок

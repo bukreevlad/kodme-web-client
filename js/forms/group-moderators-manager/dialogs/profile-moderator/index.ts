@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -15,7 +16,6 @@ import { Buttons } from "../../../../components/buttons.js";
 import { Toggle } from "../../../../components/toggle.js";
 
 // Импортируем forms
-import { GroupModeratorsManager } from "../../../group-moderators-manager/index.js";
 
 // Импортируем handlers
 import { saveModeratorHandler } from "./handlers/save.js";
@@ -57,8 +57,6 @@ export interface GroupProfileModeratorData {
 // Form
 export class GroupProfileModerator {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: GroupProfileModerator | null = null;
 
     /**
      * ***************************************************************************
@@ -74,8 +72,7 @@ export class GroupProfileModerator {
     constructor(data: GroupProfileModeratorData) {
 
         // Поиск открытого менеджера модераторов
-        let groupModeratorsManagerForm = GroupModeratorsManager.instances.get(data.channelId);
-        let insertInto = groupModeratorsManagerForm?.modal?.content || null;
+        let insertInto = FormsRegistry.get(`group-moderators-manager:${data.channelId}`)?.content || null;
 
         // Устанавливаем настройки
         this.options = {
@@ -95,12 +92,10 @@ export class GroupProfileModerator {
         this.profile = null;
 
         // Проверяем, существует ли уже экземпляр
-        if (GroupProfileModerator.instance) {
-            return GroupProfileModerator.instance;
-        }
+        const opened = FormsRegistry.getOwner<GroupProfileModerator>("group-moderators-manager-dialogs-profile-moderator");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        GroupProfileModerator.instance = this;
 
         // Инициализация
         this._init();
@@ -147,6 +142,7 @@ export class GroupProfileModerator {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
                 closeOnOverlay: true,
@@ -222,9 +218,10 @@ export class GroupProfileModerator {
             let canDeletedMessage = this.tpl.querySelector<HTMLElement>(`:scope >.content [name="can-deleted-message"]`);
             let canCleanMessages = this.tpl.querySelector<HTMLElement>(`:scope >.content [name="can-clean-messages"]`);
             let canRestrictMembers = this.tpl.querySelector<HTMLElement>(`:scope >.content [name="can-restrict-members"]`);
+            let canPostingMessages = this.tpl.querySelector<HTMLElement>(`:scope >.content [name="can-posting-messages"]`);
 
             // Поля обязаны входить в шаблон — иначе заполнять нечего
-            if (!name || !link || !bio || !canDeletedMessage || !canCleanMessages || !canRestrictMembers) return;
+            if (!name || !link || !bio || !canDeletedMessage || !canCleanMessages || !canRestrictMembers || !canPostingMessages) return;
 
             // Аватар
             new Avatars({
@@ -245,6 +242,7 @@ export class GroupProfileModerator {
             this.profile?.can_deleted_message && canDeletedMessage.click();
             this.profile?.can_clean_messages && canCleanMessages.click();
             this.profile?.can_restrict_members && canRestrictMembers.click();
+            this.profile?.can_posting_messages && canPostingMessages.click();
 
             // Инициализируем скроллбар
             const content = this.content;
@@ -277,8 +275,6 @@ export class GroupProfileModerator {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        GroupProfileModerator.instance = null;
 
     }
 
@@ -355,6 +351,26 @@ export class GroupProfileModerator {
                             </div>
                             ${Toggle.switch({
                                 name: "can-restrict-members",
+                                checked: false,
+                                toggleText: {
+                                    on: t("forms.group_moderator_profile.enabled"),
+                                    off: t("forms.group_moderator_profile.disabled")
+                                }
+                            })}
+                        </div>
+
+                        <div class="flex flex-col gap-3 ${CDM_FORM_SECTION_CLASSES()}">
+                            <div class="flex flex-col gap-1">
+                                <span class="flex flex-row gap-2 items-center font-semibold">
+                                    <span class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
+                                        ${Icons.icon("message", { settings: { size: 20 } })?.outerHTML ?? ""}
+                                    </span>
+                                    ${t("forms.group_moderator_profile.post_messages")}
+                                </span>
+                                <span class="text-sm text-secondary">${t("forms.group_moderator_profile.post_messages_desc")}</span>
+                            </div>
+                            ${Toggle.switch({
+                                name: "can-posting-messages",
                                 checked: false,
                                 toggleText: {
                                     on: t("forms.group_moderator_profile.enabled"),

@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 
 // Импортируем forms
@@ -18,8 +19,8 @@ export function meetsHandler(form: Menu): void {
     try {
 
         // Открываем форму
-        if (Meets.instance) {
-            Meets.instance?.modal?.activate();
+        if (FormsRegistry.getOwner<Meets>("meets")) {
+            FormsRegistry.getOwner<Meets>("meets")?.modal?.activate();
         } else {
             new Meets();
         }

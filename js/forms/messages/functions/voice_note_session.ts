@@ -1,7 +1,7 @@
 // Импортируем сторонние пакеты
-import { v7 as Uuidv7 } from "uuid";
 
 // Импортируем utils
+import { v7 as Uuidv7 } from "uuid";
 import { Logger } from "../../../utils/logs/logger.js";
 import { AudioRecorder } from "../../../utils/audio/voice_recorder.js";
 import { buildLocalMediaMetadata } from "../../../utils/media/local_media_metadata.js";
@@ -409,10 +409,10 @@ export class VoiceNoteSession {
         const tempMessage: MessageRecord = {
             ...TEMP_MESSAGE,
             id: Uuidv7(),
-            created_user_id: getSessionUserId() ?? undefined,
+            author_id: getSessionUserId() ?? undefined,
             display_name: getSessionUserDisplayName(),
             channel_id: this.form.channelId,
-            channel_type: channel.type,
+            channel_kind: channel.kind,
             text: textarea.value,
             reply_to_message_id: this.form.replyMessage ? this.form.replyMessage.id : null,
             reply_to_message: this.form.replyMessage ? this.form.replyMessage : null,
@@ -461,6 +461,11 @@ export class VoiceNoteSession {
         // Обновляем состояние кнопок футера
         updateStateButtons(this.form);
 
+    }
+
+    /** Закрепляет запись: отпускание больше не отправляет, доступны кнопки панели. */
+    lock(): void {
+        this.panel?.classList.remove("hold-mode", "sliding-cancel");
     }
 
     /**

@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { CDM_MODAL_CLASSES, CDM_MODAL_CONTENT_CLASSES, CDM_MODAL_FOOTER_CLASSES, CDM_MODAL_HEADER_CLASSES } from "../../../config/constants.js";
 
 // Импортируем utils
@@ -34,7 +35,6 @@ export interface RemoveCommentDialogData {
 export class RemoveComment {
 
     /** Единственный экземпляр диалога (Singleton). */
-    static instance: RemoveComment | null = null;
 
     /** Модальное окно диалога. */
     modal: Overlay | null = null;
@@ -54,12 +54,10 @@ export class RemoveComment {
         this.callback = data.callback;
 
         // Проверяем, существует ли уже экземпляр
-        if (RemoveComment.instance) {
-            return RemoveComment.instance;
-        }
+        const opened = FormsRegistry.getOwner<RemoveComment>("comments-dialogs-remove-comment");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        RemoveComment.instance = this;
 
         // Инициализация
         this._init(data.insertInto);
@@ -90,6 +88,8 @@ export class RemoveComment {
             // Диалог
             this.modal = new Overlay(tpl, {
                 type: "modal",
+                owner: this,
+                id: "comments-dialogs-remove-comment",
                 insertInto,
                 closeOnEsc: true,
                 closeOnOverlay: true,
@@ -143,8 +143,6 @@ export class RemoveComment {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр диалога
-        RemoveComment.instance = null;
 
     }
 

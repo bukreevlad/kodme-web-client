@@ -39,11 +39,8 @@ export interface GroupModeratorRecord extends StoreItem {
     /** Разрешено блокировать участников. */
     can_restrict_members?: boolean;
 
-    /** Отрисованные копии строки (каждая копия добавляет свой DOM). */
-    __domElements__?: HTMLElement[];
-
-    /** Отписка компонента строки от точечного события обновления. */
-    __unsubscribeStore__?: () => void;
+    /** Разрешено писать в сущности с «Только администратор». */
+    can_posting_messages?: boolean;
 
 }
 
@@ -66,6 +63,9 @@ export interface GroupModeratorFlags {
 
     /** Закреплять сообщения. */
     can_pin_messages: boolean;
+
+    /** Писать в сущности с «Только администратор». */
+    can_posting_messages: boolean;
 
 }
 

@@ -1,6 +1,6 @@
 // Импортируем utils
 import { Logger } from "../../../../utils/logs/logger.js";
-import { cleanStoreData } from "../../../../utils/helpers/clean_store_data.js";
+
 import { unescapeHtml } from "../../../../utils/string/unescape_html.js";
 
 // Импортируем functions

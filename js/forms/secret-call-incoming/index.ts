@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { CDM_MODAL_CLASSES, CDM_MODAL_CONTENT_CLASSES, CDM_MODAL_FOOTER_CLASSES, CDM_MODAL_HEADER_CLASSES } from "../../config/constants.js";
 
 // Импортируем utils
@@ -43,9 +44,6 @@ export interface SecretCallIncomingData {
  */
 export class SecretCallIncoming {
 
-    // Экземпляры по id звонка (звонков может прийти несколько подряд)
-    static instances = new Map<string, SecretCallIncoming>();
-
     /**
      * ***************************************************************************
      * Модалка входящего звонка.
@@ -62,10 +60,9 @@ export class SecretCallIncoming {
         this.modal = null;
 
         // Проверяем, существует ли уже экземпляр этого звонка
-        if (SecretCallIncoming.instances.has(data.callId)) return;
+        if (FormsRegistry.getOwner<SecretCallIncoming>(`secret-call-incoming:${data.callId}`)) return;
 
         // Сохраняем ссылку на текущий экземпляр
-        SecretCallIncoming.instances.set(data.callId, this);
 
         // Инициализация
         this._init();
@@ -191,7 +188,6 @@ export class SecretCallIncoming {
         this.unsubscribes = [];
 
         // Удаляем экземпляр формы
-        SecretCallIncoming.instances.delete(this.callId);
 
     }
 

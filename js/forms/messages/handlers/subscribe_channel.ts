@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 
 // Импортируем components
@@ -36,11 +37,11 @@ export async function subscribeChannelHandler(form: Messages): Promise<void> {
             channel.is_subscribed = true;
 
             // Обновляем Store
-            let storeChannel = Main.instance?.store.get(channel.id);
+            let storeChannel = FormsRegistry.getOwner<Main>("main")?.store.get(channel.id);
             if (storeChannel) {
-                Main.instance?.store.update(channel.id, channel);
+                FormsRegistry.getOwner<Main>("main")?.store.update(channel.id, channel);
             } else {
-                Main.instance?.store.add(channel);
+                FormsRegistry.getOwner<Main>("main")?.store.add(channel);
             }
 
         }

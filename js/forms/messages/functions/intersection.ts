@@ -61,10 +61,10 @@ export function intersection(entries: IntersectionObserverEntry[], observer: Int
             // Если не видно элемент
             if (!entry.isIntersecting) continue;
 
-            Logger.debug(`[app][messages][observer]: Элемент в зоне видимости. Проверяем лимиты прочтения для messageId: ${messageId}. Текущий last_viewed_message_id в форме: ${channel.last_viewed_message_id}`);
+            Logger.debug(`[app][messages][observer]: Элемент в зоне видимости. Проверяем лимиты прочтения для messageId: ${messageId}. Текущий last_read_id в форме: ${channel.last_read_id}`);
 
             // Проверяем, нужно ли обновлять статус прочтения
-            if (!channel.last_viewed_message_id || channel.last_viewed_message_id < messageId) {
+            if (!channel.last_read_id || channel.last_read_id < messageId) {
 
                 Logger.debug(`[app][messages][observer]: Планируем отметку о прочтении для messageId: ${messageId}`);
 
@@ -73,7 +73,7 @@ export function intersection(entries: IntersectionObserverEntry[], observer: Int
                 // батчер при отправке, иначе значение уменьшалось бы дважды
                 // (здесь и в flushCallback), а бейдж в списке чатов «схлопывался»
                 // быстрее, чем реально прочитаны сообщения.
-                channel.last_viewed_message_id = messageId;
+                channel.last_read_id = messageId;
 
                 // Отметку НЕ отправляем сразу: при быстром скролле обсервер
                 // срабатывает десятки раз подряд, и пользователь выбирал лимит

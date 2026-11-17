@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { CDM_MODAL_CLASSES, CDM_MODAL_CONTENT_CLASSES, CDM_MODAL_FOOTER_CLASSES, CDM_MODAL_HEADER_CLASSES } from "../../../../config/constants.js";
 
 // Импортируем utils
@@ -26,8 +27,6 @@ export interface TotpDisableDialogOptions {
 // Form
 export class TotpDisableDialog {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: TotpDisableDialog | null = null;
 
     /** Настройки диалога. */
     options: Required<TotpDisableDialogOptions>;
@@ -58,12 +57,10 @@ export class TotpDisableDialog {
         };
 
         // Проверяем, существует ли уже экземпляр
-        if (TotpDisableDialog.instance) {
-            return TotpDisableDialog.instance;
-        }
+        const opened = FormsRegistry.getOwner<TotpDisableDialog>("user-setting-security-dialogs-totp_disable");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        TotpDisableDialog.instance = this;
 
         // Инициализация
         this._init();
@@ -93,6 +90,8 @@ export class TotpDisableDialog {
             // Модальное окно
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "user-setting-security-dialogs-totp_disable",
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
                 closeOnOverlay: true,
@@ -157,8 +156,6 @@ export class TotpDisableDialog {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        TotpDisableDialog.instance = null;
 
     }
 

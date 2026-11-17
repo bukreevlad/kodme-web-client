@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { LocalStorage } from "../../utils/local_storage.js";
 import { Logger } from "../../utils/logs/logger.js";
 import { IsMobile } from "../../utils/helpers/is_mobile.js";
@@ -46,7 +47,6 @@ import type {
 export class MediaViewer {
 
     /** Единственный экземпляр класса (Singleton). */
-    static instance: MediaViewer | null = null;
 
     /** Список медиафайлов для просмотра. */
     media: MediaItem[];
@@ -173,14 +173,13 @@ export class MediaViewer {
         this.boundHandleKeydown = (event) => keydownHandler(event, this);
         this.boundHandleWheel = (event) => wheelHandler(event, this);
 
-        if (MediaViewer.instance) {
-            console.log("ℹ️ [MediaViewer] Возврат существующего Singleton-экземпляра");
-            MediaViewer.instance.update(data);
-            return MediaViewer.instance;
+        const opened = FormsRegistry.getOwner<MediaViewer>("media-viewer");
+        if (opened) {
+            opened.update(data);
+            return opened;
         }
         console.log("🚀 [MediaViewer] Создание нового экземпляра просмотрщика", data);
 
-        MediaViewer.instance = this;
         this._init();
     }
 
@@ -204,6 +203,8 @@ export class MediaViewer {
             this.tpl = this._template();
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "media-viewer",
                 url: `?media-viewer`,
                 insertInto: this.options.insertInto,
                 closeOnOverlay: this.options.closeOnOverlay,
@@ -220,7 +221,6 @@ export class MediaViewer {
         } catch (error) {
             console.error("❌ [MediaViewer] Ошибка при открытии модалки:", error);
             Logger.error(error);
-            MediaViewer.instance = null;
         }
     }
 
@@ -261,7 +261,6 @@ export class MediaViewer {
         } catch (error) {
             console.error("❌ [MediaViewer] Ошибка в _onBeforeOpen:", error);
             Logger.error(error);
-            MediaViewer.instance = null;
             throw error;
         }
     }
@@ -349,7 +348,6 @@ export class MediaViewer {
             this.elements.stage.removeEventListener("wheel", this.boundHandleWheel);
         }
 
-        MediaViewer.instance = null;
     }
 
     /**

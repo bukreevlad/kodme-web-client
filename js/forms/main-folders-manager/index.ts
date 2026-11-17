@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -62,8 +63,6 @@ export interface MainFoldersManagerData {
 // Form
 export class MainFoldersManager {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: MainFoldersManager | null = null;
 
     // Настройки формы
     options: MainFoldersManagerOptions;
@@ -141,12 +140,10 @@ export class MainFoldersManager {
         this.store = new Store<MainFoldersManagerFolder>();
 
         // Проверяем, существует ли уже экземпляр
-        if (MainFoldersManager.instance) {
-            return MainFoldersManager.instance;
-        }
+        const opened = FormsRegistry.getOwner<MainFoldersManager>("main-folders-manager");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        MainFoldersManager.instance = this;
 
         // Инициализация
         this._init();
@@ -182,6 +179,8 @@ export class MainFoldersManager {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "main-folders-manager",
                 url: `?main-folders-manager`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -288,8 +287,6 @@ export class MainFoldersManager {
         this._offScrollFolders?.();
         this._offScrollFolders = null;
 
-        // Удаляем экземпляр формы
-        MainFoldersManager.instance = null;
 
     }
 

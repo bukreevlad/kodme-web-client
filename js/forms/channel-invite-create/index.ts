@@ -6,6 +6,7 @@ import { CDM_FORM_CLASSES, CDM_FORM_HEADER_CLASSES, CDM_FORM_CONTENT_CLASSES, CD
 
 // Импортируем utils
 import { Logger } from "../../utils/logs/logger.js";
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { Icons } from "../../utils/icons.js";
 
 // Импортируем components
@@ -19,7 +20,6 @@ import { createHandler } from "./handlers/create.js";
 import { switchIsNumberUsersHandler } from "./handlers/switch-is-number-users.js";
 
 // Импортируем forms
-import { ChannelProfile } from "../channel-profile/index.js";
 import { t } from "../../utils/i18n/index.js";
 
 /**
@@ -48,8 +48,6 @@ export interface ChannelInviteCreateData {
 // Form
 export class ChannelInviteCreate {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: ChannelInviteCreate | null = null;
 
     /**
      * ***************************************************************************
@@ -65,9 +63,8 @@ export class ChannelInviteCreate {
         // Если не передан channelId
         if (!data?.channelId) throw new Error("Не передан: channelId");
 
-        // Поиск открытого профиля канала
-        let channelProfileForm = ChannelProfile.instances.get(data.channelId);
-        let insertInto = channelProfileForm?.modal?.content || null;
+        // Точка монтирования — контент открытого профиля канала
+        let insertInto = FormsRegistry.get(`channel-profile:${data.channelId}`)?.content ?? null;
 
         // Устанавливаем настройки
         this.options = {
@@ -85,12 +82,10 @@ export class ChannelInviteCreate {
         this.channelId = data.channelId;
 
         // Проверяем, существует ли уже экземпляр
-        if (ChannelInviteCreate.instance) {
-            return ChannelInviteCreate.instance;
-        }
+        const opened = FormsRegistry.getOwner<ChannelInviteCreate>("channel-invite-create");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        ChannelInviteCreate.instance = this;
 
         // Инициализация
         this._init();
@@ -135,6 +130,10 @@ export class ChannelInviteCreate {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: `channel-invite-create:${this.channelId}`,
+                placement: "stack",
+                parent: FormsRegistry.getByContent(this.options.insertInto ?? null)?.id ?? null,
                 url: `?channel-invite-create=${this.channelId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -225,8 +224,6 @@ export class ChannelInviteCreate {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        ChannelInviteCreate.instance = null;
 
     }
 

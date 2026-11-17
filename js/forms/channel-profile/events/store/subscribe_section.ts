@@ -97,20 +97,9 @@ export function subscribeSection(form: ChannelProfile, section: MediaSection): U
             // invariant: см. комментарий в item::added выше
             const data = payload as ChannelSectionItemData;
 
-            const elements = data.__domElements__;
-            if (!Array.isArray(elements)) return;
-
-            for (const element of elements) {
-                if (element && typeof element.remove === "function") {
-                    element.remove();
-                }
-            }
-
-            // Чистим массив, чтобы не копить ссылки на удалённые узлы
-            data.__domElements__ = [];
-
             // Отписываем компонент от глобальных событий (аудиоплейер):
-            // такая подписка переживает Store и удерживала закрытую форму
+            // такая подписка переживает Store и удерживала закрытую форму.
+            // DOM-копии строки стор снимает сам
             if (typeof data.__destroy__ === "function") {
                 data.__destroy__();
                 data.__destroy__ = null;

@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../../../core/managers/forms_registry.js";
 import { Logger } from "../../../../../utils/logs/logger.js";
 
 // Импортируем handlers
@@ -20,8 +21,8 @@ export async function removeModeratorFromProfileHandler(form: GroupProfileModera
 
     try {
 
-        // Список модераторов — вкладка, в которой открыты настройки
-        const listForm = GroupModeratorsManager.instances.get(form.channelId);
+        // Список модераторов — форма, в которой открыты настройки
+        const listForm = FormsRegistry.getOwner<GroupModeratorsManager>(`group-moderators-manager:${form.channelId}`);
         if (!listForm) return;
 
         // Диалог подтверждения, запрос и уборка строки — в общем обработчике

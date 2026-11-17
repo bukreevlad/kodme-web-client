@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { CDM_FORM_CLASSES, CDM_FORM_HEADER_CLASSES, CDM_FORM_CONTENT_CLASSES, CDM_FORM_SECTION_CLASSES } from "../../config/constants.js";
 
 // Импортируем utils
@@ -29,8 +30,6 @@ export interface PasskeyRenameDialogOptions {
 // Form
 export class PasskeyRenameDialog {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: PasskeyRenameDialog | null = null;
 
     /** Настройки диалога. */
     options: Required<PasskeyRenameDialogOptions>;
@@ -65,12 +64,10 @@ export class PasskeyRenameDialog {
         };
 
         // Проверяем, существует ли уже экземпляр
-        if (PasskeyRenameDialog.instance) {
-            return PasskeyRenameDialog.instance;
-        }
+        const opened = FormsRegistry.getOwner<PasskeyRenameDialog>("user-passkey-rename");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        PasskeyRenameDialog.instance = this;
 
         // Инициализация
         this._init();
@@ -100,6 +97,8 @@ export class PasskeyRenameDialog {
             // Модальное окно
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "user-passkey-rename",
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
                 closeOnOverlay: false,
@@ -162,8 +161,6 @@ export class PasskeyRenameDialog {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        PasskeyRenameDialog.instance = null;
 
     }
 

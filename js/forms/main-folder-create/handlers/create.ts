@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 import { LocalStorage } from "../../../utils/local_storage.js";
 import { getErrorMessage } from "../../../utils/helpers/error_util.js";
@@ -59,10 +60,12 @@ export async function createMainFolderHandler(form: MainFolderCreate): Promise<v
             form.modal?.close();
 
             // Отображаем новую папку в менеджере папок (если он открыт)
-            MainFoldersManager?.instance?.store?.add(response.data);
+            FormsRegistry.getOwner<MainFoldersManager>("main-folders-manager")?.store?.add(response.data);
 
             // Отображаем новую папку на главной форме (live-синхронизация вкладок)
-            if (Main.instance) addFolderTab(Main.instance, response.data);
+            const main = FormsRegistry.getOwner<Main>("main");
+
+            if (main) addFolderTab(main, response.data);
 
         }
 

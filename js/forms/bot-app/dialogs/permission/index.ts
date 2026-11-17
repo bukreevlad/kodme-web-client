@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { CDM_MODAL_CLASSES, CDM_MODAL_CONTENT_CLASSES, CDM_MODAL_FOOTER_CLASSES, CDM_MODAL_HEADER_CLASSES } from "../../../../config/constants.js";
 
 // Импортируем utils
@@ -43,7 +44,6 @@ export interface PermissionDialogOptions {
 export class PermissionDialog {
 
     /** Единственный экземпляр диалога. */
-    static instance: PermissionDialog | null = null;
 
     /** Настройки диалога. */
     options: PermissionDialogOptions;
@@ -71,12 +71,10 @@ export class PermissionDialog {
         };
 
         // Проверяем, существует ли уже экземпляр
-        if (PermissionDialog.instance) {
-            return PermissionDialog.instance;
-        }
+        const opened = FormsRegistry.getOwner<PermissionDialog>("bot-app-dialogs-permission");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        PermissionDialog.instance = this;
 
         // Инициализация
         this._init();
@@ -106,6 +104,8 @@ export class PermissionDialog {
             // Модальное окно
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "bot-app-dialogs-permission",
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
                 closeOnOverlay: true,
@@ -181,8 +181,6 @@ export class PermissionDialog {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        PermissionDialog.instance = null;
 
         // Закрытие без кнопок (Esc, клик по фону, шапка) — считаем отказом
         if (!this._decided) this.options.callback?.(false);

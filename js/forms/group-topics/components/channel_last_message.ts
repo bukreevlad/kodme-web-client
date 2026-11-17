@@ -1,8 +1,9 @@
 // Импортируем справочник типов файлов
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { isKind } from "../../../config/file_types.js";
 
 // Импортируем utils
-import { Logger } from "../../../utils/logs/logger.js";
+
 import { Icons } from "../../../utils/icons.js";
 import { I18n, t } from "../../../utils/i18n/index.js";
 
@@ -25,7 +26,7 @@ import type { ChannelRecord, MessageRecord } from "../../main/types.js";
  * ***************************************************************************
  * Превью последнего сообщения для строки темы/группы.
  *
- * Для группы (type === 2) ищет самое свежее сообщение среди общего чата и
+ * Для группы (kind === "group") ищет самое свежее сообщение среди общего чата и
  * тем; для остальных — просто рендерит переданное.
  * @param channel - Строка элемента (тема/группа).
  * @param data - Данные канала.
@@ -34,8 +35,8 @@ import type { ChannelRecord, MessageRecord } from "../../main/types.js";
  */
 export function createLastMessage(channel: TopicItem, data: ChannelRecord): HTMLElement {
 
-    // Если это группа (type === 2), ищем самое последнее сообщение среди группы и тем
-    if (channel.data.type === 2) {
+    // Если это группа (kind === "group"), ищем самое последнее сообщение среди группы и тем
+    if (channel.data.kind === "group") {
 
         // Исходно считаем самым новым сообщение самой группы
         let newestMessage: MessageRecord | null | undefined = data?.last_message;
@@ -43,7 +44,7 @@ export function createLastMessage(channel: TopicItem, data: ChannelRecord): HTML
         let topicName = "";
 
         // Поиск тем этой группы в глобальном Store (главная форма может быть ещё не создана)
-        let topics = Main.instance?.store.getAll().filter(item => item.topic_for_group_id === channel.data.id) ?? [];
+        let topics = FormsRegistry.getOwner<Main>("main")?.store.getAll().filter(item => item.parent_channel_id === channel.data.id) ?? [];
 
         // Если темы найдены, сравниваем их даты
         if (topics.length > 0) {
@@ -124,10 +125,10 @@ function renderMessageContent(channel: TopicItem, data: ChannelRecord): HTMLElem
 
     // Если сообщение от текущего пользователя
     let itsYou = tpl.querySelector("[data-its-you]");
-    let itsMe = data?.last_message?.created_user_id === getSessionUserId() ? t("forms.main.components.channels.last_message.you") : "";
-    const type = data.type;
-    if (itsMe && type != null && [1, 2, 4].includes(type)) itsYou && (itsYou.innerHTML = `<span class="text-[var(--color-green)]">${itsMe}</span>`);
-    if (!itsMe && type != null && [2, 4].includes(type) && userName) {
+    let itsMe = data?.last_message?.author_id === getSessionUserId() ? t("forms.main.components.channels.last_message.you") : "";
+    const kind = data.kind;
+    if (itsMe && kind != null && (kind === "dialog" || kind === "group" || kind === "topic")) itsYou && (itsYou.innerHTML = `<span class="text-[var(--color-green)]">${itsMe}</span>`);
+    if (!itsMe && kind != null && (kind === "group" || kind === "topic") && userName) {
 
         // Имя пользователя — внешние данные: вставка только через
         // textContent (innerHTML открыл бы XSS)
@@ -148,12 +149,12 @@ function renderMessageContent(channel: TopicItem, data: ChannelRecord): HTMLElem
 
     // Проверка статуса сообщения (диалог)
     if (!data?.last_message?.is_error_sending && !data?.last_message?.is_temporary) {
-        if (type === 1 && (getSessionUserId() === data?.last_message?.created_user_id)) {
+        if (kind === "dialog" && (getSessionUserId() === data?.last_message?.author_id)) {
 
             // Отсутствующий id не должен совпасть с id сообщения —
             // проверка `!= null` обязательна; invariant: иконки check/checks
             // входят в набор Icons
-            const lastViewedId = data.display_last_viewed_message_id;
+            const lastViewedId = data.display_last_read_id;
             if (statusIcon) {
                 if (lastViewedId != null && lastViewedId >= data.last_message.id) {
                     statusIcon.innerHTML = Icons.icon("checks", { classes: ["stroke-brand-600", "dark:stroke-brand-500"] })?.outerHTML ?? "";

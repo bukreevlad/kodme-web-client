@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -40,8 +41,6 @@ export interface StickerPaksOptions {
 // Form
 export class StickerPaks {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: StickerPaks | null = null;
 
     /** Настройки формы. */
     options: StickerPaksOptions;
@@ -93,12 +92,10 @@ export class StickerPaks {
         }
 
         // Проверяем, существует ли уже экземпляр
-        if (StickerPaks.instance) {
-            return StickerPaks.instance;
-        }
+        const opened = FormsRegistry.getOwner<StickerPaks>("sticker-paks");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        StickerPaks.instance = this;
 
         // Инициализация
         this._init();
@@ -133,6 +130,8 @@ export class StickerPaks {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "sticker-paks",
                 url: `?stickers`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -235,8 +234,6 @@ export class StickerPaks {
         this._offScrollPaks?.();
         this._offScrollPaks = null;
 
-        // Удаляем экземпляр формы
-        StickerPaks.instance = null;
 
     }
 

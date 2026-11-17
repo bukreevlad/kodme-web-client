@@ -1,4 +1,5 @@
 // Импортируем utils
+import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 
 // Импортируем forms
@@ -18,8 +19,8 @@ export function stickersHandler(form: Menu): void {
     try {
 
         // Открываем форму
-        if (StickerPaks.instance) {
-            StickerPaks.instance?.modal?.activate();
+        if (FormsRegistry.getOwner<StickerPaks>("sticker-paks")) {
+            FormsRegistry.getOwner<StickerPaks>("sticker-paks")?.modal?.activate();
         } else {
             new StickerPaks();
         }

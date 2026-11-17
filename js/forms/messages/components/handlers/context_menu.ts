@@ -111,7 +111,7 @@ export async function contextMenuHandler(event: Event, message: MessageItem): Pr
             iconName: "arrow-back-up-double",
             onClick: () => replyMessageHandler(message)
         };
-        if ((message.data.channel_type !== 3) &&
+        if ((message.data.channel_kind !== "channel") &&
             (!message.data.is_error_sending && !message.data.is_temporary) &&
             (!message.form.editedMessage)
         ) {
@@ -136,7 +136,7 @@ export async function contextMenuHandler(event: Event, message: MessageItem): Pr
             iconName: "pencil",
             onClick: () => editMessageHandler(message)
         };
-        if ((message.data.created_user_id === sessionUserId) &&
+        if ((message.data.author_id === sessionUserId) &&
             (!message.data.is_error_sending && !message.data.is_temporary) &&
             (!message.data.forwarded_to_message_id)
         ) {
@@ -159,9 +159,9 @@ export async function contextMenuHandler(event: Event, message: MessageItem): Pr
 
         // Имеет ли право удалять "Для всех" в обычных группах/личках
         const canDelete =
-            [1, 8].includes(message.form.channel.type) ||
-            message.data.created_user_id === sessionUserId ||
-            message.form.channel.created_user_id === sessionUserId ||
+            message.form.channel.kind === "dialog" ||
+            message.data.author_id === sessionUserId ||
+            message.form.channel.owner_id === sessionUserId ||
             (message.form.channel.is_moderator && message.form.channel.can_deleted_message);
 
         // Проверка
@@ -177,16 +177,16 @@ export async function contextMenuHandler(event: Event, message: MessageItem): Pr
         // Пункты модерации: цель — автор сообщения; на своих сообщениях,
         // на сообщениях модераторов и создателя канала их не показываем
         const moderationChannel = message.form.channel;
-        const moderationAuthor = message.data.created_user_id;
-        const isModerationType = !!moderationChannel && [2, 3, 4, 6, 7].includes(moderationChannel.type);
-        const isChannelOwner = !!moderationChannel && moderationChannel.created_user_id === sessionUserId;
+        const moderationAuthor = message.data.author_id;
+        const isModerationType = !!moderationChannel && moderationChannel.kind !== "dialog" && moderationChannel.kind !== "favorite";
+        const isChannelOwner = !!moderationChannel && moderationChannel.owner_id === sessionUserId;
         const canClean = isModerationType && (isChannelOwner || (!!moderationChannel?.is_moderator && !!moderationChannel?.can_clean_messages));
         const canRestrict = isModerationType && (isChannelOwner || (!!moderationChannel?.is_moderator && !!moderationChannel?.can_restrict_members));
 
         // Цель не должна быть зрителем, модератором или создателем канала
         const moderationTargetAllowed = typeof moderationAuthor === "string" &&
             moderationAuthor !== sessionUserId &&
-            moderationAuthor !== moderationChannel?.created_user_id &&
+            moderationAuthor !== moderationChannel?.owner_id &&
             !message.data.is_moderator;
 
         // Удалить все сообщения автора

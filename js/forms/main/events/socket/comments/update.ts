@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../../../../core/managers/forms_registry.js";
 import { Socket } from "../../../../../config/socket.js";
 
 // Импортируем utils
@@ -47,7 +48,7 @@ export function subscribeCommentsUpdate(asyncQueue: AsyncQueue): void {
 
                 // Запись обновляется только в открытой форме и только если строка
                 // есть в окне ленты
-                const form = Comments.instances.get(entityId);
+                const form = FormsRegistry.getOwner<Comments>(`comments:${entityId}`);
                 if (!form || !form.store.get(data.id)) return;
 
                 // invariant: реакции в пуше отсутствуют — присваивание сохранит

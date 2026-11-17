@@ -6,6 +6,7 @@ import { CDM_FORM_CLASSES, CDM_FORM_HEADER_CLASSES, CDM_FORM_CONTENT_CLASSES, CD
 
 // Импортируем utils
 import { Logger } from "../../utils/logs/logger.js";
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { Icons } from "../../utils/icons.js";
 import { LocalStorage } from "../../utils/local_storage.js";
 
@@ -16,11 +17,10 @@ import { openCastRequest } from "./requests/open.js";
 import { Overlay } from "../../components/overlay/index.js";
 import { Buttons } from "../../components/buttons.js";
 
-// Импортируем forms
-import { Messages } from "../messages/index.js";
 
 // Импортируем handlers
 import { menuHandler } from "./handlers/menu.js";
+import { openChatHandler } from "./handlers/open_chat.js";
 
 // Импортируем functions
 import { stopFLVPlayer } from "./functions/stop_flv_player.js";
@@ -63,9 +63,6 @@ export interface BroadcastPlayData {
 
 // Form
 export class BroadcastPlay {
-
-    // Реестр всех открытых форм BroadcastPlay: { castId: instance }
-    static instances = new Map<string, BroadcastPlay>();
 
     /** Настройки формы. */
     options: BroadcastPlayOptions;
@@ -223,11 +220,10 @@ export class BroadcastPlay {
         };
 
         // Получаем instance
-        let instance = BroadcastPlay.instances.get(data.castId);
+        let instance = FormsRegistry.getOwner<BroadcastPlay>(`broadcast-play:${data.castId}`);
         if (instance) return instance;
 
         // Регистрируем этот экземпляр формы
-        BroadcastPlay.instances.set(this.castId, this);
 
         // Инициализация
         this._init();
@@ -302,6 +298,10 @@ export class BroadcastPlay {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: `broadcast-play:${this.castId}`,
+                placement: "workspace",
+                workspace: `broadcast-play:${this.castId}`,
                 url: `?broadcast-play=${this.castId}`,
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
@@ -352,14 +352,9 @@ export class BroadcastPlay {
             this.menuButton = menu;
             menu?.addEventListener("click", (event) => menuHandler(event, this));
 
-            // Открыть чат
+            // Открыть чат (на десктопе — в боковой контейнер home)
             let openChat = this.tpl.querySelector<HTMLElement>(":scope >.header [action-open-chat]");
-            openChat?.addEventListener("click", () => {
-                // Ссылки в замыкании читаются в момент клика;
-                // без id канала чат не открываем
-                const channelId = this.cast?.chat_channel_id;
-                if (channelId) new Messages({ channelId });
-            });
+            openChat?.addEventListener("click", () => openChatHandler(this));
 
             // Лоадер формы: прячется, когда видео заиграло, и показывается
             // при буферизации дольше порога. Привязка к событиям плеера —
@@ -435,17 +430,11 @@ export class BroadcastPlay {
             // Обновляем форму
             this.update(response.data);
 
-            // Сообщаем системе, что форма открыта
-            window.dispatchEvent(new CustomEvent("[app][form]::opened", {
-                detail: {
-                    id: this.modal?.options.id,
-                    data: {
-                        instance: this,
-                        title: this.cast.name,
-                        subtitle: t("forms.broadcast_play.title")
-                    }
-                }
-            }));
+            // Пилюля рабочего места: заголовки живут в записи реестра
+            if (this.modal) FormsRegistry.update(this.modal.options.id, {
+                title: this.cast.name,
+                subtitle: t("forms.broadcast_play.title")
+            });
 
             // Плеер создаётся в _onOpen(): к этому моменту форма уже вставлена
             // в документ, и скин Video.js конструируется подключённым — иначе его
@@ -549,12 +538,6 @@ export class BroadcastPlay {
         loaderDispose(this);
 
         // Удаляем экземпляр формы из реестра
-        BroadcastPlay.instances.delete(this.castId);
-
-        // Сообщаем системе, что форма закрыта
-        window.dispatchEvent(new CustomEvent("[app][form]::closed", {
-            detail: { id: this.modal?.options.id }
-        }));
 
     }
 

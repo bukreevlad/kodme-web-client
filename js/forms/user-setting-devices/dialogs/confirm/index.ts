@@ -1,4 +1,5 @@
 // Импортируем config
+import { FormsRegistry } from "../../../../core/managers/forms_registry.js";
 import { CDM_MODAL_CLASSES, CDM_MODAL_CONTENT_CLASSES, CDM_MODAL_FOOTER_CLASSES, CDM_MODAL_HEADER_CLASSES } from "../../../../config/constants.js";
 
 // Импортируем utils
@@ -29,8 +30,6 @@ export interface ConfirmDeviceDialogOptions {
 // Form
 export class ConfirmDeviceDialog {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: ConfirmDeviceDialog | null = null;
 
     /** Настройки диалога. */
     options: Required<ConfirmDeviceDialogOptions>;
@@ -65,12 +64,10 @@ export class ConfirmDeviceDialog {
         };
 
         // Проверяем, существует ли уже экземпляр
-        if (ConfirmDeviceDialog.instance) {
-            return ConfirmDeviceDialog.instance;
-        }
+        const opened = FormsRegistry.getOwner<ConfirmDeviceDialog>("user-setting-devices-dialogs-confirm");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        ConfirmDeviceDialog.instance = this;
 
         // Инициализация
         this._init();
@@ -100,6 +97,8 @@ export class ConfirmDeviceDialog {
             // Модальное окно
             this.modal = new Overlay(this.tpl, {
                 type: "modal",
+                owner: this,
+                id: "user-setting-devices-dialogs-confirm",
                 insertInto: this.options.insertInto,
                 closeOnEsc: true,
                 closeOnOverlay: true,
@@ -146,8 +145,6 @@ export class ConfirmDeviceDialog {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        ConfirmDeviceDialog.instance = null;
 
     }
 

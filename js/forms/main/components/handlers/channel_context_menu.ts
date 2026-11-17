@@ -54,8 +54,8 @@ export async function channelContextMenuHandler(event: MouseEvent, channel: Chan
             iconName: "Bell",
             onClick: () => enableNotifyHandler(channel)
         };
-        if (!channel.data.is_notifications && channel.data.is_subscribed
-            && [1, 2, 3, 4, 6, 7, 8].includes(channel.data.type ?? -1)
+        if (channel.data.notifications?.mode !== "all" && channel.data.is_subscribed
+            && channel.data.kind != null && channel.data.kind !== "favorite"
         ) {
             menuItems.push(enableNotify);
         }
@@ -68,8 +68,8 @@ export async function channelContextMenuHandler(event: MouseEvent, channel: Chan
             iconName: "BellOff",
             onClick: () => disableNotifyHandler(channel)
         };
-        if (channel.data.is_notifications && channel.data.is_subscribed
-            && [1, 2, 3, 4, 6, 7, 8].includes(channel.data.type ?? -1)
+        if (channel.data.notifications?.mode === "all" && channel.data.is_subscribed
+            && channel.data.kind != null && channel.data.kind !== "favorite"
         ) {
             menuItems.push(disableNotify);
         }
@@ -97,7 +97,7 @@ export async function channelContextMenuHandler(event: MouseEvent, channel: Chan
                 new UserProfile({ userId });
             }
         };
-        if (channel.data.type === 1) {
+        if (channel.data.kind === "dialog") {
             menuItems.push(userProfile);
         }
 
@@ -114,7 +114,7 @@ export async function channelContextMenuHandler(event: MouseEvent, channel: Chan
                 isInitiator: true
             })
         };
-        if (channel.data.type === 1) {
+        if (channel.data.kind === "dialog") {
             menuItems.push(call);
         }
 
@@ -126,7 +126,7 @@ export async function channelContextMenuHandler(event: MouseEvent, channel: Chan
             iconName: "folder-open",
             onClick: () => moveToFolderHandler(channel)
         };
-        if (channel.data.type !== 5) {
+        if (channel.data.kind !== "favorite") {
             menuItems.push(moveToFolder);
         }
 
@@ -139,7 +139,7 @@ export async function channelContextMenuHandler(event: MouseEvent, channel: Chan
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => unsubscribeChannelHandler(channel)
         };
-        if (channel.data.type === 3 && channel.data.is_subscribed) {
+        if (channel.data.kind === "channel" && channel.data.is_subscribed) {
             menuItems.push(unsubscribeChannel);
         }
 
@@ -152,7 +152,7 @@ export async function channelContextMenuHandler(event: MouseEvent, channel: Chan
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => unsubscribeChannelHandler(channel)
         };
-        if (channel.data.type === 2 && channel.data.is_subscribed) {
+        if (channel.data.kind === "group" && channel.data.is_subscribed) {
             menuItems.push(unsubscribeGroup);
         }
 
@@ -165,7 +165,7 @@ export async function channelContextMenuHandler(event: MouseEvent, channel: Chan
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => clearHistoryHandler(channel)
         };
-        if ([1, 8].includes(channel.data.type ?? -1) && channel.data.is_subscribed) {
+        if (channel.data.kind === "dialog" && channel.data.is_subscribed) {
             menuItems.push(clearHistory);
         }
 
@@ -178,7 +178,7 @@ export async function channelContextMenuHandler(event: MouseEvent, channel: Chan
             cssClasses: ["text-[var(--color-red)]"],
             onClick: () => removeDialogHandler(channel)
         };
-        if ([1, 8].includes(channel.data.type ?? -1) && channel.data.is_subscribed) {
+        if (channel.data.kind === "dialog" && channel.data.is_subscribed) {
             menuItems.push(removeDialog);
         }
 

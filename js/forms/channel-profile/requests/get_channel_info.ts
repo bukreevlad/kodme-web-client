@@ -3,7 +3,7 @@ import { Socket } from "../../../config/socket.js";
 import { SOCKET_REQUEST_TIMEOUT } from "../../../config/constants.js";
 
 // Импортируем типы
-import type { Answer } from "../../../types/domain.js";
+import type { Answer, ChannelKind } from "../../../types/domain.js";
 import type { AvatarImageDocument } from "../../../components/avatars.js";
 
 /**
@@ -25,8 +25,8 @@ export interface ChannelProfileResponse {
     /** Id канала. */
     id: string;
 
-    /** Тип канала (1, 8 — диалоги, 2 — группа, 3 — канал, 4 — тема, 5 — избранное). */
-    type: number;
+    /** Вид канала (диалоги, группа, канал, тема, избранное...). */
+    kind: ChannelKind;
 
     /** Ссылка на канал (@username или публичная ссылка). */
     link?: string;
@@ -37,10 +37,10 @@ export interface ChannelProfileResponse {
     /** Отображаемое имя. */
     display_name?: string;
 
-    /** Id создателя канала (по нему показывается кнопка настроек). */
-    created_user_id?: string;
+    /** Id владельца канала (по нему показывается кнопка настроек). */
+    owner_id?: string;
 
-    /** Id пользователя-собеседника (для диалогов: типы 1 и 8 — аватар берётся от него). */
+    /** Id пользователя-собеседника (для диалогов: аватар берётся от него). */
     display_user_id?: string;
 
     /** Документ изображения аватара. */

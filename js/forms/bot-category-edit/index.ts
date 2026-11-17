@@ -1,4 +1,5 @@
 // Импортируем сторонние пакеты
+import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
@@ -14,7 +15,6 @@ import { Buttons } from "../../components/buttons.js";
 import { Inputs } from "../../components/inputs.js";
 
 // Импортируем forms
-import { BotProfile } from "../bot-profile/index.js";
 
 // Импортируем handlers
 import { saveHandler } from "./handlers/save.js";
@@ -56,8 +56,6 @@ export interface EditBotCategoryData {
 // Form
 export class EditBotCategory {
 
-    // Переменная для хранения единственного экземпляра формы
-    static instance: EditBotCategory | null = null;
 
     /**
      * ***************************************************************************
@@ -78,7 +76,7 @@ export class EditBotCategory {
         // Поиск открытого профиля бота: дочерняя форма (приложение, команда,
         // категория, ссылка) должна открыться внутри него. Если профиль
         // закрыт — остаётся левая колонка home
-        const insertInto: HTMLElement | null = BotProfile.instances.get(data.botId)?.modal?.content
+        const insertInto: HTMLElement | null = FormsRegistry.get(`bot-profile:${data.botId}`)?.content
             || document.querySelector(".cdm-form.home .left");
 
         // Устанавливаем настройки
@@ -98,12 +96,10 @@ export class EditBotCategory {
         this.callback = data.callback;
 
         // Проверяем, существует ли уже экземпляр
-        if (EditBotCategory.instance) {
-            return EditBotCategory.instance;
-        }
+        const opened = FormsRegistry.getOwner<EditBotCategory>("bot-category-edit");
+        if (opened) return opened;
 
         // Сохраняем ссылку на текущий экземпляр
-        EditBotCategory.instance = this;
 
         // Инициализация
         this._init();
@@ -149,6 +145,8 @@ export class EditBotCategory {
             // Форма
             this.modal = new Overlay(this.tpl, {
                 type: "form",
+                owner: this,
+                id: "bot-category-edit",
                 insertInto: this.options.insertInto,
                 closeOnEsc: false,
                 closeOnOverlay: false,
@@ -246,8 +244,6 @@ export class EditBotCategory {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Удаляем экземпляр формы
-        EditBotCategory.instance = null;
 
     }
 
