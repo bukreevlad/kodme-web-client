@@ -1,4 +1,24 @@
 .cdm-form.forward-messages {
+
+    /* Бейдж выбора на аватаре: плавно увеличивается с нуля у выделенной
+       строки и так же исчезает (класс selected раскладывается по всем
+       DOM-копиям строки в папках) */
+    [data-list] {
+        .item {
+            [data-select-badge] {
+                transform: scale(0);
+                opacity: 0;
+                pointer-events: none;
+                transition: transform var(--animate-time), opacity var(--animate-time);
+            }
+
+            &.selected [data-select-badge] {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    }
+
     [action-forward-messages] {
         position: absolute;
         bottom: 1rem;

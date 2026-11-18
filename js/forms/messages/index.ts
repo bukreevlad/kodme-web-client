@@ -185,6 +185,7 @@ export class Messages {
         this.videoNoteRecorder = null;                      // видео рекордер
         this.dragAndDrop = null;                            // обработчики перетаскивания файлов
         this.uploadAbort = null;                            // контроллер прерывания очереди отправки
+        this.messageAbort = null;                           // отмена текущего сообщения очереди (удаление в полёте)
         this.botStatus = null;                              // статус бота (подпись под именем)
 
         // =====================
@@ -299,6 +300,9 @@ export class Messages {
     isDropActive: boolean;
     dragAndDrop: DragAndDropHandle | null;
     uploadAbort: AbortController | null;
+
+    /** Сообщение, которое очередь грузит/отправляет сейчас: id + контроллер отмены. */
+    messageAbort: { id: string; controller: AbortController } | null;
 
     // Хранилище сообщений и менеджеры
     store: Store<MessageRecord>;

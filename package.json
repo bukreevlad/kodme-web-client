@@ -1,6 +1,6 @@
 {
     "name": "kodme-web-client",
-    "version": "8.0.0",
+    "version": "8.0.1",
     "author": "bukreevlad",
     "main": "dist/js/main.js",
     "scripts": {

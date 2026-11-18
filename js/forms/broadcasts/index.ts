@@ -101,6 +101,9 @@ export class Broadcasts {
         // Хранилище списка трансляций
         this.store = new Store<BroadcastCast>();
 
+        // Очистки hover-превью по id записи (см. functions/hover_preview.ts)
+        this.hoverPreviews = new Map();
+
         // Проверяем, существует ли уже экземпляр
         const opened = FormsRegistry.getOwner<Broadcasts>("broadcasts");
         if (opened) return opened;
@@ -145,6 +148,11 @@ export class Broadcasts {
 
     // Хранилище списка трансляций
     store: Store<BroadcastCast>;
+
+    // Очистки активных hover-превью: id записи → функция остановки плеера
+    // (нужны, чтобы снять превью при удалении записи — mouseleave в этом
+    // случае не приходит)
+    hoverPreviews: Map<string, () => void>;
 
     // ***************************************************************************
     // Инициализация

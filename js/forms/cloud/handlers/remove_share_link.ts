@@ -1,5 +1,6 @@
 // Импортируем utils
 import { Logger } from "../../../utils/logs/logger.js";
+import { getErrorMessage } from "../../../utils/helpers/error_util.js";
 
 // Импортируем components
 import { Toast } from "../../../components/toast.js";
@@ -42,6 +43,27 @@ export async function removeShareLinkHandler(form: Cloud, linkData: CloudShareLi
 
     } catch (error) {
         Logger.error(error);
+
+        // Флаг, что тост уже показан
+        let isToastShown = false;
+        let message = getErrorMessage(error);
+
+        // Ссылка уже отозвана/удалена
+        if (message.includes("LINK_NOT_FOUND")) {
+            Toast.error(t("forms.cloud.toasts.link_not_valid"));
+            isToastShown = true;
+        }
+
+        // Нет прав на отзыв
+        if (message.includes("ACCESS_DENIED")) {
+            Toast.error(t("forms.cloud.toasts.access_denied"));
+            isToastShown = true;
+        }
+
+        // Прочая ошибка сервера
+        if (!isToastShown) {
+            Toast.error(t("api.errors.server_error"));
+        }
     }
 
 }

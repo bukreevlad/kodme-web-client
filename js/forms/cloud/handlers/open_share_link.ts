@@ -18,8 +18,9 @@ import { t } from "../../../utils/i18n/index.js";
 /**
  * Коды ошибок «ссылка недействительна»: отозвана, истекла, на удалённый
  * файл (отвечают за это запросы open_share_link / get_share_link).
+ * Переиспользуется окном информации о файле — оно открывается по той же ссылке.
  */
-const LINK_ERROR_CODES = ["ITEM_DELETED", "LINK_EXPIRED", "LINK_INVALID", "LINK_NOT_FOUND", "LINK_REQUIRED"];
+export const LINK_ERROR_CODES = ["ITEM_DELETED", "LINK_EXPIRED", "LINK_INVALID", "LINK_NOT_FOUND", "LINK_REQUIRED"];
 
 /**
  * ***************************************************************************

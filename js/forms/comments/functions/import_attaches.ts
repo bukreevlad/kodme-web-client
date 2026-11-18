@@ -64,9 +64,10 @@ export async function importAttaches(form: Comments, files: File[]): Promise<voi
         // Текущий черновик (мог быть создан предыдущим импортом)
         const draft = getDraftComment(form);
 
-        // Сколько вложений уже висит в черновике.
+        // Сколько вложений уже висит: в режиме редактирования считаем
+        // редактируемый комментарий, иначе — черновик.
         // Считаем через нормализатор: сервер отдаёт массив, локальные — объект-мап
-        const existCount = Attachments.count(draft?.attachments);
+        const existCount = Attachments.count(form.editedComment?.attachments ?? draft?.attachments);
 
         // Максимум файлов из лимитов авторизации (config/limits.js). Пока ответ
         // не принят — обрезку ведёт сервер, клиент файлы не отсекает
@@ -133,8 +134,23 @@ export async function importAttaches(form: Comments, files: File[]): Promise<voi
 
         // ========================================
 
+        // Режим редактирования: файлы идут в редактируемый комментарий —
+        // строка показывает их сразу, загрузка начнётся по «Обновить»
+        if (form.editedComment) {
+
+            // Серверные вложения приходят массивом — приводим к мапу по ключу
+            const merged: AttachmentsMap = {};
+            for (const [key, element] of Attachments.toMap(form.editedComment.attachments ?? [])) {
+                merged[key] = element;
+            }
+
+            // Объединяем с уже добавленными локальными файлами
+            form.editedComment.attachments = { ...merged, ...attachments };
+
+            form.store.update(form.editedComment.id, form.editedComment);
+
         // Черновик уже висит в ленте — дописываем вложения в него
-        if (draft) {
+        } else if (draft) {
 
             // Явная типизация: поле в типе опционально, а spread требует объект
             const existAttaches = (draft.attachments || {}) as AttachmentsMap;
@@ -218,5 +234,41 @@ function formatToast(code: string, params?: object): string {
     }
 
     return text;
+
+}
+
+/**
+ * ***************************************************************************
+ * Убрать из строки комментария локальные вложения, которых нет на сервере.
+ *
+ * Используется при отмене редактирования и при отмене задачи очереди
+ * (is_edit): файлы, так и не долетевшие, не должны остаться «призраками»
+ * в строке комментария.
+ * @param form - Форма.
+ * @param commentId - Id комментария.
+ * @returns void
+ * ***************************************************************************
+ */
+export function stripLocalAttaches(form: Comments, commentId: string): void {
+
+    const record = form.store.get(commentId);
+    if (!record) return;
+
+    // Серверные вложения несут document_id/id — локальные (temp) не несут
+    const kept: AttachmentsMap = {};
+    let hasLocal = false;
+
+    for (const [key, element] of Attachments.toMap(record.attachments ?? [])) {
+        if (element.id != null || element.document_id != null) {
+            kept[key] = element;
+        } else {
+            hasLocal = true;
+        }
+    }
+
+    // Локальных файлов не было — строку не трогаем
+    if (!hasLocal) return;
+
+    form.store.update(commentId, { attachments: kept });
 
 }

@@ -5,6 +5,7 @@ import { CDM_MODAL_CLASSES, CDM_MODAL_CONTENT_CLASSES, CDM_MODAL_FOOTER_CLASSES,
 // Импортируем utils
 import { Logger } from "../../../../utils/logs/logger.js";
 import { Icons } from "../../../../utils/icons.js";
+import { toastError } from "../../../../utils/ui/toast_error.js";
 
 // Импортируем components
 import { Overlay } from "../../../../components/overlay/index.js";
@@ -227,7 +228,12 @@ export class ShareLinks {
             }
 
         } catch (error) {
-            Logger.error(error);
+
+            // Не удалось загрузить список ссылок — показываем причину
+            toastError(error, {
+                context: "[app][cloud][share-links][load]",
+                fallback: t("forms.cloud.toasts.load_links_error")
+            });
         }
 
     }

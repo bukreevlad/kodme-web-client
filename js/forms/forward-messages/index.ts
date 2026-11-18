@@ -3,7 +3,7 @@ import { FormsRegistry } from "../../core/managers/forms_registry.js";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 // Импортируем config
-import { CDM_FORM_CLASSES, CDM_FORM_HEADER_CLASSES, CDM_FORM_CONTENT_CLASSES } from "../../config/constants.js";
+import { CDM_FORM_CLASSES, CDM_FORM_HEADER_CLASSES } from "../../config/constants.js";
 
 // Импортируем utils
 import { Logger } from "../../utils/logs/logger.js";
@@ -12,6 +12,7 @@ import { Store } from "../../utils/store.js";
 
 // Импортируем functions
 import { getChannels } from "./functions/get_channels.js";
+import { showForwardFolders } from "./functions/show_folders.js";
 
 // Импортируем handlers
 import { closeHandler } from "./handlers/close.js";
@@ -23,9 +24,11 @@ import { subscribeStoreEvents } from "./events/store/store_events.js";
 // Импортируем components
 import { Overlay } from "../../components/overlay/index.js";
 import { Buttons } from "../../components/buttons.js";
+import { Tabs } from "../../components/tabs.js";
 
 // Импортируем типы
 import type { ForwardChannelRecord } from "./types.js";
+import { t } from "../../utils/i18n/index.js";
 
 /**
  * Callback формы: получает id выбранных каналов-получателей.
@@ -64,8 +67,10 @@ export class ForwardMessages {
     tpl: HTMLElement | null;
     modal: Overlay | null;
     content: HTMLElement | null;
-    list: HTMLElement | null;
     osListScrollInstance: OverlayScrollbars | null;
+
+    // Менеджер табов папок (зеркало главной формы: «Все» + папки сессии)
+    foldersTabs: Tabs | null;
 
     // Данные формы
     callback: ForwardMessagesCallback | null;
@@ -95,7 +100,7 @@ export class ForwardMessages {
         this.tpl = null;
         this.modal = null;
         this.content = null;
-        this.list = null;
+        this.foldersTabs = null;
         this.osListScrollInstance = null; // overlayScroll instance
 
         // Переменные формы
@@ -194,7 +199,18 @@ export class ForwardMessages {
 
             // Устанавливаем элементы
             this.content = this.tpl?.querySelector(":scope >.content") ?? null;
-            this.list = this.tpl?.querySelector(":scope >.content [data-list]") ?? null;
+
+            // Лента и панели папок обязаны быть в шаблоне — иначе вкладки не собрать
+            const foldersHorizontal = this.tpl?.querySelector<HTMLElement>(":scope [data-folders-horizontal] >[data-list]") ?? null;
+            const foldersPanes = this.tpl?.querySelector<HTMLElement>(":scope >.content >.cdm-tabs-content") ?? null;
+            if (!foldersHorizontal || !foldersPanes) return;
+
+            // Менеджер табов папок (как на главной форме)
+            this.foldersTabs = new Tabs(
+                [{ tabs: foldersHorizontal, scrollType: "horizontal" }],
+                foldersPanes,
+                { isSlider: true }
+            );
 
             // Инициализируем скролл
             if (this.content) {
@@ -202,6 +218,10 @@ export class ForwardMessages {
                 scrollbars: { autoHide: "scroll" }, overflow: { x: "hidden", y: "scroll" }
                 });
             }
+
+            // Папки пользователя: «Все» + папки сессии — ДО загрузки строк,
+            // события item::added раскладивают каналы по готовым панелям
+            showForwardFolders(this);
 
             // Получаем каналы с IndexedDB
             await getChannels(this);
@@ -238,11 +258,17 @@ export class ForwardMessages {
         return new DOMParser().parseFromString(`
 
             <div class="cdm-form forward-messages flex flex-col ${CDM_FORM_CLASSES()} w-full">
-                <div class="header flex flex-row gap-2 p-2 justify-end items-center ${CDM_FORM_HEADER_CLASSES()}">
+                <div class="header flex flex-row gap-2 p-2 items-center ${CDM_FORM_HEADER_CLASSES()}">
+                    <span data-title class="flex-1 font-semibold text-base truncate">${t("forms.forward_messages.header_title")}</span>
                     <button action-close class="rounded-full">${Icons.icon("X")?.outerHTML}</button>
                 </div>
-                 <div class="content w-full h-full flex flex-row gap-0 ${CDM_FORM_CONTENT_CLASSES()}">
-                    <div data-list class="flex flex-col p-2 gap-0 w-full"></div>
+                <div class="flex w-full pt-[var(--form-header-height)]">
+                    <div data-folders-horizontal class="p-1 w-full relative flex flex-row items-center gap-1 overflow-hidden">
+                        <div data-list class="cdm-tabs flex flex-row gap-1 flex-1 min-w-0 overflow-x-auto scrollbar-none"></div>
+                    </div>
+                </div>
+                 <div class="content w-full flex flex-row gap-0 flex-1 min-h-0 overflow-hidden pb-[var(--form-footer-height)]">
+                    <div class="cdm-tabs-content flex flex-row gap-0 w-full overflow-hidden"></div>
                 </div>
                 ${Buttons.primary({ shape: "circle", attributes: ["action-forward-messages"], icon: "arrow-back-up-double" })}
             </div>

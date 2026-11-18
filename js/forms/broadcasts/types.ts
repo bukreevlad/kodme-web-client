@@ -50,6 +50,12 @@ export interface BroadcastCast extends StoreItem {
     /** Флаг «идёт эфир» (бейдж LIVE). */
     is_live?: boolean;
 
+    /**
+     * Токен просмотра потока (есть только при `is_live`): клиент строит по
+     * нему адрес плеера. Срок действия — 6 часов.
+     */
+    access_token?: string;
+
     /** Документ обложки трансляции. */
     thumbnail?: CastThumbnail | null;
 

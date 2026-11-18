@@ -12,8 +12,13 @@ import { resolveMimeType } from "../../../utils/validation/file_validator.js";
 import { ProgressIndicator } from "../../../components/progress.js";
 import { Toast } from "../../../components/toast.js";
 
+// Импортируем functions
+import { stripLocalAttaches } from "./import_attaches.js";
+
 // Импортируем requests
 import { createCommentRequest } from "../requests/create_comment.js";
+import { updateCommentRequest } from "../requests/update_comment.js";
+import { removeCommentRequest } from "../requests/remove_comment.js";
 import { getUploadUrlAttachRequest } from "../requests/get_upload_url_attach.js";
 import { saveAttachRequest } from "../requests/save_attach.js";
 
@@ -72,6 +77,11 @@ export async function sendingComments(form: Comments): Promise<void> {
 
             const localId = comment.id;
 
+            // Контроллер отмены текущего комментария: удаление строки из очереди
+            // прерывает загрузку файлов и не даёт комментарию уйти на сервер
+            const commentAbort = new AbortController();
+            form.commentAbort = { id: localId, controller: commentAbort };
+
             try {
 
                 // Мап вложений для payload запроса (запись очереди хранит полные данные)
@@ -99,12 +109,22 @@ export async function sendingComments(form: Comments): Promise<void> {
                     // Проходим по файлам
                     for (const fileId of fileIds) {
 
+                        // Комментарий удалили из очереди — оставшиеся файлы не грузим
+                        if (commentAbort.signal.aborted) break;
+
                         // Проверка: не был ли файл удалён из объекта во время итерации
                         if (!attachments[fileId]) continue;
 
                         // Ссылка на вложение в объекте комментария (может исчезнуть
                         // при отмене — поэтому каждый раз перечитываем)
                         let attach = attachments[fileId];
+
+                        // Запись редактирования: вложения без локального файла уже
+                        // на сервере — их не грузим, в update уйдут только новые
+                        if (comment.is_edit && !attach._file) {
+                            documentIdByFileId[fileId] = fileId;
+                            continue;
+                        }
 
                         // Устанавливаем параметры
                         const abortController = new AbortController();
@@ -118,6 +138,16 @@ export async function sendingComments(form: Comments): Promise<void> {
                         // серверу. Дальше отмена только клиентская — строку в
                         // очереди подчистит sweep
                         let isUploading = true;
+
+                        // Отмена комментария целиком (удаление из очереди) прерывает
+                        // и этот файл: POST рвётся, серверу сообщается, пока
+                        // оригинал в пути
+                        commentAbort.signal.addEventListener("abort", () => {
+                            abortController.abort();
+                            if (uploadDocumentId && isUploading) {
+                                abortUpload({ document_id: uploadDocumentId }).catch(() => {});
+                            }
+                        }, { once: true });
 
                         try {
 
@@ -216,6 +246,9 @@ export async function sendingComments(form: Comments): Promise<void> {
 
                             // Проверка: не отменил ли пользователь загрузку, пока ждали ответ от API
                             if (!attachments[fileId]) continue;
+
+                            // Комментарий удалили, пока запрашивали ссылку загрузки — не грузим
+                            if (commentAbort.signal.aborted) break;
 
                             // Id документа нужен для отмены загрузки по кнопке
                             // на прогресс-баре (abortUpload)
@@ -322,6 +355,13 @@ export async function sendingComments(form: Comments): Promise<void> {
                         }
                     }
 
+                    // Комментарий удалили из очереди, пока грузились файлы: строка
+                    // уже удалена из UI — ни ошибку не помечаем, ни тост не показываем
+                    if (commentAbort.signal.aborted) {
+                        Logger.debug(`[app][comments][sending][${localId}]: комментарий удалён — отправка отменена.`);
+                        continue;
+                    }
+
                     // ---------- ПРОВЕРКА ПОЛНОТЫ НАБОРА ----------
                     // Файл мог выпасть из attachments уже после получения ссылки,
                     // но до конца загрузки — тогда набор неполный, и отправлять
@@ -349,6 +389,35 @@ export async function sendingComments(form: Comments): Promise<void> {
 
                 }
 
+                // Комментарий удалили из очереди — не отправляем
+                if (!form.store.get(localId)) {
+                    Logger.debug(`[app][comments][sending][${localId}]: записи нет в очереди — отправка отменена.`);
+                    continue;
+                }
+
+                // Задача редактирования: текст и новые вложения уходят в update
+                if (comment.is_edit) {
+
+                    const newText = comment.edit_text ?? comment.text ?? "";
+
+                    await updateCommentRequest({
+                        comment_id: localId,
+                        text: newText,
+                        attachments: Object.keys(requestAttachments).length > 0 ? requestAttachments : null
+                    });
+
+                    // Задача выполнена: снимаем флаги и фиксируем новый текст
+                    form.store.update(localId, {
+                        is_sending: false,
+                        is_error_sending: false,
+                        is_edit: false,
+                        text: newText,
+                        edit_text: null
+                    });
+
+                    continue;
+                }
+
                 // Шаг Отправка готового комментария на сервер
                 Logger.debug(`[app][comments]: Отправка комментария на сервер с id:${localId}.`);
 
@@ -365,6 +434,19 @@ export async function sendingComments(form: Comments): Promise<void> {
                 // ID комментария, присвоенный сервером
                 const serverId = response.data.comment_id;
                 Logger.debug(`[app][comments]: Сервер вернул serverId: ${serverId} для комментария c localId: ${localId}.`);
+
+                // Пользователь удалил комментарий, пока запрос был в пути:
+                // подчищаем локальные копии и убираем запись на сервере — иначе
+                // эхо [comment]: new вернёт строку обратно в ленту
+                if (commentAbort.signal.aborted) {
+                    form.store.remove(localId);
+                    form.store.remove(serverId);
+                    form.pendingIds?.delete(localId);
+                    removeCommentRequest({ comment_id: serverId }).catch((cleanupError: unknown) => {
+                        Logger.error(`[app][comments][sending][${localId}]: отправленный комментарий не удалён:`, cleanupError);
+                    });
+                    continue;
+                }
 
                 // Синхронизация: заменяем локальный ID на серверный.
                 // Гонка: эхо `[comment]: new` могло прийти раньше ответа и уже
@@ -424,9 +506,21 @@ export async function sendingComments(form: Comments): Promise<void> {
 
                 if (isGone) {
 
-                    form.store.remove(localId);
-                    form.pendingIds?.delete(localId);
-                    if (form.tempComment?.id === localId) form.tempComment = null;
+                    // Задача редактирования: комментарий остаётся — снимаем
+                    // флаги очереди и чистим неприкреплённые локальные файлы
+                    if (comment.is_edit) {
+                        form.store.update(localId, {
+                            is_sending: false,
+                            is_error_sending: false,
+                            is_edit: false,
+                            edit_text: null
+                        });
+                        stripLocalAttaches(form, localId);
+                    } else {
+                        form.store.remove(localId);
+                        form.pendingIds?.delete(localId);
+                        if (form.tempComment?.id === localId) form.tempComment = null;
+                    }
 
                     toastError(error, { context: `[app][comments][sending][${localId}]` });
 
@@ -457,9 +551,13 @@ export async function sendingComments(form: Comments): Promise<void> {
                     // Отклонение хранилищем (400 от S3, например пустое тело
                     // запроса от Safari) — свой текст вместо generic-ошибки
                     const isRejected = info.code === "UPLOAD_REJECTED" || info.name === "UPLOAD_REJECTED";
-                    const text = specificKey
+                    const rawText = specificKey
                         ? toasts[specificKey]
                         : (isRejected ? t("api.errors.upload_rejected") : null);
+
+                    // Шаблоны с {{name}}/{{size}} в очереди заполнить нечем —
+                    // незаполненные скобки пользователю не показываем
+                    const text = rawText && !rawText.includes("{{") ? rawText : null;
 
                     Toast.warning(text || toasts.uploading_failed || t("forms.comments.toasts.uploading_failed"), { position: "bottom-center" });
 
@@ -495,6 +593,9 @@ export async function sendingComments(form: Comments): Promise<void> {
 
         // Контроллер отмены больше не нужен
         form.uploadAbort = null;
+
+        // Контроллер отмены текущего комментария больше не нужен
+        form.commentAbort = null;
 
     }
 

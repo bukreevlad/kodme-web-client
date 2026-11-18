@@ -40,6 +40,13 @@ export async function removeMessageHandler(message: SecretChatMessageItem): Prom
 
                 try {
 
+                    // Очередь передачи грузит это сообщение — прерываем отправку
+                    // файлов до удаления записи
+                    const current = message.form.messageAbort;
+                    if (current && current.id === message.data.id) {
+                        current.controller.abort();
+                    }
+
                     // Удаление локально + control-кадр собеседнику
                     await manager.removeMessage(message.data.chat_id ?? "", message.data.id);
 

@@ -113,6 +113,7 @@ export class Comments {
         this.editedComment = null;                          // редактируемый комментарий
         this.replyComment = null;                           // комментарий, на который отвечаем
         this.uploadAbort = null;                            // контроллер прерывания очереди отправки
+        this.commentAbort = null;                           // отмена текущего комментария очереди (удаление в полёте)
 
         // Флаг подзагрузки комментариев (защита от параллельных запросов)
         this.isCommentsLoading = false;
@@ -234,6 +235,9 @@ export class Comments {
     editedComment: CommentRecord | null;
     replyComment: CommentRecord | null;
     uploadAbort: AbortController | null;
+
+    /** Комментарий, который очередь грузит/отправляет сейчас: id + контроллер отмены. */
+    commentAbort: { id: string; controller: AbortController } | null;
 
     // Состояние окна ленты
     newDividerBeforeId: string | null;

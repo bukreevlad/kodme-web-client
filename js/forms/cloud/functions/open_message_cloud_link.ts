@@ -1,5 +1,6 @@
 // Импортируем utils
-import { Logger } from "../../../utils/logs/logger.js";
+import { getErrorMessage } from "../../../utils/helpers/error_util.js";
+import { toastError } from "../../../utils/ui/toast_error.js";
 
 // Импортируем components
 import { Toast } from "../../../components/toast.js";
@@ -9,6 +10,9 @@ import { getShareLinkInfoRequest } from "../requests/get_share_link_info.js";
 
 // Импортируем forms
 import { Cloud } from "../index.js";
+
+// Импортируем handlers
+import { LINK_ERROR_CODES } from "../handlers/open_share_link.js";
 
 // Импортируем dialogs
 import { CloudFileInfo } from "../dialogs/file_info/index.js";
@@ -47,14 +51,17 @@ export async function openMessageCloudLink(token: string): Promise<boolean> {
 
     } catch (error) {
 
-        // Если ссылка недействительна — показываем уведомление
-        let message = typeof error === "object" && error !== null && "message" in error
-            ? String(error.message)
-            : "";
-        if (message.includes("Ссылка недействительна")) {
+        // Ссылка отозвана/истекла/удалена — свой текст; прочие ошибки
+        // (сеть, таймаут, 5xx) разбирает toastError
+        let message = getErrorMessage(error);
+
+        if (LINK_ERROR_CODES.some(code => message.includes(code))) {
             Toast.error(t("forms.messages.toasts.cloud_link_not_valid"));
         } else {
-            Logger.error(error);
+            toastError(error, {
+                context: "[app][cloud][open-message-cloud-link]",
+                fallback: t("api.errors.server_error")
+            });
         }
 
         return false;

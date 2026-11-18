@@ -16,6 +16,9 @@ export interface UpdateCommentData {
     /** Новый текст комментария. */
     text: string;
 
+    /** Новые вложения (объект-мап: document_id → данные) — добавляются к имеющимся. */
+    attachments?: Record<string, { file_name: string }> | null;
+
 }
 
 /**

@@ -71,6 +71,11 @@ export async function removeHandler(form: MeetSettings): Promise<void> {
                     // Закрываем форму
                     form.modal?.close();
 
+                    // Закрываем чат конференции — сервер удаляет его вместе с ней
+                    if (form.chatChannelId) {
+                        FormsRegistry.closeLayer(`messages:${form.chatChannelId}`);
+                    }
+
                     // Закрываем окно проигрывания конференции
                     FormsRegistry.closeLayer(`meet-play:${form.meetId}`);
 

@@ -136,8 +136,10 @@ export async function contextMenuHandler(event: Event, message: MessageItem): Pr
             iconName: "pencil",
             onClick: () => editMessageHandler(message)
         };
+        // Пока идёт сохранение с файлами (is_pending) — редактировать
+        // заново нельзя: вторая задача перезаписала бы первую в очереди
         if ((message.data.author_id === sessionUserId) &&
-            (!message.data.is_error_sending && !message.data.is_temporary) &&
+            (!message.data.is_error_sending && !message.data.is_temporary && !message.data.is_pending) &&
             (!message.data.forwarded_to_message_id)
         ) {
             menuItems.push(edit);

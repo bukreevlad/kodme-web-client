@@ -36,6 +36,7 @@ js/forms/messages/
 | `tempMessage` | Черновик (local_id + неотправленные вложения) |
 | `pendingIds` | Id отправляемых сообщений, ожидающих ack |
 | `uploadAbort` | `AbortController` цикла загрузки вложений |
+| `messageAbort` | `{ id, controller }` — отмена текущего сообщения очереди при удалении в полёте |
 | `pendingAcks` | Ожидания ack-ответа: `Map<string, PendingAck>` (резолвер на форме; промисы живут в модульной карте `functions/sending_messages.ts`) |
 | `lastViewedBatcher` | Батчер отметки «прочитано до» |
 | `reactionsUpdater` | Менеджер поллинга реакций |

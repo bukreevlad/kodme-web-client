@@ -71,6 +71,11 @@ export async function removeHandler(form: BroadcastSettings): Promise<void> {
                     // Закрываем форму
                     form.modal?.close();
 
+                    // Закрываем чат трансляции — сервер удаляет его вместе с ней
+                    if (form.chatChannelId) {
+                        FormsRegistry.closeLayer(`messages:${form.chatChannelId}`);
+                    }
+
                     // Поиск формы проигрывания
                     let broadcastPlayForm = FormsRegistry.getOwner<BroadcastPlay>(`broadcast-play:${form.castId}`);
                     if (broadcastPlayForm) {

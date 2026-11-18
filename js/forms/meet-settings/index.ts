@@ -59,6 +59,7 @@ export class MeetSettings {
 
     // Переменные формы
     meetId: string;
+    chatChannelId: string | null;
 
     // Каркас: шаблон, модалка, контент и instance скролла
     options: MeetSettingsOptions;
@@ -104,6 +105,7 @@ export class MeetSettings {
 
         // Переменные формы
         this.meetId = data.meetId;
+        this.chatChannelId = null;
 
         // Регистрируем этот экземпляр формы
         // Проверяем, существует ли уже экземпляр
@@ -214,6 +216,9 @@ export class MeetSettings {
 
             // Данные
             let data = response.data;
+
+            // Id канала-чата — нужен, чтобы закрыть чат при удалении конференции
+            this.chatChannelId = data.chat_channel_id ?? null;
 
             // Элементы заполняются из шаблона — без него открываться нечему
             if (!this.tpl) {

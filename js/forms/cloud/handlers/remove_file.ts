@@ -1,5 +1,6 @@
 // Импортируем utils
 import { Logger } from "../../../utils/logs/logger.js";
+import { getErrorMessage } from "../../../utils/helpers/error_util.js";
 
 // Импортируем components
 import { Toast } from "../../../components/toast.js";
@@ -52,6 +53,27 @@ export async function removeFileHandler(form: Cloud, data: CloudItem): Promise<v
 
     } catch (error) {
         Logger.error(error);
+
+        // Флаг, что тост уже показан
+        let isToastShown = false;
+        let message = getErrorMessage(error);
+
+        // Файл уже удалён (например, параллельно)
+        if (message.includes("ITEM_NOT_FOUND")) {
+            Toast.error(t("forms.cloud.toasts.element_not_found"));
+            isToastShown = true;
+        }
+
+        // Нет прав на удаление (например, закончился доступ по ссылке)
+        if (message.includes("ACCESS_DENIED")) {
+            Toast.error(t("forms.cloud.toasts.access_denied"));
+            isToastShown = true;
+        }
+
+        // Прочая ошибка сервера
+        if (!isToastShown) {
+            Toast.error(t("api.errors.server_error"));
+        }
     }
 
 }

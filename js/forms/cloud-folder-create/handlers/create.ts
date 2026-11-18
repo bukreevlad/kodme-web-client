@@ -1,6 +1,7 @@
 // Импортируем utils
 import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
+import { getErrorMessage } from "../../../utils/helpers/error_util.js";
 
 // Импортируем components
 import { Toast } from "../../../components/toast.js";
@@ -15,6 +16,13 @@ import { Cloud } from "../../cloud/index.js";
 import { t } from "../../../utils/i18n/index.js";
 
 /**
+ * Правило имени папки облака (зеркало серверной проверки): буквы любых
+ * писменностей, цифры, пробелы, дефисы и подчёркивание — без точек, слэшей
+ * и скобок; от 2 до 128 символов.
+ */
+const FOLDER_NAME_REGEX = /^[\p{L}\p{M}\p{N}\p{Zs}\p{Pd}_]{2,128}$/u;
+
+/**
  * ***************************************************************************
  * Создание папки в текущей папке облака (своё облако либо общий доступ).
  * @param dialog - Экземпляр диалога создания папки.
@@ -22,16 +30,18 @@ import { t } from "../../../utils/i18n/index.js";
  */
 export async function createHandler(dialog: CreateFolder): Promise<void> {
 
+    // Поле ввода имени (читается и в catch — для подсветки ошибки сервера)
+    let input = dialog.tpl?.querySelector<HTMLInputElement>(":scope [name='name']");
+
     try {
 
-        // Получаем поле ввода имени
-        let input = dialog.tpl?.querySelector<HTMLInputElement>(":scope [name='name']");
         let name = input?.value?.trim() || "";
 
-        // Если имя пустое — подсвечиваем поле
-        if (!name) {
+        // Имя пустое либо не прошло правило — подсвечиваем поле и объясняем
+        if (!name || !FOLDER_NAME_REGEX.test(name)) {
             input?.classList.add("invalid");
             input?.focus();
+            Toast.error(t("forms.cloud.toasts.invalid_name"));
             return;
         }
 
@@ -81,6 +91,38 @@ export async function createHandler(dialog: CreateFolder): Promise<void> {
 
     } catch (error) {
         Logger.error(error);
+
+        // Флаг, что тост уже показан
+        let isToastShown = false;
+        let message = getErrorMessage(error);
+
+        // Имя не прошло проверку сервера
+        if (message.includes("NAME_INVALID")) {
+
+            // Подсвечиваем поле и объясняем причину
+            input?.classList.add("invalid");
+            input?.focus();
+            Toast.error(t("forms.cloud.toasts.invalid_name"));
+            isToastShown = true;
+
+        }
+
+        // Имя уже занято в этой папке
+        if (message.includes("NAME_ALREADY_TAKEN")) {
+            Toast.error(t("forms.cloud.toasts.folder_name_taken"));
+            isToastShown = true;
+        }
+
+        // Нет прав на создание (например, закончился доступ по ссылке)
+        if (message.includes("ACCESS_DENIED")) {
+            Toast.error(t("forms.cloud.toasts.access_denied"));
+            isToastShown = true;
+        }
+
+        // Прочая ошибка сервера
+        if (!isToastShown) {
+            Toast.error(t("api.errors.server_error"));
+        }
     }
 
 }

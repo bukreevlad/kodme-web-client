@@ -13,6 +13,7 @@ import { removeCommentRequest } from "../../requests/remove_comment.js";
 
 // Импортируем functions
 import { markCommentRemoved } from "../../functions/push_state.js";
+import { stripLocalAttaches } from "../../functions/import_attaches.js";
 
 // Импортируем типы
 import type { Comments } from "../../index.js";
@@ -39,7 +40,31 @@ export async function removeCommentHandler(form: Comments, data: CommentRecord):
 
         // Не отправленный комментарий удаляется локально без запроса
         if (data.is_error_sending || data.is_sending) {
-            form.store.remove(data.id);
+
+            // Очередь грузит/отправляет комментарий прямо сейчас — прерываем
+            // загрузку и отправку, иначе строка «воскреснет» после ack
+            const current = form.commentAbort;
+            if (current && current.id === data.id) {
+                current.controller.abort();
+            }
+
+            form.pendingIds?.delete(data.id);
+            if (form.tempComment?.id === data.id) form.tempComment = null;
+
+            // Задача редактирования: сам комментарий остаётся в ленте —
+            // снимаем флаги очереди и убираем неприкреплённые локальные файлы
+            if (data.is_edit) {
+                form.store.update(data.id, {
+                    is_sending: false,
+                    is_error_sending: false,
+                    is_edit: false,
+                    edit_text: null
+                });
+                stripLocalAttaches(form, data.id);
+            } else {
+                form.store.remove(data.id);
+            }
+
             return;
         }
 

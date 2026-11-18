@@ -467,6 +467,10 @@
       },
       "participant_fallback": "Participant"
     },
+    "forward_messages": {
+      "header_title": "Forward message",
+      "header_selected": "Selected {{count}}"
+    },
     "messages": {
       "favorite": "Favorites",
       "online": "Online",
@@ -1069,7 +1073,11 @@
         "invalid_extension": "Invalid file extension",
         "download_error": "Failed to download the file",
         "load_error": "Failed to load the folder contents",
-        "load_links_error": "Failed to load the link list"
+        "load_links_error": "Failed to load the link list",
+        "invalid_name": "Name must be 2 to 128 characters and contain only letters, digits, spaces, hyphens and underscores",
+        "folder_name_taken": "A folder with this name already exists",
+        "element_not_found": "Item not found",
+        "invalid_expires": "Invalid expiration date"
       },
       "dialogs": {
         "create_folder": {

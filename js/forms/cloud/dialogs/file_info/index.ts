@@ -6,16 +6,20 @@ import { CDM_MODAL_CLASSES, CDM_MODAL_FOOTER_CLASSES, CDM_MODAL_HEADER_CLASSES }
 import { Logger } from "../../../../utils/logs/logger.js";
 import { Icons } from "../../../../utils/icons.js";
 import { formatBytes } from "../../../../utils/string/format_bytes.js";
+import { getErrorMessage } from "../../../../utils/helpers/error_util.js";
+import { toastError } from "../../../../utils/ui/toast_error.js";
 
 // Импортируем components
 import { Overlay } from "../../../../components/overlay/index.js";
 import { Buttons } from "../../../../components/buttons.js";
+import { Toast } from "../../../../components/toast.js";
 
 // Импортируем requests
 import { openShareLinkRequest } from "../../requests/open_share_link.js";
 
 // Импортируем handlers
 import { downloadFileHandler } from "../../handlers/download_file.js";
+import { LINK_ERROR_CODES } from "../../handlers/open_share_link.js";
 import type { DownloadFileData } from "../../handlers/download_file.js";
 
 // Импортируем functions
@@ -231,7 +235,21 @@ export class CloudFileInfo {
             }
 
         } catch (error) {
-            Logger.error(error);
+
+            // Ссылка отозвана/истекла/на удалённый файл — свой текст, иначе
+            // общий тост; диалог в любом случае закрывается
+            let message = getErrorMessage(error);
+
+            if (LINK_ERROR_CODES.some(code => message.includes(code))) {
+                Logger.error("[app][cloud][file-info]:", error);
+                Toast.error(t("forms.cloud.toasts.link_not_valid"));
+            } else {
+                toastError(error, {
+                    context: "[app][cloud][file-info][load]",
+                    fallback: t("forms.cloud.toasts.load_error")
+                });
+            }
+
             this.modal?.close();
         }
 

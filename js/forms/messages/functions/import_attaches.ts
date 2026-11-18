@@ -81,9 +81,10 @@ export async function importAttaches(form: Messages, files: File[]): Promise<voi
         // Ограничиваем количество ДО генерации метадаты
         // ========================================
 
-        // Сколько вложений уже висит в черновике.
+        // Сколько вложений уже висит: в режиме редактирования считаем
+        // редактируемое сообщение, иначе — черновик.
         // Считаем через нормализатор: сервер отдаёт массив, локальные — объект-мап
-        const existCount = Attachments.count(form.tempMessage?.attachments);
+        const existCount = Attachments.count(form.editedMessage?.attachments ?? form.tempMessage?.attachments);
 
         // Максимум файлов из лимитов авторизации (config/limits.js). Пока ответ
         // не принят — обрезку ведёт сервер, клиент файлы не отсекает
@@ -153,8 +154,23 @@ export async function importAttaches(form: Messages, files: File[]): Promise<voi
 
         // ========================================
 
+        // Режим редактирования: файлы идут в редактируемое сообщение —
+        // строка показывает их сразу, загрузка начнётся по «Сохранить»
+        if (form.editedMessage) {
+
+            // Серверные вложения приходят массивом — приводим к мапу по ключу
+            const merged: AttachmentsMap = {};
+            for (const [key, element] of Attachments.toMap(form.editedMessage.attachments ?? [])) {
+                merged[key] = element;
+            }
+
+            // Объединяем с уже добавленными локальными файлами
+            form.editedMessage.attachments = { ...merged, ...attachments };
+
+            form.store.update(form.editedMessage.id, form.editedMessage);
+
         // Если временное сообщение уже создано
-        if (form.tempMessage) {
+        } else if (form.tempMessage) {
 
             // Текущие вложения
             let existAttaches = form.tempMessage.attachments || {};
@@ -167,12 +183,8 @@ export async function importAttaches(form: Messages, files: File[]): Promise<voi
 
             form.store.update(form.tempMessage.id, form.tempMessage);
 
-        }
-
-        // ========================================
-
         // Если временное сообщение еще не создано
-        if (!form.tempMessage) {
+        } else {
 
             // Явная типизация: поле формы хранит запись стора, а литерал
             // дополнительно несёт серверные поля (created_at, reply_to и т.д.)
@@ -256,5 +268,41 @@ function formatToast(code: string, params?: ToastParams): string {
     }
 
     return text;
+
+}
+
+/**
+ * ***************************************************************************
+ * Убрать из строки сообщения локальные вложения, которых нет на сервере.
+ *
+ * Используется при отмене редактирования и при отмене задачи очереди
+ * (is_edit): файлы, так и не долетевшие, не должны остаться «призраками»
+ * в строке сообщения.
+ * @param form - Форма.
+ * @param messageId - Id сообщения.
+ * @returns void
+ * ***************************************************************************
+ */
+export function stripLocalAttaches(form: Messages, messageId: string): void {
+
+    const record = form.store.get(messageId);
+    if (!record) return;
+
+    // Серверные вложения несут document_id/id — локальные (temp) не несут
+    const kept: AttachmentsMap = {};
+    let hasLocal = false;
+
+    for (const [key, element] of Attachments.toMap(record.attachments ?? [])) {
+        if (element.id != null || element.document_id != null) {
+            kept[key] = element;
+        } else {
+            hasLocal = true;
+        }
+    }
+
+    // Локальных файлов не было — строку не трогаем
+    if (!hasLocal) return;
+
+    form.store.update(messageId, { attachments: kept });
 
 }

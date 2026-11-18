@@ -52,7 +52,16 @@ export async function updateMessageHandler(form: SecretChat): Promise<void> {
             // Подсвечиваем поле только для «пустого» текста
             if (validation.code === "empty_message") textarea.classList.add("invalid");
 
-            Toast.warning(I18n.tree.forms.secret_chat.toasts[validation.code], {
+            // Коды валидации — ключи локали forms.secret_chat.toasts.*
+            const toasts: Record<string, string> = { ...I18n.tree.forms.secret_chat.toasts };
+            let toastText = toasts[validation.code] ?? null;
+
+            // Подстановка параметров ({{count}} и т.п.)
+            for (const [key, value] of Object.entries(validation.params)) {
+                toastText = toastText?.replaceAll(`{{${key}}}`, String(value)) ?? null;
+            }
+
+            Toast.warning(toastText || I18n.tree.forms.secret_chat.toasts.empty_message, {
                 position: "bottom-center"
             });
 

@@ -61,6 +61,9 @@ export interface VideoPlayerOptions {
     /** Показывать кнопку широкого режима кадра в панели контролов (только вариант "full"). */
     wideControl?: boolean;
 
+    /** Показывать пункт «Скорость» в меню скина (только вариант "full"; для живых трансляций выключается). */
+    speedControl?: boolean;
+
     /** Произвольные атрибуты нативного <video>. */
     attributes?: Record<string, string | boolean | null>;
 
@@ -141,6 +144,24 @@ const WIDE_BUTTON_STYLES = `
 .media-cdm-player-wide[aria-pressed="true"] {
     background-color: var(--media-accent-color);
     color: var(--media-accent-text-color, #ffffff);
+}
+`;
+
+/**
+ * Стили скрытия пункта «Скорость» в меню packaged-скина.
+ *
+ * Живут строкой по той же причине, что и WIDE_BUTTON_STYLES: правила
+ * применяются к shadow root скина. Селектор :has() выбирает пункт меню
+ * по иконке speed и подменю по радиогруппе; при изменении разметки пакета
+ * селектор просто не совпадёт — пункт останется, плеер продолжит работать.
+ * @type {string}
+ */
+const SPEED_MENU_STYLES = `
+media-menu-item:has(> media-icon[name="speed"]) {
+    display: none !important;
+}
+media-menu-content:has(> media-playback-rate-radio-group) {
+    display: none !important;
 }
 `;
 
@@ -307,6 +328,9 @@ export class VideoPlayer {
     /** Снятие слушателей видимости кнопки ширины (см. _mountWideControl). */
     _wideCleanup: (() => void) | null = null;
 
+    /** Снятие наблюдателя наполнения меню настроек (см. _syncSettingsButton). */
+    _settingsSyncCleanup: (() => void) | null = null;
+
     /** Пользовательские подписки (Plyr-совместимый on/off). */
     _handlers: Map<string, Set<VideoPlayerHandler>>;
 
@@ -337,6 +361,7 @@ export class VideoPlayer {
             ratio: "",
             className: "",
             wideControl: false,
+            speedControl: true,
             attributes: {},
             ...options
         };
@@ -599,6 +624,18 @@ export class VideoPlayer {
             this._mountWideControl();
         }
 
+        // Пункт «Скорость» убирается по опции — в живом эфире менять
+        // скорость воспроизведения бессмысленно
+        if (variant === "full" && !this.options.speedControl) {
+            this._hideSpeedMenu();
+        }
+
+        // Шестерёнка настроек прячется, если после всех ограничений меню
+        // скина осталось пустым (порядок важен: скорость уже скрыта)
+        if (variant === "full") {
+            this._syncSettingsButton();
+        }
+
         // Контейнер для Plyr-совместимого доступа и оформления
         this.container = this.container || this.skin.querySelector<HTMLElement>("media-container") || this.skin;
 
@@ -818,6 +855,103 @@ export class VideoPlayer {
         this._syncWideButton();
 
         return true;
+
+    }
+
+    /**
+     * ***************************************************************************
+     * Удаление пункта «Скорость» из меню packaged-скина.
+     *
+     * Пункт и подменю зашиты в шаблон скина, публичного переключателя у
+     * Video.js 10 нет — поэтому прячем их стилями в shadow root (см.
+     * SPEED_MENU_STYLES), как кнопка ширины вставляется туда же (см.
+     * _mountWideControl). Горячие клавиши speedUp/speedDown (`>`/`<`)
+     * снимаются совсем: скрытая скорость изменяла бы эфир без видимого
+     * управления. При изменении разметки пакета метод предупредит в лог.
+     * @returns {boolean} - true, если скрытие применено.
+     * ***************************************************************************
+     */
+    _hideSpeedMenu(): boolean {
+
+        // Меню рендерится в shadow root скина в конструкторе — к моменту
+        // вызова оно уже собрано
+        const root = this.skin?.shadowRoot;
+        if (!root) return false;
+
+        try {
+
+            // Скрытие уже применено — повторная сборка не нужна
+            if (root.querySelector("style[data-cdm-speed-hidden]")) return true;
+
+            // Радиогруппа скорости — маркер того, что пункт меню на месте
+            const hasSpeedMenu = !!root.querySelector("media-playback-rate-radio-group");
+
+            // Стили внедряются в shadow root: глобальный CSS не проникает внутрь
+            const style = document.createElement("style");
+            style.setAttribute("data-cdm-speed-hidden", "");
+            style.textContent = SPEED_MENU_STYLES;
+            root.appendChild(style);
+
+            // Горячие клавиши скорости снимаем совсем (display:none их
+            // не отключает — слушатель клавиш у элемента остался бы)
+            root.querySelectorAll("media-hotkey").forEach((hotkey) => {
+                const action = hotkey.getAttribute("action");
+                if (action === "speedUp" || action === "speedDown") hotkey.remove();
+            });
+
+            if (!hasSpeedMenu) {
+                Logger.warn("[VideoPlayer] Пункт «Скорость» в меню скина не найден — разметка пакета изменилась");
+            }
+
+            return true;
+
+        } catch (error) {
+            Logger.error("[VideoPlayer] Ошибка скрытия пункта скорости:", error);
+            return false;
+        }
+
+    }
+
+    /**
+     * ***************************************************************************
+     * Синхронизация кнопки настроек (шестерёнка) с наполнением меню скина.
+     *
+     * Когда все пункты меню исчезают (нет субтитров/дорожек/качества, «Скорость»
+     * выключена опцией speedControl), кнопка открывала бы пустое меню — прячем
+     * её. Пункты меняются динамически (качество появляется вместе с подключением
+     * hls.js), поэтому за наполнением наблюдает MutationObserver; наблюдение
+     * снимается в destroy().
+     * @returns {void}
+     * ***************************************************************************
+     */
+    _syncSettingsButton(): void {
+
+        // Меню рендерится в shadow root скина — работаем только с ним
+        const root = this.skin?.shadowRoot;
+        if (!root) return;
+
+        // Кнопка настроек и её popup (id лежит в commandfor кнопки)
+        const gear = root.querySelector<HTMLButtonElement>("button.media-settings-menu-trigger");
+        const menuId = gear?.getAttribute("commandfor");
+        const menu = menuId ? root.querySelector(`#${CSS.escape(menuId)}`) : null;
+        if (!gear || !menu) return;
+
+        // Пункт видим, если его не выключили ни availability скина
+        // (data-availability → display: none), ни наши стили скорости
+        const hasVisibleItems = Array
+            .from(menu.querySelectorAll<HTMLElement>("media-menu-item.media-menu-trigger-item"))
+            .some((item) => getComputedStyle(item).display !== "none");
+
+        // Пустое меню открывать нечего — прячем кнопку. Прячем inline-стилем:
+        // атрибут hidden перебивает display стилей скина (см. _syncWideButton)
+        gear.style.display = hasVisibleItems ? "" : "none";
+
+        // Следим за пунктами: доступность дорожек и качество меняются на лету
+        if (!this._settingsSyncCleanup) {
+            const observer = new MutationObserver(() => this._syncSettingsButton());
+            observer.observe(menu, { subtree: true, childList: true, attributes: true });
+            this._settingsSyncCleanup = () => observer.disconnect();
+        }
 
     }
 
@@ -1257,6 +1391,12 @@ export class VideoPlayer {
         if (this._wideCleanup) {
             this._wideCleanup();
             this._wideCleanup = null;
+        }
+
+        // Снимаем наблюдатель наполнения меню настроек
+        if (this._settingsSyncCleanup) {
+            this._settingsSyncCleanup();
+            this._settingsSyncCleanup = null;
         }
 
         // 2. Отпускаем адаптер уровней

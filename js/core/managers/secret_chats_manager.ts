@@ -595,6 +595,7 @@ export class SecretChatsManager {
      * @param {string} fileId - Id файла (UUIDv7, тот же, что в payload сообщения).
      * @param {Blob} blob - Данные файла.
      * @param {object} meta - Метаданные файла.
+     * @param {AbortSignal} [signal] - Сигнал отмены передачи (удаление сообщения).
      * @returns {Promise<void>}
      * ***************************************************************************
      */
@@ -604,11 +605,15 @@ export class SecretChatsManager {
         fileId: string,
         blob: Blob,
         meta: { name: string; mime_type: string; duration: number | null; width: number | null; height: number | null },
+        signal?: AbortSignal,
     ): Promise<void> {
 
         const session = this._requireSession(chatId);
         const connection = session.connection;
         if (!connection || session.connectionState !== "connected") throw new Error("Соединение с собеседником не установлено");
+
+        // Отмена до старта (сообщение удалено) — файл ни сохраняем, ни шлём
+        if (signal?.aborted) throw new Error("Передача файла отменена");
 
         const salt = createChunkSalt();
         const chunksCount = Math.max(1, Math.ceil(blob.size / FILE_CHUNK_SIZE));
@@ -616,6 +621,10 @@ export class SecretChatsManager {
         // Читаем файл чанками: шифрованная копия для локального хранения + отправка
         const storedChunks: Blob[] = [];
         for (let index = 0; index < chunksCount; index++) {
+
+            // Отмена во время подготовки чанков — до сохранения строки файла
+            if (signal?.aborted) throw new Error("Передача файла отменена");
+
             const slice = blob.slice(index * FILE_CHUNK_SIZE, Math.min((index + 1) * FILE_CHUNK_SIZE, blob.size));
             const data = new Uint8Array(await slice.arrayBuffer());
             storedChunks.push(new Blob([await Vault.encryptChunk(salt, index, data)]));
@@ -653,6 +662,10 @@ export class SecretChatsManager {
 
             let loaded = 0;
             for (let index = 0; index < chunksCount; index++) {
+
+                // Отмена передачи (сообщение удалено) — чанки не шлём
+                if (signal?.aborted) throw new Error("Передача файла отменена");
+
                 const slice = blob.slice(index * FILE_CHUNK_SIZE, Math.min((index + 1) * FILE_CHUNK_SIZE, blob.size));
                 const data = new Uint8Array(await slice.arrayBuffer());
                 await connection.sendFileChunk(fileId, index, data);
@@ -665,6 +678,12 @@ export class SecretChatsManager {
             this._emit("file::done", { chatId, fileId });
 
         } catch (error) {
+
+            // Отмена (сообщение удалено): строку файла убираем, статус не ставим
+            if (signal?.aborted) {
+                await secretFilesTable().delete(fileId);
+                throw error;
+            }
 
             // Обрыв при передаче: файл помечаем failed (resume в v1 нет)
             Logger.error("[app][SecretChatsManager]: ошибка передачи файла:", error);

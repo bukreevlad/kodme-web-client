@@ -135,6 +135,7 @@ export class SecretChat {
         this.editedMessage = null;                          // редактируемое сообщение
         this.replyMessage = null;                           // сообщение на которое отвечаем
         this.tempMessage = null;                            // черновик (вложения до отправки)
+        this.messageAbort = null;                           // отмена текущей задачи передачи (удаление сообщения)
         this.voiceRecorder = null;                          // сессия записи голосового (активна во время записи)
         this.voiceNoteSession = null;                       // постоянная сессия голосовых сообщений
         this.voiceNoteGestureController = null;             // контроллер жестов микрофона
@@ -217,6 +218,9 @@ export class SecretChat {
     editedMessage: SecretChatMessageRecord | null;
     replyMessage: SecretChatMessageRecord | null;
     tempMessage: SecretChatMessageRecord | null;
+
+    /** Сообщение, чью задачу очередь передаёт сейчас: id + контроллер отмены. */
+    messageAbort: { id: string; controller: AbortController } | null;
 
     // Сессии записи
     voiceRecorder: unknown;

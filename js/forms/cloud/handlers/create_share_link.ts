@@ -1,6 +1,3 @@
-// Импортируем utils
-import { Logger } from "../../../utils/logs/logger.js";
-
 // Импортируем requests
 import { createShareLinkRequest } from "../requests/create_share_link.js";
 import type { CreateShareLinkData } from "../requests/create_share_link.js";
@@ -30,31 +27,24 @@ export interface CreateShareLinkPayload {
  * Создание ссылки (общий доступ) на папку или файл.
  * @param item - Папка или файл.
  * @param linkPayload - Параметры ссылки.
- * @returns Ответ сервера (созданная ссылка) либо null при ошибке.
+ * @returns Ответ сервера (созданная ссылка).
+ * @throws Ошибка сервера/сети пробрасывается вызывающему коду —
+ *   он показывает тост (см. handlers/create.ts диалога создания ссылки).
  * ***************************************************************************
  */
 export async function createShareLinkHandler(
     item: CloudItem,
     linkPayload: CreateShareLinkPayload = {}
-): Promise<Answer<CloudShareLinkRow> | null> {
+): Promise<Answer<CloudShareLinkRow>> {
 
-    try {
+    // Данные запроса (уровень доступа по умолчанию — чтение)
+    let data: CreateShareLinkData = {
+        item_id: item.id,
+        user_ids: linkPayload.user_ids || [],
+        access_level: linkPayload.access_level || "read",
+        expires_at: linkPayload.expires_at || null
+    };
 
-        // Запрос на сервер
-        let data: CreateShareLinkData = {
-            item_id: item.id,
-            user_ids: linkPayload.user_ids || [],
-            access_level: linkPayload.access_level || "read",
-            expires_at: linkPayload.expires_at || null
-        };
-
-        let response = await createShareLinkRequest(data);
-
-        return response;
-
-    } catch (error) {
-        Logger.error(error);
-        return null;
-    }
+    return await createShareLinkRequest(data);
 
 }

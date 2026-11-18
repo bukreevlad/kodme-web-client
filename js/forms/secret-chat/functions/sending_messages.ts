@@ -3,6 +3,7 @@ import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 
 import { SecretChatsManager } from "../../../core/managers/secret_chats_manager.js";
+import { secretMessagesTable } from "../../../utils/secret_chats/secret_chats_db.js";
 
 // Импортируем components
 import { Toast } from "../../../components/toast.js";
@@ -113,10 +114,26 @@ export async function sendingMessages(form: SecretChat): Promise<void> {
             // invariant: очередь непустая — while выше это гарантирует
             const task = queue[0]!;
 
+            // Контроллер отмены текущей задачи: удаление сообщения прерывает
+            // передачу его файлов. Назначается ДО проверки записи в базе —
+            // удаление во время проверки успевает абортнуть контроллер
+            const controller = new AbortController();
+            form.messageAbort = { id: task.messageId, controller };
+
+            // Сообщение могли удалить, пока задача ждала своей очереди
+            const taskExists = await secretMessagesTable().get(task.messageId);
+            if (!taskExists || controller.signal.aborted) {
+                queue.shift();
+                continue;
+            }
+
             for (const file of task.files) {
 
                 // Форма закрыта во время отправки — останавливаем очередь
                 if (FormsRegistry.getOwner<SecretChat>(`secret-chat:${form.chatId}`) !== form) return;
+
+                // Сообщение удалили — оставшиеся файлы не передаём
+                if (controller.signal.aborted) break;
 
                 try {
 
@@ -129,9 +146,12 @@ export async function sendingMessages(form: SecretChat): Promise<void> {
                     // Передаём файл чанками (file_offer → чанки → file_done)
                     const manager = SecretChatsManager.instance;
                     if (!manager) return;
-                    await manager.transferFile(form.chatId, task.messageId, file.fileId, file.blob, file.meta);
+                    await manager.transferFile(form.chatId, task.messageId, file.fileId, file.blob, file.meta, controller.signal);
 
                 } catch (error) {
+
+                    // Сообщение удалили — задачу выбрасываем без тоста
+                    if (controller.signal.aborted) break;
 
                     // Обрыв/ошибка передачи: файл помечен failed менеджером,
                     // очередь останавливаем — пользователю показываем причину
@@ -147,7 +167,7 @@ export async function sendingMessages(form: SecretChat): Promise<void> {
 
             }
 
-            // Задача обработана — убираем из очереди
+            // Задача обработана либо отменена удалением сообщения — убираем её
             queue.shift();
 
         }
@@ -158,6 +178,9 @@ export async function sendingMessages(form: SecretChat): Promise<void> {
 
         // Снимаем блокировку цикла (только своей формы)
         sendingForms.delete(form);
+
+        // Контроллер отмены текущей задачи больше не нужен
+        form.messageAbort = null;
 
     }
 

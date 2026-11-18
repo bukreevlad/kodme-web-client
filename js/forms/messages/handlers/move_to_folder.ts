@@ -14,6 +14,10 @@ import { MainFoldersManager } from "../../main-folders-manager/index.js";
 import { moveToFolderRequest } from "../requests/move_to_folder.js";
 import { unmoveFromFolderRequest } from "../requests/unmove_from_folder.js";
 
+// Импортируем functions
+import { addChannelToFolderPane, removeChannelFromFolderPane } from "../../main/functions/folder_pane.js";
+import { updateFolderUnread } from "../../main/functions/update_folder_unread.js";
+
 // Импортируем типы
 import type { ChannelRecord } from "../types.js";
 import { t } from "../../../utils/i18n/index.js";
@@ -49,62 +53,88 @@ export async function moveToFolderHandler(channel: ChannelRecord): Promise<void>
             callback: async (folder: FolderChoice) => {
                 if (folder && folder.id) {
 
-                    // Если папка выбрана
-                    if (folder.is_selected) {
+                    try {
 
-                        // Запрос
-                        let response = await moveToFolderRequest({
-                            channel_id: channel.id,
-                            main_folder_id: folder.id
-                        });
+                        // Если папка выбрана
+                        if (folder.is_selected) {
 
-                        // Если запрос выполнен
-                        if (response) {
-
-                            // Обновляем данные
-                            channel.main_folders_ids?.push(folder.id);
-                            FormsRegistry.getOwner<Main>("main")?.store.update(channel.id, channel);
-
-                            // Обновляем IndexedDB
-                            await IndexedDB.db?.table("channels").update(channel.id, {
-                                main_folders_ids: channel.main_folders_ids
+                            // Запрос
+                            let response = await moveToFolderRequest({
+                                channel_id: channel.id,
+                                main_folder_id: folder.id
                             });
 
-                            // Toast
-                            Toast.success(t("forms.main.components.channels.context_menu.toasts.success_move_to_folder"), {
-                                position: "bottom-center"
+                            // Если запрос выполнен
+                            if (response) {
+
+                                // Обновляем данные
+                                channel.main_folders_ids?.push(folder.id);
+                                FormsRegistry.getOwner<Main>("main")?.store.update(channel.id, channel);
+
+                                // Обновляем IndexedDB
+                                await IndexedDB.db?.table("channels").update(channel.id, {
+                                    main_folders_ids: channel.main_folders_ids
+                                });
+
+                                // Добавляем канал в панель папки, чтобы он сразу появился
+                                addChannelToFolderPane(folder.id, channel);
+
+                                // Обновляем бейджи непрочитанных на вкладках папок
+                                const main = FormsRegistry.getOwner<Main>("main");
+
+                                if (main) updateFolderUnread(main);
+
+                                // Toast
+                                Toast.success(t("forms.main.components.channels.context_menu.toasts.success_move_to_folder"), {
+                                    position: "bottom-center"
+                                });
+
+                            }
+
+                            // Если папка не выбрана
+                        } else {
+
+                            // Запрос
+                            let response = await unmoveFromFolderRequest({
+                                channel_id: channel.id,
+                                main_folder_id: folder.id
                             });
+
+                            // Если запрос выполнен
+                            if (response) {
+
+                                // Обновляем данные
+                                let filteredFolders = channel.main_folders_ids?.filter(f => f !== folder.id);
+                                channel.main_folders_ids = filteredFolders || [];
+                                FormsRegistry.getOwner<Main>("main")?.store.update(channel.id, channel);
+
+                                // Обновляем IndexedDB
+                                await IndexedDB.db?.table("channels").update(channel.id, {
+                                    main_folders_ids: filteredFolders
+                                });
+
+                                // Убираем канал из панели папки
+                                removeChannelFromFolderPane(folder.id, channel);
+
+                                // Обновляем бейджи непрочитанных на вкладках папок
+                                const main = FormsRegistry.getOwner<Main>("main");
+
+                                if (main) updateFolderUnread(main);
+
+                                // Toast
+                                Toast.success(t("forms.main.components.channels.context_menu.toasts.success_unmove_from_folder"), {
+                                    position: "bottom-center"
+                                });
+
+                            }
 
                         }
 
-                        // Если папка не выбрана
-                    } else {
+                    } catch (error) {
+                        Logger.error(error);
 
-                        // Запрос
-                        let response = await unmoveFromFolderRequest({
-                            channel_id: channel.id,
-                            main_folder_id: folder.id
-                        });
-
-                        // Если запрос выполнен
-                        if (response) {
-
-                            // Обновляем данные
-                            let filteredFolders = channel.main_folders_ids?.filter(f => f !== folder.id);
-                            channel.main_folders_ids = filteredFolders || [];
-                            FormsRegistry.getOwner<Main>("main")?.store.update(channel.id, channel);
-
-                            // Обновляем IndexedDB
-                            await IndexedDB.db?.table("channels").update(channel.id, {
-                                main_folders_ids: filteredFolders
-                            });
-
-                            // Toast
-                            Toast.success(t("forms.main.components.channels.context_menu.toasts.success_unmove_from_folder"), {
-                                position: "bottom-center"
-                            });
-
-                        }
+                        // Прочая ошибка сервера
+                        Toast.error(t("api.errors.server_error"));
 
                     }
 

@@ -44,8 +44,10 @@ export function initPlayer(form: BroadcastPlay): void {
     //
     // Вариант "full" даёт готовый набор контролов, повторяющий прежний
     // набор Plyr: play / mute / volume / fullscreen / pip, плюс меню
-    // качества (для HLS) и скорости. wideControl добавляет в контролы
-    // переключатель ширины сцены (его действие — handlers/wide.ts)
+    // качества (для HLS). Пункт «Скорость» выключен (speedControl) —
+    // трансляция идёт в прямом эфире, менять её скорость бессмысленно.
+    // wideControl добавляет в контролы переключатель ширины сцены
+    // (его действие — handlers/wide.ts)
     form.player = new VideoPlayer({
         insertInto: form.videoMount,
         options: {
@@ -53,7 +55,8 @@ export function initPlayer(form: BroadcastPlay): void {
             autoplay: true,
             playsinline: true,
             ratio: "16:9",
-            wideControl: true
+            wideControl: true,
+            speedControl: false
         }
     });
 

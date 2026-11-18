@@ -135,7 +135,9 @@ export async function contextMenuHandler(event: Event, form: Comments, data: Com
             || form.post?.author_id === sessionUserId
             || Boolean(data.is_moderator);
 
-        if (canDelete && !data.is_sending) {
+        // Отправляющийся/упавший комментарий удаляется локально без диалога
+        // (ветка в removeCommentHandler), поэтому пункт показывается и для него
+        if (canDelete) {
             menuItems.push(remove);
         }
 

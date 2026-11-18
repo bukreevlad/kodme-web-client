@@ -194,7 +194,7 @@ export class CreateFolder {
                             ${Inputs.create({
             placeholder: t("forms.cloud.dialogs.create_folder.name"),
             name: "name",
-            attributes: ["required"]
+            attributes: ["required", "maxlength=128"]
         })}
                         </div>
                     </div>

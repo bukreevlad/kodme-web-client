@@ -74,12 +74,14 @@ export function updateStateButtons(form: Comments): void {
 
         if (isEditing) {
 
-            // «Отправить»/голос/кружок/эмодзи/скрепка скрыты, «Обновить»/«Отмена» видны
+            // «Отправить»/голос/кружок/эмодзи скрыты, «Обновить»/«Отмена» и
+            // скрепка видны: файлы можно прикрепить к редактируемому
+            // комментарию — загрузятся после «Обновить»
             createButton?.classList.add("hidden");
             voiceRecorderButton?.classList.add("hidden");
             videoRecorderButton?.classList.add("hidden");
             emojiButton?.classList.add("hidden");
-            attachFileButton?.classList.add("hidden");
+            attachFileButton?.classList.remove("hidden");
             updateButton?.classList.remove("hidden");
             cancelEditButton?.classList.remove("hidden");
 

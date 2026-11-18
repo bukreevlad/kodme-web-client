@@ -15,6 +15,8 @@ import { Toast } from "../../../components/toast.js";
 
 // Импортируем requests
 import { createMessageRequest } from "../requests/create_message.js";
+import { updateMessageRequest } from "../requests/update_message.js";
+import { removeMessageRequest } from "../components/requests/remove_message.js";
 import { getUploadAttachURLRequest } from "../requests/get_upload_url_attach.js";
 import { saveAttachRequest } from "../requests/save_attach.js";
 
@@ -152,6 +154,17 @@ export async function sendingMessages(form: Messages): Promise<void> {
             // Локальный ID сообщения (из IndexedDB)
             const localId = message.id;
 
+            // Контроллер отмены текущего сообщения: удаление строки из очереди
+            // прерывает загрузку файлов и не даёт сообщению уйти на сервер
+            const messageAbort = new AbortController();
+            form.messageAbort = { id: localId, controller: messageAbort };
+
+            // Сообщение могли удалить, пока очередь доставало его из базы —
+            // пропускаем: записи в очереди уже нет
+            const pickedRow = await IndexedDB.db
+                ?.table<MessageRecord, string>("pending_messages").get(localId);
+            if (!pickedRow || messageAbort.signal.aborted) continue;
+
             try {
 
                 // Мап вложений для payload запроса (запись очереди хранит полные данные)
@@ -181,6 +194,9 @@ export async function sendingMessages(form: Messages): Promise<void> {
                     // Проходим по файлам
                     for (const fileId of fileIds) {
 
+                        // Сообщение удалили из очереди — оставшиеся файлы не грузим
+                        if (messageAbort.signal.aborted) break;
+
                         // Проверка: не был ли файл удалён из объекта во время итерации
                         // (пользователь мог нажать «отмена» на прошлом файле)
                         if (!attachments[fileId]) continue;
@@ -188,6 +204,13 @@ export async function sendingMessages(form: Messages): Promise<void> {
                         // Ссылка на вложение в объекте сообщения (может исчезнуть
                         // при отмене — поэтому каждый раз перечитываем и падаем в continue)
                         let attach = attachments[fileId];
+
+                        // Запись редактирования: вложения без локального файла уже
+                        // на сервере — их не грузим, в update уйдут только новые
+                        if (message.is_edit && !attach._file) {
+                            documentIdByFileId[fileId] = fileId;
+                            continue;
+                        }
 
                         // Устанавливаем параметры
                         const abortController = new AbortController();
@@ -201,6 +224,16 @@ export async function sendingMessages(form: Messages): Promise<void> {
                         // серверу. Дальше отмена только клиентская — строку в
                         // очереди подчистит sweep
                         let isUploading = true;
+
+                        // Отмена сообщения целиком (удаление из очереди) прерывает
+                        // и этот файл: POST рвётся, серверу сообщается, пока
+                        // оригинал в пути
+                        messageAbort.signal.addEventListener("abort", () => {
+                            abortController.abort();
+                            if (uploadDocumentId && isUploading) {
+                                abortUpload({ document_id: uploadDocumentId }).catch(() => {});
+                            }
+                        }, { once: true });
 
                         try {
 
@@ -316,6 +349,9 @@ export async function sendingMessages(form: Messages): Promise<void> {
 
                             // Проверка: не отменил ли пользователь загрузку, пока ждали ответ от API
                             if (!attachments[fileId]) continue;
+
+                            // Сообщение удалили, пока запрашивали ссылку загрузки — не грузим
+                            if (messageAbort.signal.aborted) break;
 
                             // Id документа нужен для отмены загрузки по кнопке
                             // на прогресс-баре (abortUpload)
@@ -435,6 +471,13 @@ export async function sendingMessages(form: Messages): Promise<void> {
                         }
                     }
 
+                    // Сообщение удалили из очереди, пока грузились файлы: строка
+                    // уже удалена из UI — ни ошибку не помечаем, ни тост не показываем
+                    if (messageAbort.signal.aborted) {
+                        Logger.debug(`[app][messages][sending][${localId}]: сообщение удалено — отправка отменена.`);
+                        continue;
+                    }
+
                     // Сверяем полноту набора: каждое вложение, оставшееся в
                     // сообщении, обязано получить document_id — иначе сообщение
                     // ушло бы на сервер без части файлов
@@ -465,6 +508,32 @@ export async function sendingMessages(form: Messages): Promise<void> {
 
                 }
 
+                // Страховка от «воскресения»: запись могли удалить из очереди
+                // в гонке (между выборкой и отправкой) — тогда не отправляем
+                const stillQueued = await IndexedDB.db
+                    ?.table<MessageRecord, string>("pending_messages").get(localId);
+                if (!stillQueued) {
+                    Logger.debug(`[app][messages][sending][${localId}]: записи нет в очереди — отправка отменена.`);
+                    continue;
+                }
+
+                // Задача редактирования: текст и новые вложения уходят в update
+                if (message.is_edit) {
+
+                    await updateMessageRequest({
+                        message_id: localId,
+                        text: message.text ?? "",
+                        attachments: Object.keys(requestAttachments).length > 0 ? requestAttachments : null
+                    });
+
+                    // Задача выполнена: снимаем запись очереди и флаги строки
+                    await IndexedDB.db?.table<MessageRecord, string>("pending_messages").delete(localId);
+                    await IndexedDB.db?.table<MessageRecord, string>("messages").update(localId, { text: message.text ?? "" });
+                    form.store.update(localId, { text: message.text ?? "", is_pending: false, is_error_sending: false });
+
+                    continue;
+                }
+
                 // Шаг Отправка готового сообщения на сервер
                 Logger.debug(`[app][messages]: Отправка сообщения на сервер с id:${localId}.`);
                 const response = await createMessageRequest({
@@ -482,6 +551,26 @@ export async function sendingMessages(form: Messages): Promise<void> {
                 // ID сообщения, присвоенный сервером
                 const serverId = response.data.message_id;
                 Logger.debug(`[app][messages]: Сервер вернул serverId: ${serverId} для сообщения c localId: ${localId}. Начинаем replaceId.`);
+
+                // Пользователь удалил сообщение, пока запрос был в пути (маркер —
+                // abort: эхо снимает запись очереди и само, это не удаление):
+                // подчищаем локальные копии и убираем запись на сервере — иначе
+                // эхо message_new вернёт строку обратно в список
+                if (messageAbort.signal.aborted) {
+
+                    // Локальные копии (эхо могло успеть вставить серверную запись)
+                    form.store.remove(localId);
+                    form.store.remove(serverId);
+                    await IndexedDB.db?.table<MessageRecord, string>("messages").delete(serverId);
+
+                    // Удаление на сервере публикует message_deleted — он добьёт
+                    // и поздние копии эха
+                    removeMessageRequest({ message_id: serverId, for_all: true }).catch((cleanupError: unknown) => {
+                        Logger.error(`[app][messages][sending][${localId}]: отправленное сообщение не удалено:`, cleanupError);
+                    });
+
+                    continue;
+                }
 
                 // Подтверждение сервера: снимаем флаги ожидания — запись живёт
                 // до прихода полного сообщения и повторно не отправляется
@@ -526,7 +615,14 @@ export async function sendingMessages(form: Messages): Promise<void> {
                 if (info.isAccessDenied) {
 
                     await removePendingMessage(localId);
-                    form.store.remove(localId);
+
+                    // Задача редактирования: сообщение остаётся в ленте —
+                    // снимаем только флаги очереди
+                    if (message.is_edit) {
+                        form.store.update(localId, { is_pending: false, is_error_sending: false });
+                    } else {
+                        form.store.remove(localId);
+                    }
 
                     toastError(error, { context: `[app][messages][sending][${localId}]` });
 
@@ -561,9 +657,13 @@ export async function sendingMessages(form: Messages): Promise<void> {
                     // Отклонение хранилищем (400 от S3, например пустое тело
                     // запроса от Safari) — свой текст вместо generic-ошибки
                     const isRejected = info.code === "UPLOAD_REJECTED" || info.name === "UPLOAD_REJECTED";
-                    const text = specificKey
+                    const rawText = specificKey
                         ? toasts[specificKey]
                         : (isRejected ? t("api.errors.upload_rejected") : null);
+
+                    // Шаблоны с {{name}}/{{size}} в очереди заполнить нечем —
+                    // незаполненные скобки пользователю не показываем
+                    const text = rawText && !rawText.includes("{{") ? rawText : null;
 
                     Toast.warning(text || t("forms.messages.toasts.uploading_failed"), { position: "bottom-center" });
 
@@ -601,6 +701,9 @@ export async function sendingMessages(form: Messages): Promise<void> {
 
         // Контроллер отмены больше не нужен
         form.uploadAbort = null;
+
+        // Контроллер отмены текущего сообщения больше не нужен
+        form.messageAbort = null;
 
     }
 

@@ -64,14 +64,21 @@ export async function removeMessageHandler(message: MessageItem): Promise<void> 
                 // (сообщество и т.п.) — всегда для всех
                 const shouldRemoveForAll = isChat ? !!data.for_all : true;
 
+                // Прерываем задачу редактирования, если она грузит это сообщение
+                const current = message.form.messageAbort;
+                if (current && current.id === message.data.id) {
+                    current.controller.abort();
+                }
+
                 // Запрос к API
                 await removeMessageRequest({
                     message_id: message.data.id,
                     for_all: shouldRemoveForAll
                 });
 
-                // Локальное удаление
+                // Локальное удаление (строка очереди редактирования — вместе с сообщением)
                 await IndexedDB.db?.table<MessageRecord, string>("messages").delete(message.data.id);
+                await IndexedDB.db?.table<MessageRecord, string>("pending_messages").delete(message.data.id);
                 message.form.store.remove(message.data.id);
 
                 // Сообщение

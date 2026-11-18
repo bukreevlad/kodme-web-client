@@ -18,9 +18,11 @@ import type { ForwardMessages } from "../index.js";
  * Загрузка списка каналов для пересылки из IndexedDB главной формы.
  *
  * Предфильтр «куда разрешено пересылать» повторяет серверную проверку
- * прав публикации: личные диалоги, избранное и боты — всегда; создатель
- * сущности — всегда; иначе — когда в сущности разрешён постинг и она
- * публичная либо пользователь в ней подписан.
+ * прав публикации ([message]: forward → canPost): диалоги и избранное —
+ * всегда; создатель сущности; модератор с правом писать; иначе — когда
+ * в сущности разрешён постинг и она публичная либо пользователь в ней
+ * подписан. Не участники и темы (как корневые строки) не показываются —
+ * как на главной форме.
  *
  * @param form - Экземпляр формы.
  * @returns Promise без значения.
@@ -53,14 +55,26 @@ export async function getChannels(form: ForwardMessages): Promise<void> {
             // Проходим по каналам
             for (const channel of sortedChannels) {
 
-                // Имеет ли право пересылать сюда сообщение
-                const canForwardInChat =
-                    channel.kind === "dialog" || channel.kind === "favorite" ||
+                // Куда разрешено пересылать: зеркало серверной проверки прав
+                // публикации ([message]: forward проверяет canPost цели).
+                // Не участники не показываются (как на главной форме);
+                // диалоги и избранное — всегда; иначе — создатель сущности,
+                // модератор с правом писать либо сущность «все пишут»
+                // (публичная либо с подпиской пользователя). Темы корнем
+                // не показываются — как на Main
+                const canPost =
                     channel.owner_id === sessionUser.id ||
-                    (channel.posting_mode === "all" && (channel.visibility === "public" || channel.is_subscribed));
+                    (channel.is_moderator === true && channel.can_posting_messages === true) ||
+                    (channel.posting_mode === "all" && (channel.visibility === "public" || channel.is_subscribed === true));
+
+                const canForward = channel.is_member !== false && (
+                    channel.kind === "dialog" || channel.kind === "favorite"
+                        ? true
+                        : channel.kind !== "topic" && canPost
+                );
 
                 // Добавляем В Store
-                if (canForwardInChat) {
+                if (canForward) {
 
                     // Проверяем канал
                     const isStore = form.store.get(channel.id);

@@ -3,14 +3,19 @@ import { FormsRegistry } from "../../../core/managers/forms_registry.js";
 import { Logger } from "../../../utils/logs/logger.js";
 import { CacheManager } from "../../../utils/cache_manager.js";
 import { getThumbnailSizeQuery } from "../../../utils/helpers/get_thumbnail_size_query.js";
+import { IsMobile } from "../../../utils/helpers/is_mobile.js";
 import { Icons } from "../../../utils/icons.js";
 
 // Импортируем forms
 import { BroadcastPlay } from "../../broadcast-play/index.js";
 
+// Импортируем functions
+import { startHoverPreview, PREVIEW_DELAY_MS } from "../functions/hover_preview.js";
+
 // Импортируем типы
 import { isBroadcastCast } from "../types.js";
 import type { StoreEventName } from "../../../utils/store.js";
+import type { HoverPreviewHandle } from "../functions/hover_preview.js";
 import type { BroadcastCast } from "../types.js";
 import type { Broadcasts } from "../index.js";
 
@@ -33,6 +38,10 @@ export function createCastItem(form: Broadcasts, data: BroadcastCast): HTMLEleme
 
     // Записываем данные: setup обновляет ссылку, как раньше это делал this.data
     let current = data;
+
+    // Состояние hover-превью: таймер задержки и активный плеер
+    let previewTimer: ReturnType<typeof setTimeout> | null = null;
+    let preview: HoverPreviewHandle | null = null;
 
     // Создаем DOM-элемент из шаблона
     const element = template();
@@ -70,7 +79,7 @@ export function createCastItem(form: Broadcasts, data: BroadcastCast): HTMLEleme
         // запроса на reduced motion) и поднимается тенью
         return new DOMParser().parseFromString(`
             <div class="item flex flex-col gap-1 p-0 bg-[var(--second-bg)] cursor-pointer rounded-lg overflow-hidden transition-all duration-200 motion-reduce:transition-none motion-safe:hover:scale-[1.02] motion-safe:hover:shadow-md motion-safe:active:scale-[.99]">
-                <div class="relative flex flex-col gap-0 self-center w-full h-full aspect-16/9">
+                <div data-media class="relative flex flex-col gap-0 self-center w-full h-full aspect-16/9">
                     <img data-thumbnail class="w-full h-full aspect-16/9 object-cover bg-[var(--second-bg)]" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" draggable="false" />
                     <div data-placeholder class="absolute w-full h-full aspect-16/9 bg-[var(--second-bg)] pointer-events-none">
                         <img data-img-placeholder class="absolute w-full h-full aspect-16/9 object-cover bg-[var(--second-bg)]" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" draggable="false"/>    
@@ -146,7 +155,12 @@ export function createCastItem(form: Broadcasts, data: BroadcastCast): HTMLEleme
             if (next.is_live) {
                 isLive?.classList.remove("hidden");
             } else {
+
                 isLive?.classList.add("hidden");
+
+                // Эфир остановили — активное превью гасим (обложка вернётся)
+                stopPreview();
+
             }
 
         } catch (error) {
@@ -165,6 +179,9 @@ export function createCastItem(form: Broadcasts, data: BroadcastCast): HTMLEleme
         // Открыть трансляцию
         element.addEventListener("click", () => {
 
+            // Клик открывает воспроизведение — превью больше не нужно
+            stopPreview();
+
             // Если на форму передан callback
             if (form.callback) {
                 form.callback(current);
@@ -180,6 +197,66 @@ export function createCastItem(form: Broadcasts, data: BroadcastCast): HTMLEleme
             }
 
         });
+
+        // На тач-устройствах hover нет: превью не запускаем вовсе
+        if (IsMobile.get()) return;
+
+        // Наведение: через PREVIEW_DELAY_MS под обложкой появляется поток
+        element.addEventListener("mouseenter", () => {
+
+            // Превью только для живого эфира с токеном
+            if (!current.is_live || !current.access_token) return;
+
+            // Таймер уже стоит либо плеер уже играет — повторно не стартуем
+            if (previewTimer !== null || preview !== null) return;
+
+            // Cleanup регистрируем сразу: запись могут удалить, пока тикает
+            // таймер — без регистрации снять превью было бы нечем
+            form.hoverPreviews.set(current.id, stopPreview);
+
+            previewTimer = setTimeout(() => {
+
+                previewTimer = null;
+
+                const container = element.querySelector<HTMLElement>(":scope [data-media]");
+
+                // invariant: media-контейнер входит в шаблон карточки
+                if (!container) return;
+
+                preview = startHoverPreview(current, container);
+
+                // Не запустилось (нет MSE/токена) — cleanup забираем обратно
+                if (!preview) form.hoverPreviews.delete(current.id);
+
+            }, PREVIEW_DELAY_MS);
+
+        });
+
+        // Увод мыши — таймер и плеер снимаются полностью
+        element.addEventListener("mouseleave", stopPreview);
+
+    }
+
+    /**
+     * ***************************************************************************
+     * Остановка hover-превью: отменяет таймер, гасит плеер и забирает cleanup
+     * из реестра формы. Идемпотентна — зовётся с mouseleave, кликом,
+     * удалением записи и обновлением без эфира.
+     * ***************************************************************************
+     */
+    function stopPreview(): void {
+
+        if (previewTimer !== null) {
+            clearTimeout(previewTimer);
+            previewTimer = null;
+        }
+
+        if (preview) {
+            preview.stop();
+            preview = null;
+        }
+
+        form.hoverPreviews.delete(current.id);
 
     }
 

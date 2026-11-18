@@ -22,6 +22,9 @@ export interface BroadcastSettingsRecord {
     /** Включён ли чат трансляции. */
     is_chat?: boolean;
 
+    /** Id канала-чата трансляции. */
+    chat_channel_id?: string | null;
+
     /** Токен подключения трансляции к серверу (rtmp/whip/chat-ссылки). */
     token: string;
 

@@ -171,6 +171,9 @@ export interface MessageRecord extends StoreItem {
     /** Ожидает ответа сервера (исходящее). */
     is_pending?: boolean;
 
+    /** Запись очереди: задача редактирования — новые файлы к существующему сообщению. */
+    is_edit?: boolean;
+
     /** Число комментариев под постом (сервер для type = 3). */
     count_comments?: number;
 

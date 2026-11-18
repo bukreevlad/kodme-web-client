@@ -63,6 +63,7 @@ export class BroadcastSettings {
 
     // Переменные формы
     castId: string;
+    chatChannelId: string | null;
 
     // Каркас: шаблон, модалка, контент и instance скролла
     options: BroadcastSettingsOptions;
@@ -106,6 +107,7 @@ export class BroadcastSettings {
 
         // Переменные формы
         this.castId = data.castId;
+        this.chatChannelId = null;
 
         // Получаем instance
         let instance = FormsRegistry.getOwner<BroadcastSettings>(`broadcast-settings:${data.castId}`);
@@ -223,6 +225,9 @@ export class BroadcastSettings {
 
             // Данные
             let data = response.data;
+
+            // Id канала-чата — нужен, чтобы закрыть чат при удалении трансляции
+            this.chatChannelId = data.chat_channel_id ?? null;
 
             // Устанавливаем элементы
             this.content = this.tpl.querySelector(":scope >.content");

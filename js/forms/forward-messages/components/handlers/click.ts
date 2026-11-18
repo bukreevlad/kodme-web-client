@@ -3,6 +3,7 @@ import { Logger } from "../../../../utils/logs/logger.js";
 
 // Импортируем типы
 import type { ChannelItem } from "../../types.js";
+import { t } from "../../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
@@ -31,12 +32,17 @@ export async function clickHandler(item: ChannelItem): Promise<void> {
 
         // Обновляем данные
         if (isSelected) {
-            item.element.classList.remove("selected");
             form.selectedChannelsIds = form.selectedChannelsIds.filter(id => id !== item.data.id);
         } else {
-            item.element.classList.add("selected");
             form.selectedChannelsIds.push(item.data.id);
         }
+
+        // Класс выделения — на всех копиях строки (в папках одна запись даёт
+        // несколько DOM-строк): по нему CSS показывает бейдж-галочку на аватаре
+        const selected = form.selectedChannelsIds.includes(item.data.id);
+        form.store.getDomElements(item.data.id).forEach(element => {
+            element.classList.toggle("selected", selected);
+        });
 
         // Проверяем есть ли в списке выделенные
         const actionForwardMessages = form.tpl?.querySelector(":scope >[action-forward-messages]");
@@ -46,6 +52,16 @@ export async function clickHandler(item: ChannelItem): Promise<void> {
             actionForwardMessages?.classList.add("active");
         } else {
             actionForwardMessages?.classList.remove("active");
+        }
+
+        // Заголовок: пока не выбрано ни одного канала — «Переслать сообщение»,
+        // иначе — количество выбранных
+        const title = form.tpl?.querySelector<HTMLElement>(":scope >.header [data-title]");
+        const selectedCount = form.selectedChannelsIds.length;
+        if (title) {
+            title.textContent = selectedCount > 0
+                ? t("forms.forward_messages.header_selected", { count: selectedCount })
+                : t("forms.forward_messages.header_title");
         }
 
     } catch (error) {

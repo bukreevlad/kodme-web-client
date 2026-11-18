@@ -26,6 +26,10 @@ export function subscribeItemRemoved(form: Broadcasts): void {
             // Стор шлёт payload как unknown — сверяемся guard'ом
             if (!isBroadcastCast(data)) return;
 
+            // Удалили запись — hover-превью снимаем: mouseleave при удалении
+            // из DOM не приходит, таймер/плеер иначе остались бы жить
+            form.hoverPreviews.get(data.id)?.();
+
             // Если удалили последнюю трансляцию — показываем пустое состояние
             // (DOM-копии стор снимает сам)
             updateEmptyState(form);
