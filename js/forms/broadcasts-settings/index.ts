@@ -240,9 +240,8 @@ export class BroadcastsSettings {
                                 ${t("forms.broadcasts_settings.type_play")}
                             </span>
                             ${Toggle.cardGroup([
-        { name: "type-play", value: "flv", checked: true, text: t("forms.broadcasts_settings.flv"), description: t("forms.broadcasts_settings.flv_play_desc") },
-        { name: "type-play", value: "hls", checked: true, text: t("forms.broadcasts_settings.hls"), description: t("forms.broadcasts_settings.hls_play_desc") },
-        { name: "type-play", value: "rtc", checked: true, text: t("forms.broadcasts_settings.rtc"), description: t("forms.broadcasts_settings.rtc_play_desc") }
+        { name: "type-play", value: "rtc", checked: true, text: t("forms.broadcasts_settings.rtc"), description: t("forms.broadcasts_settings.rtc_play_desc") },
+        { name: "type-play", value: "hls", checked: true, text: t("forms.broadcasts_settings.hls"), description: t("forms.broadcasts_settings.hls_play_desc") }
     ])}
                         </div>
 

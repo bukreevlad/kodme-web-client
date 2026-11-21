@@ -153,6 +153,35 @@ describe("TabsManager (пульт пиуль)", () => {
 
     /**
      * ***************************************************************************
+     * Снятие активной записи подсвечивает пикулю оставшегося места.
+     * ***************************************************************************
+     */
+    test("закрытие формы подсвечивает пикулю оставшегося места", () => {
+
+        // У каждой пилюли свой фейк — проверяем активность по отдельности
+        const created: FakeTab[] = [];
+        TabsManager.createTabElement = () => {
+            const fake = createFakeTab();
+            created.push(fake);
+            return fake.tab;
+        };
+
+        registerWorkspace("chat");
+        registerWorkspace("cloud");
+
+        // Активна свежеоткрытая
+        expect(created[0]?.toggle).toHaveBeenLastCalledWith("active", false);
+        expect(created[1]?.toggle).toHaveBeenLastCalledWith("active", true);
+
+        FormsRegistry.unregister("cloud");
+
+        expect(TabsManager.tabs.has("cloud")).toBe(false);
+        expect(LayoutManager.isActive("chat")).toBe(true);
+        expect(created[0]?.toggle).toHaveBeenLastCalledWith("active", true);
+    });
+
+    /**
+     * ***************************************************************************
      * Смена роли убирает пикулю и закрывает место, но форму не закрывает.
      * ***************************************************************************
      */

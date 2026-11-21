@@ -600,14 +600,6 @@ export class Messages {
 
             // ==================================
 
-            // Пилюля рабочего места: заголовки живут в записи реестра
-            if (this.modal) FormsRegistry.update(this.modal.options.id, {
-                title: this.channel?.kind === "favorite" ? t("forms.messages.favorite") : this.channel?.display_name ?? "",
-                subtitle: t("forms.messages.title")
-            });
-
-            // ==================================
-
             // Записываем VideoNoteSession
             this.videoNoteRecorder = new VideoNoteSession(this);
 
@@ -782,6 +774,13 @@ export class Messages {
 
         // Если это чат трансляции
         if (data.kind === "cast_chat") I18n.setPlain(this.subtitle, t("forms.messages.broadcast_chat"));
+
+        // Пилюля рабочего места: имя и подпись копируются из шапки — таб
+        // повторяет текст формы для любого типа канала
+        if (this.modal) FormsRegistry.update(this.modal.options.id, {
+            title: this.name.textContent ?? "",
+            subtitle: this.subtitle.textContent ?? ""
+        });
 
         // Обновляем состояние кнопок
         updateStateButtons(this);

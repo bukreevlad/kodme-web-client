@@ -195,6 +195,44 @@ describe("LayoutManager", () => {
 
     /**
      * ***************************************************************************
+     * Закрытие активного места активирует оставшееся — событие активации
+     * шлётся, чтобы пилюли переподсветились.
+     * ***************************************************************************
+     */
+    test("закрытие активного места шлёт событие активации оставшегося", () => {
+        LayoutManager.openWorkspace("first");
+        LayoutManager.openWorkspace("second");
+
+        const activated = mock((_: unknown) => {});
+        LayoutManager.on("workspace-activated", activated);
+
+        LayoutManager.closeWorkspace("second");
+
+        expect(LayoutManager.isActive("first")).toBe(true);
+        expect(activated).toHaveBeenCalledTimes(1);
+        expect(activated).toHaveBeenCalledWith({ workspaceId: "first" });
+    });
+
+    /**
+     * ***************************************************************************
+     * Закрытие неактивного места активности не меняет — событие не шлётся.
+     * ***************************************************************************
+     */
+    test("закрытие неактивного места не шлёт событие активации", () => {
+        LayoutManager.openWorkspace("first");
+        LayoutManager.openWorkspace("second");
+
+        const activated = mock((_: unknown) => {});
+        LayoutManager.on("workspace-activated", activated);
+
+        LayoutManager.closeWorkspace("first");
+
+        expect(LayoutManager.isActive("second")).toBe(true);
+        expect(activated).not.toHaveBeenCalled();
+    });
+
+    /**
+     * ***************************************************************************
      * Повторное открытие места обновляет настройки, но активность не трогает.
      * ***************************************************************************
      */

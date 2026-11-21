@@ -54,6 +54,21 @@ export interface SocketOptions {
     /** Сколько раз подряд нет ответа → принудительный реконнект. */
     heartbeatMisses: number;
 
+    /** Access-токен: уходит в заголовок Sec-WebSocket-Protocol, а не в URL — так он не попадает в access-логи. */
+    accessToken?: string | null;
+
+}
+
+/**
+ * ***************************************************************************
+ * Токен → значение Sec-WebSocket-Protocol: base64url-замены ("+", "/", "=")
+ * вне token-символов RFC6455; для JWT (уже base64url) — no-op.
+ * @param {string} token - Исходный токен.
+ * @returns {string} Значение для subprotocol.
+ * ***************************************************************************
+ */
+function toSubprotocolValue(token: string): string {
+    return token.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
 /**
@@ -507,7 +522,11 @@ export class Socket {
                 if (wsUrl.protocol === "https:") wsUrl.protocol = "wss:";
                 else if (wsUrl.protocol === "http:") wsUrl.protocol = "ws:";
 
-                this.ws = new WebSocket(wsUrl.toString());
+                // Токен — в заголовок Sec-WebSocket-Protocol, не в URL (не попадает в логи)
+                const accessToken = this.options.accessToken;
+                this.ws = accessToken
+                    ? new WebSocket(wsUrl.toString(), [toSubprotocolValue(accessToken)])
+                    : new WebSocket(wsUrl.toString());
                 this._heartbeatMisses = 0;
 
                 // Ссылка на текущий сокет, чтобы устаревший таймаут не закрывал новый сокет
@@ -562,16 +581,13 @@ export class Socket {
 
     /**
      * ***************************************************************************
-     * Обновить access-токен в URL сокета: следующий connect() (в том числе
-     * авто-реконнект) пойдёт на handshake уже с новым токеном.
+     * Обновить access-токен: следующий connect() уйдёт с новым токеном
+     * в заголовке протокола.
      * @param {string} token - Новый access-токен.
      * ***************************************************************************
      */
     setAccessToken(token: string): void {
-        // URL хранится в относительном виде (путь + query) — меняем только параметр
-        const url = new URL(this.url, window.location.href);
-        url.searchParams.set("access_token", token);
-        this.url = `${url.pathname}${url.search}`;
+        this.options.accessToken = token;
     }
 
     // Принудительное уничтожение текущего сокета без побочных эффектов

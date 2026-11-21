@@ -166,13 +166,20 @@ export class LayoutManager {
         // (сворачивание WebApp в бот-профиль)
         this._workspaces.delete(id);
 
-        if (this._activeId === id) {
+        const wasActive = this._activeId === id;
+        if (wasActive) {
             const lastId = Array.from(this._workspaces.keys()).pop();
             this._activeId = lastId ?? null;
             this._applyVisibility();
         }
 
         this._emit("workspace-closed", { workspaceId: id });
+
+        // Активность сменилась вместе с закрытием — сообщаем, что место
+        // активировано (пилюли подсвечиваются именно по этому событию)
+        if (wasActive && this._activeId) {
+            this._emit("workspace-activated", { workspaceId: this._activeId });
+        }
     }
 
     /**

@@ -17,7 +17,7 @@ import { t } from "../../../utils/i18n/index.js";
 /**
  * ***************************************************************************
  * Контекстное меню аватара бота: «Загрузить» (открывает выбор фото)
- * и «Удалить» (снимает ссылку на аватар).
+ * и «Удалить» (снимает ссылку на аватар; пункт есть, только если фото стоит).
  * @param event - Событие клика (стандартное меню браузера отменяется).
  * @param form - Экземпляр формы.
  ***************************************************************************
@@ -34,17 +34,19 @@ export function avatarContextMenuHandler(event: Event, form: BotSettings): void 
                 text: t("forms.bot_settings.context_menu.upload_avatar"),
                 iconName: "Upload",
                 onClick: () => choosePhoto(form)
-            },
+            }
 
-            // Удаление аватара
-            {
+        ];
+
+        // Удаление — только если аватар установлен: удалять нечего
+        if (form.avatar?.options.image) {
+            menuItems.push({
                 text: t("forms.bot_settings.context_menu.remove_avatar"),
                 iconName: "trash",
                 cssClasses: ["text-[var(--color-red)]"],
                 onClick: () => removePhoto(form)
-            }
-
-        ];
+            });
+        }
 
         // Отменяем стандартное контекстное меню браузера
         event.preventDefault();

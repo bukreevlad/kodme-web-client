@@ -111,8 +111,9 @@ export class BroadcastOnlineChat {
         // Подписываемся на события Store.
         subscribeStoreEvents(this);
 
-        // Инициализируем сокет
-        Socket.client = new Socket(`/api/v1/wss/cast_online_chat?access_token=${this.auth}`, {
+        // Токен — в заголовок Sec-WebSocket-Protocol, URL чист (не попадает в логи)
+        Socket.client = new Socket("/api/v1/wss/cast_online_chat", {
+            accessToken: this.auth || null,
             autoReconnect: true,
             reconnectAttempts: 0,
             defaultAckTimeout: 5000,

@@ -1811,7 +1811,6 @@
       "title": "Broadcast",
       "context_menu": {
         "play_rtc": "Play WebRTC",
-        "play_flv": "Play FLV",
         "play_hls": "Play HLS",
         "settings": "Settings",
         "source": "Video source"
@@ -2224,10 +2223,8 @@
     },
     "broadcasts_settings": {
       "type_play": "Player type",
-      "flv": "FLV player",
       "hls": "HLS player",
       "rtc": "RTC player",
-      "flv_play_desc": "Less demanding on the network — 1-5 second delay.",
       "hls_play_desc": "Less demanding on the network — 3-10 second delay.",
       "rtc_play_desc": "More demanding on the network — 1-2 second delay.",
       "type_blobal_media_event": "Global media actions",

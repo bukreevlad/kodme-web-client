@@ -266,7 +266,7 @@ if (!customElements.get("cdm-video-skin")) {
  * (`<video-player>` + скин + `<video>`): компонент скрывает их композицию
  * и даёт Plyr-совместимый API.
  *
- * Стриминг: HLS/FLV/RTC-движки (hls.js, mpegts.js, livekit-client, WebRTC)
+ * Стриминг: HLS/RTC-движки (hls.js, WebRTC)
  * работают с тем же нативным `<video>`, что отдаётся наружу в `player.video`:
  * кастомный `xhrSetup` с `?hls_chunk=` (его требует service worker) и
  * WHEP-логика трансляций требуют родного элемента. Меню качества нативное
@@ -280,7 +280,7 @@ export class VideoPlayer {
     /** Настройки с дефолтами (см. конструктор). */
     options: Required<VideoPlayerOptions>;
 
-    /** Нативный <video> — с ним работают hls.js/mpegts/LiveKit. */
+    /** Нативный <video> — с ним работают hls.js и WebRTC. */
     video: HTMLVideoElement;
 
     /** Куда монтируется корневой <video-player> (null — родителя у видео нет). */
@@ -366,7 +366,7 @@ export class VideoPlayer {
             ...options
         };
 
-        // Нативный <video> — тот самый, с которым работают hls.js/mpegts/LiveKit
+        // Нативный <video> — тот самый, с которым работают hls.js и WebRTC
         this.video = video instanceof HTMLVideoElement ? video : document.createElement("video");
 
         // Куда монтируем: явно заданный контейнер либо текущий родитель видео
@@ -1282,7 +1282,7 @@ export class VideoPlayer {
      * `xhrSetup` с `?hls_chunk=` для service worker), поэтому просто отдаём
      * адаптер, который Video.js читает как обычный список уровней.
      *
-     * Остаётся ради HLS живых трансляций из SRS: загруженные видео-вложения
+     * Остаётся ради HLS живых трансляций: загруженные видео-вложения
      * больше не используют HLS — у них качество переключает `FileRenditions`.
      *
      * @param {Hls} hls - Экземпляр hls.js.

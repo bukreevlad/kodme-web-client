@@ -1,6 +1,6 @@
 {
     "name": "kodme-web-client",
-    "version": "8.0.1",
+    "version": "8.0.2",
     "author": "bukreevlad",
     "main": "dist/js/main.js",
     "scripts": {
@@ -25,7 +25,6 @@
         "livekit-client": "^2.23.0",
         "markdown-it": "^15.0.3",
         "mediabunny": "^1.65.2",
-        "mpegts.js": "^1.8.2",
         "opus-recorder": "^8.0.5",
         "overlayscrollbars": "^2.17.0",
         "uuid": "^14.0.3",

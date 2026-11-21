@@ -1,6 +1,8 @@
 // Импортируем utils
 import { Logger } from "../../../utils/logs/logger.js";
 import { Icons } from "../../../utils/icons.js";
+import { GestureController } from "../../../utils/gesture_controller.js";
+import { IsMobile } from "../../../utils/helpers/is_mobile.js";
 
 // Импортируем components
 import { Buttons } from "../../../components/buttons.js";
@@ -165,21 +167,50 @@ export function createCloudAvailableItem(form: Cloud, data: CloudAvailableLink):
 
     /**
      * ***************************************************************************
-     * Обработчики: открытие ссылки и контекстное меню.
+     * Обработчики: открытие ссылки по тапу, контекстное меню — по кнопке,
+     * правому клику (десктоп) и долгому тапу (мобильные).
      * ***************************************************************************
      */
     function actions(): void {
-
-        // Клик по элементу — открываем ссылку
-        element.addEventListener("click", () => {
-            openAvailableLinkHandler(form, current);
-        });
 
         // Кнопка действий — контекстное меню
         let menu = element.querySelector<HTMLElement>("[action-menu]");
         menu?.addEventListener("click", (event) => {
             event.stopPropagation();
             openAvailableActions(event, handle());
+        });
+
+        // Тапы и ПКМ по строке. Открытие ссылки лежит в tap.onTap, а не в click:
+        // после долгого тапа браузер генерирует синтетический click, и ссылка
+        // открылась бы поверх меню
+        new GestureController(element, {
+            threshold: 5,
+            // Кнопка действий обрабатывается своим click-слушателем
+            ignore: ["[action-menu]"],
+            onContextMenu: (event) => {
+                event.preventDefault();
+
+                // На мобильных долгое удержание порождает и contextmenu, и
+                // долгий тап — меню открывает только один из них
+                if (IsMobile.get()) return;
+                openAvailableActions(event, handle());
+            },
+            tap: {
+                // timeout = longTapTimeout: зажатие до 500 мс — тап (открытие),
+                // дольше — долгий тап (меню на мобильных)
+                timeout: 500,
+                longTapTimeout: 500,
+                onTap: () => openAvailableLinkHandler(form, current),
+                onLongTap: (event) => {
+
+                    // Долгий тап — мобильное меню; на ПК то же делает правый клик
+                    if (!IsMobile.get()) return;
+                    if (event.cancelable) event.preventDefault();
+
+                    openAvailableActions(event, handle());
+
+                }
+            }
         });
 
     }

@@ -1,5 +1,4 @@
 // Импортируем сторонние пакеты
-import type Mpegts from "mpegts.js";
 import type Hls from "hls.js";
 
 // Импортируем utils
@@ -29,16 +28,15 @@ export interface CastThumbnail {
  * Данные потока из "[broadcast]: get stream info".
  *
  * Поля — только те, что реально читает форма (чипы статистики и
- * stream_info_update). video.fps приходит из ответа сервера (SRS);
- * RTC-путь дополнительно перезаписывает fps из getStats() браузера
- * (см. functions/rtc_stats.ts).
+ * stream_info_update). video.fps приходит из ответа сервера
+ * (REST API OvenMediaEngine).
  */
 export interface StreamInfo {
 
     /** Название потока. */
     name?: string;
 
-    /** Приложение потока на SRS. */
+    /** Приложение потока на медиасервере. */
     app?: string;
 
     /** Идёт ли поток прямо сейчас. */
@@ -61,7 +59,7 @@ export interface StreamInfo {
         width?: number | null;
         /** Высота кадра. */
         height?: number | null;
-        /** Кадров в секунду (из SRS; RTC-путь обновляет из getStats). */
+        /** Кадров в секунду (из ответа сервера). */
         fps?: number | null;
     };
 
@@ -76,6 +74,35 @@ export interface StreamInfo {
 
     /** Сколько соединений было суммарно. */
     total_readers?: number;
+
+    /**
+     * Варианты качества WebRTC-воспроизведения (из OvenMediaEngine).
+     * Заполняется только при просмотре через RTC — из них клиент строит
+     * меню «Качество» в панели видеоплеера.
+     */
+    renditions?: StreamRendition[];
+
+}
+
+/**
+ * Вариант качества в ответе "[broadcast]: get stream info".
+ */
+export interface StreamRendition {
+
+    /** Имя рендеринга в OvenMediaEngine (source, 720p, 480p). */
+    name: string;
+
+    /** Ширина кадра. */
+    width: number | null;
+
+    /** Высота кадра. */
+    height: number | null;
+
+    /** Битрейт видеотрека (bps). */
+    bitrate: number | null;
+
+    /** Частота кадров. */
+    frameRate: number | null;
 
 }
 
@@ -132,15 +159,14 @@ export interface BroadcastCast {
 }
 
 /**
- * Движок потока формы: mpegts.js (FLV) либо hls.js (HLS).
+ * Движок потока формы: hls.js (LL-HLS).
  *
  * kind дублирует form.typePlay — invariant: пока движок существует,
  * kind всегда равен текущему typePlay (start_* ставит тип до создания
  * движка, stop_* гасит движок при совпадении типа). kind нужен для
- * сужения union'а: у mpegts и hls.js разные наборы методов.
+ * сужения union'а: у hls.js свои наборы методов.
  */
 export type StreamEngine =
-    | { kind: "flv"; player: Mpegts.Player }
     | { kind: "hls"; player: Hls }
     | null;
 

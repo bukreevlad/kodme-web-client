@@ -3,6 +3,8 @@ import { Logger } from "../../../utils/logs/logger.js";
 import { Icons } from "../../../utils/icons.js";
 import { formatBytes } from "../../../utils/string/format_bytes.js";
 import { CacheManager } from "../../../utils/cache_manager.js";
+import { GestureController } from "../../../utils/gesture_controller.js";
+import { IsMobile } from "../../../utils/helpers/is_mobile.js";
 import { getThumbnailSizeQuery } from "../../../utils/helpers/get_thumbnail_size_query.js";
 
 // Импортируем components
@@ -111,12 +113,14 @@ export function createCloudFileItem(
             // invariant: шаблон выше — наши строки, .item в нём всегда есть
             return new DOMParser().parseFromString(`
                 <div class="item relative flex flex-col gap-1 p-2 items-center bg-[var(--second-bg)] hover:bg-[var(--color-black)]/5 active:bg-[var(--color-black)]/10 dark:hover:bg-[var(--color-white)]/10 dark:active:bg-[var(--color-white)]/15 cursor-pointer rounded-lg transition-all duration-200 motion-reduce:transition-none motion-safe:hover:scale-[1.02] motion-safe:hover:shadow-md motion-safe:active:scale-[.99]">
-                    <div data-icon class="flex items-center justify-center shrink-0 w-12 h-12 bg-[var(--color-brand)]/10 text-[var(--color-brand)] rounded-lg">${Icons.icon("file", { settings: { size: 28 } })?.outerHTML}</div>
+                    <div data-icon class="relative flex items-center justify-center shrink-0 w-12 h-12 bg-[var(--color-brand)]/10 text-[var(--color-brand)] rounded-lg">
+                        ${Icons.icon("file", { settings: { size: 28 } })?.outerHTML}
+                        <div data-progress-wrap class="absolute hidden pt-1 w-full h-full"></div>
+                    </div>
                     <div class="flex flex-col gap-0 w-full min-w-0 items-center">
                         <span data-name class="text-xs text-center truncate w-full"></span>
                         <span data-meta class="text-[0.625rem] text-muted truncate w-full text-center"></span>
                         <span data-date class="text-[0.625rem] text-muted truncate w-full text-center"></span>
-                        <div data-progress-wrap class="hidden pt-1 w-full"></div>
                     </div>
                     ${Buttons.transparent({ shape: "circle", attributes: ["action-menu"], icon: { name: "dots", settings: { size: 14 } }, classes: ["absolute", "top-0.5", "right-0.5", "p-1!"] })}
                 </div>
@@ -128,7 +132,10 @@ export function createCloudFileItem(
         return new DOMParser().parseFromString(`
             <div class="item flex flex-row gap-2 p-2 py-1 items-center bg-[var(--second-bg)] hover:bg-[var(--color-black)]/5 active:bg-[var(--color-black)]/10 dark:hover:bg-[var(--color-white)]/10 dark:active:bg-[var(--color-white)]/15 cursor-pointer rounded-lg">
                 <div class="flex flex-row gap-2 items-center w-full min-w-0">
-                    <div data-icon class="flex items-center justify-center shrink-0 w-8 h-8 bg-[var(--color-brand)]/10 text-[var(--color-brand)] rounded-lg">${Icons.icon("file", { settings: { size: 20 } })?.outerHTML}</div>
+                    <div data-icon class="relative flex items-center justify-center shrink-0 w-8 h-8 bg-[var(--color-brand)]/10 text-[var(--color-brand)] rounded-lg">
+                        ${Icons.icon("file", { settings: { size: 20 } })?.outerHTML}
+                        <div data-progress-wrap class="absolute hidden pt-1 w-full h-full"></div>
+                    </div>
                     <div class="flex flex-col gap-0 min-w-0 flex-1">
                         <span data-name class="text-sm truncate"></span>
                         <div class="flex flex-row">
@@ -136,7 +143,6 @@ export function createCloudFileItem(
                             <span data-separator class="px-1 text-xs text-muted">-</span>
                             <span data-date class="text-xs text-muted truncate"></span>
                         </div>
-                        <div data-progress-wrap class="hidden pt-1"></div>
                     </div>
                 </div>
                 ${Buttons.transparent({ shape: "circle", attributes: ["action-menu"], icon: "dots" })}
@@ -332,16 +338,11 @@ export function createCloudFileItem(
 
     /**
      * ***************************************************************************
-     * Обработчики: скачивание файла и контекстное меню.
+     * Обработчики: скачивание по тапу, контекстное меню — по кнопке,
+     * правому клику (десктоп) и долгому тапу (мобильные).
      * ***************************************************************************
      */
     function actions(): void {
-
-        // Клик по элементу — скачиваем файл (если не идёт загрузка)
-        element.addEventListener("click", () => {
-            if (current.is_uploading) return;
-            downloadFileHandler(current);
-        });
 
         // Кнопка действий — контекстное меню
         // (в общем доступе — только при праве записи)
@@ -349,16 +350,57 @@ export function createCloudFileItem(
         let canWrite = ["owner", "write"].includes(
             form.sharedAccessLevel || form.sharedLink?.access_level || "read"
         );
-        if (mode === "shared" && !canWrite) {
-            menu?.classList.add("hidden");
-        } else {
-            menu?.classList.remove("hidden");
-            menu?.addEventListener("click", (event) => {
-                event.stopPropagation();
-                if (current.is_uploading) return;
-                openFileActions(event, handle());
-            });
+        let canOpenActions = mode !== "shared" || canWrite;
+        if (menu) {
+            if (canOpenActions) {
+                menu.classList.remove("hidden");
+                menu.addEventListener("click", (event) => {
+                    event.stopPropagation();
+                    if (current.is_uploading) return;
+                    openFileActions(event, handle());
+                });
+            } else {
+                menu.classList.add("hidden");
+            }
         }
+
+        // Тапы и ПКМ по строке. Скачивание лежит в tap.onTap, а не в click:
+        // после долгого тапа браузер генерирует синтетический click, и файл
+        // скачался бы поверх открытого меню
+        new GestureController(element, {
+            threshold: 5,
+            // Кнопка действий обрабатывается своим click-слушателем
+            ignore: ["[action-menu]"],
+            onContextMenu: (event) => {
+                event.preventDefault();
+
+                // На мобильных долгое удержание порождает и contextmenu, и
+                // долгий тап — меню открывает только один из них
+                if (IsMobile.get()) return;
+                if (!canOpenActions || current.is_uploading) return;
+                openFileActions(event, handle());
+            },
+            tap: {
+                // timeout = longTapTimeout: зажатие до 500 мс — тап (скачивание),
+                // дольше — долгий тап (меню на мобильных)
+                timeout: 500,
+                longTapTimeout: 500,
+                onTap: () => {
+                    if (current.is_uploading) return;
+                    downloadFileHandler(current);
+                },
+                onLongTap: (event) => {
+
+                    // Долгий тап — мобильное меню; на ПК то же делает правый клик
+                    if (!IsMobile.get()) return;
+                    if (!canOpenActions || current.is_uploading) return;
+                    if (event.cancelable) event.preventDefault();
+
+                    openFileActions(event, handle());
+
+                }
+            }
+        });
 
     }
 

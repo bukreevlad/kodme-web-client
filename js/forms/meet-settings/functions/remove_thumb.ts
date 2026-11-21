@@ -13,7 +13,7 @@ import type { MeetSettings } from "../index.js";
 import { t } from "../../../utils/i18n/index.js";
 
 /** Прозрачная заглушка обложки (как в шаблоне формы до загрузки). */
-const THUMB_PLACEHOLDER = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+export const THUMB_PLACEHOLDER = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 
 /**
  * ***************************************************************************

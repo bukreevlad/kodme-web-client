@@ -271,7 +271,9 @@ export class BroadcastSettings {
             about.value = data.about ?? "";
             rtmpUrl.value = `rtmp://${window.location.hostname}/live`;
             rtmpKey.value = `${this.castId}?token=${data.token}`;
-            whipUrl.value = `${window.location.protocol}//${window.location.hostname}/api/v1/cast/whip/?app=live&type=push&stream=${this.castId}&token=${data.token}`;
+            // WHIP в формате OvenMediaEngine: POST /{app}/{stream}?direction=whip
+            // (nginx отрезает префикс /api/v1/cast/whip/, OME получает /live/{castId})
+            whipUrl.value = `${window.location.protocol}//${window.location.hostname}/api/v1/cast/whip/live/${this.castId}?direction=whip&token=${data.token}`;
 
             // Приватность
             if (data.is_public) {

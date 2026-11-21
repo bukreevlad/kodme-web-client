@@ -8,9 +8,8 @@ import { Logger } from "../../../utils/logs/logger.js";
 import { Toast } from "../../../components/toast.js";
 
 // Импортируем functions
-import { stopRTCPlayer } from "./stop_rtc_player.js";
-import { stopFLVPlayer } from "./stop_flv_player.js";
 import { stopHLSPlayer } from "./stop_hls_player.js";
+import { stopRTCPlayer } from "./stop_rtc_player.js";
 import { castTimingUpdate } from "./cast_timing_update.js";
 import { loaderHide, loaderShow } from "./loader_control.js";
 
@@ -58,7 +57,6 @@ export async function startHLSPlayer(form: BroadcastPlay): Promise<void> {
 
         // Останавливаем проигрыватели
         form.typePlay === "rtc" && stopRTCPlayer(form);
-        form.typePlay === "flv" && stopFLVPlayer(form);
         form.typePlay === "hls" && stopHLSPlayer(form);
 
         // Записываем параметры
@@ -95,6 +93,10 @@ export async function startHLSPlayer(form: BroadcastPlay): Promise<void> {
         });
         form.streamEngine = { kind: "hls", player: engine };
 
+        // Уровни подключаем ДО запуска загрузки: Video.js перечитывает
+        // videoRenditions только на loadstart, позже меню «Качество» не появится
+        form.player?.attachHls(engine);
+
         // Загрузка ресурсов.
         //
         // ПОРЯДОК ВАЖЕН: сначала цепляем медиа, потом грузим манифест. При
@@ -105,13 +107,6 @@ export async function startHLSPlayer(form: BroadcastPlay): Promise<void> {
         engine.on(Hls.Events.MEDIA_ATTACHED, () => {
             Logger.debug("[hls]: Видеоэлемент доступен");
             engine.loadSource(hlsUrl);
-        });
-
-        // Прокидываем уровни hls.js в Video.js: адаптер renditions превращает
-        // их в родное меню «Качество». Уровни становятся известны только после
-        // парсинга манифеста, поэтому подключаем адаптер именно здесь.
-        engine.on(Hls.Events.MANIFEST_PARSED, () => {
-            form.player?.attachHls(engine);
         });
 
         // Обработка ошибок

@@ -162,8 +162,9 @@ export class Home {
             // Получаем сессию
             const session = LocalStorage.session;
 
-            // Инициализируем сокет
-            Socket.client = new Socket(`/api/v1/wss/client?access_token=${session?.access_token}`, {
+            // Токен — в заголовок Sec-WebSocket-Protocol, URL чист (не попадает в логи)
+            Socket.client = new Socket("/api/v1/wss/client", {
+                accessToken: session?.access_token ?? null,
                 autoReconnect: true,
                 reconnectAttempts: 0,
                 defaultAckTimeout: 5000

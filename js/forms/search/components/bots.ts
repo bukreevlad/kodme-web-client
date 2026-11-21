@@ -64,7 +64,7 @@ export function createBotItem(form: Search, data: SearchRecord): HTMLElement {
         return new DOMParser().parseFromString(`
             <div class="item flex flex-row gap-3 p-2 hover:bg-[var(--second-bg)] active:bg-[var(--second-bg)] rounded-lg cursor-pointer">
                 <div class="cdm-avatar relative"></div>
-                <div class="flex flex-col gap-1 self-center">
+                <div class="flex flex-col gap-1 self-center truncate">
                     <span data-link class="font-semibold truncate"></span>
                     <span data-is-online class="text-secondary"></span>
                 </div>

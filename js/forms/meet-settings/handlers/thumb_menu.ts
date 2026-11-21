@@ -7,7 +7,7 @@ import { createPopoverMenu } from "../../../components/overlay/popover_menu.js";
 
 // Импортируем functions
 import { choosePhoto } from "../functions/choose_photo.js";
-import { removeThumb } from "../functions/remove_thumb.js";
+import { removeThumb, THUMB_PLACEHOLDER } from "../functions/remove_thumb.js";
 
 // Импортируем типы
 import type { PopoverMenuItem } from "../../../components/overlay/popover_menu.js";
@@ -17,7 +17,7 @@ import { t } from "../../../utils/i18n/index.js";
 /**
  * ***************************************************************************
  * Контекстное меню обложки: «Загрузить» (открывает выбор файла) и
- * «Удалить» (снимает ссылку на обложку).
+ * «Удалить» (снимает ссылку на обложку; пункт есть, только если обложка стоит).
  * @param event - Событие клика (стандартное меню браузера отменяется).
  * @param form - Экземпляр формы.
  * @returns Promise без значения.
@@ -45,9 +45,12 @@ export async function thumbnailContextMenuHandler(event: Event, form: MeetSettin
             onClick: () => removeThumb(form)
         };
 
-        // Проверяем на отображение
+        // Удаление — только если обложка стоит (иначе в src заглушка):
+        // удалять нечего
         menuItems.push(upload);
-        menuItems.push(remove);
+        if (form.thumbImage && form.thumbImage.src !== THUMB_PLACEHOLDER) {
+            menuItems.push(remove);
+        }
 
         // Отменяем стандартное контекстное меню браузера
         event.preventDefault();

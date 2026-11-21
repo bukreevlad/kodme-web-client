@@ -7,7 +7,7 @@ import type { BroadcastsSettings } from "../index.js";
 
 /**
  * ***************************************************************************
- * Сохранение выбранного типа проигрывания трансляции (flv / hls / rtc)
+ * Сохранение выбранного типа проигрывания трансляции (hls / rtc)
  * в настройки сессии пользователя.
  * @param form - Экземпляр диалога настроек трансляций.
  * ***************************************************************************
@@ -22,7 +22,7 @@ export async function typePlayChangeHandler(form: BroadcastsSettings): Promise<v
         // Сессия пользователя
         let session = LocalStorage.session;
         if (session) {
-            session.settings.broadcasts.type_play = typePlay?.value || "flv";
+            session.settings.broadcasts.type_play = typePlay?.value || "hls";
             LocalStorage.updateSession(session);
         }
 

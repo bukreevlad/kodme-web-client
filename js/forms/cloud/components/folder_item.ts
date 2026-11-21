@@ -1,6 +1,8 @@
 // Импортируем utils
 import { Logger } from "../../../utils/logs/logger.js";
 import { Icons } from "../../../utils/icons.js";
+import { GestureController } from "../../../utils/gesture_controller.js";
+import { IsMobile } from "../../../utils/helpers/is_mobile.js";
 
 // Импортируем components
 import { Buttons } from "../../../components/buttons.js";
@@ -163,19 +165,11 @@ export function createCloudFolderItem(
 
     /**
      * ***************************************************************************
-     * Обработчики: открытие папки и контекстное меню.
+     * Обработчики: открытие папки по тапу, контекстное меню — по кнопке,
+     * правому клику (десктоп) и долгому тапу (мобильные).
      * ***************************************************************************
      */
     function actions(): void {
-
-        // Клик по элементу — открываем папку
-        element.addEventListener("click", () => {
-            if (mode === "shared") {
-                openSharedFolderHandler(form, current);
-            } else {
-                openFolderHandler(form, current);
-            }
-        });
 
         // Кнопка действий — контекстное меню
         // (в общем доступе — только при праве записи)
@@ -183,15 +177,59 @@ export function createCloudFolderItem(
         let canWrite = ["owner", "write"].includes(
             form.sharedAccessLevel || form.sharedLink?.access_level || "read"
         );
-        if (mode === "shared" && !canWrite) {
-            menu?.classList.add("hidden");
-        } else {
-            menu?.classList.remove("hidden");
-            menu?.addEventListener("click", (event) => {
-                event.stopPropagation();
-                openFolderActions(event, handle());
-            });
+        let canOpenActions = mode !== "shared" || canWrite;
+        if (menu) {
+            if (canOpenActions) {
+                menu.classList.remove("hidden");
+                menu.addEventListener("click", (event) => {
+                    event.stopPropagation();
+                    openFolderActions(event, handle());
+                });
+            } else {
+                menu.classList.add("hidden");
+            }
         }
+
+        // Тапы и ПКМ по строке. Открытие папки лежит в tap.onTap, а не в click:
+        // после долгого тапа браузер генерирует синтетический click, и папка
+        // открылась бы поверх меню
+        new GestureController(element, {
+            threshold: 5,
+            // Кнопка действий обрабатывается своим click-слушателем
+            ignore: ["[action-menu]"],
+            onContextMenu: (event) => {
+                event.preventDefault();
+
+                // На мобильных долгое удержание порождает и contextmenu, и
+                // долгий тап — меню открывает только один из них
+                if (IsMobile.get()) return;
+                if (!canOpenActions) return;
+                openFolderActions(event, handle());
+            },
+            tap: {
+                // timeout = longTapTimeout: зажатие до 500 мс — тап (открытие),
+                // дольше — долгий тап (меню на мобильных)
+                timeout: 500,
+                longTapTimeout: 500,
+                onTap: () => {
+                    if (mode === "shared") {
+                        openSharedFolderHandler(form, current);
+                    } else {
+                        openFolderHandler(form, current);
+                    }
+                },
+                onLongTap: (event) => {
+
+                    // Долгий тап — мобильное меню; на ПК то же делает правый клик
+                    if (!IsMobile.get()) return;
+                    if (!canOpenActions) return;
+                    if (event.cancelable) event.preventDefault();
+
+                    openFolderActions(event, handle());
+
+                }
+            }
+        });
 
     }
 

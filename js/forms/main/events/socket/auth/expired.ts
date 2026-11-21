@@ -72,7 +72,7 @@ async function handleAuthExpired(): Promise<void> {
         return;
     }
 
-    // Свежий токен — в URL сокета: следующий connect() уйдёт уже с ним
+    // Свежий токен — в опцию сокета: следующий connect() уйдёт с ним в заголовке
     Socket.client.setAccessToken(token);
 
     // Переподключаемся: авто-реконнект на 1008 останавливался — запускаем сами.

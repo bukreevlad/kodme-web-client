@@ -17,7 +17,7 @@ import { t } from "../../../utils/i18n/index.js";
 /**
  * ***************************************************************************
  * Контекстное меню аватара: «Загрузить» (открывает выбор фото) и
- * «Удалить» (снимает ссылку на аватар).
+ * «Удалить» (снимает ссылку на аватар; пункт есть, только если фото стоит).
  * @param event - Событие клика (стандартное меню браузера отменяется).
  * @param form - Экземпляр формы.
  * @returns Promise без значения.
@@ -45,9 +45,11 @@ export async function avatarContextMenuHandler(event: Event, form: ChannelSettin
             onClick: () => removePhoto(form)
         };
 
-        // Проверяем на отображение
+        // Удаление — только если аватар установлен: удалять нечего
         menuItems.push(upload);
-        menuItems.push(remove);
+        if (form.avatar?.options.image) {
+            menuItems.push(remove);
+        }
 
         // Отменяем стандартное контекстное меню браузера
         event.preventDefault();

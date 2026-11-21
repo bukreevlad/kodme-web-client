@@ -3,11 +3,10 @@ import { Logger } from "../../../utils/logs/logger.js";
 
 // Импортируем functions
 import { startHLSPlayer } from "./start_hls_player.js";
-import { startFLVPlayer } from "./start_flv_player.js";
 import { startRTCPlayer } from "./start_rtc_player.js";
-import { stopFLVPlayer } from "./stop_flv_player.js";
 import { stopHLSPlayer } from "./stop_hls_player.js";
 import { stopRTCPlayer } from "./stop_rtc_player.js";
+import { syncOmeRenditions } from "./ome_renditions_control.js";
 import { updateStats } from "./update_stats.js";
 import { syncLiveState } from "./sync_live_state.js";
 import { loaderHide } from "./loader_control.js";
@@ -54,18 +53,18 @@ export async function streamInfoUpdate(form: BroadcastPlay): Promise<void> {
             updateStats(form, response.data);
             syncLiveState(form);
 
+            // Меню «Качество» для WebRTC: адаптер подключаем до потока —
+            // Video.js перечитывает список только на loadstart
+            if (form.typePlay === "rtc") {
+                syncOmeRenditions(form, response.data.renditions ?? []);
+            }
+
             // Добавляем класс
             form.video?.classList.add("live");
 
-            // Если проигрывание не запущено.
-            // Проверяем все три ветки: hls.js/mpegts.js (form.streamEngine),
-            // RTC (form.peerConnection) и нативный HLS без движка (isPlaying).
+            // Если проигрывание не запущено: три ветки — hls.js
+            // (streamEngine), WebRTC (rtcSocket) и нативный HLS (isPlaying)
             if (!form.isPlaying) {
-
-                // Если тип проигрывания flv
-                if (form.typePlay === "flv") {
-                    startFLVPlayer(form);
-                }
 
                 // Если тип проигрывания hls
                 if (form.typePlay === "hls") {
@@ -88,7 +87,6 @@ export async function streamInfoUpdate(form: BroadcastPlay): Promise<void> {
             form.isStreamLive = false;
 
             // Останавливаем проигрыватели
-            stopFLVPlayer(form);
             stopHLSPlayer(form);
             stopRTCPlayer(form);
 

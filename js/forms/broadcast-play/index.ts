@@ -23,7 +23,6 @@ import { menuHandler } from "./handlers/menu.js";
 import { openChatHandler } from "./handlers/open_chat.js";
 
 // Импортируем functions
-import { stopFLVPlayer } from "./functions/stop_flv_player.js";
 import { stopHLSPlayer } from "./functions/stop_hls_player.js";
 import { stopRTCPlayer } from "./functions/stop_rtc_player.js";
 import { initPlayer } from "./functions/init_player.js";
@@ -36,6 +35,7 @@ import { renderAuthor } from "./functions/render_author.js";
 // Импортируем типы
 import type { VideoPlayer } from "../../components/video_player.js";
 import type { StreamEngine, BroadcastCast } from "./types.js";
+import type { OmeRenditions } from "../../utils/video/ome_renditions.js";
 import { I18n, t } from "../../utils/i18n/index.js";
 
 /**
@@ -85,20 +85,14 @@ export class BroadcastPlay {
     /** Данные трансляции (ответ "[broadcast]: open"). */
     cast: BroadcastCast | null = null;
 
-    /** Выбранный тип воспроизведения (rtc / flv / hls). */
+    /** Выбранный тип воспроизведения (hls). */
     typePlay: string;
 
     /** Экземпляр VideoPlayer (UI + обёртка над <video>). */
     player: VideoPlayer | null = null;
 
-    /** Экземпляр hls.js / mpegts.js (движок потока). */
+    /** Экземпляр hls.js (движок потока). */
     streamEngine: StreamEngine = null;
-
-    /** PeerConnection WHEP-проигрывания (RTC). */
-    peerConnection: RTCPeerConnection | null = null;
-
-    /** Конфигурация RTCPeerConnection (ICE-серверы из сессии). */
-    pcConfig: RTCConfiguration;
 
     /**
      * Ссылка на обработчик глобальной координации медиа: нужна, чтобы
@@ -108,9 +102,6 @@ export class BroadcastPlay {
 
     /** Таймер чипа длительности эфира (см. functions/cast_timing_update.ts). */
     castTiming: ReturnType<typeof setInterval> | null = null;
-
-    /** Таймер RTC-статистики (см. functions/rtc_stats_update.ts). */
-    rtcStatTiming: ReturnType<typeof setInterval> | null = null;
 
     /** Таймер опроса состояния потока (см. functions/stream_info_update.ts). */
     castUpdaterTiming: ReturnType<typeof setInterval> | null = null;
@@ -136,9 +127,21 @@ export class BroadcastPlay {
     statsMounted = false;
 
     /** Ссылки на странсляцию */
-    whepUrl: string | null = null;
-    flvUrl: string | null = null;
+    whipUrl: string | null = null;
     hlsUrl: string | null = null;
+    rtcUrl: string | null = null;
+
+    /** WebSocket-сессия WebRTC-сигналинга (см. functions/start_rtc_player.ts). */
+    rtcSocket: WebSocket | null = null;
+
+    /** Идентификатор сессии сигналинга OME (приходит в offer). */
+    rtcSessionId: number | null = null;
+
+    /** Адаптер вариантов качества RTC для меню Video.js (см. functions/ome_renditions_control.ts). */
+    omeRenditions: OmeRenditions | null = null;
+
+    /** PeerConnection воспроизведения WebRTC-трансляции. */
+    peerConnection: RTCPeerConnection | null = null;
 
     // Устанавливаемые элементы шаблона (_onBeforeOpen)
     /** Шапка формы. */
@@ -212,12 +215,7 @@ export class BroadcastPlay {
 
         // Переменные формы
         this.castId = data.castId;
-        this.typePlay = "flv";
-        this.pcConfig = {
-            iceTransportPolicy: "all", // all или ("relay" если хочешь использовать только TURN)
-            rtcpMuxPolicy: "require",
-            iceServers: _getSessionIceServers()
-        };
+        this.typePlay = "hls";
 
         // Получаем instance
         let instance = FormsRegistry.getOwner<BroadcastPlay>(`broadcast-play:${data.castId}`);
@@ -234,10 +232,10 @@ export class BroadcastPlay {
      * ***************************************************************************
      * Нативный <video> текущего плеера.
      *
-     * Живёт внутри VideoPlayer, но нужен наружу: hls.js, mpegts.js и WHEP
-     * (RTCPeerConnection) подключаются именно к нему, а не к UI-обёртке.
-     * Именно поэтому VideoPlayer оборачивает существующий <video>, а не
-     * заменяет его (см. js/components/video_player.ts).
+     * Живёт внутри VideoPlayer, но нужен наружу: hls.js подключается
+     * именно к нему, а не к UI-обёртке. Именно поэтому VideoPlayer
+     * оборачивает существующий <video>, а не заменяет его
+     * (см. js/components/video_player.ts).
      *
      * @returns <video> или null, если плеера нет.
      * ***************************************************************************
@@ -253,9 +251,7 @@ export class BroadcastPlay {
      * Нужно, потому что движок потока (form.streamEngine) есть не всегда:
      *   - HLS через MSE — hls.js, лежит в form.streamEngine;
      *   - HLS нативно (Safari/iOS, MSE недоступен) — <video> играет сам,
-     *     движка нет, а src задан прямо в теге;
-     *   - FLV — mpegts.js, лежит в form.streamEngine;
-     *   - RTC — RTCPeerConnection, лежит в form.peerConnection.
+     *     движка нет, а src задан прямо в теге.
      *
      * Без этой проверки на iOS ветка «нативный HLS» перезапускалась бы
      * каждые 5 секунд по таймеру stream_info_update.
@@ -266,7 +262,9 @@ export class BroadcastPlay {
     get isPlaying(): boolean {
 
         if (this.streamEngine) return true;
-        if (this.peerConnection) return true;
+
+        // WebRTC: сессия сигналинга живёт до stopRTCPlayer
+        if (this.rtcSocket) return true;
 
         // Нативный HLS: src задан, но srcObject и движка нет
         if (this.typePlay === "hls" && this.video?.getAttribute("src")) return true;
@@ -384,9 +382,10 @@ export class BroadcastPlay {
             this.cast = response.data;
 
             // Ссылки на странсляцию
-            this.whepUrl = `${window.location.protocol}//${window.location.hostname}/api/v1/cast/whep/?app=live&stream=${this.castId}&token=${this.cast?.access_token}`;
-            this.flvUrl = `${window.location.protocol}//${window.location.hostname}/api/v1/cast/flv/live/${this.castId}.flv?token=${this.cast?.access_token}`;
-            this.hlsUrl = `${window.location.protocol}//${window.location.hostname}/api/v1/cast/hls/live/${this.castId}.m3u8?token=${this.cast?.access_token}`;
+            this.whipUrl = `${window.location.protocol}//${window.location.hostname}/api/v1/cast/whip/live/${this.castId}?direction=whip&token=${this.cast?.access_token}`;
+            this.hlsUrl = `${window.location.protocol}//${window.location.hostname}/api/v1/cast/hls/live/${this.castId}/abr.m3u8?token=${this.cast?.access_token}`;
+            // WebRTC-сигналинг OME: ws(s)://host/.../rtc (FileName=rtc в Server.xml)
+            this.rtcUrl = `${window.location.protocol === "https:" ? "wss:" : "ws:"}//${window.location.hostname}/api/v1/cast/rtc/live/${this.castId}/rtc?token=${this.cast?.access_token}`;
 
             // Эфир объявлен активным — живое состояние ставим сразу, до
             // первого опроса stream_info_update: иначе между вставкой формы
@@ -399,7 +398,18 @@ export class BroadcastPlay {
             // Без сессии тип воспроизведения не узнать
             const session = LocalStorage.session;
             if (!session) return;
-            this.typePlay = session.settings.broadcasts.type_play;
+
+            // Нормализация: значения flv из старых версий больше не
+            // существуют — без неё ни один движок не запустится
+            const stored = session.settings.broadcasts.type_play;
+            this.typePlay = stored === "rtc" || stored === "hls" ? stored : "hls";
+
+            // Записываем нормализованное значение, чтобы не повторять
+            // проверку при каждом открытии формы
+            if (stored !== this.typePlay) {
+                session.settings.broadcasts.type_play = this.typePlay;
+                LocalStorage.updateSession(session);
+            }
 
             // Элементы заполняются из шаблона — без него нечего настраивать
             if (!this.tpl) return;
@@ -504,13 +514,10 @@ export class BroadcastPlay {
     // ***************************************************************************
     _onBeforeClose(): void {
 
-        // Порядок teardown критичен: сначала освобождаем движки потока
-        // (hls.js / mpegts / WHEP), и только потом уничтожаем плеер.
-        // Обратный порядок даёт "GET blob:... ERR_FILE_NOT_FOUND": движок
-        // успевает дёрнуть load() на уже отсоединённом <video>.
-        stopFLVPlayer(this);
-        stopHLSPlayer(this);
+        // Порядок teardown: сначала движки потока (hls.js, WebRTC-сессия),
+        // потом плеер — иначе движок дёрнёт load() на отсоединённом <video>
         stopRTCPlayer(this);
+        stopHLSPlayer(this);
 
         // Удаляем плеер
         if (this.player) {
@@ -620,42 +627,5 @@ export class BroadcastPlay {
         return tpl;
 
     }
-
-}
-
-/**
- * ***************************************************************************
- * Приватный: ICE-серверы из настроек текущей сессии.
- *
- * Поле `server` дописывается в сессию при логине (см. handlers/check.ts
- * формы sessions), поэтому честный путь — только через guard: битая или
- * неполная сессия не должна ронять форму необработанной ошибкой.
- * @throws Error, если в сессии нет WebRTC-конфига.
- * ***************************************************************************
- */
-function _getSessionIceServers(): RTCIceServer[] {
-
-    const session: unknown = LocalStorage.session;
-    if (!session || typeof session !== "object" || !("server" in session)) {
-        throw new Error("В сессии нет данных сервера");
-    }
-
-    const server: unknown = session.server;
-    if (!server || typeof server !== "object" || !("web_rtc" in server)) {
-        throw new Error("В сессии нет WebRTC-конфига");
-    }
-
-    const webRtc: unknown = server.web_rtc;
-    if (!webRtc || typeof webRtc !== "object" || !("ice_servers" in webRtc)) {
-        throw new Error("В сессии нет ICE-серверов");
-    }
-
-    const iceServers = webRtc.ice_servers;
-    if (!Array.isArray(iceServers)) {
-        throw new Error("Некорректный формат ICE-серверов");
-    }
-
-    // invariant: сервер отдаёт массив RTCIceServer
-    return iceServers as RTCIceServer[];
 
 }

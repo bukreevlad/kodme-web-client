@@ -286,7 +286,7 @@ export class LocalStorage {
                         locale: "ru",
                     },
                     broadcasts: {
-                        type_play: "flv",
+                        type_play: "hls",
                         type_global_media_event: "muted"
                     }
                 }

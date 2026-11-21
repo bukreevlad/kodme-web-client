@@ -177,11 +177,21 @@ async function _uploadFile(form: Cloud, file: File): Promise<void> {
                 parent_id: item.parent_id,
                 name: item.name,
                 item_type: "file",
-                created_at: item.created_at
+                created_at: item.created_at,
+
+                // Загрузка завершена
+                is_uploading: false
             };
 
             // Заменяем временный id на серверный
             store.replaceId(tempId, item.id);
+
+            // Служебные поля завершённой загрузки
+            let savedItem = store.get(item.id);
+            if (savedItem) {
+                delete savedItem.__uploader__;
+                delete savedItem._file;
+            }
 
             // Обновляем данные элемента
             store.update(item.id, finalData);

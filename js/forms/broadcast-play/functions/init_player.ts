@@ -8,7 +8,6 @@ import { VideoPlayer } from "../../../components/video_player.js";
 // Импортируем functions
 import { playerEvents } from "./player_events.js";
 import { globalEvents } from "./global_events.js";
-import { startFLVPlayer } from "./start_flv_player.js";
 import { startHLSPlayer } from "./start_hls_player.js";
 import { startRTCPlayer } from "./start_rtc_player.js";
 import { streamInfoUpdate } from "./stream_info_update.js";
@@ -36,18 +35,8 @@ export function initPlayer(form: BroadcastPlay): void {
     // Плеер уже есть — повторный вызов не пересобирает ничего
     if (form.player) return;
 
-    // Создаем плеер.
-    //
-    // VideoPlayer оборачивает нативный <video>, а не заменяет его, поэтому
-    // hls.js / mpegts.js / WHEP продолжают работать с тем же элементом
-    // (form.video — геттер, отдаёт player.video).
-    //
-    // Вариант "full" даёт готовый набор контролов, повторяющий прежний
-    // набор Plyr: play / mute / volume / fullscreen / pip, плюс меню
-    // качества (для HLS). Пункт «Скорость» выключен (speedControl) —
-    // трансляция идёт в прямом эфире, менять её скорость бессмысленно.
-    // wideControl добавляет в контролы переключатель ширины сцены
-    // (его действие — handlers/wide.ts)
+    // Создаем плеер: VideoPlayer оборачивает нативный <video> — hls.js
+    // и WebRTC продолжают работать с тем же элементом (form.video)
     form.player = new VideoPlayer({
         insertInto: form.videoMount,
         options: {
@@ -93,11 +82,6 @@ export function initPlayer(form: BroadcastPlay): void {
         // деле нет, он вернёт пустой ответ и состояние «эфир не идёт»
         form.isStreamLive = true;
         syncLiveState(form);
-
-        // Если тип проигрывания flv
-        if (form.typePlay === "flv") {
-            startFLVPlayer(form);
-        }
 
         // Если тип проигрывания hls
         if (form.typePlay === "hls") {

@@ -41,7 +41,7 @@ export async function menuHandler(event: Event, form: BroadcastPlay): Promise<vo
         if (form.cast?.stream?.online) {
             menuItems.push({
                 text: t("forms.broadcast_play.context_menu.source"),
-                iconName: "antenna-bars-5",
+                iconName: "player-play",
                 onClick: () => sourceHandler(form, form.menuButton)
             });
         }

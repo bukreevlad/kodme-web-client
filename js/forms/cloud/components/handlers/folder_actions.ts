@@ -1,5 +1,6 @@
 // Импортируем utils
 import { Logger } from "../../../../utils/logs/logger.js";
+import { readEventPoint } from "../../../../utils/dom/read_event_point.js";
 
 // Импортируем components
 import { Overlay } from "../../../../components/overlay/index.js";
@@ -23,18 +24,19 @@ import { t } from "../../../../utils/i18n/index.js";
  * ***************************************************************************
  * Контекстное меню папки: открыть, поделиться, ссылки, удалить.
  * В общем доступе (по ссылке) — только открыть и удалить.
- * @param event - Событие клика по кнопке действий.
+ * @param event - Событие (мышь или долгий тап: координаты читаем по типу).
  * @param item - Компонент папки.
  * ***************************************************************************
  */
-export async function openFolderActions(event: MouseEvent, item: CloudFolderItemHandle): Promise<void> {
+export async function openFolderActions(event: Event, item: CloudFolderItemHandle): Promise<void> {
 
     try {
 
-        // Получение координат из события (меню открывается кликом мыши
-        // или тачем — синтезированный click несёт clientX/clientY)
-        let x = event.clientX || 0;
-        let y = event.clientY || 0;
+        // Получение координат из события: в MouseEvent они в clientX/clientY,
+        // а в touch-событиях — в changedTouches
+        const point = readEventPoint(event);
+        const x = point?.x ?? 0;
+        const y = point?.y ?? 0;
 
         // Определение списка элементов меню
         const menuItems: PopoverMenuInput[] = [];

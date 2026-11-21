@@ -20,6 +20,12 @@ import type { BroadcastCast } from "../types.js";
 import type { Broadcasts } from "../index.js";
 
 /**
+ * Период обновления кадра эфира на карточке (мс): кадр на медиасервере
+ * меняется каждую секунду, но чаще нужного его не запрашиваем.
+ */
+const LIVE_THUMB_REFRESH_MS = 10000;
+
+/**
  * ***************************************************************************
  * createCastItem - карточка трансляции в списке.
  *
@@ -43,8 +49,16 @@ export function createCastItem(form: Broadcasts, data: BroadcastCast): HTMLEleme
     let previewTimer: ReturnType<typeof setTimeout> | null = null;
     let preview: HoverPreviewHandle | null = null;
 
+    // Таймер обновления кадра эфира (тикает только пока трансляция live)
+    let thumbTimer: ReturnType<typeof setInterval> | null = null;
+
     // Создаем DOM-элемент из шаблона
     const element = template();
+
+    // Картинка карточки: invariant — оба data-* селектора есть в шаблоне,
+    // карточка создана из него же, элементы не пересоздаются
+    const thumbImage = element.querySelector<HTMLImageElement>(`:scope [data-thumbnail]`);
+    const placeholderImage = element.querySelector<HTMLImageElement>(`:scope [data-img-placeholder]`);
 
     // Проставляем id элементу: по нему ScrollManager ищет якорь скролла
     // при вставке пачки в начало списка (см. functions/get_casts.ts)
@@ -113,38 +127,22 @@ export function createCastItem(form: Broadcasts, data: BroadcastCast): HTMLEleme
 
             // Устанавливаем элементы: invariant — все data-* селекторы ниже
             // есть в шаблоне template(), карточка создана из него же
-            let thumbImage = element.querySelector<HTMLImageElement>(`:scope [data-thumbnail]`);
-            let placeholderImage = element.querySelector<HTMLImageElement>(`:scope [data-img-placeholder]`);
             let name = element.querySelector<HTMLElement>(":scope [data-name]");
             let creator = element.querySelector<HTMLElement>(":scope [data-creator]");
             let isLive = element.querySelector<HTMLElement>(":scope [data-is-live]");
 
-            if (next.thumbnail) {
+            // Обложка из БД: кадр офлайн-карточки и фолбэк, если кадр
+            // с медиасервера не отдался
+            const coverUrl = getCoverUrl(next);
 
-                // Получения размера миниатюры
-                const thumbnails = next.thumbnail.metadata?.thumbnails;
-                const thumbSize = getThumbnailSizeQuery(thumbnails, 400);
-
-                // Формируем ссылку через CacheManager
-                const mediaUrl = CacheManager.getMediaSrc({
-                    url: `${window.location.protocol}//${window.location.hostname}/api/v1/storage/${next.thumbnail.id}${thumbSize?.string}`,
-                    file_token: next.thumbnail.token,
-                    type: "image"
-                });
-
-                // Устанавливаем ссылку
-                if (thumbImage) thumbImage.src = mediaUrl;
-
-                // Обложка есть — плейсхолдер прячем
-                placeholderImage?.classList.add("hidden");
-
+            // Эфир идёт — на карточке текущий кадр с медиасервера
+            // (обновляется по таймеру); иначе обложка из БД/плейсхолдер
+            if (next.is_live && next.access_token) {
+                showLiveThumb(next, coverUrl);
+                startThumbRefresh();
             } else {
-
-                // Обложки нет (или убрали при обновлении) — src убираем,
-                // плейсхолдер возвращаем
-                thumbImage?.classList.add("hidden");
-                placeholderImage?.classList.remove("hidden");
-
+                stopThumbRefresh();
+                showCover(coverUrl);
             }
 
             // Отображаем данные
@@ -166,6 +164,163 @@ export function createCastItem(form: Broadcasts, data: BroadcastCast): HTMLEleme
         } catch (error) {
             Logger.error(error);
         }
+
+    }
+
+    /**
+     * ***************************************************************************
+     * URL обложки трансляции из БД.
+     * @param next - Данные трансляции.
+     * @returns URL обложки либо null, если обложки нет.
+     * ***************************************************************************
+     */
+    function getCoverUrl(next: BroadcastCast): string | null {
+
+        if (!next.thumbnail) return null;
+
+        // Получения размера миниатюры
+        const thumbnails = next.thumbnail.metadata?.thumbnails;
+        const thumbSize = getThumbnailSizeQuery(thumbnails, 400);
+
+        // Формируем ссылку через CacheManager
+        return CacheManager.getMediaSrc({
+            url: `${window.location.protocol}//${window.location.hostname}/api/v1/storage/${next.thumbnail.id}${thumbSize?.string}`,
+            file_token: next.thumbnail.token,
+            type: "image"
+        });
+
+    }
+
+    /**
+     * ***************************************************************************
+     * Показывает обложку из БД, при её отсутствии — плейсхолдер.
+     * @param coverUrl - URL обложки (null — обложки нет).
+     * ***************************************************************************
+     */
+    function showCover(coverUrl: string | null): void {
+
+        if (!thumbImage || !placeholderImage) return;
+
+        // Ошибка самой обложки уводит карточку в плейсхолдер, а не в битую картинку
+        thumbImage.onerror = () => showPlaceholder();
+
+        if (coverUrl) {
+
+            thumbImage.classList.remove("hidden");
+            thumbImage.src = coverUrl;
+
+            // Обложка есть — плейсхолдер прячем
+            placeholderImage.classList.add("hidden");
+
+        } else {
+            showPlaceholder();
+        }
+
+    }
+
+    /**
+     * ***************************************************************************
+     * Показывает плейсхолдер вместо картинки карточки.
+     * ***************************************************************************
+     */
+    function showPlaceholder(): void {
+
+        thumbImage?.classList.add("hidden");
+        placeholderImage?.classList.remove("hidden");
+
+    }
+
+    /**
+     * ***************************************************************************
+     * Показывает текущий кадр эфира с медиасервера. Кадр подгружается в
+     * скрытый Image и на карточку попадает только успешным: битый src
+     * мигнул бы пустым прямо поверх обложки. Если кадр не отдаётся (стрим
+     * только стартует либо уже остановился), карточка остаётся на обложке
+     * из БД.
+     * @param next - Данные трансляции (нужны id и access_token).
+     * @param coverUrl - URL обложки из БД — фолбэк при ошибке кадра.
+     * ***************************************************************************
+     */
+    function showLiveThumb(next: BroadcastCast, coverUrl: string | null): void {
+
+        // invariant: вызывается только при is_live с токеном
+        if (!thumbImage || !next.access_token) return;
+
+        // &_ — браузер не должен отдавать кадр из кэша: он меняется на ходу
+        const url = `${window.location.protocol}//${window.location.hostname}/api/v1/cast/hls/live/${next.id}/thumb.jpg?token=${next.access_token}&_=${Date.now()}`;
+
+        const probe = new Image();
+
+        probe.onload = () => {
+
+            // Данные могли устареть, пока кадр грузился — чужой не ставим
+            if (current.id !== next.id || !current.is_live) return;
+
+            thumbImage.onerror = null;
+            thumbImage.classList.remove("hidden");
+            thumbImage.src = url;
+
+            // Кадр закрывает плейсхолдер
+            placeholderImage?.classList.add("hidden");
+
+        };
+
+        probe.onerror = () => showCover(coverUrl);
+
+        probe.src = url;
+
+    }
+
+    /**
+     * ***************************************************************************
+     * Запускает периодическое обновление кадра эфира (повторный вызов
+     * при уже работающем таймере — no-op).
+     * ***************************************************************************
+     */
+    function startThumbRefresh(): void {
+
+        if (thumbTimer !== null) return;
+
+        thumbTimer = setInterval(() => {
+
+            // Карточку сняли из документа — тикать на снятой копии незачем
+            // (запись могут удалить раньше, чем отработает подписка стора)
+            if (!element.isConnected) {
+                stopThumbRefresh();
+                return;
+            }
+
+            // Вкладка скрыта — кадр не обновляем, тик возобновится после возврата
+            if (document.hidden) return;
+
+            // Карточка за пределами экрана — запрос откладываем до показа
+            const rect = element.getBoundingClientRect();
+            if (rect.bottom < 0 || rect.top > window.innerHeight) return;
+
+            // Эфир мог закончиться, а данные списка ещё не пришли
+            if (!current.is_live || !current.access_token) {
+                stopThumbRefresh();
+                showCover(getCoverUrl(current));
+                return;
+            }
+
+            showLiveThumb(current, getCoverUrl(current));
+
+        }, LIVE_THUMB_REFRESH_MS);
+
+    }
+
+    /**
+     * ***************************************************************************
+     * Останавливает обновление кадра эфира. Идемпотентна.
+     * ***************************************************************************
+     */
+    function stopThumbRefresh(): void {
+
+        if (thumbTimer === null) return;
+
+        clearInterval(thumbTimer);
+        thumbTimer = null;
 
     }
 
@@ -285,6 +440,10 @@ export function createCastItem(form: Broadcasts, data: BroadcastCast): HTMLEleme
 
             // Запоминаем отписку в сторе — она вызовется при удалении элемента
             form.store.addItemSubscription(current.id, unsubscribe);
+
+            // Таймер кадра гасим тем же механизмом: mouseleave при удалении
+            // из DOM не придёт, тикать он иначе продолжал бы на снятой копии
+            form.store.addItemSubscription(current.id, stopThumbRefresh);
 
         } catch (error) {
             Logger.error(error);

@@ -7,9 +7,8 @@ import { Toast } from "../../../components/toast.js";
 import { createPopoverMenu } from "../../../components/overlay/popover_menu.js";
 
 // Импортируем functions
-import { startRTCPlayer } from "../functions/start_rtc_player.js";
-import { startFLVPlayer } from "../functions/start_flv_player.js";
 import { startHLSPlayer } from "../functions/start_hls_player.js";
+import { startRTCPlayer } from "../functions/start_rtc_player.js";
 
 // Импортируем типы
 import type { BroadcastPlay } from "../index.js";
@@ -46,23 +45,19 @@ export async function sourceHandler(form: BroadcastPlay, targetNode?: HTMLElemen
         if (!form.cast?.stream?.online) return;
 
         // ---------- ПУНКТЫ ----------
+        // RTC и LL-HLS: оба доступны в OvenMediaEngine. FLV удалён
+        // вместе с переходом на OME — в нём нет HTTP-FLV
         const menuItems = [
 
             {
                 text: t("forms.broadcast_play.context_menu.play_rtc"),
-                iconName: "antenna-bars-5",
+                iconName: "player-play",
                 cssClasses: form.typePlay === "rtc" ? ["is-active"] : [],
                 onClick: () => startRTCPlayer(form)
             },
             {
-                text: t("forms.broadcast_play.context_menu.play_flv"),
-                iconName: "player-play",
-                cssClasses: form.typePlay === "flv" ? ["is-active"] : [],
-                onClick: () => startFLVPlayer(form)
-            },
-            {
                 text: t("forms.broadcast_play.context_menu.play_hls"),
-                iconName: "video",
+                iconName: "player-play",
                 cssClasses: form.typePlay === "hls" ? ["is-active"] : [],
                 onClick: () => startHLSPlayer(form)
             }
