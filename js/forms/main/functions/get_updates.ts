@@ -83,6 +83,7 @@ export async function getUpdates(form: Main): Promise<void> {
             }
 
             // Если есть данные
+            let applied = 0;
             if (items && items.length > 0) {
                 Logger.debug(`[app][GetUpdates]: Получено ${items.length} событий.`);
 
@@ -95,7 +96,7 @@ export async function getUpdates(form: Main): Promise<void> {
                 });
 
                 // Применяем события (единый аплайер с живым толчком)
-                await applyUpdates(items);
+                applied = await applyUpdates(items);
 
                 // Удаляем запись о намерении после успешного применения
                 await pendingUpdatesTable().delete(pendingId);
@@ -106,6 +107,15 @@ export async function getUpdates(form: Main): Promise<void> {
 
             // Рекурсия (если сервер отдал полный лимит — возможно, есть еще данные)
             if (has_more) {
+
+                // Все события пакета упали — pts каналов не продвинулся, и
+                // рекурсия запросит те же строки: выходим, догонка повторится
+                // при следующей синхронизации
+                if (items && items.length > 0 && applied === 0) {
+                    Logger.warn(`[app][GetUpdates]: ни одно из ${items.length} событий не применилось — выход из цикла`);
+                    return;
+                }
+
                 Logger.debug(`[app][GetUpdates]: Есть еще данные, запуск следующей итерации...`);
                 await getUpdates(form);
                 return;
@@ -126,17 +136,24 @@ export async function getUpdates(form: Main): Promise<void> {
  * ***************************************************************************
  * Применить пакет событий ленты (каждое — через общий аплайер).
  * @param events - Пакет событий ленты (в порядке возрастания pts).
+ * @returns Сколько событий обработано без ошибки (0 — пакет упал целиком).
  * ***************************************************************************
  */
-async function applyUpdates(events: ChannelFeedEvent[]): Promise<void> {
+async function applyUpdates(events: ChannelFeedEvent[]): Promise<number> {
+
+    // Счётчик обработанных: сбой одного события не должен ронять остальные
+    let applied = 0;
 
     for (const event of events) {
         try {
             await applyChannelFeedEvent(event, false);
+            applied++;
         } catch (err) {
             Logger.error(`[app][GetUpdates]: Ошибка обработки события ${event.type} (Канал: ${event.channel_id}):`, err);
         }
     }
+
+    return applied;
 
 }
 

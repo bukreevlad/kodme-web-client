@@ -15,7 +15,12 @@ import type { UserFeedEvent, UserFeedEventType } from "../../../../types/domain.
 /** Типы событий личной ленты, которые умеет применять диспетчер. */
 const USER_FEED_TYPES: Readonly<Record<UserFeedEventType, true>> = {
     channel_created: true,
-    channel_removed: true
+    channel_removed: true,
+    user_updated: true,
+    folder_created: true,
+    folder_removed: true,
+    channel_moved_to_folder: true,
+    channel_removed_from_folder: true
 };
 
 /**

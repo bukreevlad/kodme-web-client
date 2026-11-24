@@ -60,6 +60,9 @@ export class UserProfile {
     /** Профиль пользователя (загружается в _onBeforeOpen). */
     profile: UserProfileRecord | null;
 
+    /** Компонент аватара (создаётся в _onBeforeOpen). */
+    avatar: Avatars | null;
+
     // Каркас: шаблон, модалка, контент и instance скролла
     options: UserProfileOptions;
     tpl: HTMLElement | null;
@@ -96,6 +99,7 @@ export class UserProfile {
         // Переменные формы
         this.userId = data.userId;
         this.profile = null;
+        this.avatar = null;
 
         // Регистрируем этот экземпляр формы
         // Проверяем, существует ли уже экземпляр
@@ -230,7 +234,7 @@ export class UserProfile {
             if (!settings || !actions || !name || !link || !bio) return;
 
             // Аватар
-            new Avatars({
+            this.avatar = new Avatars({
                 element: avatar,
                 id: this.profile.id,
                 name: this.profile.display_name,

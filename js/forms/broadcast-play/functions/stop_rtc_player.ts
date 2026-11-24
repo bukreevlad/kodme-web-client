@@ -72,6 +72,9 @@ export function stopRTCPlayer(form: BroadcastPlay): void {
         if (form.castTiming !== null) clearInterval(form.castTiming);
         form.castTiming = null;
 
+        if (form.rtcStatTiming !== null) clearInterval(form.rtcStatTiming);
+        form.rtcStatTiming = null;
+
     } catch (error) {
         Logger.error(error);
     }

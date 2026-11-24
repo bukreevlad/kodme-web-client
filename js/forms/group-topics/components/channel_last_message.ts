@@ -6,6 +6,7 @@ import { isKind } from "../../../config/file_types.js";
 
 import { Icons } from "../../../utils/icons.js";
 import { I18n, t } from "../../../utils/i18n/index.js";
+import { unescapeHtml } from "../../../utils/string/unescape_html.js";
 
 // Импортируем components
 import { Badges } from "../../../components/badges.js";
@@ -120,14 +121,33 @@ function renderMessageContent(channel: TopicItem, data: ChannelRecord): HTMLElem
         text.textContent = parseSystemMessage(systemSource, messagesLocale);
 
     } else {
-        text.textContent = data?.last_message?.text ?? null;
+
+        // Стикер-сообщение без текста: в превью показываем подпись
+        if (!data?.last_message?.text && data?.last_message?.sticker_document_id) {
+            text.textContent = t("forms.main.components.channels.last_message.sticker");
+
+            // Сервер присылает текст экранированным — снимаем одно экранирование;
+            // пустой текст нормализуем: null в unescapeHtml упал бы без catch,
+            // и превью не отрисовалось вовсе
+        } else {
+            text.textContent = unescapeHtml(data?.last_message?.text ?? "");
+        }
+
     }
 
     // Если сообщение от текущего пользователя
     let itsYou = tpl.querySelector("[data-its-you]");
     let itsMe = data?.last_message?.author_id === getSessionUserId() ? t("forms.main.components.channels.last_message.you") : "";
     const kind = data.kind;
-    if (itsMe && kind != null && (kind === "dialog" || kind === "group" || kind === "topic")) itsYou && (itsYou.innerHTML = `<span class="text-[var(--color-green)]">${itsMe}</span>`);
+    if (itsMe && kind != null && (kind === "dialog" || kind === "group" || kind === "topic")) {
+
+        // Создаем элемент для безопасной вставки (textContent исключает XSS)
+        const itsYouSpan = document.createElement("span");
+        itsYouSpan.classList.add("text-[var(--color-brand)]");
+        itsYouSpan.textContent = itsMe;
+        itsYou?.appendChild(itsYouSpan);
+
+    }
     if (!itsMe && kind != null && (kind === "group" || kind === "topic") && userName) {
 
         // Имя пользователя — внешние данные: вставка только через

@@ -150,10 +150,15 @@ export interface ChannelFeedEvent {
     created_at?: IsoTimestamp;
 }
 
-/** Тип события личной ленты пользователя (появление и исчезновение каналов). */
+/** Тип события личной ленты пользователя (жизненный цикл каналов, смены профиля и папок). */
 export type UserFeedEventType =
     | "channel_created"
-    | "channel_removed";
+    | "channel_removed"
+    | "user_updated"
+    | "folder_created"
+    | "folder_removed"
+    | "channel_moved_to_folder"
+    | "channel_removed_from_folder";
 
 /**
  * Событие личной ленты пользователя: живой толчок `[user]: feed` и элемент
@@ -165,7 +170,7 @@ export interface UserFeedEvent {
     upid: number;
     /** Тип события. */
     type: UserFeedEventType;
-    /** Полезная нагрузка события ({ channel_id }). */
+    /** Полезная нагрузка события — данные по его типу. */
     payload: Record<string, unknown>;
     /** Время события (заполняется в догонке). */
     created_at?: IsoTimestamp;

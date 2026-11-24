@@ -6,6 +6,7 @@ import { stopRTCPlayer } from "./stop_rtc_player.js";
 import { stopHLSPlayer } from "./stop_hls_player.js";
 import { syncOmeRenditions } from "./ome_renditions_control.js";
 import { castTimingUpdate } from "./cast_timing_update.js";
+import { rtcStatsUpdate } from "./rtc_stats_update.js";
 import { loaderHide, loaderShow } from "./loader_control.js";
 import { getIceServers } from "./get_ice_servers.js";
 
@@ -107,6 +108,9 @@ export async function startRTCPlayer(form: BroadcastPlay): Promise<void> {
 
         // Время трансляции
         form.castTiming = setInterval(() => { castTimingUpdate(form); }, 1000);
+
+        // RTC-статистика: реальные значения соединения (кадры, битрейт, трафик)
+        form.rtcStatTiming = setInterval(() => { rtcStatsUpdate(form); }, 1000);
 
         // PeerConnection: ICE-серверы из сессии, остальное — дефолты OME
         const pc = new RTCPeerConnection({

@@ -47,7 +47,10 @@ export async function createMainFolderHandler(form: MainFolderCreate): Promise<v
             // хранятся как unknown — сверяем структуру перед записью)
             const user: unknown = LocalStorage?.session?.user;
             if (isRecord(user) && Array.isArray(user.main_folders)) {
-                user.main_folders.push(response.data);
+
+                // Повтор: событие ленты могло записать папку раньше ответа запроса
+                const already = user.main_folders.some((folder: unknown) => isRecord(folder) && folder.id === response.data?.id);
+                if (!already) user.main_folders.push(response.data);
             }
 
             // Обновляем сессию

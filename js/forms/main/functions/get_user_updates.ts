@@ -14,6 +14,7 @@ import { getUserUpdatesRequest } from "../requests/get_user_updates.js";
 // Импортируем functions
 import { applyUserFeedEvent } from "./apply_user_feed_event.js";
 import { getConversations } from "./get_conversations.js";
+import { refreshMainFolders } from "./refresh_main_folders.js";
 
 // Импортируем db
 import { getUserFeedUpts, pendingUserUpdatesTable, setUserFeedUpts } from "../db.js";
@@ -25,8 +26,8 @@ import { t } from "../../../utils/i18n/index.js";
 
 /**
  * ***************************************************************************
- * Глобальный обработчик догоняющих обновлений личной ленты (появление и
- * исчезновение каналов у пользователя).
+ * Глобальный обработчик догоняющих обновлений личной ленты (жизненный
+ * цикл каналов у пользователя и смены его профиля).
  *
  * Сервер отдаёт события того же формата, что и живой толчок `[user]: feed`,
  * и они применяются тем же аплайером. Пакет применяется отказоустойчиво:
@@ -65,6 +66,15 @@ export async function getUserUpdates(form: Main): Promise<void> {
             if (too_long) {
                 Logger.debug(`[app][GetUserUpdates]: [SNAPSHOT] Точка отрезана, полный список каналов.`);
                 await getConversations(form);
+
+                // События папок в отрезанном участке потеряны — список
+                // папок перечитывается; сбой не мешает зафиксировать точку
+                try {
+                    await refreshMainFolders();
+                } catch (error) {
+                    Logger.error(`[app][GetUserUpdates]: [SNAPSHOT] Папки не перечитаны:`, error);
+                }
+
                 await setUserFeedUpts(serverUpts);
                 break;
             }
@@ -93,7 +103,15 @@ export async function getUserUpdates(form: Main): Promise<void> {
 
             // Сервер отдал полный лимит — возможно, есть еще данные
             if (!has_more) break;
-            upid = await getUserFeedUpts();
+
+            // Пакет не продвинул курсор (все события падают) — выходим,
+            // иначе следующая итерация запросит те же строки и зациклится
+            const nextUpts = await getUserFeedUpts();
+            if (nextUpts === upid) {
+                Logger.warn(`[app][GetUserUpdates]: курсор не продвинулся после ${items?.length ?? 0} событий — выход из цикла`);
+                break;
+            }
+            upid = nextUpts;
 
         }
 

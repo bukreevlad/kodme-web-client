@@ -67,12 +67,17 @@ export function updateStats(form: BroadcastPlay, stream?: StreamInfo | null): bo
         // подставил бы устаревшие значения обратно
         const data = stream === undefined ? form.cast?.stream : stream;
 
+        // Пока играет RTC, чипы кадров/битрейта/трафика ведутся локально из
+        // соединения (см. functions/rtc_stats_update.ts) — сервер их не трогает
+        const rtcLocal = form.typePlay === "rtc";
+
         // Потока нет — показываем пустые значения, но не нули: «0p» и
         // «0mbps» читаются как сведения о качестве, а не как отсутствие данных
         if (!data) {
 
             for (const chip of CHIPS) {
                 if (chip.name === "timing") continue; // время ведёт cast_timing_update
+                if (rtcLocal && chip.name !== "watching") continue;
                 const node = form[chip.name];
                 if (!node) continue;
                 node.textContent = "—";
@@ -88,10 +93,10 @@ export function updateStats(form: BroadcastPlay, stream?: StreamInfo | null): bo
         const values: Record<StatChipName, string | undefined> = {
             watching: String(data.readers ?? 0),
             timing: undefined, // заполняется таймером отдельно
-            resolution: `${data.video?.height || 0}p`,
-            fps: `${Math.round(data.video?.fps || 0)}fps`,
-            bitrate: `${data.bitrate?.mbps || 0}mbps`,
-            incoming: formatBytes(data.received_total || 0)
+            resolution: rtcLocal ? undefined : `${data.video?.height || 0}p`,
+            fps: rtcLocal ? undefined : `${Math.round(data.video?.fps || 0)}fps`,
+            bitrate: rtcLocal ? undefined : `${data.bitrate?.mbps || 0}mbps`,
+            incoming: rtcLocal ? undefined : formatBytes(data.received_total || 0)
         };
 
         for (const chip of CHIPS) {

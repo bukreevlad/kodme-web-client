@@ -559,13 +559,23 @@ export class Avatars {
     /**
      * Установить изображение
      * ***************************************************************************
-     * @param {AvatarImageDocument} image - Документ с изображением
+     * @param {AvatarImageDocument | null} image - Документ с изображением
+     * (null — аватар снят, показывается акроним с цветным фоном)
      * ***************************************************************************
      */
-    setImage(image: AvatarImageDocument) {
+    setImage(image: AvatarImageDocument | null) {
         this.options.image = image;
         this.options.icon = null;
-        this._createImage();
+
+        // Снятый аватар: акрониму нужен цветной фон — цвет применяется
+        // только при отсутствии картинки
+        if (image) {
+            this._createImage();
+        } else {
+            this._createAcronym();
+            this._applyColor();
+        }
+
         return this;
     }
 

@@ -103,6 +103,9 @@ export class BroadcastPlay {
     /** Таймер чипа длительности эфира (см. functions/cast_timing_update.ts). */
     castTiming: ReturnType<typeof setInterval> | null = null;
 
+    /** Таймер RTC-статистики соединения (см. functions/rtc_stats_update.ts). */
+    rtcStatTiming: ReturnType<typeof setInterval> | null = null;
+
     /** Таймер опроса состояния потока (см. functions/stream_info_update.ts). */
     castUpdaterTiming: ReturnType<typeof setInterval> | null = null;
 
